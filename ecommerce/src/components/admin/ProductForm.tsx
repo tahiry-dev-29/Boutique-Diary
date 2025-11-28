@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "sonner";
+
 import { useState, useEffect } from "react";
 
 import { Product } from "@/types/admin";
@@ -127,6 +129,11 @@ export default function ProductForm({
       });
 
       if (response.ok) {
+        toast.success(
+          product?.id
+            ? "Produit modifié avec succès"
+            : "Produit créé avec succès",
+        );
         onSuccess();
         if (!product?.id) {
           setFormData({
@@ -140,10 +147,11 @@ export default function ProductForm({
         }
       } else {
         const data = await response.json();
-        setError(data.error || "Une erreur est survenue");
+        toast.error(data.error || "Une erreur est survenue");
       }
-    } catch {
-      setError("Erreur de connexion au serveur");
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast.error("Une erreur est survenue lors de la sauvegarde");
     } finally {
       setLoading(false);
     }

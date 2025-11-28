@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Category } from "@/types/category";
+import { toast } from "sonner";
 
 interface CategoryListProps {
   onEdit: (category: Category) => void;
@@ -47,13 +48,13 @@ export default function CategoryList({
 
       if (response.ok) {
         setCategories(categories.filter((c) => c.id !== id));
+        toast.success("Catégorie supprimée avec succès");
       } else {
-        const data = await response.json();
-        alert(data.error || "Erreur lors de la suppression");
+        toast.error("Erreur lors de la suppression");
       }
     } catch (error) {
       console.error("Error deleting category:", error);
-      alert("Erreur lors de la suppression");
+      toast.error("Erreur lors de la suppression");
     }
   };
 

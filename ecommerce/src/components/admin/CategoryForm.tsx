@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Category } from "@/types/category";
 
 interface CategoryFormProps {
@@ -62,20 +63,21 @@ export default function CategoryForm({
       });
 
       if (response.ok) {
+        toast.success(
+          category
+            ? "Catégorie modifiée avec succès"
+            : "Catégorie créée avec succès"
+        );
         onSuccess();
-        if (!category?.id) {
-          setFormData({
-            name: "",
-            description: "",
-            slug: "",
-          });
+        if (!category) {
+          setFormData({ name: "", description: "", slug: "" });
         }
       } else {
         const data = await response.json();
-        setError(data.error || "Une erreur est survenue");
+        toast.error(data.error || "Une erreur est survenue");
       }
     } catch {
-      setError("Erreur de connexion au serveur");
+      toast.error("Erreur de connexion au serveur");
     } finally {
       setLoading(false);
     }
