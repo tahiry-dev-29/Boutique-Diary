@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+
 export const dynamic = "force-dynamic";
 
 // GET - Récupérer un produit par ID
@@ -52,8 +53,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, description, reference, image, price, stock, categoryId } =
-      body;
+    const { name, description, reference, image, price, stock } = body;
 
     // Validation
     if (price !== undefined && parseFloat(price) < 0) {
@@ -78,7 +78,6 @@ export async function PUT(
         ...(image !== undefined && { image }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(stock !== undefined && { stock: parseInt(stock) }),
-        ...(categoryId !== undefined && { categoryId }),
       },
     });
 

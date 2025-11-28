@@ -1,5 +1,3 @@
-import { Category } from "./category";
-
 export interface Product {
   id?: number;
   name: string;
@@ -8,6 +6,4 @@ export interface Product {
   image?: string | null;
   price: number;
   stock: number;
-  categoryId?: number | null;
-  category?: Category | null;
 }

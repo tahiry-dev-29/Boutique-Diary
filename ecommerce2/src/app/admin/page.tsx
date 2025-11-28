@@ -4,9 +4,6 @@ import React, { useState, useMemo } from "react";
 import ProductList from "@/components/admin/ProductList";
 import { Product } from "@/types/admin";
 import ProductForm from "@/components/admin/ProductForm";
-import CategoryList from "@/components/admin/CategoryList";
-import CategoryForm from "@/components/admin/CategoryForm";
-import { Category } from "@/types/category";
 
 // Icônes SVG natives
 const Icons = {
@@ -198,9 +195,6 @@ const navItems = [
 // Composant pour le contenu principal de chaque section
 const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
   const [showForm, setShowForm] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -299,65 +293,6 @@ const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
         )}
 
         <ProductList onEdit={handleEdit} refreshTrigger={refreshTrigger} />
-      </div>
-    );
-  }
-
-  // Contenu spécifique pour la section catégories
-  if (activeSection === "categories") {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-              {currentContent.title}
-            </h1>
-            <p className="text-gray-600 mt-1">{currentContent.text}</p>
-          </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            {showForm ? "Annuler" : "Nouvelle catégorie"}
-          </button>
-        </div>
-
-        {showForm && (
-          <CategoryForm
-            category={selectedCategory}
-            onSuccess={() => {
-              setShowForm(false);
-              setSelectedCategory(null);
-              setRefreshTrigger((prev) => prev + 1);
-            }}
-            onCancel={() => {
-              setShowForm(false);
-              setSelectedCategory(null);
-            }}
-          />
-        )}
-
-        <CategoryList
-          onEdit={(category: Category) => {
-            setSelectedCategory(category);
-            setShowForm(true);
-          }}
-          refreshTrigger={refreshTrigger}
-        />
       </div>
     );
   }

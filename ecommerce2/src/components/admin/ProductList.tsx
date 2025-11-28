@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Product } from "@/types/admin";
-import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -84,9 +83,6 @@ export default function ProductList({
               Référence
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Catégorie
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Prix
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -126,17 +122,8 @@ export default function ProductList({
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {product.reference}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {product.category ? (
-                  <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    {product.category.name}
-                  </span>
-                ) : (
-                  <span className="text-gray-400 italic">Non classé</span>
-                )}
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {formatPrice(product.price)}
+                {product.price.toFixed(2)} €
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span

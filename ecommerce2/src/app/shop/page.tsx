@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatPrice } from "@/lib/formatPrice";
 
 interface Product {
   id: number;
@@ -131,7 +130,7 @@ export default function ShopPage() {
                   )}
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-indigo-600">
-                      {formatPrice(product.price)}
+                      {product.price.toFixed(2)} €
                     </span>
                     {product.stock > 0 && (
                       <span className="text-sm text-gray-500">

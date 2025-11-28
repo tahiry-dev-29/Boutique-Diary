@@ -7,15 +7,6 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const products = await prisma.product.findMany({
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
       orderBy: {
         createdAt: "desc",
       },
@@ -38,8 +29,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, description, reference, image, price, stock, categoryId } =
-      body;
+    const { name, description, reference, image, price, stock } = body;
 
     // Validation
     if (!name || !reference || price === undefined) {
@@ -70,7 +60,6 @@ export async function POST(request: NextRequest) {
         image: image || null,
         price: parseFloat(price),
         stock: parseInt(stock) || 0,
-        categoryId: categoryId || null,
       },
     });
 
