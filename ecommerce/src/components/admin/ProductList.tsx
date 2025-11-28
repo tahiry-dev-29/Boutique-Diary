@@ -33,16 +33,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Edit, Search, X } from "lucide-react";
+import { Trash2, Edit, Search, X, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
+  onView: (product: Product) => void;
   refreshTrigger: number;
 }
 
 export default function ProductList({
   onEdit,
+  onView,
   refreshTrigger,
 }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -95,8 +97,8 @@ export default function ProductList({
     new Set(
       products
         .map((p) => p.category?.name)
-        .filter((c): c is string => Boolean(c)),
-    ),
+        .filter((c): c is string => Boolean(c))
+    )
   ).sort();
 
   // Filter products
@@ -276,7 +278,16 @@ export default function ProductList({
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => onView(product)}
+                      title="Voir les détails"
+                    >
+                      <Eye className="h-4 w-4 text-blue-500" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => onEdit(product)}
+                      title="Modifier"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>

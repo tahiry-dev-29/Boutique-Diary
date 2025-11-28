@@ -186,7 +186,7 @@ export default function ProductForm({
         formData.stock < 0
       ) {
         toast.error(
-          "Veuillez remplir tous les champs obligatoires correctement.",
+          "Veuillez remplir tous les champs obligatoires correctement."
         );
         setLoading(false);
         return;
@@ -207,7 +207,7 @@ export default function ProductForm({
         toast.success(
           product?.id
             ? "Produit modifié avec succès"
-            : "Produit créé avec succès",
+            : "Produit créé avec succès"
         );
         onSuccess();
         if (!product?.id) {
@@ -360,7 +360,7 @@ export default function ProductForm({
 
         <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Galerie d'images (Max 6)
+            Galerie d images (Max 6)
           </label>
 
           {/* Add Image Controls */}

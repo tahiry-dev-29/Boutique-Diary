@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import ProductList from "@/components/admin/ProductList";
 import { Product } from "@/types/admin";
 import ProductForm from "@/components/admin/ProductForm";
+import ProductViewModal from "@/components/admin/ProductViewModal";
 import CategoryList from "@/components/admin/CategoryList";
 import CategoryForm from "@/components/admin/CategoryForm";
 import { Category } from "@/types/category";
@@ -199,9 +200,10 @@ const navItems = [
 const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
+    null
   );
   const [showForm, setShowForm] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const contentMap = useMemo(
@@ -231,7 +233,7 @@ const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
         text: "Configurez les paramètres généraux, la sécurité et les accès utilisateurs.",
       },
     }),
-    [],
+    []
   );
 
   const currentContent = contentMap[
@@ -250,6 +252,11 @@ const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setShowForm(true);
+  };
+
+  const handleView = (product: Product) => {
+    setSelectedProduct(product);
+    setShowViewModal(true);
   };
 
   const handleCancel = () => {
@@ -298,7 +305,20 @@ const MainContentComponent = ({ activeSection }: { activeSection: string }) => {
           />
         )}
 
-        <ProductList onEdit={handleEdit} refreshTrigger={refreshTrigger} />
+        <ProductList
+          onEdit={handleEdit}
+          onView={handleView}
+          refreshTrigger={refreshTrigger}
+        />
+
+        <ProductViewModal
+          product={selectedProduct}
+          isOpen={showViewModal}
+          onClose={() => {
+            setShowViewModal(false);
+            setSelectedProduct(null);
+          }}
+        />
       </div>
     );
   }
