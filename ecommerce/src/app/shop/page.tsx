@@ -8,7 +8,7 @@ interface Product {
   name: string;
   description: string | null;
   reference: string;
-  image: string | null;
+  images: string[];
   price: number;
   stock: number;
 }
@@ -86,9 +86,9 @@ export default function ShopPage() {
               >
                 {/* Image */}
                 <div className="relative h-64 bg-gray-200">
-                  {product.image ? (
+                  {product.images && product.images[0] ? (
                     <img
-                      src={product.image}
+                      src={product.images[0]}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />

@@ -16,7 +16,7 @@ function generateSlug(name: string): string {
 // GET - Récupérer une catégorie par ID
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -38,7 +38,7 @@ export async function GET(
     if (!category) {
       return NextResponse.json(
         { error: "Category not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(
     }
     return NextResponse.json(
       { error: "Failed to fetch category" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,7 +57,7 @@ export async function GET(
 // PUT - Mettre à jour une catégorie
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -99,20 +99,20 @@ export async function PUT(
       if ((error as { code: string }).code === "P2002") {
         return NextResponse.json(
           { error: "A category with this name already exists" },
-          { status: 409 }
+          { status: 409 },
         );
       }
       if ((error as { code: string }).code === "P2025") {
         return NextResponse.json(
           { error: "Category not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
 
     return NextResponse.json(
       { error: "Failed to update category" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -120,7 +120,7 @@ export async function PUT(
 // DELETE - Supprimer une catégorie
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -143,7 +143,7 @@ export async function DELETE(
     if (!category) {
       return NextResponse.json(
         { error: "Category not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -152,7 +152,7 @@ export async function DELETE(
         {
           error: `Cannot delete category with ${category._count.products} associated product(s)`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -173,13 +173,13 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         { error: "Category not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to delete category" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

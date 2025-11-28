@@ -227,9 +227,9 @@ export default function ProductList({
               filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    {product.image ? (
+                    {product.images && product.images[0] ? (
                       <img
-                        src={product.image}
+                        src={product.images[0]}
                         alt={product.name}
                         className="h-10 w-10 object-cover rounded-md"
                       />

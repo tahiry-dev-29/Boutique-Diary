@@ -1,9 +1,8 @@
 "use client";
 
 import { toast } from "sonner";
-
 import { useState, useEffect } from "react";
-
+import { X, Upload, Plus, Image as ImageIcon } from "lucide-react";
 import { Product } from "@/types/admin";
 import { Category } from "@/types/category";
 
@@ -22,18 +21,15 @@ export default function ProductForm({
     name: "",
     description: "",
     reference: "",
-    image: "",
+    images: [],
     price: 0,
     stock: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [imageMode, setImageMode] = useState<"url" | "upload">("url");
-  const [imagePreview, setImagePreview] = useState<string>("");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [urlInput, setUrlInput] = useState("");
 
   useEffect(() => {
-    // Charger les catégories
     const fetchCategories = async () => {
       try {
         const response = await fetch("/api/categories");
@@ -53,66 +49,145 @@ export default function ProductForm({
         name: product.name,
         description: product.description || "",
         reference: product.reference,
-        image: product.image || "",
+        images: product.images || [],
         price: product.price,
         stock: product.stock,
         categoryId: product.categoryId || null,
       });
-      if (product.image) {
-        setImagePreview(product.image);
-      }
     }
   }, [product]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    // Vérifier le type de fichier
-    if (!file.type.startsWith("image/")) {
-      setError("Veuillez sélectionner un fichier image valide");
+    const remainingSlots = 6 - formData.images.length;
+    if (remainingSlots === 0) {
+      toast.error("Maximum 6 images autorisées");
       return;
     }
 
-    // Vérifier la taille (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("L'image ne doit pas dépasser 5MB");
-      return;
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
+    const validFiles: File[] = [];
+
+    // Validate all files first
+    for (const file of filesToProcess) {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} n'est pas une image valide`);
+        continue;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} dépasse 5MB`);
+        continue;
+      }
+
+      validFiles.push(file);
     }
 
-    // Convertir en base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setFormData({ ...formData, image: base64String });
-      setImagePreview(base64String);
-      setError("");
-    };
-    reader.onerror = () => {
-      setError("Erreur lors de la lecture du fichier");
-    };
-    reader.readAsDataURL(file);
+    if (validFiles.length === 0) return;
+
+    // Process all valid files
+    const base64Promises = validFiles.map((file) => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () =>
+          reject(new Error(`Erreur lors de la lecture de ${file.name}`));
+        reader.readAsDataURL(file);
+      });
+    });
+
+    try {
+      const base64Strings = await Promise.all(base64Promises);
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...base64Strings],
+      }));
+      toast.success(`${base64Strings.length} image(s) ajoutée(s)`);
+    } catch (error) {
+      toast.error("Erreur lors de la lecture des fichiers");
+    }
+
+    // Reset input
+    e.target.value = "";
   };
 
-  const handleImageUrlChange = (url: string) => {
-    setFormData({ ...formData, image: url });
-    setImagePreview(url);
+  const handleAddUrl = async () => {
+    if (!urlInput) return;
+
+    if (formData.images.length >= 6) {
+      toast.error("Maximum 6 images autorisées");
+      return;
+    }
+
+    // Show loading toast
+    const loadingToast = toast.loading("Téléchargement de l'image...");
+
+    try {
+      const response = await fetch("/api/upload-url-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: urlInput }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Erreur lors du téléchargement");
+        toast.dismiss(loadingToast);
+        return;
+      }
+
+      // Add the local path to images
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, data.path],
+      }));
+
+      toast.success("Image téléchargée avec succès");
+      toast.dismiss(loadingToast);
+      setUrlInput("");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Erreur lors du téléchargement de l'image");
+      toast.dismiss(loadingToast);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSetMainImage = (index: number) => {
+    if (index === 0) return;
+    const newImages = [...formData.images];
+    const [selectedImage] = newImages.splice(index, 1);
+    newImages.unshift(selectedImage);
+    setFormData((prev) => ({ ...prev, images: newImages }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
-      // Validation basique
       if (
         !formData.name ||
         !formData.reference ||
+        isNaN(formData.price) ||
         formData.price < 0 ||
+        isNaN(formData.stock) ||
         formData.stock < 0
       ) {
-        setError("Veuillez remplir tous les champs obligatoires correctement.");
+        toast.error(
+          "Veuillez remplir tous les champs obligatoires correctement.",
+        );
         setLoading(false);
         return;
       }
@@ -140,7 +215,7 @@ export default function ProductForm({
             name: "",
             description: "",
             reference: "",
-            image: "",
+            images: [],
             price: 0,
             stock: 0,
           });
@@ -160,246 +235,254 @@ export default function ProductForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-6 rounded-lg border border-gray-200"
+      className="space-y-6 bg-white p-6 rounded-lg border border-gray-200"
     >
-      <h3 className="text-lg font-semibold text-gray-900">
-        {product?.id ? "Modifier le produit" : "Nouveau produit"}
-      </h3>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Nom *
-        </label>
-        <input
-          type="text"
-          required
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
-        <textarea
-          value={formData.description || ""}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Référence *
-        </label>
-        <input
-          type="text"
-          required
-          value={formData.reference}
-          onChange={(e) =>
-            setFormData({ ...formData, reference: e.target.value })
-          }
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Catégorie
-        </label>
-        <select
-          value={formData.categoryId || ""}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              categoryId: e.target.value ? parseInt(e.target.value) : null,
-            })
-          }
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900">
+          {product?.id ? "Modifier le produit" : "Nouveau produit"}
+        </h3>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-gray-400 hover:text-gray-500"
         >
-          <option value="">Non classé</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Image du produit
-        </label>
-
-        {/* Toggle entre URL et Upload */}
-        <div className="flex gap-2 mb-3">
-          <button
-            type="button"
-            onClick={() => setImageMode("url")}
-            className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${
-              imageMode === "url"
-                ? "bg-indigo-600 text-white border-indigo-600"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            <svg
-              className="w-4 h-4 inline-block mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
-            URL
-          </button>
-          <button
-            type="button"
-            onClick={() => setImageMode("upload")}
-            className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${
-              imageMode === "upload"
-                ? "bg-indigo-600 text-white border-indigo-600"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            <svg
-              className="w-4 h-4 inline-block mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Upload
-          </button>
-        </div>
-
-        {/* Champ URL */}
-        {imageMode === "url" && (
-          <input
-            type="text"
-            value={formData.image || ""}
-            onChange={(e) => handleImageUrlChange(e.target.value)}
-            placeholder="https://example.com/image.jpg"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        )}
-
-        {/* Champ Upload */}
-        {imageMode === "upload" && (
-          <div className="relative">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nom *
+            </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Formats acceptés: JPG, PNG, GIF, WebP (max 5MB)
-            </p>
           </div>
-        )}
 
-        {/* Prévisualisation de l'image */}
-        {imagePreview && (
-          <div className="mt-3">
-            <p className="text-sm text-gray-600 mb-2">Aperçu:</p>
-            <div className="relative w-full h-48 border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imagePreview}
-                alt="Aperçu"
-                className="w-full h-full object-contain"
-                onError={() => {
-                  setImagePreview("");
-                  setError(
-                    "Impossible de charger l'image. Vérifiez l'URL ou le fichier.",
-                  );
-                }}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Référence *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.reference}
+              onChange={(e) =>
+                setFormData({ ...formData, reference: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Catégorie
+            </label>
+            <select
+              value={formData.categoryId || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  categoryId: e.target.value ? parseInt(e.target.value) : null,
+                })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="">Non classé</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Prix (Ar) *
+              </label>
+              <input
+                type="number"
+                required
+                min="0"
+                step="0.01"
+                value={isNaN(formData.price) ? "" : formData.price}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    price: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
-              <button
-                type="button"
-                onClick={() => {
-                  setImagePreview("");
-                  setFormData({ ...formData, image: "" });
-                }}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Stock *
+              </label>
+              <input
+                type="number"
+                required
+                min="0"
+                value={isNaN(formData.stock) ? "" : formData.stock}
+                onChange={(e) =>
+                  setFormData({ ...formData, stock: parseInt(e.target.value) })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
             </div>
           </div>
-        )}
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Prix (Ar) *
-          </label>
-          <input
-            type="number"
-            required
-            min="0"
-            step="0.01"
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: parseFloat(e.target.value) })
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={formData.description || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
         </div>
 
-        <div>
+        <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Stock *
+            Galerie d'images (Max 6)
           </label>
-          <input
-            type="number"
-            required
-            min="0"
-            value={formData.stock}
-            onChange={(e) =>
-              setFormData({ ...formData, stock: parseInt(e.target.value) })
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
+
+          {/* Add Image Controls */}
+          <div className="flex gap-2 mb-4">
+            <input
+              type="text"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              placeholder="URL de l'image..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleAddUrl}
+              disabled={!urlInput || formData.images.length >= 6}
+              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+            <label
+              className={`cursor-pointer px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 flex items-center ${formData.images.length >= 6 ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <Upload className="w-5 h-5" />
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                disabled={formData.images.length >= 6}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Image Gallery Layout */}
+          <div className="space-y-4">
+            {/* Main Image Display */}
+            <div className="relative w-full aspect-video bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden flex items-center justify-center">
+              {formData.images[0] ? (
+                <>
+                  <img
+                    src={formData.images[0]}
+                    alt="Image principale"
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded shadow z-10">
+                    Image Principale
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(0)}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 z-10"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-400">
+                  <ImageIcon className="w-16 h-16 mb-2" />
+                  <span className="text-sm">Aucune image principale</span>
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnails Row */}
+            <div className="grid grid-cols-6 gap-2">
+              {/* Slots for images 1-6 (Index 0 is main, so we show 0-5 in thumbnails? 
+                  The user wants to click a thumbnail to make it main. 
+                  Usually this means showing ALL images in the thumbnail row, including the main one, 
+                  OR showing the "rest" of the images.
+                  The reference image shows the main image repeated in the thumbnails row with a highlight.
+                  Let's show ALL images in the row to allow selection.
+              */}
+              {formData.images.map((img, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleSetMainImage(index)}
+                  className={`relative aspect-square bg-gray-50 border-2 rounded-lg overflow-hidden cursor-pointer transition-all ${
+                    index === 0
+                      ? "border-indigo-600 ring-2 ring-indigo-100"
+                      : "border-gray-200 hover:border-indigo-300"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Vue ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {index !== 0 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveImage(index);
+                      }}
+                      className="absolute top-0.5 right-0.5 p-0.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 hover:opacity-100"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              {/* Empty slots placeholders if less than 6 images */}
+              {Array.from({
+                length: Math.max(0, 6 - formData.images.length),
+              }).map((_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-gray-300"
+                >
+                  <span className="text-xs">
+                    {formData.images.length + i + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-4 border-t border-gray-100">
         <button
           type="submit"
           disabled={loading}
@@ -409,7 +492,7 @@ export default function ProductForm({
             ? "Enregistrement..."
             : product?.id
               ? "Mettre à jour"
-              : "Créer"}
+              : "Créer le produit"}
         </button>
         <button
           type="button"

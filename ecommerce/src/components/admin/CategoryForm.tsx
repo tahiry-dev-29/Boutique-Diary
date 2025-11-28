@@ -66,7 +66,7 @@ export default function CategoryForm({
         toast.success(
           category
             ? "Catégorie modifiée avec succès"
-            : "Catégorie créée avec succès"
+            : "Catégorie créée avec succès",
         );
         onSuccess();
         if (!category) {

@@ -52,7 +52,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, description, reference, image, price, stock, categoryId } =
+    const { name, description, reference, images, price, stock, categoryId } =
       body;
 
     // Validation
@@ -75,7 +75,7 @@ export async function PUT(
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
         ...(reference !== undefined && { reference }),
-        ...(image !== undefined && { image }),
+        ...(images !== undefined && { images }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(stock !== undefined && { stock: parseInt(stock) }),
         ...(categoryId !== undefined && { categoryId }),
