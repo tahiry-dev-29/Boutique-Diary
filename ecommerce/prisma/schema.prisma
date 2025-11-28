@@ -30,3 +30,15 @@ model User {
   password  String
   createdAt DateTime @default(now())
 }
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  reference   String   @unique @db.VarChar(100)
+  image       String?  @db.VarChar(500)
+  price       Float
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
