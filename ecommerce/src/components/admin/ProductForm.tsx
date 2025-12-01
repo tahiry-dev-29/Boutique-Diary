@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { X, Upload, Plus, Image as ImageIcon } from "lucide-react";
 import { Product } from "@/types/admin";
 import { Category } from "@/types/category";
+import { AVAILABLE_COLORS, AVAILABLE_SIZES } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductFormProps {
   product: Product | null;
@@ -24,6 +26,12 @@ export default function ProductForm({
     images: [],
     price: 0,
     stock: 0,
+    brand: "",
+    colors: [],
+    sizes: [],
+    isNew: false,
+    isPromotion: false,
+    isBestSeller: false,
   });
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -53,6 +61,12 @@ export default function ProductForm({
         price: product.price,
         stock: product.stock,
         categoryId: product.categoryId || null,
+        brand: product.brand || "",
+        colors: product.colors || [],
+        sizes: product.sizes || [],
+        isNew: product.isNew || false,
+        isPromotion: product.isPromotion || false,
+        isBestSeller: product.isBestSeller || false,
       });
     }
   }, [product]);
@@ -218,6 +232,12 @@ export default function ProductForm({
             images: [],
             price: 0,
             stock: 0,
+            brand: "",
+            colors: [],
+            sizes: [],
+            isNew: false,
+            isPromotion: false,
+            isBestSeller: false,
           });
         }
       } else {
@@ -251,58 +271,81 @@ export default function ProductForm({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Column - All Data Fields */}
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nom *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
+          {/* Name and Reference */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nom *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Référence *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.reference}
+                onChange={(e) =>
+                  setFormData({ ...formData, reference: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Référence *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.reference}
-              onChange={(e) =>
-                setFormData({ ...formData, reference: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
+          {/* Category and Brand */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Catégorie
+              </label>
+              <select
+                value={formData.categoryId || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    categoryId: e.target.value
+                      ? parseInt(e.target.value)
+                      : null,
+                  })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="">Non classé</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Catégorie
-            </label>
-            <select
-              value={formData.categoryId || ""}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  categoryId: e.target.value ? parseInt(e.target.value) : null,
-                })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              <option value="">Non classé</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Marque
+              </label>
+              <input
+                type="text"
+                value={formData.brand || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, brand: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -343,6 +386,145 @@ export default function ProductForm({
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Couleurs
+              </label>
+              <select
+                onChange={(e) => {
+                  if (
+                    e.target.value &&
+                    !formData.colors?.includes(e.target.value)
+                  ) {
+                    setFormData({
+                      ...formData,
+                      colors: [...(formData.colors || []), e.target.value],
+                    });
+                  }
+                  e.target.value = "";
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="">Ajouter une couleur</option>
+                {AVAILABLE_COLORS.map((color) => (
+                  <option key={color} value={color}>
+                    {color}
+                  </option>
+                ))}
+              </select>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {formData.colors?.map((color) => (
+                  <Badge
+                    key={color}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    {color}
+                    <X
+                      className="w-3 h-3 cursor-pointer"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          colors: formData.colors?.filter((c) => c !== color),
+                        })
+                      }
+                    />
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tailles
+              </label>
+              <select
+                onChange={(e) => {
+                  if (
+                    e.target.value &&
+                    !formData.sizes?.includes(e.target.value)
+                  ) {
+                    setFormData({
+                      ...formData,
+                      sizes: [...(formData.sizes || []), e.target.value],
+                    });
+                  }
+                  e.target.value = "";
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="">Ajouter une taille</option>
+                {AVAILABLE_SIZES.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {formData.sizes?.map((size) => (
+                  <Badge
+                    key={size}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    {size}
+                    <X
+                      className="w-3 h-3 cursor-pointer"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          sizes: formData.sizes?.filter((s) => s !== size),
+                        })
+                      }
+                    />
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Type de produit
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isNew || false}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isNew: e.target.checked })
+                  }
+                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="text-sm text-gray-700">Nouveau</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isPromotion || false}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isPromotion: e.target.checked })
+                  }
+                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="text-sm text-gray-700">Promotion</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isBestSeller || false}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isBestSeller: e.target.checked })
+                  }
+                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span className="text-sm text-gray-700">Best-seller</span>
+              </label>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
@@ -358,9 +540,11 @@ export default function ProductForm({
           </div>
         </div>
 
+        {/* Right Column - Images */}
+
         <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Galerie d images (Max 6)
+            Galerie d&apos;images (Max 6)
           </label>
 
           {/* Add Image Controls */}
@@ -479,28 +663,29 @@ export default function ProductForm({
               ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="flex gap-3 pt-4 border-t border-gray-100">
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading
-            ? "Enregistrement..."
-            : product?.id
-              ? "Mettre à jour"
-              : "Créer le produit"}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-        >
-          Annuler
-        </button>
+          {/* Buttons at bottom of image section */}
+          <div className="flex gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-[300px] bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading
+                ? "Enregistrement..."
+                : product?.id
+                  ? "Mettre à jour"
+                  : "Créer le produit"}
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   );

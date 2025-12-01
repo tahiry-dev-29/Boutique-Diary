@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -38,27 +38,40 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, description, reference, images, price, stock, categoryId } =
-      body;
+    const {
+      name,
+      description,
+      reference,
+      images,
+      price,
+      stock,
+      categoryId,
+      brand,
+      colors,
+      sizes,
+      isNew,
+      isPromotion,
+      isBestSeller,
+    } = body;
 
     // Validation
     if (!name || !reference || price === undefined) {
       return NextResponse.json(
         { error: "Name, reference, and price are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (price !== undefined && parseFloat(price) < 0) {
       return NextResponse.json(
         { error: "Price cannot be negative" },
-        { status: 400 },
+        { status: 400 }
       );
     }
     if (stock !== undefined && parseInt(stock) < 0) {
       return NextResponse.json(
         { error: "Stock cannot be negative" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -82,6 +95,12 @@ export async function POST(request: NextRequest) {
         price: parseFloat(price),
         stock: parseInt(stock) || 0,
         categoryId: categoryId || null,
+        brand: brand || null,
+        colors: colors || [],
+        sizes: sizes || [],
+        isNew: isNew || false,
+        isPromotion: isPromotion || false,
+        isBestSeller: isBestSeller || false,
       },
     });
 
@@ -99,7 +118,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "A product with this reference already exists" },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
@@ -107,7 +126,7 @@ export async function POST(request: NextRequest) {
       {
         error: `Failed to create product: ${error instanceof Error ? error.message : String(error)}`,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

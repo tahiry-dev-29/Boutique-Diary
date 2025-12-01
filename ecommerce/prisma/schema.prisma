@@ -32,17 +32,32 @@ model User {
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(255)
-  description String?   @db.Text
-  reference   String    @unique @db.VarChar(100)
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  reference   String   @unique @db.VarChar(100)
   images      String[]
   price       Float
-  stock       Int       @default(0)
-  categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  stock       Int      @default(0)
+
+  // Nouveaux champs pour filtrage avancé
+  brand  String?  @db.VarChar(100)
+  colors String[] @default([])
+  sizes  String[] @default([])
+
+  // Indicateurs de type de produit
+  isNew        Boolean @default(false)
+  isPromotion  Boolean @default(false)
+  isBestSeller Boolean @default(false)
+
+  // Avis clients
+  rating      Float? @default(0)
+  reviewCount Int    @default(0)
+
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Category {

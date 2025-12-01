@@ -90,18 +90,98 @@ export default function ProductViewModal({
             </div>
 
             {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Catégorie
-              </label>
-              {product.category ? (
-                <Badge variant="secondary" className="text-sm">
-                  {product.category.name}
-                </Badge>
-              ) : (
-                <span className="text-gray-400 italic text-sm">Non classé</span>
-              )}
+            {/* Brand and Category */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Marque
+                </label>
+                {product.brand ? (
+                  <span className="text-gray-900 font-medium">
+                    {product.brand}
+                  </span>
+                ) : (
+                  <span className="text-gray-400 italic text-sm">
+                    Non renseignée
+                  </span>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Catégorie
+                </label>
+                {product.category ? (
+                  <Badge variant="secondary" className="text-sm">
+                    {product.category.name}
+                  </Badge>
+                ) : (
+                  <span className="text-gray-400 italic text-sm">
+                    Non classé
+                  </span>
+                )}
+              </div>
             </div>
+
+            {/* Colors and Sizes */}
+            {((product.colors && product.colors.length > 0) ||
+              (product.sizes && product.sizes.length > 0)) && (
+              <div className="grid grid-cols-2 gap-4">
+                {product.colors && product.colors.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Couleurs
+                    </label>
+                    <div className="flex flex-wrap gap-1">
+                      {product.colors.map((color) => (
+                        <Badge key={color} variant="outline">
+                          {color}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {product.sizes && product.sizes.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tailles
+                    </label>
+                    <div className="flex flex-wrap gap-1">
+                      {product.sizes.map((size) => (
+                        <Badge key={size} variant="outline">
+                          {size}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Product Types */}
+            {(product.isNew || product.isPromotion || product.isBestSeller) && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Labels
+                </label>
+                <div className="flex gap-2">
+                  {product.isNew && (
+                    <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200">
+                      Nouveau
+                    </Badge>
+                  )}
+                  {product.isPromotion && (
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-200 border-red-200">
+                      Promotion
+                    </Badge>
+                  )}
+                  {product.isBestSeller && (
+                    <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200">
+                      Best-seller
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Price and Stock */}
             <div className="grid grid-cols-2 gap-4">
@@ -164,6 +244,20 @@ export default function ProductViewModal({
                     {product.stock > 0 ? "En stock" : "Rupture"}
                   </Badge>
                 </div>
+                {product.rating !== undefined && (
+                  <div>
+                    <span className="text-gray-500">Note:</span>
+                    <span className="ml-2 font-medium text-gray-900 flex items-center gap-1 inline-flex">
+                      {product.rating}/5
+                      <span className="text-yellow-400">★</span>
+                      {product.reviewCount !== undefined && (
+                        <span className="text-gray-400 text-xs">
+                          ({product.reviewCount} avis)
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
