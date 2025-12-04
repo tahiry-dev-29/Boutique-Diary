@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 // GET - Récupérer un produit par ID
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -18,6 +18,9 @@ export async function GET(
 
     const product = await prisma.product.findUnique({
       where: { id },
+      include: {
+        images: true,
+      },
     });
 
     if (!product) {
@@ -33,7 +36,7 @@ export async function GET(
     }
     return NextResponse.json(
       { error: "Failed to fetch product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -41,7 +44,7 @@ export async function GET(
 // PUT - Mettre à jour un produit
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -72,13 +75,13 @@ export async function PUT(
     if (price !== undefined && parseFloat(price) < 0) {
       return NextResponse.json(
         { error: "Price cannot be negative" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (stock !== undefined && parseInt(stock) < 0) {
       return NextResponse.json(
         { error: "Stock cannot be negative" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,7 +91,6 @@ export async function PUT(
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
         ...(reference !== undefined && { reference }),
-        ...(images !== undefined && { images }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(stock !== undefined && { stock: parseInt(stock) }),
         ...(categoryId !== undefined && { categoryId }),
@@ -98,6 +100,19 @@ export async function PUT(
         ...(isNew !== undefined && { isNew }),
         ...(isPromotion !== undefined && { isPromotion }),
         ...(isBestSeller !== undefined && { isBestSeller }),
+        ...(images !== undefined && {
+          images: {
+            deleteMany: {},
+            create: (images || []).map((img: any) => ({
+              url: typeof img === "string" ? img : img.url,
+              color: typeof img === "string" ? null : img.color,
+              sizes: typeof img === "string" ? [] : img.sizes || [],
+            })),
+          },
+        }),
+      },
+      include: {
+        images: true,
       },
     });
 
@@ -117,13 +132,13 @@ export async function PUT(
         {
           error: "Product not found or reference already exists",
         },
-        { status: (error as { code: string }).code === "P2025" ? 404 : 409 }
+        { status: (error as { code: string }).code === "P2025" ? 404 : 409 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to update product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -131,7 +146,7 @@ export async function PUT(
 // DELETE - Supprimer un produit
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -161,7 +176,7 @@ export async function DELETE(
 
     return NextResponse.json(
       { error: "Failed to delete product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -2,6 +2,7 @@
 
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/formatPrice";
+import { Maximize2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -23,29 +24,86 @@ export default function ProductViewModal({
   onClose,
 }: ProductViewModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   if (!product) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className={
+          isFullscreen
+            ? "max-w-full w-screen h-screen m-0 p-6 flex flex-col"
+            : "max-w-4xl max-h-[90vh] overflow-y-auto"
+        }
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Détails du Produit
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-2xl font-bold">
+              Détails du Produit
+            </DialogTitle>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-all border-2 border-purple-500"
+                title={isFullscreen ? "Réduire" : "Plein écran"}
+              >
+                <Maximize2 className="w-5 h-5 text-gray-700" />
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-all border-2 border-purple-500"
+                title="Fermer"
+              >
+                <X className="w-5 h-5 text-gray-700" />
+              </button>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 ${isFullscreen ? "flex-1 overflow-y-auto" : ""}`}
+        >
           {/* Image Gallery Section */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Main Image */}
-            <div className="relative w-full aspect-square bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
+            <div
+              className={`relative w-full ${isFullscreen ? "aspect-video" : "aspect-square"} bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden flex items-center justify-center`}
+            >
               {product.images && product.images[selectedImageIndex] ? (
-                <img
-                  src={product.images[selectedImageIndex]}
-                  alt={product.name}
-                  className="w-full h-full object-contain"
-                />
+                <>
+                  <img
+                    src={product.images[selectedImageIndex].url}
+                    alt={product.name}
+                    className="w-full h-full object-contain"
+                  />
+                  {/* Image Attributes Overlay */}
+                  {(product.images[selectedImageIndex].color ||
+                    (product.images[selectedImageIndex].sizes &&
+                      product.images[selectedImageIndex].sizes.length > 0)) && (
+                    <div className="absolute bottom-2 left-2 flex gap-1">
+                      {product.images[selectedImageIndex].color && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-white/90 shadow-sm"
+                        >
+                          {product.images[selectedImageIndex].color}
+                        </Badge>
+                      )}
+                      {product.images[selectedImageIndex].sizes &&
+                        product.images[selectedImageIndex].sizes.length > 0 && (
+                          <Badge
+                            variant="secondary"
+                            className="bg-white/90 shadow-sm"
+                          >
+                            {product.images[selectedImageIndex].sizes.join(
+                              ", "
+                            )}
+                          </Badge>
+                        )}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="flex flex-col items-center justify-center text-gray-400">
                   <span className="text-sm">Aucune image</span>
@@ -55,7 +113,7 @@ export default function ProductViewModal({
 
             {/* Thumbnail Gallery */}
             {product.images && product.images.length > 1 && (
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {product.images.map((img, index) => (
                   <div
                     key={index}
@@ -67,7 +125,7 @@ export default function ProductViewModal({
                     }`}
                   >
                     <img
-                      src={img}
+                      src={img.url}
                       alt={`Vue ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -131,12 +189,22 @@ export default function ProductViewModal({
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Couleurs
                     </label>
-                    <div className="flex flex-wrap gap-1">
-                      {product.colors.map((color) => (
-                        <Badge key={color} variant="outline">
-                          {color}
-                        </Badge>
-                      ))}
+                    <div className="flex flex-wrap gap-2">
+                      {product.colors.map((color) => {
+                        const isAvailable =
+                          product.images[selectedImageIndex]?.color === color;
+                        return (
+                          <Badge
+                            key={color}
+                            variant="outline"
+                            className={
+                              isAvailable ? "border-pink-500 border-2" : ""
+                            }
+                          >
+                            {color}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -145,12 +213,24 @@ export default function ProductViewModal({
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Tailles
                     </label>
-                    <div className="flex flex-wrap gap-1">
-                      {product.sizes.map((size) => (
-                        <Badge key={size} variant="outline">
-                          {size}
-                        </Badge>
-                      ))}
+                    <div className="flex flex-wrap gap-2">
+                      {product.sizes.map((size) => {
+                        const isAvailable =
+                          product.images[selectedImageIndex]?.sizes?.includes(
+                            size
+                          ) || false;
+                        return (
+                          <Badge
+                            key={size}
+                            variant="outline"
+                            className={
+                              isAvailable ? "border-purple-500 border-2" : ""
+                            }
+                          >
+                            {size}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

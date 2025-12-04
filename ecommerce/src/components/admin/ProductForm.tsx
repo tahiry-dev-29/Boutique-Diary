@@ -37,6 +37,8 @@ export default function ProductForm({
   const [categories, setCategories] = useState<Category[]>([]);
   const [urlInput, setUrlInput] = useState("");
 
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -57,7 +59,14 @@ export default function ProductForm({
         name: product.name,
         description: product.description || "",
         reference: product.reference,
-        images: product.images || [],
+        // Map existing images to the new structure if they are just strings
+        images:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          product.images?.map((img: any) =>
+            typeof img === "string"
+              ? { url: img, color: null, sizes: [] }
+              : img,
+          ) || [],
         price: product.price,
         stock: product.stock,
         categoryId: product.categoryId || null,
@@ -114,12 +123,17 @@ export default function ProductForm({
 
     try {
       const base64Strings = await Promise.all(base64Promises);
+      const newImages = base64Strings.map((url) => ({
+        url,
+        color: null,
+        sizes: [],
+      }));
       setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, ...base64Strings],
+        images: [...prev.images, ...newImages],
       }));
       toast.success(`${base64Strings.length} image(s) ajoutée(s)`);
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la lecture des fichiers");
     }
 
@@ -158,7 +172,7 @@ export default function ProductForm({
       // Add the local path to images
       setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, data.path],
+        images: [...prev.images, { url: data.path, color: null, sizes: [] }],
       }));
 
       toast.success("Image téléchargée avec succès");
@@ -176,6 +190,19 @@ export default function ProductForm({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+    // Adjust selectedImageIndex if the removed image was before it
+    if (selectedImageIndex >= index && selectedImageIndex > 0) {
+      setSelectedImageIndex((prev) => prev - 1);
+    } else if (selectedImageIndex === index && formData.images.length === 1) {
+      // If the last image is removed, reset selected index
+      setSelectedImageIndex(0);
+    } else if (
+      selectedImageIndex === index &&
+      index === formData.images.length - 1
+    ) {
+      // If the last image is removed and it was selected, select the new last image
+      setSelectedImageIndex(formData.images.length - 2);
+    }
   };
 
   const handleSetMainImage = (index: number) => {
@@ -184,6 +211,22 @@ export default function ProductForm({
     const [selectedImage] = newImages.splice(index, 1);
     newImages.unshift(selectedImage);
     setFormData((prev) => ({ ...prev, images: newImages }));
+    setSelectedImageIndex(0); // After setting a new main image, select it
+  };
+
+  const handleUpdateImageAttribute = (
+    index: number,
+    field: "color" | "sizes",
+    value: string | string[],
+  ) => {
+    const newImages = [...formData.images];
+    if (newImages[index]) {
+      newImages[index] = {
+        ...newImages[index],
+        [field]: value || (field === "sizes" ? [] : null),
+      };
+      setFormData({ ...formData, images: newImages });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -200,7 +243,7 @@ export default function ProductForm({
         formData.stock < 0
       ) {
         toast.error(
-          "Veuillez remplir tous les champs obligatoires correctement."
+          "Veuillez remplir tous les champs obligatoires correctement.",
         );
         setLoading(false);
         return;
@@ -221,7 +264,7 @@ export default function ProductForm({
         toast.success(
           product?.id
             ? "Produit modifié avec succès"
-            : "Produit créé avec succès"
+            : "Produit créé avec succès",
         );
         onSuccess();
         if (!product?.id) {
@@ -239,6 +282,7 @@ export default function ProductForm({
             isPromotion: false,
             isBestSeller: false,
           });
+          setSelectedImageIndex(0); // Reset selected image index for new product
         }
       } else {
         const data = await response.json();
@@ -583,19 +627,21 @@ export default function ProductForm({
           <div className="space-y-4">
             {/* Main Image Display */}
             <div className="relative w-full aspect-video bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden flex items-center justify-center">
-              {formData.images[0] ? (
+              {formData.images[selectedImageIndex] ? (
                 <>
                   <img
-                    src={formData.images[0]}
+                    src={formData.images[selectedImageIndex].url}
                     alt="Image principale"
                     className="w-full h-full object-contain"
                   />
                   <div className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded shadow z-10">
-                    Image Principale
+                    {selectedImageIndex === 0
+                      ? "Image Principale"
+                      : `Image ${selectedImageIndex + 1}`}
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleRemoveImage(0)}
+                    onClick={() => handleRemoveImage(selectedImageIndex)}
                     className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 z-10"
                   >
                     <X className="w-4 h-4" />
@@ -604,46 +650,32 @@ export default function ProductForm({
               ) : (
                 <div className="flex flex-col items-center justify-center text-gray-400">
                   <ImageIcon className="w-16 h-16 mb-2" />
-                  <span className="text-sm">Aucune image principale</span>
+                  <span className="text-sm">Aucune image sélectionnée</span>
                 </div>
               )}
             </div>
 
             {/* Thumbnails Row */}
             <div className="grid grid-cols-6 gap-2">
-              {/* Slots for images 1-6 (Index 0 is main, so we show 0-5 in thumbnails? 
-                  The user wants to click a thumbnail to make it main. 
-                  Usually this means showing ALL images in the thumbnail row, including the main one, 
-                  OR showing the "rest" of the images.
-                  The reference image shows the main image repeated in the thumbnails row with a highlight.
-                  Let's show ALL images in the row to allow selection.
-              */}
               {formData.images.map((img, index) => (
                 <div
                   key={index}
-                  onClick={() => handleSetMainImage(index)}
+                  onClick={() => setSelectedImageIndex(index)}
                   className={`relative aspect-square bg-gray-50 border-2 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                    index === 0
+                    index === selectedImageIndex
                       ? "border-indigo-600 ring-2 ring-indigo-100"
                       : "border-gray-200 hover:border-indigo-300"
                   }`}
                 >
                   <img
-                    src={img}
+                    src={img.url}
                     alt={`Vue ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
-                  {index !== 0 && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveImage(index);
-                      }}
-                      className="absolute top-0.5 right-0.5 p-0.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 hover:opacity-100"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+                  {index === 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-indigo-600 text-white text-[8px] text-center py-0.5">
+                      MAIN
+                    </div>
                   )}
                 </div>
               ))}
@@ -662,6 +694,90 @@ export default function ProductForm({
                 </div>
               ))}
             </div>
+
+            {/* Image Attributes Settings */}
+            {formData.images[selectedImageIndex] && (
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-2">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  Paramètres de l&apos;image {selectedImageIndex + 1}
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Couleur associée
+                    </label>
+                    <select
+                      value={formData.images[selectedImageIndex].color || ""}
+                      onChange={(e) =>
+                        handleUpdateImageAttribute(
+                          selectedImageIndex,
+                          "color",
+                          e.target.value,
+                        )
+                      }
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
+                    >
+                      <option value="">Aucune</option>
+                      {formData.colors?.map((color) => (
+                        <option key={color} value={color}>
+                          {color}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Tailles associées
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.sizes?.map((size) => (
+                        <label
+                          key={size}
+                          className="flex items-center gap-1 text-xs cursor-pointer bg-white px-2 py-1 rounded border border-gray-200 hover:border-indigo-300"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={
+                              formData.images[
+                                selectedImageIndex
+                              ].sizes?.includes(size) || false
+                            }
+                            onChange={(e) => {
+                              const currentSizes =
+                                formData.images[selectedImageIndex].sizes || [];
+                              const newSizes = e.target.checked
+                                ? [...currentSizes, size]
+                                : currentSizes.filter((s) => s !== size);
+                              handleUpdateImageAttribute(
+                                selectedImageIndex,
+                                "sizes",
+                                newSizes,
+                              );
+                            }}
+                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 w-3 h-3"
+                          />
+                          {size}
+                        </label>
+                      ))}
+                    </div>
+                    {(!formData.sizes || formData.sizes.length === 0) && (
+                      <p className="text-xs text-gray-400 italic">
+                        Aucune taille définie pour le produit
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {selectedImageIndex !== 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleSetMainImage(selectedImageIndex)}
+                    className="mt-3 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    Définir comme image principale
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Buttons at bottom of image section */}

@@ -1,11 +1,18 @@
 import { Category } from "./category";
 
+export interface ProductImage {
+  id?: number;
+  url: string;
+  color?: string | null;
+  sizes?: string[];
+}
+
 export interface Product {
   id?: number;
   name: string;
   description?: string | null;
   reference: string;
-  images: string[];
+  images: ProductImage[];
   price: number;
   stock: number;
 

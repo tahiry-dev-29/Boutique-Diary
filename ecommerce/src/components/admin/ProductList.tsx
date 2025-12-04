@@ -114,13 +114,15 @@ export default function ProductList({
     new Set(
       products
         .map((p) => p.category?.name)
-        .filter((c): c is string => Boolean(c))
-    )
+        .filter((c): c is string => Boolean(c)),
+    ),
   ).sort();
 
   // Get unique brands
   const brands = Array.from(
-    new Set(products.map((p) => p.brand).filter((b): b is string => Boolean(b)))
+    new Set(
+      products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
+    ),
   ).sort();
 
   // Filter products
@@ -388,7 +390,7 @@ export default function ProductList({
                     <TableCell>
                       {product.images && product.images[0] ? (
                         <img
-                          src={product.images[0]}
+                          src={product.images[0].url}
                           alt={product.name}
                           className="h-10 w-10 object-cover rounded-md"
                         />
@@ -527,7 +529,7 @@ export default function ProductList({
                     >
                       {page}
                     </Button>
-                  )
+                  ),
                 )}
               </div>
 
