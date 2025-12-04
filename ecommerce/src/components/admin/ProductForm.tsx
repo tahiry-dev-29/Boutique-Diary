@@ -63,9 +63,7 @@ export default function ProductForm({
         images:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           product.images?.map((img: any) =>
-            typeof img === "string"
-              ? { url: img, color: null, sizes: [] }
-              : img,
+            typeof img === "string" ? { url: img, color: null, sizes: [] } : img
           ) || [],
         price: product.price,
         stock: product.stock,
@@ -216,8 +214,8 @@ export default function ProductForm({
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes",
-    value: string | string[],
+    field: "color" | "sizes" | "price",
+    value: string | string[] | number | null
   ) => {
     const newImages = [...formData.images];
     if (newImages[index]) {
@@ -243,7 +241,7 @@ export default function ProductForm({
         formData.stock < 0
       ) {
         toast.error(
-          "Veuillez remplir tous les champs obligatoires correctement.",
+          "Veuillez remplir tous les champs obligatoires correctement."
         );
         setLoading(false);
         return;
@@ -264,7 +262,7 @@ export default function ProductForm({
         toast.success(
           product?.id
             ? "Produit modifié avec succès"
-            : "Produit créé avec succès",
+            : "Produit créé avec succès"
         );
         onSuccess();
         if (!product?.id) {
@@ -701,7 +699,7 @@ export default function ProductForm({
                 <h4 className="text-sm font-medium text-gray-900 mb-3">
                   Paramètres de l&apos;image {selectedImageIndex + 1}
                 </h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Couleur associée
@@ -712,7 +710,7 @@ export default function ProductForm({
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "color",
-                          e.target.value,
+                          e.target.value
                         )
                       }
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
@@ -724,6 +722,29 @@ export default function ProductForm({
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Prix (Ar)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder={`${formData.price} Ar (défaut)`}
+                      value={formData.images[selectedImageIndex].price || ""}
+                      onChange={(e) =>
+                        handleUpdateImageAttribute(
+                          selectedImageIndex,
+                          "price",
+                          e.target.value ? parseFloat(e.target.value) : null
+                        )
+                      }
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Laisser vide pour utiliser le prix par défaut
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -751,7 +772,7 @@ export default function ProductForm({
                               handleUpdateImageAttribute(
                                 selectedImageIndex,
                                 "sizes",
-                                newSizes,
+                                newSizes
                               );
                             }}
                             className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 w-3 h-3"

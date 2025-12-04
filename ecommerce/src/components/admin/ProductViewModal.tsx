@@ -270,8 +270,24 @@ export default function ProductViewModal({
                   Prix
                 </label>
                 <p className="text-2xl font-bold text-indigo-600">
-                  {formatPrice(product.price)}
+                  {product.images &&
+                  product.images[selectedImageIndex] &&
+                  typeof product.images[selectedImageIndex] === "object" &&
+                  "price" in product.images[selectedImageIndex] &&
+                  product.images[selectedImageIndex].price
+                    ? formatPrice(product.images[selectedImageIndex].price)
+                    : formatPrice(product.price)}
                 </p>
+                {product.images &&
+                  product.images[selectedImageIndex] &&
+                  typeof product.images[selectedImageIndex] === "object" &&
+                  "price" in product.images[selectedImageIndex] &&
+                  product.images[selectedImageIndex].price && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Prix pour cette image (Prix par défaut:{" "}
+                      {formatPrice(product.price)})
+                    </p>
+                  )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

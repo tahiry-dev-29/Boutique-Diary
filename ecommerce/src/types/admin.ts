@@ -5,6 +5,20 @@ export interface ProductImage {
   url: string;
   color?: string | null;
   sizes?: string[];
+  price?: number | null; // Prix spécifique pour cette image
+}
+
+export interface ProductVariation {
+  id?: number;
+  sku: string;
+  productId?: number;
+  color?: string | null;
+  size?: string | null;
+  price: number | string; // Decimal can be string or number
+  stock: number;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Product {
@@ -12,22 +26,20 @@ export interface Product {
   name: string;
   description?: string | null;
   reference: string;
-  images: ProductImage[];
+  images?: (string | ProductImage)[];
   price: number;
   stock: number;
-
-  // Nouveaux champs
-  brand?: string;
+  categoryId?: number | null;
+  category?: Category | null;
+  brand?: string | null;
   colors?: string[];
   sizes?: string[];
-
   isNew?: boolean;
   isPromotion?: boolean;
   isBestSeller?: boolean;
-
-  rating?: number;
+  rating?: number | null;
   reviewCount?: number;
-
-  categoryId?: number | null;
-  category?: Category | null;
+  variations?: ProductVariation[];
+  createdAt?: string;
+  updatedAt?: string;
 }

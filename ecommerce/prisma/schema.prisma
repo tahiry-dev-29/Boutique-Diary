@@ -55,9 +55,35 @@ model Product {
   reviewCount Int    @default(0)
 
   categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  category   Category?          @relation(fields: [categoryId], references: [id])
+  variations ProductVariation[]
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+}
+
+model ProductVariation {
+  id        Int     @id @default(autoincrement())
+  sku       String  @unique
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Attributes
+  color String?
+  size  String?
+
+  // Pricing & Stock
+  price Decimal @db.Decimal(10, 2)
+  stock Int     @default(0)
+
+  // Status
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, color, size])
+  @@index([sku])
+  @@index([productId])
 }
 
 model ProductImage {
@@ -65,6 +91,7 @@ model ProductImage {
   url       String
   color     String?
   sizes     String[] @default([])
+  price     Float? // Prix spécifique pour cette image
   productId Int
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
