@@ -89,6 +89,7 @@ model ProductVariation {
 model ProductImage {
   id        Int      @id @default(autoincrement())
   url       String
+  reference String? // Référence unique pour cette image (ex: 456RB-vrt)
   color     String?
   sizes     String[] @default([])
   price     Float? // Prix spécifique pour cette image

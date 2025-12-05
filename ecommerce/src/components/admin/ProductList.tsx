@@ -590,6 +590,16 @@ export default function ProductList({
                                         )}
                                       </div>
                                       <div className="p-2 space-y-1">
+                                        {imageData.reference && (
+                                          <div className="flex items-center gap-1">
+                                            <span className="text-xs text-gray-500">
+                                              Réf:
+                                            </span>
+                                            <span className="text-xs font-bold text-indigo-600">
+                                              {imageData.reference}
+                                            </span>
+                                          </div>
+                                        )}
                                         {imageData.color && (
                                           <div className="flex items-center gap-1">
                                             <span className="text-xs text-gray-500">

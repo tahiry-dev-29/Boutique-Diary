@@ -85,6 +85,12 @@ export async function PUT(
       );
     }
 
+    // Get existing product reference for image reference generation
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      select: { reference: true },
+    });
+
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -103,27 +109,42 @@ export async function PUT(
         ...(images !== undefined && {
           images: {
             deleteMany: {},
-            create: (images || []).map((img: any) => ({
-              url: typeof img === "string" ? img : img.url,
-              color: typeof img === "string" ? null : (img.color ?? null),
-              sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-              price:
-                typeof img === "string"
-                  ? null
-                  : img.price !== undefined &&
-                      img.price !== null &&
-                      img.price !== ""
-                    ? img.price
-                    : null,
-              stock:
-                typeof img === "string"
-                  ? null
-                  : img.stock !== undefined &&
-                      img.stock !== null &&
-                      img.stock !== ""
-                    ? img.stock
-                    : null,
-            })),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            create: (images || []).map((img: any, index: number) => {
+              const imgColor = typeof img === "string" ? null : img.color;
+              // Generate automatic reference if not provided
+              const productRef = reference || existingProduct?.reference || "";
+              const colorAbbrev = imgColor
+                ? imgColor.toLowerCase().slice(0, 3)
+                : `img${index + 1}`;
+              const autoReference = `${productRef}-${colorAbbrev}`;
+
+              return {
+                url: typeof img === "string" ? img : img.url,
+                reference:
+                  typeof img === "string"
+                    ? autoReference
+                    : img.reference || autoReference,
+                color: imgColor ?? null,
+                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+                price:
+                  typeof img === "string"
+                    ? null
+                    : img.price !== undefined &&
+                        img.price !== null &&
+                        img.price !== ""
+                      ? img.price
+                      : null,
+                stock:
+                  typeof img === "string"
+                    ? null
+                    : img.stock !== undefined &&
+                        img.stock !== null &&
+                        img.stock !== ""
+                      ? img.stock
+                      : null,
+              };
+            }),
           },
         }),
       },

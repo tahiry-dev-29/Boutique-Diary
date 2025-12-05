@@ -214,7 +214,7 @@ export default function ProductForm({
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes" | "price" | "stock",
+    field: "color" | "sizes" | "price" | "stock" | "reference",
     value: string | string[] | number | null
   ) => {
     const newImages = [...formData.images];
@@ -225,9 +225,22 @@ export default function ProductForm({
         newValue = field === "sizes" ? [] : null;
       }
 
+      // Auto-generate reference when color changes
+      let autoReference = newImages[index].reference;
+      if (field === "color" && newValue && typeof newValue === "string") {
+        const productRef = formData.reference || "";
+        const colorAbbrev = newValue.toLowerCase().slice(0, 3);
+        autoReference = `${productRef}-${colorAbbrev}`;
+      } else if (field === "color" && !newValue) {
+        // If color is removed, generate reference with index
+        const productRef = formData.reference || "";
+        autoReference = `${productRef}-img${index + 1}`;
+      }
+
       newImages[index] = {
         ...newImages[index],
         [field]: newValue,
+        ...(field === "color" && { reference: autoReference }),
       };
       setFormData({ ...formData, images: newImages });
     }
@@ -682,18 +695,49 @@ export default function ProductForm({
             </div>
 
             {/* Image Attributes Settings */}
-            {formData.images[selectedImageIndex] && (
+            {formData.images && formData.images[selectedImageIndex] && (
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-2">
                 <h4 className="text-sm font-medium text-gray-900 mb-3">
                   Paramètres de l&apos;image {selectedImageIndex + 1}
                 </h4>
+
+                {/* Reference Display */}
+                <div className="mb-3 p-2 bg-indigo-50 rounded-lg border border-indigo-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-600">
+                      Référence image:
+                    </span>
+                    <span className="text-sm font-bold text-indigo-600">
+                      {(() => {
+                        const img = formData.images?.[selectedImageIndex];
+                        if (!img || typeof img === "string") {
+                          return `${formData.reference || ""}-img${selectedImageIndex + 1}`;
+                        }
+                        return (
+                          img.reference ||
+                          `${formData.reference || ""}-img${selectedImageIndex + 1}`
+                        );
+                      })()}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-1">
+                    La référence est générée automatiquement à partir de la
+                    couleur sélectionnée
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Couleur associée
                     </label>
                     <select
-                      value={formData.images[selectedImageIndex].color || ""}
+                      value={
+                        (typeof formData.images[selectedImageIndex] !==
+                          "string" &&
+                          formData.images[selectedImageIndex]?.color) ||
+                        ""
+                      }
                       onChange={(e) =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,

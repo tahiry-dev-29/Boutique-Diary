@@ -3,10 +3,11 @@ import { Category } from "./category";
 export interface ProductImage {
   id?: number;
   url: string;
+  reference?: string | null; // Référence unique pour cette image (ex: 456RB-vrt)
   color?: string | null;
   sizes?: string[];
-  price?: number | null; // Prix spécifique pour cette image
-  stock?: number | null; // Stock spécifique pour cette image
+  price?: number | null;
+  stock?: number | null;
 }
 
 export interface ProductVariation {

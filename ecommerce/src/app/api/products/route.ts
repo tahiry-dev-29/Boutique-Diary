@@ -177,27 +177,40 @@ export async function POST(request: NextRequest) {
         isBestSeller: isBestSeller || false,
         images: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          create: (images || []).map((img: any) => ({
-            url: typeof img === "string" ? img : img.url,
-            color: typeof img === "string" ? null : (img.color ?? null),
-            sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-            price:
-              typeof img === "string"
-                ? null
-                : img.price !== undefined &&
-                    img.price !== null &&
-                    img.price !== ""
-                  ? img.price
-                  : null,
-            stock:
-              typeof img === "string"
-                ? null
-                : img.stock !== undefined &&
-                    img.stock !== null &&
-                    img.stock !== ""
-                  ? img.stock
-                  : null,
-          })),
+          create: (images || []).map((img: any, index: number) => {
+            const imgColor = typeof img === "string" ? null : img.color;
+            // Generate automatic reference: {productRef}-{colorAbbrev or index}
+            const colorAbbrev = imgColor
+              ? imgColor.toLowerCase().slice(0, 3)
+              : `img${index + 1}`;
+            const autoReference = `${reference}-${colorAbbrev}`;
+
+            return {
+              url: typeof img === "string" ? img : img.url,
+              reference:
+                typeof img === "string"
+                  ? autoReference
+                  : img.reference || autoReference,
+              color: imgColor ?? null,
+              sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+              price:
+                typeof img === "string"
+                  ? null
+                  : img.price !== undefined &&
+                      img.price !== null &&
+                      img.price !== ""
+                    ? img.price
+                    : null,
+              stock:
+                typeof img === "string"
+                  ? null
+                  : img.stock !== undefined &&
+                      img.stock !== null &&
+                      img.stock !== ""
+                    ? img.stock
+                    : null,
+            };
+          }),
         },
       },
       include: {

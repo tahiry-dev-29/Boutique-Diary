@@ -143,8 +143,30 @@ export default function ProductViewModal({
                 {product.name}
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Réf: {product.reference}
+                Réf produit: {product.reference}
               </p>
+              {/* Image-specific reference */}
+              {product.images && product.images[selectedImageIndex] && (
+                <div className="mt-2 p-2 bg-indigo-50 rounded-lg border border-indigo-200 inline-block">
+                  <span className="text-xs text-gray-600">Réf image: </span>
+                  <span className="text-sm font-bold text-indigo-600">
+                    {(() => {
+                      const img = product.images?.[selectedImageIndex];
+                      if (!img || typeof img === "string") {
+                        return `${product.reference}-img${selectedImageIndex + 1}`;
+                      }
+                      if (img.reference) {
+                        return img.reference;
+                      }
+                      // Generate reference from color if available
+                      if (img.color) {
+                        return `${product.reference}-${img.color.toLowerCase().slice(0, 3)}`;
+                      }
+                      return `${product.reference}-img${selectedImageIndex + 1}`;
+                    })()}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Category */}
