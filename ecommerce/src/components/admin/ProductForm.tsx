@@ -214,14 +214,20 @@ export default function ProductForm({
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes" | "price",
+    field: "color" | "sizes" | "price" | "stock",
     value: string | string[] | number | null
   ) => {
     const newImages = [...formData.images];
     if (newImages[index]) {
+      // Handle 0 as a valid number, but treat empty string/null/undefined as null
+      let newValue = value;
+      if (value === "" || value === null || value === undefined) {
+        newValue = field === "sizes" ? [] : null;
+      }
+
       newImages[index] = {
         ...newImages[index],
-        [field]: value || (field === "sizes" ? [] : null),
+        [field]: newValue,
       };
       setFormData({ ...formData, images: newImages });
     }
@@ -236,9 +242,7 @@ export default function ProductForm({
         !formData.name ||
         !formData.reference ||
         isNaN(formData.price) ||
-        formData.price < 0 ||
-        isNaN(formData.stock) ||
-        formData.stock < 0
+        formData.price < 0
       ) {
         toast.error(
           "Veuillez remplir tous les champs obligatoires correctement."
@@ -406,22 +410,6 @@ export default function ProductForm({
                     ...formData,
                     price: parseFloat(e.target.value),
                   })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                value={isNaN(formData.stock) ? "" : formData.stock}
-                onChange={(e) =>
-                  setFormData({ ...formData, stock: parseInt(e.target.value) })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
@@ -744,6 +732,28 @@ export default function ProductForm({
                     />
                     <p className="text-xs text-gray-400 mt-0.5">
                       Laisser vide pour utiliser le prix par défaut
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Stock
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Stock spécifique"
+                      value={formData.images[selectedImageIndex].stock || ""}
+                      onChange={(e) =>
+                        handleUpdateImageAttribute(
+                          selectedImageIndex,
+                          "stock",
+                          e.target.value ? parseInt(e.target.value) : null
+                        )
+                      }
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Laisser vide si pas de stock spécifique
                     </p>
                   </div>
                   <div className="space-y-2">

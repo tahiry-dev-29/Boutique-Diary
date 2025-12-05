@@ -114,15 +114,13 @@ export default function ProductList({
     new Set(
       products
         .map((p) => p.category?.name)
-        .filter((c): c is string => Boolean(c)),
-    ),
+        .filter((c): c is string => Boolean(c))
+    )
   ).sort();
 
   // Get unique brands
   const brands = Array.from(
-    new Set(
-      products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
-    ),
+    new Set(products.map((p) => p.brand).filter((b): b is string => Boolean(b)))
   ).sort();
 
   // Filter products
@@ -150,10 +148,17 @@ export default function ProductList({
     const matchesSize =
       selectedSize === "all" || product.sizes?.includes(selectedSize);
 
+    // Calculate total stock from images
+    const totalStock =
+      product.images?.reduce((sum, img) => {
+        const imgStock = typeof img === "string" ? 0 : img.stock || 0;
+        return sum + imgStock;
+      }, 0) || 0;
+
     const matchesAvailability =
       availability === "all" ||
-      (availability === "in-stock" && product.stock > 0) ||
-      (availability === "out-of-stock" && product.stock === 0);
+      (availability === "in-stock" && totalStock > 0) ||
+      (availability === "out-of-stock" && totalStock === 0);
 
     const matchesType =
       (!productType.isNew || product.isNew) &&
@@ -424,16 +429,27 @@ export default function ProductList({
                     </TableCell>
                     <TableCell>{formatPrice(product.price)}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={product.stock > 0 ? "outline" : "destructive"}
-                        className={
-                          product.stock > 0
-                            ? "bg-green-50 text-green-700 border-green-200"
-                            : ""
-                        }
-                      >
-                        {product.stock}
-                      </Badge>
+                      {(() => {
+                        // Calculate total stock from all images
+                        const totalStock =
+                          product.images?.reduce((sum, img) => {
+                            const imgStock =
+                              typeof img === "string" ? 0 : img.stock || 0;
+                            return sum + imgStock;
+                          }, 0) || 0;
+                        return (
+                          <Badge
+                            variant={totalStock > 0 ? "outline" : "destructive"}
+                            className={
+                              totalStock > 0
+                                ? "bg-green-50 text-green-700 border-green-200"
+                                : ""
+                            }
+                          >
+                            {totalStock}
+                          </Badge>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-right space-x-2">
                       <Button
@@ -529,7 +545,7 @@ export default function ProductList({
                     >
                       {page}
                     </Button>
-                  ),
+                  )
                 )}
               </div>
 

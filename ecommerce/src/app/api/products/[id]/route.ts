@@ -105,9 +105,24 @@ export async function PUT(
             deleteMany: {},
             create: (images || []).map((img: any) => ({
               url: typeof img === "string" ? img : img.url,
-              color: typeof img === "string" ? null : img.color,
-              sizes: typeof img === "string" ? [] : img.sizes || [],
-              price: typeof img === "string" ? null : img.price || null,
+              color: typeof img === "string" ? null : (img.color ?? null),
+              sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+              price:
+                typeof img === "string"
+                  ? null
+                  : img.price !== undefined &&
+                      img.price !== null &&
+                      img.price !== ""
+                    ? img.price
+                    : null,
+              stock:
+                typeof img === "string"
+                  ? null
+                  : img.stock !== undefined &&
+                      img.stock !== null &&
+                      img.stock !== ""
+                    ? img.stock
+                    : null,
             })),
           },
         }),

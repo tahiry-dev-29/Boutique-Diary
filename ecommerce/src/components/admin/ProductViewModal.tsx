@@ -294,15 +294,61 @@ export default function ProductViewModal({
                   Stock
                 </label>
                 <Badge
-                  variant={product.stock > 0 ? "outline" : "destructive"}
+                  variant={
+                    (product.images &&
+                    product.images[selectedImageIndex] &&
+                    typeof product.images[selectedImageIndex] === "object" &&
+                    "stock" in product.images[selectedImageIndex] &&
+                    product.images[selectedImageIndex].stock !== null &&
+                    product.images[selectedImageIndex].stock !== undefined
+                      ? product.images[selectedImageIndex].stock
+                      : product.stock) > 0
+                      ? "outline"
+                      : "destructive"
+                  }
                   className={
-                    product.stock > 0
+                    (product.images &&
+                    product.images[selectedImageIndex] &&
+                    typeof product.images[selectedImageIndex] === "object" &&
+                    "stock" in product.images[selectedImageIndex] &&
+                    product.images[selectedImageIndex].stock !== null &&
+                    product.images[selectedImageIndex].stock !== undefined
+                      ? product.images[selectedImageIndex].stock
+                      : product.stock) > 0
                       ? "bg-green-50 text-green-700 border-green-200 text-lg px-4 py-1"
                       : "text-lg px-4 py-1"
                   }
                 >
-                  {product.stock} unité{product.stock > 1 ? "s" : ""}
+                  {product.images &&
+                  product.images[selectedImageIndex] &&
+                  typeof product.images[selectedImageIndex] === "object" &&
+                  "stock" in product.images[selectedImageIndex] &&
+                  product.images[selectedImageIndex].stock !== null &&
+                  product.images[selectedImageIndex].stock !== undefined
+                    ? product.images[selectedImageIndex].stock
+                    : product.stock}{" "}
+                  unité
+                  {(product.images &&
+                  product.images[selectedImageIndex] &&
+                  typeof product.images[selectedImageIndex] === "object" &&
+                  "stock" in product.images[selectedImageIndex] &&
+                  product.images[selectedImageIndex].stock !== null &&
+                  product.images[selectedImageIndex].stock !== undefined
+                    ? product.images[selectedImageIndex].stock
+                    : product.stock) > 1
+                    ? "s"
+                    : ""}
                 </Badge>
+                {product.images &&
+                  product.images[selectedImageIndex] &&
+                  typeof product.images[selectedImageIndex] === "object" &&
+                  "stock" in product.images[selectedImageIndex] &&
+                  product.images[selectedImageIndex].stock !== null &&
+                  product.images[selectedImageIndex].stock !== undefined && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Stock pour cette image
+                    </p>
+                  )}
               </div>
             </div>
 

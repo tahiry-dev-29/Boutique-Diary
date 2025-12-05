@@ -6,6 +6,7 @@ export interface ProductImage {
   color?: string | null;
   sizes?: string[];
   price?: number | null; // Prix spécifique pour cette image
+  stock?: number | null; // Stock spécifique pour cette image
 }
 
 export interface ProductVariation {

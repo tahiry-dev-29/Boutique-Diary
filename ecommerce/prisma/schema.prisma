@@ -92,6 +92,7 @@ model ProductImage {
   color     String?
   sizes     String[] @default([])
   price     Float? // Prix spécifique pour cette image
+  stock     Int? // Stock spécifique pour cette image
   productId Int
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
