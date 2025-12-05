@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/formatPrice";
 import {
@@ -33,7 +33,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Edit, Search, X, Eye, Filter } from "lucide-react";
+import {
+  Trash2,
+  Edit,
+  Search,
+  X,
+  Eye,
+  Filter,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AVAILABLE_COLORS, AVAILABLE_SIZES } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
@@ -51,6 +60,9 @@ export default function ProductList({
 }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedProductId, setExpandedProductId] = useState<number | null>(
+    null
+  );
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -370,6 +382,7 @@ export default function ProductList({
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10"></TableHead>
                 <TableHead>Image</TableHead>
                 <TableHead>Nom</TableHead>
                 <TableHead>Référence</TableHead>
@@ -383,7 +396,7 @@ export default function ProductList({
               {filteredProducts.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="h-24 text-center text-gray-500"
                   >
                     Aucun produit trouvé
@@ -391,115 +404,254 @@ export default function ProductList({
                 </TableRow>
               ) : (
                 currentProducts.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      {product.images && product.images[0] ? (
-                        <img
-                          src={product.images[0].url}
-                          alt={product.name}
-                          className="h-10 w-10 object-cover rounded-md"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
-                          <span className="text-gray-400 text-[10px]">
-                            No img
-                          </span>
+                  <React.Fragment key={product.id}>
+                    <TableRow
+                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() =>
+                        setExpandedProductId(
+                          expandedProductId === product.id
+                            ? null
+                            : (product.id ?? null)
+                        )
+                      }
+                    >
+                      <TableCell>
+                        <div className="text-gray-400">
+                          {expandedProductId === product.id ? (
+                            <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4" />
+                          )}
                         </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <div>{product.name}</div>
-                      {product.description && (
-                        <div className="text-xs text-gray-500 truncate max-w-[150px]">
-                          {product.description}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>{product.reference}</TableCell>
-                    <TableCell>
-                      {product.category ? (
-                        <Badge variant="secondary">
-                          {product.category.name}
-                        </Badge>
-                      ) : (
-                        <span className="text-gray-400 italic text-sm">
-                          Non classé
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>{formatPrice(product.price)}</TableCell>
-                    <TableCell>
-                      {(() => {
-                        // Calculate total stock from all images
-                        const totalStock =
-                          product.images?.reduce((sum, img) => {
-                            const imgStock =
-                              typeof img === "string" ? 0 : img.stock || 0;
-                            return sum + imgStock;
-                          }, 0) || 0;
-                        return (
-                          <Badge
-                            variant={totalStock > 0 ? "outline" : "destructive"}
-                            className={
-                              totalStock > 0
-                                ? "bg-green-50 text-green-700 border-green-200"
-                                : ""
-                            }
-                          >
-                            {totalStock}
-                          </Badge>
-                        );
-                      })()}
-                    </TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onView(product)}
-                        title="Voir les détails"
-                      >
-                        <Eye className="h-4 w-4 text-blue-500" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onEdit(product)}
-                        title="Modifier"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Êtes-vous absolument sûr ?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action ne peut pas être annulée. Cela
-                              supprimera définitivement le produit &quot;
-                              {product.name}&quot; de la base de données.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                product.id && handleDelete(product.id)
+                      </TableCell>
+                      <TableCell>
+                        {product.images && product.images[0] ? (
+                          <div className="relative">
+                            <img
+                              src={
+                                typeof product.images[0] === "string"
+                                  ? product.images[0]
+                                  : product.images[0].url
                               }
-                              className="bg-red-600 hover:bg-red-700"
+                              alt={product.name}
+                              className="h-10 w-10 object-cover rounded-md"
+                            />
+                            {product.images.length > 1 && (
+                              <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                                {product.images.length}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
+                            <span className="text-gray-400 text-[10px]">
+                              No img
+                            </span>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <div>{product.name}</div>
+                        {product.description && (
+                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
+                            {product.description}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>{product.reference}</TableCell>
+                      <TableCell>
+                        {product.category ? (
+                          <Badge variant="secondary">
+                            {product.category.name}
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-400 italic text-sm">
+                            Non classé
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>{formatPrice(product.price)}</TableCell>
+                      <TableCell>
+                        {(() => {
+                          const totalStock =
+                            product.images?.reduce((sum, img) => {
+                              const imgStock =
+                                typeof img === "string" ? 0 : img.stock || 0;
+                              return sum + imgStock;
+                            }, 0) || 0;
+                          return (
+                            <Badge
+                              variant={
+                                totalStock > 0 ? "outline" : "destructive"
+                              }
+                              className={
+                                totalStock > 0
+                                  ? "bg-green-50 text-green-700 border-green-200"
+                                  : ""
+                              }
                             >
-                              Supprimer
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
+                              {totalStock}
+                            </Badge>
+                          );
+                        })()}
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onView(product);
+                          }}
+                          title="Voir les détails"
+                        >
+                          <Eye className="h-4 w-4 text-blue-500" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(product);
+                          }}
+                          title="Modifier"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Êtes-vous absolument sûr ?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Cette action ne peut pas être annulée. Cela
+                                supprimera définitivement le produit &quot;
+                                {product.name}&quot; de la base de données.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  product.id && handleDelete(product.id)
+                                }
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Supprimer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    </TableRow>
+
+                    {/* Expanded Images Row */}
+                    {expandedProductId === product.id &&
+                      product.images &&
+                      product.images.length > 0 && (
+                        <TableRow>
+                          <TableCell colSpan={8} className="p-0">
+                            <div className="bg-gradient-to-r from-gray-50 to-white border-t border-b border-gray-100 p-4">
+                              <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-indigo-600"></span>
+                                Images du produit ({product.images.length})
+                              </h4>
+                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                                {product.images.map((img, index) => {
+                                  const imageData =
+                                    typeof img === "string"
+                                      ? { url: img }
+                                      : img;
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                                    >
+                                      <div className="aspect-square relative">
+                                        <img
+                                          src={imageData.url}
+                                          alt={`${product.name} - Image ${index + 1}`}
+                                          className="w-full h-full object-cover"
+                                        />
+                                        {index === 0 && (
+                                          <span className="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full">
+                                            Principal
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="p-2 space-y-1">
+                                        {imageData.color && (
+                                          <div className="flex items-center gap-1">
+                                            <span className="text-xs text-gray-500">
+                                              Couleur:
+                                            </span>
+                                            <span className="text-xs font-medium text-gray-700">
+                                              {imageData.color}
+                                            </span>
+                                          </div>
+                                        )}
+                                        {imageData.sizes &&
+                                          imageData.sizes.length > 0 && (
+                                            <div className="flex items-center gap-1 flex-wrap">
+                                              <span className="text-xs text-gray-500">
+                                                Tailles:
+                                              </span>
+                                              {imageData.sizes.map(
+                                                (size: string, i: number) => (
+                                                  <span
+                                                    key={i}
+                                                    className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded"
+                                                  >
+                                                    {size}
+                                                  </span>
+                                                )
+                                              )}
+                                            </div>
+                                          )}
+                                        {imageData.price !== undefined &&
+                                          imageData.price !== null && (
+                                            <div className="flex items-center gap-1">
+                                              <span className="text-xs text-gray-500">
+                                                Prix:
+                                              </span>
+                                              <span className="text-xs font-bold text-indigo-600">
+                                                {formatPrice(imageData.price)}
+                                              </span>
+                                            </div>
+                                          )}
+                                        {imageData.stock !== undefined &&
+                                          imageData.stock !== null && (
+                                            <div className="flex items-center gap-1">
+                                              <span className="text-xs text-gray-500">
+                                                Stock:
+                                              </span>
+                                              <span
+                                                className={`text-xs font-medium ${imageData.stock > 0 ? "text-green-600" : "text-red-600"}`}
+                                              >
+                                                {imageData.stock}
+                                              </span>
+                                            </div>
+                                          )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                  </React.Fragment>
                 ))
               )}
             </TableBody>
