@@ -2,11 +2,12 @@
 
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { X, Upload, Plus, Image as ImageIcon } from "lucide-react";
+import { X, Upload, Plus, Image as ImageIcon, Save } from "lucide-react";
 import { Product } from "@/types/admin";
 import { Category } from "@/types/category";
 import { AVAILABLE_COLORS, AVAILABLE_SIZES } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
+import ElectricButton from "@/components/ui/ElectricButton";
 
 interface ProductFormProps {
   product: Product | null;
@@ -857,21 +858,18 @@ export default function ProductForm({
 
           {/* Buttons at bottom of image section */}
           <div className="flex gap-3 pt-4 border-t border-gray-100">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-[300px] bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <ElectricButton type="submit" disabled={loading}>
+              <Save className="h-5 w-5" />
               {loading
                 ? "Enregistrement..."
                 : product?.id
                   ? "Mettre à jour"
                   : "Créer le produit"}
-            </button>
+            </ElectricButton>
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="px-6 py-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-all"
             >
               Annuler
             </button>

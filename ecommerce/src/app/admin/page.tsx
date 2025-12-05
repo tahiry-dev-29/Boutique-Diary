@@ -8,6 +8,8 @@ import ProductViewModal from "@/components/admin/ProductViewModal";
 import CategoryList from "@/components/admin/CategoryList";
 import CategoryForm from "@/components/admin/CategoryForm";
 import { Category } from "@/types/category";
+import ElectricButton from "@/components/ui/ElectricButton";
+import { Plus } from "lucide-react";
 
 // Icônes SVG natives
 const Icons = {
@@ -546,7 +548,7 @@ const MainContentComponent = ({
 }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
+    null
   );
   const [showForm, setShowForm] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -649,26 +651,10 @@ const MainContentComponent = ({
               Organisez vos produits en catégories claires et gérables.
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 flex items-center gap-2 transition-all"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+          <ElectricButton onClick={() => setShowForm(!showForm)}>
+            <Plus className="h-5 w-5" />
             {showForm ? "Annuler" : "Nouvelle catégorie"}
-          </button>
+          </ElectricButton>
         </div>
 
         {showForm && (
