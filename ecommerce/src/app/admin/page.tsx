@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import ProductList from "@/components/admin/ProductList";
 import { Product } from "@/types/admin";
 import ProductForm from "@/components/admin/ProductForm";
@@ -10,6 +11,11 @@ import CategoryForm from "@/components/admin/CategoryForm";
 import { Category } from "@/types/category";
 import ElectricButton from "@/components/ui/ElectricButton";
 import { Plus } from "lucide-react";
+import LogoForm from "@/components/admin/LogoForm";
+import { useLogo } from "@/hooks/useLogo";
+import BannerForm from "@/components/admin/BannerForm";
+import BannerList from "@/components/admin/BannerList";
+import { Banner } from "@/types/banner";
 
 // Icônes SVG natives
 const Icons = {
@@ -275,6 +281,22 @@ const Icons = {
       />
     </svg>
   ),
+  Palette: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+      />
+    </svg>
+  ),
 };
 
 // Structure de navigation
@@ -294,13 +316,8 @@ interface SubMenuItem {
 const navItems: MenuItem[] = [
   {
     id: "dashboard",
-    label: "Tableau de bord",
+    label: "Vue d'ensemble",
     icon: Icons.Home,
-    subItems: [
-      { id: "overview", label: "Vue d'ensemble" },
-      { id: "statistics", label: "Statistiques" },
-      { id: "activity", label: "Activité récente" },
-    ],
   },
   {
     id: "products",
@@ -367,6 +384,15 @@ const navItems: MenuItem[] = [
       { id: "sales-reports", label: "Ventes" },
       { id: "product-reports", label: "Produits" },
       { id: "customer-reports", label: "Clients" },
+    ],
+  },
+  {
+    id: "appearance",
+    label: "Apparence",
+    icon: Icons.Palette,
+    subItems: [
+      { id: "logo", label: "Logo" },
+      { id: "banner", label: "Bannière" },
     ],
   },
 ];
@@ -554,6 +580,11 @@ const MainContentComponent = ({
   const [showViewModal, setShowViewModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // Banner states
+  const [showBannerForm, setShowBannerForm] = useState(false);
+  const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
+  const [bannerRefreshTrigger, setBannerRefreshTrigger] = useState(0);
+
   const handleFormSuccess = () => {
     setShowForm(false);
     setSelectedProduct(null);
@@ -678,6 +709,71 @@ const MainContentComponent = ({
             setShowForm(true);
           }}
           refreshTrigger={refreshTrigger}
+        />
+      </div>
+    );
+  }
+
+  // Section Logo - sous Apparence
+  if (activeSubSection === "logo") {
+    return (
+      <div className="p-8 bg-white rounded-2xl shadow-sm h-full">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          Gestion du Logo
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Personnalisez le logo de votre boutique.
+        </p>
+        <LogoForm />
+      </div>
+    );
+  }
+
+  // Section Bannière - sous Apparence
+  if (activeSubSection === "banner") {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Gestion des Bannières
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Gérez les bannières du slider de la page d&apos;accueil (max 5).
+            </p>
+          </div>
+          <ElectricButton
+            onClick={() => {
+              setSelectedBanner(null);
+              setShowBannerForm(!showBannerForm);
+            }}
+          >
+            <Plus className="h-5 w-5" />
+            {showBannerForm ? "Annuler" : "Nouvelle bannière"}
+          </ElectricButton>
+        </div>
+
+        {showBannerForm && (
+          <BannerForm
+            banner={selectedBanner}
+            onSuccess={() => {
+              setShowBannerForm(false);
+              setSelectedBanner(null);
+              setBannerRefreshTrigger((prev) => prev + 1);
+            }}
+            onCancel={() => {
+              setShowBannerForm(false);
+              setSelectedBanner(null);
+            }}
+          />
+        )}
+
+        <BannerList
+          onEdit={(banner: Banner) => {
+            setSelectedBanner(banner);
+            setShowBannerForm(true);
+          }}
+          refreshTrigger={bannerRefreshTrigger}
         />
       </div>
     );

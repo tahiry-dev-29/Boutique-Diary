@@ -107,3 +107,28 @@ model Category {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
+
+model SiteSettings {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(100)
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(100) // Ex: "CUSTOMIZED"
+  subtitle    String?  @db.VarChar(100) // Ex: "FASHION"
+  description String?  @db.Text
+  buttonText  String?  @db.VarChar(50) // Ex: "READ MORE"
+  buttonLink  String?  @db.VarChar(255) // Ex: "/shop"
+  imageUrl    String   @db.Text
+  order       Int      @default(1) // Position in slider (1-5)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+}
