@@ -68,6 +68,8 @@ export async function PUT(
       sizes,
       isNew,
       isPromotion,
+
+      oldPrice,
       isBestSeller,
     } = body;
 
@@ -99,12 +101,19 @@ export async function PUT(
         ...(reference !== undefined && { reference }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(stock !== undefined && { stock: parseInt(stock) }),
-        ...(categoryId !== undefined && { categoryId }),
+        ...(categoryId !== undefined && {
+          category: categoryId
+            ? { connect: { id: categoryId } }
+            : { disconnect: true },
+        }),
         ...(brand !== undefined && { brand }),
         ...(colors !== undefined && { colors }),
         ...(sizes !== undefined && { sizes }),
         ...(isNew !== undefined && { isNew }),
         ...(isPromotion !== undefined && { isPromotion }),
+        ...(oldPrice !== undefined && {
+          oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+        }),
         ...(isBestSeller !== undefined && { isBestSeller }),
         ...(images !== undefined && {
           images: {
@@ -130,10 +139,14 @@ export async function PUT(
                 price:
                   typeof img === "string"
                     ? null
-                    : img.price !== undefined &&
-                        img.price !== null &&
-                        img.price !== ""
-                      ? img.price
+                    : img.price !== undefined && img.price !== null
+                      ? parseFloat(img.price)
+                      : null,
+                oldPrice:
+                  typeof img === "string"
+                    ? null
+                    : img.oldPrice !== undefined && img.oldPrice !== null
+                      ? parseFloat(img.oldPrice)
                       : null,
                 stock:
                   typeof img === "string"
@@ -173,8 +186,12 @@ export async function PUT(
       );
     }
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: "Failed to update product" },
+      {
+        error: `Failed to update product: ${errorMessage}`,
+        details: errorMessage,
+      },
       { status: 500 }
     );
   }

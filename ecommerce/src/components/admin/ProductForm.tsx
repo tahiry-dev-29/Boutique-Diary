@@ -32,6 +32,7 @@ export default function ProductForm({
     sizes: [],
     isNew: false,
     isPromotion: false,
+    oldPrice: null,
     isBestSeller: false,
   });
   const [loading, setLoading] = useState(false);
@@ -74,6 +75,7 @@ export default function ProductForm({
         sizes: product.sizes || [],
         isNew: product.isNew || false,
         isPromotion: product.isPromotion || false,
+        oldPrice: product.oldPrice || null,
         isBestSeller: product.isBestSeller || false,
       });
     }
@@ -215,7 +217,7 @@ export default function ProductForm({
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes" | "price" | "stock" | "reference",
+    field: "color" | "sizes" | "price" | "oldPrice" | "stock" | "reference",
     value: string | string[] | number | null
   ) => {
     const newImages = [...formData.images];
@@ -256,7 +258,10 @@ export default function ProductForm({
         !formData.name ||
         !formData.reference ||
         isNaN(formData.price) ||
-        formData.price < 0
+        formData.price < 0 ||
+        (formData.oldPrice !== null &&
+          formData.oldPrice !== undefined &&
+          formData.oldPrice < 0)
       ) {
         toast.error(
           "Veuillez remplir tous les champs obligatoires correctement."
@@ -358,9 +363,23 @@ export default function ProductForm({
                 type="text"
                 required
                 value={formData.reference}
-                onChange={(e) =>
-                  setFormData({ ...formData, reference: e.target.value })
-                }
+                onChange={(e) => {
+                  const newRef = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    reference: newRef,
+                    images: prev.images.map((img, idx) => {
+                      if (typeof img === "string") return img;
+                      const suffix = img.color
+                        ? img.color.toLowerCase().slice(0, 3)
+                        : `img${idx + 1}`;
+                      return {
+                        ...img,
+                        reference: `${newRef}-${suffix}`,
+                      };
+                    }),
+                  }));
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
@@ -411,7 +430,7 @@ export default function ProductForm({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Prix (Ar) *
+                {formData.isPromotion ? "Prix promo (Ar)" : "Prix (Ar)"} *
               </label>
               <input
                 type="number"
@@ -428,6 +447,33 @@ export default function ProductForm({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
+
+            {formData.isPromotion && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ancien prix (Ar)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={
+                    formData.oldPrice === null || isNaN(formData.oldPrice)
+                      ? ""
+                      : formData.oldPrice
+                  }
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      oldPrice: e.target.value
+                        ? parseFloat(e.target.value)
+                        : null,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -756,16 +802,22 @@ export default function ProductForm({
                       ))}
                     </select>
                   </div>
+
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Prix (Ar)
+                      Prix spécifique (Ar)
                     </label>
                     <input
                       type="number"
-                      step="0.01"
                       min="0"
-                      placeholder={`${formData.price} Ar (défaut)`}
-                      value={formData.images[selectedImageIndex].price || ""}
+                      step="0.01"
+                      placeholder="Prix par défaut"
+                      value={
+                        (typeof formData.images[selectedImageIndex] !==
+                          "string" &&
+                          formData.images[selectedImageIndex]?.price) ||
+                        ""
+                      }
                       onChange={(e) =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,
@@ -778,6 +830,32 @@ export default function ProductForm({
                     <p className="text-xs text-gray-400 mt-0.5">
                       Laisser vide pour utiliser le prix par défaut
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Ancien prix (Ar)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="Ex: 15000"
+                      value={
+                        (typeof formData.images[selectedImageIndex] !==
+                          "string" &&
+                          formData.images[selectedImageIndex]?.oldPrice) ||
+                        ""
+                      }
+                      onChange={(e) =>
+                        handleUpdateImageAttribute(
+                          selectedImageIndex,
+                          "oldPrice",
+                          e.target.value ? parseFloat(e.target.value) : null
+                        )
+                      }
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">

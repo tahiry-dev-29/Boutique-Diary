@@ -7,6 +7,7 @@ export interface ProductImage {
   color?: string | null;
   sizes?: string[];
   price?: number | null;
+  oldPrice?: number | null;
   stock?: number | null;
 }
 
@@ -38,6 +39,7 @@ export interface Product {
   sizes?: string[];
   isNew?: boolean;
   isPromotion?: boolean;
+  oldPrice?: number | null;
   isBestSeller?: boolean;
   rating?: number | null;
   reviewCount?: number;

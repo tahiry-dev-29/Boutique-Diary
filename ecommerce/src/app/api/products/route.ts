@@ -127,6 +127,7 @@ export async function POST(request: NextRequest) {
       sizes,
       isNew,
       isPromotion,
+      oldPrice,
       isBestSeller,
     } = body;
 
@@ -168,12 +169,15 @@ export async function POST(request: NextRequest) {
         reference,
         price: parseFloat(price),
         stock: parseInt(stock) || 0,
-        categoryId: categoryId || null,
+        category: categoryId
+          ? { connect: { id: parseInt(categoryId) } }
+          : undefined,
         brand: brand || null,
         colors: colors || [],
         sizes: sizes || [],
         isNew: isNew || false,
         isPromotion: isPromotion || false,
+        oldPrice: oldPrice ? parseFloat(oldPrice) : null,
         isBestSeller: isBestSeller || false,
         images: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -236,9 +240,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       {
-        error: `Failed to create product: ${error instanceof Error ? error.message : String(error)}`,
+        error: `Failed to create product: ${errorMessage}`,
+        details: errorMessage,
       },
       { status: 500 }
     );

@@ -26,6 +26,35 @@ export default function ProductViewModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Helper variables for current image and its properties
+  const selectedImage = product?.images?.[selectedImageIndex];
+  // Ensure we handle the case where selectedImage might be a string (URL) or an object
+  const currentImage =
+    typeof selectedImage === "object" && selectedImage !== null
+      ? selectedImage
+      : null;
+
+  // Helper to determine current price (image specific or product default)
+  const currentPrice =
+    currentImage && currentImage.price
+      ? currentImage.price
+      : product?.price || 0;
+
+  // Helper to determine current old price (image specific or product default)
+  const currentOldPrice =
+    currentImage &&
+    currentImage.oldPrice !== undefined &&
+    currentImage.oldPrice !== null
+      ? currentImage.oldPrice
+      : product?.oldPrice;
+
+  const currentStock =
+    currentImage &&
+    currentImage.stock !== undefined &&
+    currentImage.stock !== null
+      ? currentImage.stock
+      : product?.stock || 0;
+
   if (!product) return null;
 
   return (
@@ -97,7 +126,7 @@ export default function ProductViewModal({
                             className="bg-white/90 shadow-sm"
                           >
                             {product.images[selectedImageIndex].sizes.join(
-                              ", "
+                              ", ",
                             )}
                           </Badge>
                         )}
@@ -239,7 +268,7 @@ export default function ProductViewModal({
                       {product.sizes.map((size) => {
                         const isAvailable =
                           product.images[selectedImageIndex]?.sizes?.includes(
-                            size
+                            size,
                           ) || false;
                         return (
                           <Badge
@@ -273,7 +302,18 @@ export default function ProductViewModal({
                   )}
                   {product.isPromotion && (
                     <Badge className="bg-red-100 text-red-800 hover:bg-red-200 border-red-200">
-                      Promotion
+                      Promotion{" "}
+                      {currentOldPrice && currentOldPrice > currentPrice && (
+                        <span className="ml-2 text-xs font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full border border-rose-200">
+                          -
+                          {Math.round(
+                            ((currentOldPrice - currentPrice) /
+                              currentOldPrice) *
+                              100,
+                          )}
+                          %
+                        </span>
+                      )}
                     </Badge>
                   )}
                   {product.isBestSeller && (

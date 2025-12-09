@@ -12,6 +12,7 @@ interface Product {
   images: { url: string; color?: string }[];
   isNew: boolean;
   isPromotion: boolean;
+  oldPrice?: number | null;
   isBestSeller: boolean;
   colors: string[];
 }
@@ -38,8 +39,7 @@ export default function ProductsShowcase() {
   }, []);
 
   const getBadge = (product: Product) => {
-    if (product.isPromotion)
-      return { text: "Promotion", color: "bg-[#A07DDF]" };
+    if (product.isPromotion) return { text: "Promotion", color: "bg-black" };
     if (product.isNew) return { text: "New", color: "bg-[#A07DDF]" };
     if (product.isBestSeller)
       return { text: "Customer favorite", color: "bg-[#A07DDF]" };
@@ -122,9 +122,24 @@ export default function ProductsShowcase() {
                     className="product-card-img"
                   />
                   {badge && (
-                    <span className={`product-badge ${badge.color}`}>
-                      {badge.text}
-                    </span>
+                    <div className="flex flex-col items-start gap-1">
+                      <span className={`product-badge ${badge.color}`}>
+                        {badge.text}
+                      </span>
+                      {product.isPromotion &&
+                        product.oldPrice &&
+                        product.oldPrice > product.price && (
+                          <span className="product-badge bg-rose-500">
+                            -
+                            {Math.round(
+                              ((product.oldPrice - product.price) /
+                                product.oldPrice) *
+                                100
+                            )}
+                            %
+                          </span>
+                        )}
+                    </div>
                   )}
                 </div>
 

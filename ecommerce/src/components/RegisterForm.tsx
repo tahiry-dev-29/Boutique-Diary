@@ -1,8 +1,8 @@
-// ecommerce/src/components/RegisterForm.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -19,7 +19,7 @@ export default function RegisterForm() {
     setLoading(true);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Les mots de passe ne correspondent pas");
       setLoading(false);
       return;
     }
@@ -36,96 +36,126 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        // alert(data.message);
         router.push("/login"); // Redirect to login page after successful registration
       } else {
-        setError(data.message || "Registration failed");
+        setError(data.message || "Échec de l'inscription");
       }
     } catch (err) {
       console.error(err);
-      setError("An unexpected error occurred");
+      setError("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 border rounded shadow-md"
-    >
-      {error && <p className="text-red-500">{error}</p>}
-      <div>
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-gray-700"
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <label
+            htmlFor="username"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Nom d&apos;utilisateur *
+          </label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Nom d'utilisateur"
+            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Email *
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Mot de passe *
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mot de passe"
+            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Confirmation de mot de passe *
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirmer le mot de passe"
+            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 px-4 border border-transparent rounded-full shadow-sm text-base font-bold text-white bg-[#2d7a56] hover:bg-[#236345] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2d7a56] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Nom d&apos;utilisateur:
-        </label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          required
-        />
+          {loading ? "Enregistrement..." : "S'inscrire"}
+        </button>
+      </form>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-4 bg-white text-gray-500">ou</span>
+        </div>
       </div>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email:
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          required
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Mot de passe:
-        </label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          required
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Confirmation de mot de passe:
-        </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+
+      {/* Login Link Button */}
+      <Link
+        href="/login"
+        className="block w-full py-3 px-4 border-2 border-[#1e293b] rounded-full text-center text-base font-bold text-[#1e293b] hover:bg-gray-50 transition-colors"
       >
-        {loading ? "Enregistrement..." : "S'inscrire"}
-      </button>
-    </form>
+        Vous avez déjà un compte ?
+      </Link>
+    </div>
   );
 }

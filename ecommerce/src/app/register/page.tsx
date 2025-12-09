@@ -1,12 +1,35 @@
-// ecommerce/src/app/register/page.tsx
-import RegisterForm from "../../components/RegisterForm";
+"use client";
+
+import RegisterForm from "@/components/RegisterForm";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export default function RegisterPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">S&apos;inscrire</h1>
-        <RegisterForm />
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header with Back Link */}
+      <div className="p-6">
+        <Link
+          href="/shop"
+          className="inline-flex items-center text-gray-600 hover:text-[#2d7a56] font-medium transition-colors"
+        >
+          <ChevronLeft size={20} />
+          <span className="ml-1">Retour</span>
+        </Link>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center -mt-20 px-4">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+              S&apos;inscrire
+            </h1>
+            <p className="text-gray-500">Créez votre compte Greenweez</p>
+          </div>
+
+          <RegisterForm />
+        </div>
       </div>
     </div>
   );

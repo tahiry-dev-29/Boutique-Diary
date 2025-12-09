@@ -16,6 +16,7 @@ import { useLogo } from "@/hooks/useLogo";
 import BannerForm from "@/components/admin/BannerForm";
 import BannerList from "@/components/admin/BannerList";
 import { Banner } from "@/types/banner";
+import CustomerList from "@/components/admin/CustomerList";
 
 // Icônes SVG natives
 const Icons = {
@@ -775,6 +776,23 @@ const MainContentComponent = ({
           }}
           refreshTrigger={bannerRefreshTrigger}
         />
+      </div>
+    );
+  }
+
+  // Section Clients
+  if (activeSubSection === "all-customers") {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Liste des Clients
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Gérez les clients inscrits sur votre boutique.
+          </p>
+        </div>
+        <CustomerList refreshTrigger={refreshTrigger} />
       </div>
     );
   }

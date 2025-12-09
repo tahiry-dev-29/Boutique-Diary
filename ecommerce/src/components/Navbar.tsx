@@ -3,6 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  Search,
+  User,
+  ShoppingCart,
+  Menu,
+  X,
+  Facebook,
+  Instagram,
+  Youtube,
+  ChevronDown,
+} from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,7 +41,7 @@ export default function Navbar() {
   const LogoComponent = () => (
     <Link href="/" className="flex items-center gap-2">
       {logoUrl ? (
-        <div className="relative w-32 h-12">
+        <div className="relative w-48 h-16">
           <Image
             src={logoUrl}
             alt="Logo"
@@ -42,157 +53,173 @@ export default function Navbar() {
       ) : (
         <>
           <div className="flex flex-col items-start leading-tight">
-            <span className="text-emerald-700 font-bold text-xl tracking-tight">
-              Boutique
+            <span className="text-emerald-700 font-bold text-2xl tracking-tight">
+              marmalade
             </span>
-            <span className="text-emerald-500 font-semibold text-sm -mt-1">
-              Diary
+            <span className="text-[#a3b10b] font-bold text-2xl -mt-2">
+              lion.
             </span>
           </div>
-          <svg
-            className="w-8 h-8 text-emerald-500"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 2C9.5 2 7.5 4 7.5 6.5C7.5 8.5 8.5 10 10 11V22H14V11C15.5 10 16.5 8.5 16.5 6.5C16.5 4 14.5 2 12 2Z" />
-            <circle cx="9" cy="5" r="2" fill="#22c55e" />
-            <circle cx="15" cy="5" r="2" fill="#22c55e" />
-            <path
-              d="M12 2C12 2 10 0 8 2"
-              stroke="#15803d"
-              strokeWidth="1.5"
-              fill="none"
-            />
-            <path
-              d="M12 2C12 2 14 0 16 2"
-              stroke="#15803d"
-              strokeWidth="1.5"
-              fill="none"
-            />
-          </svg>
         </>
       )}
     </Link>
   );
 
   return (
-    <>
-      <nav className="w-full bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <LogoComponent />
-
-            {/* Desktop Menu - Visible on large screens */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                href="/"
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Accueil
-              </Link>
-              <Link
-                href="/shop"
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Boutique
-              </Link>
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Connexion
-              </Link>
-              <Link
-                href="/register"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg"
-              >
-                Inscription
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button - Hidden on large screens */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex items-center justify-center w-12 h-10 bg-emerald-600 hover:bg-emerald-700 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
-              aria-label="Menu"
+    <header className="w-full font-sans">
+      {/* 1. TOP BAR - Dark Green */}
+      <div className="bg-[#15803d] text-white py-2 px-4 md:px-8">
+        <div className="max-w-[1400px] mx-auto flex justify-between items-center text-sm">
+          {/* Social Icons */}
+          <div className="flex items-center gap-4">
+            <Facebook size={18} fill="currentColor" strokeWidth={0} />
+            <Instagram size={18} />
+            {/* Pinterest icon often needs a custom SVG as it's not always in all sets, using a placeholder or generic if needed, 
+                but lucide doesn't have a standard Pinterest fill usually. We'll stick to text or standard icons for now. */}
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              stroke="currentColor"
+              strokeWidth="0"
+              className="w-[18px] h-[18px]"
             >
-              <div className="flex flex-col gap-1">
-                <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""}`}
-                />
-                <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`}
-                />
-                <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
-                />
-              </div>
-            </button>
+              <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.399.165-1.487-.695-2.435-2.878-2.435-4.646 0-3.786 2.75-7.262 7.928-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.367 18.62 0 12.017 0z" />
+            </svg>
+            <Youtube size={18} fill="currentColor" strokeWidth={0} />
           </div>
-        </div>
-      </nav>
 
-      {/* Mobile Menu Overlay - Only visible on small screens */}
-      <div
-        className={`md:hidden fixed inset-0 bg-white z-50 transition-all duration-300 ${
-          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo in Menu */}
-            <div onClick={() => setIsMenuOpen(false)}>
-              <LogoComponent />
+          {/* Promo Right */}
+          <div className="flex items-center gap-2">
+            <span className="font-bold tracking-wide text-xs md:text-sm">
+              BUY NOW, PAY LATER
+            </span>
+            <div className="flex items-center gap-1 bg-white/20 px-2 py-1 rounded">
+              {/* Placeholders for payment icons */}
+              <span className="font-bold italic text-xs">afterpay</span>
+              <span className="font-bold text-xs bg-black text-white px-1 ml-1">
+                zip
+              </span>
             </div>
-
-            {/* Close Button */}
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center justify-center w-12 h-10 bg-emerald-600 hover:bg-emerald-700 rounded-full transition-all duration-300 shadow-md"
-              aria-label="Fermer"
-            >
-              <div className="flex flex-col gap-1">
-                <span className="block w-5 h-0.5 bg-white rotate-45 translate-y-1.5" />
-                <span className="block w-5 h-0.5 bg-white opacity-0" />
-                <span className="block w-5 h-0.5 bg-white -rotate-45 -translate-y-1.5" />
-              </div>
-            </button>
           </div>
-        </div>
-
-        {/* Menu Links */}
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-8">
-          <Link
-            href="/"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-4xl font-bold text-gray-800 hover:text-emerald-600 transition-colors"
-          >
-            Accueil
-          </Link>
-          <Link
-            href="/shop"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-4xl font-bold text-gray-800 hover:text-emerald-600 transition-colors"
-          >
-            Boutique
-          </Link>
-          <Link
-            href="/login"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-4xl font-bold text-gray-800 hover:text-emerald-600 transition-colors"
-          >
-            Connexion
-          </Link>
-          <Link
-            href="/register"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-4xl font-bold text-gray-800 hover:text-emerald-600 transition-colors"
-          >
-            Inscription
-          </Link>
         </div>
       </div>
-    </>
+
+      {/* 2. MAIN HEADER - White */}
+      <div className="bg-white border-b border-gray-100 py-4">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <LogoComponent />
+          </div>
+
+          {/* Search Bar */}
+          <div className="flex-1 max-w-2xl w-full mx-4">
+            <div className="flex items-center border border-gray-300 rounded-full overflow-hidden px-4 py-2 bg-white hover:shadow-sm transition-shadow">
+              <button className="flex items-center gap-1 text-gray-500 text-sm font-medium border-r border-gray-300 pr-3 mr-3 hover:text-gray-700">
+                All Categories <ChevronDown size={14} />
+              </button>
+              <input
+                type="text"
+                placeholder="Search for products"
+                className="flex-1 outline-none text-gray-700 placeholder-gray-400 text-sm"
+              />
+              <Search
+                className="text-gray-400 cursor-pointer hover:text-[#15803d]"
+                size={20}
+              />
+            </div>
+          </div>
+
+          {/* User Actions */}
+          <div className="flex items-center gap-6 text-gray-700">
+            <Link
+              href="/login"
+              className="hover:text-[#15803d] transition-colors"
+            >
+              <User size={24} />
+            </Link>
+            <Link
+              href="/cart"
+              className="relative hover:text-[#15803d] transition-colors"
+            >
+              <ShoppingCart size={24} />
+              <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full">
+                0
+              </span>
+            </Link>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              className="md:hidden text-gray-700"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. NAVIGATION BAR - Dark Green */}
+      <div className="bg-[#15803d] hidden md:block border-t border-white/20">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+          <ul className="flex items-center justify-center gap-8 py-3 text-white text-sm font-medium tracking-wide">
+            <li>
+              <Link
+                href="/shop"
+                className="flex items-center gap-1 hover:text-gray-100 transition-colors"
+              >
+                SHOP <ChevronDown size={12} />
+              </Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/designs">DESIGNS</Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/category/mats">BABY PLAY MATS</Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/category/liners">PRAM LINERS</Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/category/dolls">NESTING DOLLS</Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/category/bundles">BABY BUNDLES</Link>
+            </li>
+            <li className="hover:text-gray-100 transition-colors">
+              <Link href="/category/hampers">BABY HAMPERS</Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-[140px] left-0 w-full bg-white shadow-lg border-t border-gray-100 z-50">
+          <ul className="flex flex-col p-4 text-gray-700">
+            <li className="py-2 border-b border-gray-50">
+              <Link href="/shop" onClick={() => setIsMenuOpen(false)}>
+                Shop
+              </Link>
+            </li>
+            <li className="py-2 border-b border-gray-50">
+              <Link href="/designs" onClick={() => setIsMenuOpen(false)}>
+                Designs
+              </Link>
+            </li>
+            <li className="py-2 border-b border-gray-50">
+              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                Login
+              </Link>
+            </li>
+            <li className="py-2">
+              <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                Register
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
+    </header>
   );
 }
