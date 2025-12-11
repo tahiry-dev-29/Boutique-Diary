@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { COLOR_MAP } from "@/lib/constants";
 
 interface ProductViewModalProps {
   product: Product | null;
@@ -106,15 +107,19 @@ export default function ProductViewModal({
                     className="w-full h-full object-contain"
                   />
                   {}
-                  {(selectedImageObj?.color ||
+                      {(selectedImageObj?.color ||
                     (selectedImageObj?.sizes &&
                       selectedImageObj.sizes.length > 0)) && (
                     <div className="absolute bottom-2 left-2 flex gap-1">
                       {selectedImageObj.color && (
                         <Badge
                           variant="secondary"
-                          className="bg-white/90 shadow-sm"
+                          className="bg-white/90 shadow-sm flex items-center gap-1.5"
                         >
+                          <span
+                             className="w-2 h-2 rounded-full border border-gray-200"
+                             style={{ background: COLOR_MAP[selectedImageObj.color] || 'gray' }}
+                           />
                           {selectedImageObj.color}
                         </Badge>
                       )}
@@ -247,9 +252,13 @@ export default function ProductViewModal({
                             key={color}
                             variant="outline"
                             className={
-                              isAvailable ? "border-pink-500 border-2" : ""
+                              isAvailable ? "border-pink-500 border-2 gap-1.5 pl-1.5" : "gap-1.5 pl-1.5"
                             }
                           >
+                            <span
+                               className="w-3 h-3 rounded-full border border-gray-200"
+                               style={{ background: COLOR_MAP[color] || 'gray' }}
+                            />
                             {color}
                           </Badge>
                         );

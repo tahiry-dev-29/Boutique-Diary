@@ -66,6 +66,27 @@ export function ProductFormFields({
           placeholder="Description du produit..."
         />
       </div>
+
+       {/* Synced Global Settings (Read-Only) */}
+       <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div className="space-y-2">
+            <Label className="text-muted-foreground text-xs">Catégorie (Synchronisé)</Label>
+            <div className="h-9 px-3 py-2 rounded-md border bg-muted text-sm text-muted-foreground flex items-center">
+              {categories.find(c => c.id === formData.categoryId)?.name || "Non classé"}
+            </div>
+          </div>
+          <div className="space-y-2">
+             <Label className="text-muted-foreground text-xs">Statuts (Synchronisé)</Label>
+             <div className="flex gap-2">
+                <div className={`h-9 px-3 rounded-md border flex items-center text-sm ${formData.isNew ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-muted text-muted-foreground"}`}>
+                  {formData.isNew ? "Nouveauté" : "Standard"}
+                </div>
+                 <div className={`h-9 px-3 rounded-md border flex items-center text-sm ${formData.isPromotion ? "bg-red-50 border-red-200 text-red-700" : "bg-muted text-muted-foreground"}`}>
+                  {formData.isPromotion ? "Promo" : "Standard"}
+                </div>
+             </div>
+          </div>
+       </div>
     </div>
   );
 }

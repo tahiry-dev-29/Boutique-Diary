@@ -48,7 +48,7 @@ import {
   Plus,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AVAILABLE_COLORS, AVAILABLE_SIZES } from "@/lib/constants";
+import { AVAILABLE_COLORS, AVAILABLE_SIZES, COLOR_MAP } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
@@ -641,13 +641,9 @@ export default function ProductList({
                                           <span
                                             className="w-3 h-3 rounded-full border border-gray-200"
                                             style={{
-                                              backgroundColor:
-                                                imgData.color === "Noir"
-                                                  ? "black"
-                                                  : imgData.color === "Blanc"
-                                                    ? "white"
-                                                    : "gray",
+                                              background: COLOR_MAP[imgData.color || ''] || imgData.color?.toLowerCase() || 'gray'
                                             }}
+                                            title={imgData.color || ''}
                                           ></span>{" "}
                                           {imgData.color}
                                         </div>

@@ -296,9 +296,11 @@ export function ProductImageUploader({
 
       {/* Thumbnails Grid */}
       <div className="grid grid-cols-6 gap-2">
-        {images.map((img, index) => (
+        {images.map((img, index) => {
+           const uniqueKey = typeof img === 'string' ? img : (img.reference || `img-${index}`);
+           return (
           <div
-            key={index}
+            key={uniqueKey}
             onClick={() => setSelectedImageIndex(index)}
             className={`relative aspect-square bg-muted border-2 rounded-lg overflow-hidden cursor-pointer transition-all ${
               index === selectedImageIndex
@@ -317,7 +319,8 @@ export function ProductImageUploader({
               </div>
             )}
           </div>
-        ))}
+        );
+        })}
 
         {/* Empty slots */}
         {Array.from({ length: Math.max(0, 6 - images.length) }).map((_, i) => (

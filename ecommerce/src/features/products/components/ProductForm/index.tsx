@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { X, Save } from "lucide-react";
-import { Product } from "@/types/admin";
+import { Product, ProductImage } from "@/types/admin";
 import { Category } from "@/types/category";
 import { Button } from "@/components/ui/button";
 
@@ -57,14 +57,32 @@ export default function ProductForm({
           reference: product.reference,
           images:
             product.images?.map(
-              (
-                img:
-                  | string
-                  | { url: string; color?: string | null; sizes?: string[] },
-              ) =>
+              (img: string | ProductImage, index: number) =>
                 typeof img === "string"
-                  ? { url: img, color: null, sizes: [] }
-                  : img,
+                  ? { 
+                      url: img, 
+                      color: null, 
+                      sizes: [],
+                      categoryId: index === 0 ? (product.categoryId ?? null) : null,
+                      isNew: index === 0 ? (product.isNew ?? false) : false,
+                      isPromotion: index === 0 ? (product.isPromotion ?? false) : false,
+                      oldPrice: null,
+                      price: null,
+                      stock: null,
+                      reference: generateRandomReference()
+                    }
+                  : {
+                      ...img,
+                      // Ensure created defaults if missing from API response (though schema has defaults)
+                      sizes: img.sizes || [],
+                      categoryId: img.categoryId ?? (index === 0 ? (product.categoryId ?? null) : null),
+                      isNew: img.isNew ?? (index === 0 ? (product.isNew ?? false) : false),
+                      isPromotion: img.isPromotion ?? (index === 0 ? (product.isPromotion ?? false) : false),
+                      oldPrice: img.oldPrice ?? null,
+                      price: img.price ?? null,
+                      stock: img.stock ?? null,
+                      reference: img.reference || generateRandomReference()
+                  },
             ) || [],
           price: product.price,
           stock: product.stock,
@@ -98,7 +116,32 @@ export default function ProductForm({
            name: product.name,
            description: product.description || "",
            reference: product.reference,
-           images: product.images?.map(img => typeof img === 'string' ? { url: img } : img) || [],
+           images: product.images?.map((img: string | ProductImage, index: number) => 
+              typeof img === 'string' 
+              ? { 
+                  url: img,
+                  color: null, 
+                  sizes: [],
+                  categoryId: index === 0 ? (product.categoryId ?? null) : null,
+                  isNew: index === 0 ? (product.isNew ?? false) : false,
+                  isPromotion: index === 0 ? (product.isPromotion ?? false) : false,
+                  oldPrice: null,
+                  price: null,
+                  stock: null, 
+                  reference: generateRandomReference()
+                } 
+              : {
+                  ...img,
+                  sizes: img.sizes || [],
+                  categoryId: img.categoryId ?? (index === 0 ? (product.categoryId ?? null) : null),
+                  isNew: img.isNew ?? (index === 0 ? (product.isNew ?? false) : false),
+                  isPromotion: img.isPromotion ?? (index === 0 ? (product.isPromotion ?? false) : false),
+                  oldPrice: img.oldPrice ?? null,
+                  price: img.price ?? null,
+                  stock: img.stock ?? null,
+                  reference: img.reference || generateRandomReference()
+              }
+           ) || [],
            price: product.price,
            stock: product.stock,
            categoryId: product.categoryId || null,

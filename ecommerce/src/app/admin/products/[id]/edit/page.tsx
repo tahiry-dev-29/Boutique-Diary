@@ -58,7 +58,10 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       price: img.price ?? null,
       oldPrice: img.oldPrice ?? null,
       stock: img.stock ?? 0,
-      reference: img.reference || "" 
+      reference: img.reference || "",
+      isNew: img.isNew,
+      isPromotion: img.isPromotion,
+      categoryId: img.categoryId
     })),
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString()
