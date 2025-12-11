@@ -57,7 +57,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { DashboardStats } from "./DashboardStats"; // Added import
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -92,6 +99,13 @@ export default function ProductList({
     isNew: false,
     isPromotion: false,
     isBestSeller: false,
+  });
+
+  const [visibleColumns, setVisibleColumns] = useState({
+    product: true,
+    category: true,
+    status: true,
+    price: true,
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -246,167 +260,144 @@ export default function ProductList({
 
   return (
     <div className="flex flex-col gap-6">
-      {}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-2 flex-1 min-w-[300px]">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Rechercher un produit..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors rounded-lg"
-            />
+      {/* Stats Section - Passed dynamic products data */}
+      <DashboardStats products={products} />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3 flex-1 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
+          {/* Search */}
+          <div className="relative min-w-[200px] max-w-sm">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+             <Input
+               placeholder="Rechercher..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="pl-9 h-11 border-gray-100 bg-white shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200"
+             />
           </div>
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-gray-200 text-gray-700 gap-2 rounded-lg"
-                >
-                  <Filter className="h-4 w-4" />
-                  Filtres
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 p-2">
-                {}
-                <DropdownMenuLabel>Filtres rapides</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="p-2">
-                  <Label className="text-xs text-gray-500 mb-1.5 block">
-                    Catégorie
-                  </Label>
-                  <Select
-                    value={selectedCategory}
-                    onValueChange={setSelectedCategory}
-                  >
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue placeholder="Toutes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Toutes</SelectItem>
-                      {categories.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="p-2 space-y-4">
-                  <div>
-                    <Label className="text-xs text-gray-500 mb-1.5 block">
-                      Disponibilité
-                    </Label>
-                    <Select
-                      value={availability}
-                      onValueChange={setAvailability}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Tous" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Tous</SelectItem>
-                        <SelectItem value="in-stock">En stock</SelectItem>
-                        <SelectItem value="out-of-stock">Rupture</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
 
-                  <div>
-                    <Label className="text-xs text-gray-500 mb-1.5 block">
-                      Marque
-                    </Label>
-                    <Select
-                      value={selectedBrand}
-                      onValueChange={setSelectedBrand}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Toutes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Toutes</SelectItem>
-                        {brands.map((b) => (
-                          <SelectItem key={b} value={b}>
-                            {b}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-xs text-gray-500 mb-1.5 block">
-                      Couleur
-                    </Label>
-                    <Select
-                      value={selectedColor}
-                      onValueChange={setSelectedColor}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Toutes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Toutes</SelectItem>
-                        {AVAILABLE_COLORS.map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-xs text-gray-500 mb-1.5 block">
-                      Taille
-                    </Label>
-                    <Select
-                      value={selectedSize}
-                      onValueChange={setSelectedSize}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Toutes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Toutes</SelectItem>
-                        {AVAILABLE_SIZES.map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button
-              variant="outline"
-              className="border-gray-200 text-gray-700 gap-2 rounded-lg"
-            >
-              <Settings2 className="h-4 w-4" />
-              Colonnes
-            </Button>
+          {/* Status Filter */}
+          <div className="w-[150px]">
+              <Select value={availability} onValueChange={setAvailability}>
+                <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white text-gray-600 hover:bg-gray-50 transition-colors px-4">
+                   <div className="flex items-center gap-2">
+                       <span className="text-gray-400 font-light">×</span>
+                       <span className="font-medium">Statut</span>
+                   </div>
+                </SelectTrigger>
+                <SelectContent>
+                   <SelectItem value="all">Tous les status</SelectItem>
+                   <SelectItem value="in-stock">En stock</SelectItem>
+                   <SelectItem value="out-of-stock">Rupture</SelectItem>
+                </SelectContent>
+              </Select>
           </div>
+
+          {/* Category Filter */}
+          <div className="w-[160px]">
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white text-gray-600 hover:bg-gray-50 transition-colors px-4">
+                   <div className="flex items-center gap-2">
+                       <span className="text-gray-400 font-light">×</span>
+                       <span className="truncate font-medium">{selectedCategory === 'all' ? 'Catégorie' : selectedCategory}</span>
+                   </div>
+                </SelectTrigger>
+                <SelectContent>
+                   <SelectItem value="all">Toutes</SelectItem>
+                   {categories.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                   ))}
+                </SelectContent>
+              </Select>
+          </div>
+
+           {/* Price Range */}
+           <div className="w-[170px]">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" className="w-full justify-between h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white rounded-xl text-gray-600 font-medium hover:bg-gray-50">
+                        <span className="truncate">
+                          {(minPrice || maxPrice) ? `${minPrice || '0'} - ${maxPrice || '∞'}` : 'Prix'}
+                        </span>
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4">
+                     <div className="flex gap-2 items-center">
+                        <div className="grid gap-2 flex-1">
+                           <Label htmlFor="minPrice">Min</Label>
+                           <Input 
+                              id="minPrice"
+                              type="number" 
+                              placeholder="Min" 
+                              value={minPrice} 
+                              onChange={(e) => setMinPrice(e.target.value)} 
+                           />
+                        </div>
+                        <span className="pt-6">-</span>
+                        <div className="grid gap-2 flex-1">
+                           <Label htmlFor="maxPrice">Max</Label>
+                           <Input 
+                              id="maxPrice"
+                              type="number" 
+                              placeholder="Max" 
+                              value={maxPrice} 
+                              onChange={(e) => setMaxPrice(e.target.value)} 
+                           />
+                        </div>
+                     </div>
+                  </PopoverContent>
+                </Popover>
+           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={() => router.push('/admin/products/new')} className="bg-black text-white hover:bg-gray-800 rounded-lg gap-2">
-            <Plus className="h-4 w-4" />
-            Ajouter
-          </Button>
+             <DropdownMenu>
+               <DropdownMenuTrigger asChild>
+                 <Button
+                   variant="outline"
+                   className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white text-gray-700 gap-2 rounded-xl font-semibold hover:bg-gray-50"
+                 >
+                   <span>Colonnes</span>
+                   <Settings2 className="h-4 w-4" />
+                 </Button>
+               </DropdownMenuTrigger>
+               <DropdownMenuContent align="end">
+                  <DropdownMenuCheckboxItem
+                    checked={visibleColumns.product}
+                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, product: checked }))}
+                  >
+                    Produit
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={visibleColumns.category}
+                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, category: checked }))}
+                  >
+                    Catégorie
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={visibleColumns.status}
+                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, status: checked }))}
+                  >
+                    Statut
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={visibleColumns.price}
+                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, price: checked }))}
+                  >
+                    Prix
+                  </DropdownMenuCheckboxItem>
+               </DropdownMenuContent>
+             </DropdownMenu>
         </div>
       </div>
 
       {}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-gray-50/50">
+            <TableHeader className="bg-gray-50/30">
               <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                <TableHead className="w-12 text-center">
+                <TableHead className="w-12 text-center pl-4">
                   <Checkbox
                     checked={
                       selectedRows.length === currentProducts.length &&
@@ -414,24 +405,33 @@ export default function ProductList({
                     }
                     onCheckedChange={toggleSelectAll}
                     aria-label="Select all"
+                    className="rounded-md border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black"
                   />
                 </TableHead>
                 <TableHead className="w-12"></TableHead>
-                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Produit
-                </TableHead>
-                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Catégorie
-                </TableHead>
-                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Status
-                </TableHead>
-                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Prix
-                </TableHead>
+                {visibleColumns.product && (
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                    Produit
+                  </TableHead>
+                )}
+                {visibleColumns.category && (
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                    Catégorie
+                  </TableHead>
+                )}
+                {visibleColumns.status && (
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                    Statut
+                  </TableHead>
+                )}
+                {visibleColumns.price && (
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                    Prix
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="space-y-2">
               {currentProducts.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-32 text-center">
@@ -457,11 +457,11 @@ export default function ProductList({
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group transition-all border-b border-gray-50 hover:bg-gray-50/50 ${isSelected ? "bg-blue-50/30" : ""}`}
-                        onClick={() => toggleSelectRow(product.id as number)}
+                        className={`group transition-all border-b border-gray-50 hover:bg-gray-50/50 ${isExpanded ? "bg-gray-50" : "bg-white"} h-20 cursor-pointer`}
+                        onClick={() => setExpandedProductId(isExpanded ? null : (product.id as number))}
                       >
                         <TableCell
-                          className="text-center"
+                          className="text-center pl-4"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Checkbox
@@ -469,6 +469,7 @@ export default function ProductList({
                             onCheckedChange={() =>
                               toggleSelectRow(product.id as number)
                             }
+                            className="rounded-md border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black"
                           />
                         </TableCell>
                         <TableCell
@@ -492,60 +493,66 @@ export default function ProductList({
                             )}
                           </Button>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
-                              <img
-                                src={
-                                  product.images && product.images[0]
-                                    ? typeof product.images[0] === "string"
-                                      ? product.images[0]
-                                      : product.images[0].url
-                                    : "/placeholder.png"
-                                }
-                                alt={product.name}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {product.name}
+                        {visibleColumns.product && (
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
+                                <img
+                                  src={
+                                    product.images && product.images[0]
+                                      ? typeof product.images[0] === "string"
+                                        ? product.images[0]
+                                        : product.images[0].url
+                                      : "/placeholder.png"
+                                  }
+                                  alt={product.name}
+                                  className="h-full w-full object-cover"
+                                />
                               </div>
-                              <div className="text-xs text-gray-500">
-                                {product.reference}
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {product.name}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {product.reference}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {product.category ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                              {product.category.name}
-                            </span>
-                          ) : (
-                            <span className="text-gray-400 text-xs italic">
-                              Sans catégorie
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={`gap-1.5 font-normal ${
-                              totalStock > 0
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-red-50 text-red-700 border-red-200"
-                            }`}
-                          >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${totalStock > 0 ? "bg-emerald-600" : "bg-red-600"}`}
-                            />
-                            {totalStock > 0 ? "En stock" : "Rupture"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium text-gray-900">
-                          {formatPrice(product.price)}
-                        </TableCell>
+                          </TableCell>
+                        )}
+                        {visibleColumns.category && (
+                          <TableCell>
+                            {product.category ? (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                {product.category.name}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs italic">
+                                Sans catégorie
+                              </span>
+                            )}
+                          </TableCell>
+                        )}
+                        {visibleColumns.status && (
+                          <TableCell>
+                             {totalStock > 0 ? (
+                                 <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                                    En stock
+                                 </div>
+                             ) : (
+                                 <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                    Rupture
+                                 </div>
+                             )}
+                          </TableCell>
+                        )}
+                        {visibleColumns.price && (
+                          <TableCell className="font-medium text-gray-900">
+                            {formatPrice(product.price)}
+                          </TableCell>
+                        )}
                         <TableCell
                           className="text-right"
                           onClick={(e) => e.stopPropagation()}
