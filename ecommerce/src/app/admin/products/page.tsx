@@ -2,14 +2,11 @@
 
 import React, { useState } from "react";
 import ProductList from "@/components/admin/ProductList";
-import ProductViewModal from "@/components/admin/ProductViewModal";
 import { Product } from "@/types/admin";
 import { useRouter } from "next/navigation";
 
 export default function ProductsPage() {
   const router = useRouter();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showViewModal, setShowViewModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleEdit = (product: Product) => {
@@ -18,8 +15,7 @@ export default function ProductsPage() {
   };
 
   const handleView = (product: Product) => {
-    setSelectedProduct(product);
-    setShowViewModal(true);
+    router.push(`/admin/products/${product.id}`);
   };
 
   return (
@@ -34,14 +30,6 @@ export default function ProductsPage() {
         onView={handleView}
         refreshTrigger={refreshTrigger}
       />
-
-      {showViewModal && selectedProduct && (
-        <ProductViewModal
-          product={selectedProduct}
-          isOpen={showViewModal}
-          onClose={() => setShowViewModal(false)}
-        />
-      )}
     </div>
   );
 }
