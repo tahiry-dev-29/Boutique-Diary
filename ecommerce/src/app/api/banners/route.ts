@@ -12,7 +12,7 @@ export async function GET() {
     console.error("Erreur lors de la récupération des bannières:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des bannières" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (!title || !imageUrl) {
       return NextResponse.json(
         { error: "Le titre et l'image sont requis" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (count >= 5) {
       return NextResponse.json(
         { error: "Maximum 5 bannières autorisées" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     console.error("Erreur lors de la création de la bannière:", error);
     return NextResponse.json(
       { error: "Erreur lors de la création de la bannière" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

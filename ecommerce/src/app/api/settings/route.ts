@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     console.error("Erreur lors de la récupération des paramètres:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des paramètres" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!key || value === undefined) {
       return NextResponse.json(
         { error: "La clé et la valeur sont requises" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     console.error("Erreur lors de la sauvegarde du paramètre:", error);
     return NextResponse.json(
       { error: "Erreur lors de la sauvegarde du paramètre" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -66,7 +66,7 @@ export async function DELETE(request: NextRequest) {
     if (!key) {
       return NextResponse.json(
         { error: "La clé est requise" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function DELETE(request: NextRequest) {
     console.error("Erreur lors de la suppression du paramètre:", error);
     return NextResponse.json(
       { error: "Erreur lors de la suppression du paramètre" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

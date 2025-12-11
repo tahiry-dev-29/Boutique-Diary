@@ -81,7 +81,7 @@ export default function CustomerList({ refreshTrigger }: CustomerListProps) {
   const filteredCustomers = customers.filter(
     (customer) =>
       customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (loading) {

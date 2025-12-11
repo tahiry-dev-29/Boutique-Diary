@@ -60,8 +60,8 @@ export default function BannerList({
 
       setBanners(
         banners.map((b) =>
-          b.id === banner.id ? { ...b, isActive: !b.isActive } : b
-        )
+          b.id === banner.id ? { ...b, isActive: !b.isActive } : b,
+        ),
       );
     } catch (err) {
       console.error(err);

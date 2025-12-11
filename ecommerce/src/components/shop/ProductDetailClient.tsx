@@ -63,7 +63,7 @@ export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
   const [selectedImage, setSelectedImage] = useState(
-    product.images[0]?.url || "/placeholder.png"
+    product.images[0]?.url || "/placeholder.png",
   );
   // Initialize color from the first image if available, otherwise fallback to first color
   const initialColor = product.images[0]?.color || product.colors[0] || null;
@@ -79,7 +79,7 @@ export default function ProductDetailClient({
   const [quantity, setQuantity] = useState(1);
 
   const selectedImageIndex = product.images.findIndex(
-    (img) => img.url === selectedImage
+    (img) => img.url === selectedImage,
   );
   const currentImage =
     selectedImageIndex !== -1 ? product.images[selectedImageIndex] : null;
@@ -245,7 +245,7 @@ export default function ProductDetailClient({
                 <span className="bg-rose-100 text-rose-600 text-sm font-bold px-3 py-1 rounded-full border border-rose-200 self-start mt-1">
                   -
                   {Math.round(
-                    ((currentOldPrice - currentPrice) / currentOldPrice) * 100
+                    ((currentOldPrice - currentPrice) / currentOldPrice) * 100,
                   )}
                   %
                 </span>
@@ -270,7 +270,7 @@ export default function ProductDetailClient({
                         setSelectedColor(color);
                         // Find first image with this color
                         const imageWithColor = product.images.find(
-                          (img) => img.color === color
+                          (img) => img.color === color,
                         );
                         if (imageWithColor) {
                           selectImageAndSyncStock(imageWithColor.url);

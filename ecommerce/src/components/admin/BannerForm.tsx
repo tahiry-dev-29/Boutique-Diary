@@ -38,19 +38,19 @@ export default function BannerForm({
           order: banner.order,
           isActive: banner.isActive,
         }
-      : initialFormData
+      : initialFormData,
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState<string>(
-    banner?.imageUrl || ""
+    banner?.imageUrl || "",
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({

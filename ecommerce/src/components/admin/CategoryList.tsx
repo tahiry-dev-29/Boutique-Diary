@@ -269,7 +269,7 @@ export default function CategoryList({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          category.id && handleDelete(category.id);
+                          if (category.id) handleDelete(category.id);
                         }}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={

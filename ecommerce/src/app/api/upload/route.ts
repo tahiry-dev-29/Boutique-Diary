@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { error: "Aucun fichier fourni" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         { error: "Le fichier doit être une image" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     console.error("Erreur lors de l'upload:", error);
     return NextResponse.json(
       { error: "Erreur lors de l'upload du fichier" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

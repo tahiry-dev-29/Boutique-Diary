@@ -23,12 +23,23 @@ model Post {
   createdAt DateTime @default(now())
 }
 
+// Role hierarchy: CUSTOMER < EMPLOYEE < ADMIN < SUPERADMIN
+enum Role {
+  CUSTOMER
+  EMPLOYEE
+  ADMIN
+  SUPERADMIN
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   email     String   @unique
   password  String
+  role      Role     @default(CUSTOMER)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
@@ -133,4 +144,15 @@ model Banner {
 
   @@index([order])
   @@index([isActive])
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @unique
+  password  String
+  role      String   @default("admin") // "admin" | "superadmin"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

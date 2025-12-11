@@ -90,7 +90,7 @@ export default function CustomerAuthPage() {
 
       if (response.ok) {
         toast.success(
-          "Inscription réussie ! Vous pouvez maintenant vous connecter."
+          "Inscription réussie ! Vous pouvez maintenant vous connecter.",
         );
         setIsLogin(true);
         setFormData({

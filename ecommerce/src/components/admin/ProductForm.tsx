@@ -65,7 +65,9 @@ export default function ProductForm({
         images:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           product.images?.map((img: any) =>
-            typeof img === "string" ? { url: img, color: null, sizes: [] } : img
+            typeof img === "string"
+              ? { url: img, color: null, sizes: [] }
+              : img,
           ) || [],
         price: product.price,
         stock: product.stock,
@@ -218,7 +220,7 @@ export default function ProductForm({
   const handleUpdateImageAttribute = (
     index: number,
     field: "color" | "sizes" | "price" | "oldPrice" | "stock" | "reference",
-    value: string | string[] | number | null
+    value: string | string[] | number | null,
   ) => {
     const newImages = [...formData.images];
     if (newImages[index]) {
@@ -264,7 +266,7 @@ export default function ProductForm({
           formData.oldPrice < 0)
       ) {
         toast.error(
-          "Veuillez remplir tous les champs obligatoires correctement."
+          "Veuillez remplir tous les champs obligatoires correctement.",
         );
         setLoading(false);
         return;
@@ -285,7 +287,7 @@ export default function ProductForm({
         toast.success(
           product?.id
             ? "Produit modifié avec succès"
-            : "Produit créé avec succès"
+            : "Produit créé avec succès",
         );
         onSuccess();
         if (!product?.id) {
@@ -789,7 +791,7 @@ export default function ProductForm({
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "color",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
@@ -822,7 +824,7 @@ export default function ProductForm({
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "price",
-                          e.target.value ? parseFloat(e.target.value) : null
+                          e.target.value ? parseFloat(e.target.value) : null,
                         )
                       }
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
@@ -851,7 +853,7 @@ export default function ProductForm({
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "oldPrice",
-                          e.target.value ? parseFloat(e.target.value) : null
+                          e.target.value ? parseFloat(e.target.value) : null,
                         )
                       }
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
@@ -870,7 +872,7 @@ export default function ProductForm({
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "stock",
-                          e.target.value ? parseInt(e.target.value) : null
+                          e.target.value ? parseInt(e.target.value) : null,
                         )
                       }
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
@@ -905,7 +907,7 @@ export default function ProductForm({
                               handleUpdateImageAttribute(
                                 selectedImageIndex,
                                 "sizes",
-                                newSizes
+                                newSizes,
                               );
                             }}
                             className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 w-3 h-3"

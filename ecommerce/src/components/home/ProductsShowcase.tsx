@@ -134,7 +134,7 @@ export default function ProductsShowcase() {
                             {Math.round(
                               ((product.oldPrice - product.price) /
                                 product.oldPrice) *
-                                100
+                                100,
                             )}
                             %
                           </span>

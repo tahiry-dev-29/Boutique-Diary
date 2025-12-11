@@ -61,7 +61,7 @@ export default function ProductList({
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
-    null
+    null,
   );
 
   // Filter states
@@ -126,13 +126,15 @@ export default function ProductList({
     new Set(
       products
         .map((p) => p.category?.name)
-        .filter((c): c is string => Boolean(c))
-    )
+        .filter((c): c is string => Boolean(c)),
+    ),
   ).sort();
 
   // Get unique brands
   const brands = Array.from(
-    new Set(products.map((p) => p.brand).filter((b): b is string => Boolean(b)))
+    new Set(
+      products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
+    ),
   ).sort();
 
   // Filter products
@@ -411,7 +413,7 @@ export default function ProductList({
                         setExpandedProductId(
                           expandedProductId === product.id
                             ? null
-                            : (product.id ?? null)
+                            : (product.id ?? null),
                         )
                       }
                     >
@@ -624,7 +626,7 @@ export default function ProductList({
                                                   >
                                                     {size}
                                                   </span>
-                                                )
+                                                ),
                                               )}
                                             </div>
                                           )}
@@ -707,7 +709,7 @@ export default function ProductList({
                     >
                       {page}
                     </Button>
-                  )
+                  ),
                 )}
               </div>
 

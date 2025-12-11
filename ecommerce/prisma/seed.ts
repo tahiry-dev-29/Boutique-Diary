@@ -1,6 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import bcrypt from "bcryptjs";
+import "dotenv/config";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 const CATEGORIES = [
   {
@@ -75,8 +87,8 @@ const STYLES = [
 ];
 
 // Helper to get random item from array
-const random = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
-const randomSubset = (arr: any[], min = 1, max = 3) => {
+const random = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const randomSubset = <T>(arr: T[], min = 1, max = 3): T[] => {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.floor(Math.random() * (max - min + 1)) + min);
 };
@@ -165,6 +177,27 @@ async function main() {
         },
       },
     });
+  }
+
+  // Create default admin user with SUPERADMIN role
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: "admin@boutique.com" },
+  });
+
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+    await prisma.user.create({
+      data: {
+        username: "admin",
+        email: "admin@boutique.com",
+        password: hashedPassword,
+        role: "SUPERADMIN",
+        isActive: true,
+      },
+    });
+    console.log("Created default admin: admin@boutique.com / admin123");
+  } else {
+    console.log("Admin already exists, skipping...");
   }
 
   console.log("Seeding finished. Created 50 products.");

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 // GET - Fetch a specific customer by ID
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -27,7 +27,7 @@ export async function GET(
     if (!customer) {
       return NextResponse.json(
         { error: "Customer not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function GET(
     console.error("Error fetching customer:", error);
     return NextResponse.json(
       { error: "Failed to fetch customer" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -44,7 +44,7 @@ export async function GET(
 // DELETE - Delete a customer by ID
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -70,13 +70,13 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         { error: "Customer not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to delete customer" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

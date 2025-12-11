@@ -37,7 +37,7 @@ export default function ShopProductModal({
   // State initialization assumes component is re-mounted when product changes (via key prop in parent)
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(
-    product?.sizes && product.sizes.length > 0 ? product.sizes[0] : null
+    product?.sizes && product.sizes.length > 0 ? product.sizes[0] : null,
   );
 
   if (!product) return null;
@@ -169,7 +169,7 @@ export default function ShopProductModal({
                           {Math.round(
                             ((product.oldPrice - product.price) /
                               product.oldPrice) *
-                              100
+                              100,
                           )}
                           %
                         </Badge>
@@ -277,7 +277,7 @@ export default function ShopProductModal({
                         -
                         {Math.round(
                           ((currentOldPrice - currentPrice) / currentOldPrice) *
-                            100
+                            100,
                         )}
                         %
                       </span>

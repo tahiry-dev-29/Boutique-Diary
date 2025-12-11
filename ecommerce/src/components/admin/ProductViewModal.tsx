@@ -48,7 +48,7 @@ export default function ProductViewModal({
       ? currentImage.oldPrice
       : product?.oldPrice;
 
-  const currentStock =
+  const _currentStock =
     currentImage &&
     currentImage.stock !== undefined &&
     currentImage.stock !== null

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 // GET: Récupérer une bannière par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -15,7 +15,7 @@ export async function GET(
     if (!banner) {
       return NextResponse.json(
         { error: "Bannière non trouvée" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -24,7 +24,7 @@ export async function GET(
     console.error("Erreur lors de la récupération de la bannière:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération de la bannière" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -32,7 +32,7 @@ export async function GET(
 // PUT: Mettre à jour une bannière
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -67,7 +67,7 @@ export async function PUT(
     console.error("Erreur lors de la mise à jour de la bannière:", error);
     return NextResponse.json(
       { error: "Erreur lors de la mise à jour de la bannière" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -75,7 +75,7 @@ export async function PUT(
 // DELETE: Supprimer une bannière
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -88,7 +88,7 @@ export async function DELETE(
     console.error("Erreur lors de la suppression de la bannière:", error);
     return NextResponse.json(
       { error: "Erreur lors de la suppression de la bannière" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

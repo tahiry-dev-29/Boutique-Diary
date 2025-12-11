@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ProductList from "@/components/admin/ProductList";
 import { Product } from "@/types/admin";
 import ProductForm from "@/components/admin/ProductForm";
@@ -10,13 +10,22 @@ import CategoryList from "@/components/admin/CategoryList";
 import CategoryForm from "@/components/admin/CategoryForm";
 import { Category } from "@/types/category";
 import ElectricButton from "@/components/ui/ElectricButton";
-import { Plus } from "lucide-react";
+import Image from "next/image";
+import { Plus, LogOut, Bell } from "lucide-react";
 import LogoForm from "@/components/admin/LogoForm";
-import { useLogo } from "@/hooks/useLogo";
 import BannerForm from "@/components/admin/BannerForm";
 import BannerList from "@/components/admin/BannerList";
 import { Banner } from "@/types/banner";
 import CustomerList from "@/components/admin/CustomerList";
+import { toast } from "sonner";
+import AdminDashboard from "@/components/admin/dashboard/AdminDashboard";
+
+interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  role: "CUSTOMER" | "EMPLOYEE" | "ADMIN" | "SUPERADMIN";
+}
 
 // Icônes SVG natives
 const Icons = {
@@ -569,13 +578,17 @@ const CollapsibleSidebar = ({
 
 // Composant pour le contenu principal
 const MainContentComponent = ({
+  activeSection,
   activeSubSection,
+  user,
 }: {
+  activeSection: string;
   activeSubSection: string;
+  user: AdminUser;
 }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
+    null,
   );
   const [showForm, setShowForm] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -607,6 +620,11 @@ const MainContentComponent = ({
     setShowForm(false);
     setSelectedProduct(null);
   };
+
+  // DASHBOARD view
+  if (activeSection === "dashboard") {
+    return <AdminDashboard user={user} />;
+  }
 
   // Contenu pour "Tous les produits" - Liste uniquement
   if (activeSubSection === "all-products") {
@@ -820,9 +838,62 @@ const MainContentComponent = ({
 
 // Composant principal
 const AdminDashboardPage = () => {
+  const router = useRouter();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [activeSubSection, setActiveSubSection] = useState("");
+  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/admin/auth/me");
+        if (response.ok) {
+          const data = await response.json();
+          setAdmin(data.admin);
+        } else {
+          router.push("/admin/login");
+        }
+      } catch {
+        router.push("/admin/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
+      toast.success("Déconnexion réussie");
+      router.push("/admin/login");
+    } catch {
+      toast.error("Erreur lors de la déconnexion");
+    }
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-white/70">
+            Vérification de l&apos;authentification...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not authenticated
+  if (!admin) {
+    return null;
+  }
 
   return (
     <div className="h-screen bg-[#E5E7EB] flex overflow-hidden relative">
@@ -854,19 +925,49 @@ const AdminDashboardPage = () => {
 
       {/* Contenu Principal */}
       <main className="flex-1 p-8 overflow-y-auto h-full">
-        {/* Mobile menu button */}
-        {!isSidebarExpanded && (
-          <button
-            onClick={() => setIsSidebarExpanded(true)}
-            className="lg:hidden fixed top-4 left-4 z-20 p-2 bg-gray-800 text-white rounded-lg shadow-lg"
-            aria-label="Ouvrir le menu"
-          >
-            <Icons.Menu />
-          </button>
-        )}
+        {/* Top bar with logout */}
+        <div className="flex items-center justify-between mb-6">
+          {/* Mobile menu button */}
+          {!isSidebarExpanded && (
+            <button
+              onClick={() => setIsSidebarExpanded(true)}
+              className="lg:hidden p-2 bg-gray-800 text-white rounded-lg shadow-lg"
+              aria-label="Ouvrir le menu"
+            >
+              <Icons.Menu />
+            </button>
+          )}
+          <div className="hidden lg:block" />
 
-        <div className="max-w-7xl mx-auto">
-          <MainContentComponent activeSubSection={activeSubSection} />
+          {/* Admin info and logout */}
+          <div className="flex items-center gap-4 ml-auto">
+            <button className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors">
+              <Bell className="w-5 h-5" />
+            </button>
+            <div className="w-10 h-10 bg-white rounded-xl shadow-sm p-0.5 overflow-hidden relative">
+              <Image
+                src="/admin-avatar.png"
+                alt="Admin"
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-600 hover:text-red-600 transition-colors"
+              title="Déconnexion"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="max-w-[1600px] mx-auto p-8">
+          <MainContentComponent
+            activeSection={activeSection}
+            activeSubSection={activeSubSection}
+            user={admin!}
+          />
         </div>
       </main>
     </div>
