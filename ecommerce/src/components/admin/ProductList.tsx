@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/formatPrice";
@@ -69,6 +70,7 @@ export default function ProductList({
   onView,
   refreshTrigger,
 }: ProductListProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
@@ -391,7 +393,7 @@ export default function ProductList({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button className="bg-black text-white hover:bg-gray-800 rounded-lg gap-2">
+          <Button onClick={() => router.push('/admin/products/new')} className="bg-black text-white hover:bg-gray-800 rounded-lg gap-2">
             <Plus className="h-4 w-4" />
             Ajouter
           </Button>
