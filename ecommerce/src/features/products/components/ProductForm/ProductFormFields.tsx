@@ -47,7 +47,7 @@ export function ProductFormFields({
 
   return (
     <div className="space-y-4">
-      {/* Name and Reference */}
+      {}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="name">Nom *</Label>
@@ -74,7 +74,7 @@ export function ProductFormFields({
         </div>
       </div>
 
-      {/* Category and Brand */}
+      {}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Catégorie</Label>
@@ -113,7 +113,7 @@ export function ProductFormFields({
         </div>
       </div>
 
-      {/* Description */}
+      {}
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea

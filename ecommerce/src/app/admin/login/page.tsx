@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
-      {/* Background Pattern */}
+      {}
       <div
         className="absolute inset-0 opacity-30"
         style={{
@@ -54,9 +54,9 @@ export default function AdminLoginPage() {
       />
 
       <div className="relative w-full max-w-md">
-        {/* Card */}
+        {}
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
-          {/* Header */}
+          {}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-indigo-500/30">
               <Shield className="w-8 h-8 text-white" />
@@ -69,9 +69,9 @@ export default function AdminLoginPage() {
             </p>
           </div>
 
-          {/* Form */}
+          {}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Password */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Mot de passe
@@ -118,7 +118,7 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Remember Me */}
+            {}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -133,7 +133,7 @@ export default function AdminLoginPage() {
               </label>
             </div>
 
-            {/* Submit Button */}
+            {}
             <button
               type="submit"
               disabled={loading}
@@ -150,13 +150,13 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
+          {}
           <p className="text-center text-gray-500 text-xs mt-6">
             Accès réservé aux administrateurs
           </p>
         </div>
 
-        {/* Decorative Elements */}
+        {}
         <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
       </div>

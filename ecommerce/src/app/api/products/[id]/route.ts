@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// GET - Récupérer un produit par ID
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -41,7 +40,6 @@ export async function GET(
   }
 }
 
-// PUT - Mettre à jour un produit
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -73,7 +71,16 @@ export async function PUT(
       isBestSeller,
     } = body;
 
-    // Validation
+    interface ProductImage {
+      url: string;
+      reference?: string;
+      color?: string | null;
+      sizes?: string[];
+      price?: number | null;
+      oldPrice?: number | null;
+      stock?: number | null;
+    }
+
     if (price !== undefined && parseFloat(price) < 0) {
       return NextResponse.json(
         { error: "Price cannot be negative" },
@@ -87,7 +94,6 @@ export async function PUT(
       );
     }
 
-    // Get existing product reference for image reference generation
     const existingProduct = await prisma.product.findUnique({
       where: { id },
       select: { reference: true },
@@ -118,46 +124,47 @@ export async function PUT(
         ...(images !== undefined && {
           images: {
             deleteMany: {},
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            create: (images || []).map((img: any, index: number) => {
-              const imgColor = typeof img === "string" ? null : img.color;
-              // Generate automatic reference if not provided
-              const productRef = reference || existingProduct?.reference || "";
-              const colorAbbrev = imgColor
-                ? imgColor.toLowerCase().slice(0, 3)
-                : `img${index + 1}`;
-              const autoReference = `${productRef}-${colorAbbrev}`;
 
-              return {
-                url: typeof img === "string" ? img : img.url,
-                reference:
-                  typeof img === "string"
-                    ? autoReference
-                    : img.reference || autoReference,
-                color: imgColor ?? null,
-                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-                price:
-                  typeof img === "string"
-                    ? null
-                    : img.price !== undefined && img.price !== null
-                      ? parseFloat(img.price)
-                      : null,
-                oldPrice:
-                  typeof img === "string"
-                    ? null
-                    : img.oldPrice !== undefined && img.oldPrice !== null
-                      ? parseFloat(img.oldPrice)
-                      : null,
-                stock:
-                  typeof img === "string"
-                    ? null
-                    : img.stock !== undefined &&
-                        img.stock !== null &&
-                        img.stock !== ""
-                      ? img.stock
-                      : null,
-              };
-            }),
+            create: (images || []).map(
+              (img: string | ProductImage, index: number) => {
+                const imgColor = typeof img === "string" ? null : img.color;
+
+                const productRef =
+                  reference || existingProduct?.reference || "";
+                const colorAbbrev = imgColor
+                  ? imgColor.toLowerCase().slice(0, 3)
+                  : `img${index + 1}`;
+                const autoReference = `${productRef}-${colorAbbrev}`;
+
+                return {
+                  url: typeof img === "string" ? img : img.url,
+                  reference:
+                    typeof img === "string"
+                      ? autoReference
+                      : img.reference || autoReference,
+                  color: imgColor ?? null,
+                  sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+                  price:
+                    typeof img === "string"
+                      ? null
+                      : img.price !== undefined && img.price !== null
+                        ? img.price
+                        : null,
+                  oldPrice:
+                    typeof img === "string"
+                      ? null
+                      : img.oldPrice !== undefined && img.oldPrice !== null
+                        ? img.oldPrice
+                        : null,
+                  stock:
+                    typeof img === "string"
+                      ? null
+                      : img.stock !== undefined && img.stock !== null
+                        ? img.stock
+                        : null,
+                };
+              },
+            ),
           },
         }),
       },
@@ -197,7 +204,6 @@ export async function PUT(
   }
 }
 
-// DELETE - Supprimer un produit
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },

@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header with Back Link */}
+      {}
       <div className="p-6">
         <Link
           href="/login"
@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
         </Link>
       </div>
 
-      {/* Main Content */}
+      {}
       <div className="flex-1 flex flex-col items-center justify-center -mt-20 px-4">
         <div className="w-full max-w-md space-y-8 text-center">
           <h1 className="text-3xl font-bold text-[#1e293b] mb-2">

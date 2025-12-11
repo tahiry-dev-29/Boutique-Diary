@@ -26,34 +26,27 @@ export default function ProductViewModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Helper variables for current image and its properties
-  const selectedImage = product?.images?.[selectedImageIndex];
-  // Ensure we handle the case where selectedImage might be a string (URL) or an object
-  const currentImage =
-    typeof selectedImage === "object" && selectedImage !== null
-      ? selectedImage
-      : null;
+  const selectedImageRaw = product?.images?.[selectedImageIndex];
+  const selectedImageObj =
+    typeof selectedImageRaw === "object" ? selectedImageRaw : null;
+  const selectedImageUrl =
+    typeof selectedImageRaw === "string"
+      ? selectedImageRaw
+      : selectedImageRaw?.url;
 
-  // Helper to determine current price (image specific or product default)
+  const currentImage = selectedImageObj;
+
   const currentPrice =
     currentImage && currentImage.price
       ? currentImage.price
       : product?.price || 0;
 
-  // Helper to determine current old price (image specific or product default)
   const currentOldPrice =
     currentImage &&
     currentImage.oldPrice !== undefined &&
     currentImage.oldPrice !== null
       ? currentImage.oldPrice
       : product?.oldPrice;
-
-  const _currentStock =
-    currentImage &&
-    currentImage.stock !== undefined &&
-    currentImage.stock !== null
-      ? currentImage.stock
-      : product?.stock || 0;
 
   if (!product) return null;
 
@@ -93,7 +86,7 @@ export default function ProductViewModal({
         <div
           className={`grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 ${isFullscreen ? "flex-1 overflow-y-auto" : ""}`}
         >
-          {/* Image Gallery Section */}
+          {/* Gallery Section */}
           <div className="space-y-3">
             {/* Main Image */}
             <div
@@ -102,32 +95,30 @@ export default function ProductViewModal({
               {product.images && product.images[selectedImageIndex] ? (
                 <>
                   <img
-                    src={product.images[selectedImageIndex].url}
+                    src={selectedImageUrl}
                     alt={product.name}
                     className="w-full h-full object-contain"
                   />
-                  {/* Image Attributes Overlay */}
-                  {(product.images[selectedImageIndex].color ||
-                    (product.images[selectedImageIndex].sizes &&
-                      product.images[selectedImageIndex].sizes.length > 0)) && (
+                  {/* Image specific badges */}
+                  {(selectedImageObj?.color ||
+                    (selectedImageObj?.sizes &&
+                      selectedImageObj.sizes.length > 0)) && (
                     <div className="absolute bottom-2 left-2 flex gap-1">
-                      {product.images[selectedImageIndex].color && (
+                      {selectedImageObj.color && (
                         <Badge
                           variant="secondary"
                           className="bg-white/90 shadow-sm"
                         >
-                          {product.images[selectedImageIndex].color}
+                          {selectedImageObj.color}
                         </Badge>
                       )}
-                      {product.images[selectedImageIndex].sizes &&
-                        product.images[selectedImageIndex].sizes.length > 0 && (
+                      {selectedImageObj.sizes &&
+                        selectedImageObj.sizes.length > 0 && (
                           <Badge
                             variant="secondary"
                             className="bg-white/90 shadow-sm"
                           >
-                            {product.images[selectedImageIndex].sizes.join(
-                              ", ",
-                            )}
+                            {selectedImageObj.sizes.join(", ")}
                           </Badge>
                         )}
                     </div>
@@ -140,7 +131,7 @@ export default function ProductViewModal({
               )}
             </div>
 
-            {/* Thumbnail Gallery */}
+            {/* Thumbnails */}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {product.images.map((img, index) => (
@@ -154,7 +145,7 @@ export default function ProductViewModal({
                     }`}
                   >
                     <img
-                      src={img.url}
+                      src={typeof img === "string" ? img : img.url}
                       alt={`Vue ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -164,9 +155,9 @@ export default function ProductViewModal({
             )}
           </div>
 
-          {/* Product Details Section */}
+          {}
           <div className="space-y-6">
-            {/* Name and Reference */}
+            {}
             <div>
               <h3 className="text-2xl font-bold text-gray-900">
                 {product.name}
@@ -174,7 +165,7 @@ export default function ProductViewModal({
               <p className="text-sm text-gray-500 mt-1">
                 Réf produit: {product.reference}
               </p>
-              {/* Image-specific reference */}
+              {}
               {product.images && product.images[selectedImageIndex] && (
                 <div className="mt-2 p-2 bg-indigo-50 rounded-lg border border-indigo-200 inline-block">
                   <span className="text-xs text-gray-600">Réf image: </span>
@@ -187,7 +178,7 @@ export default function ProductViewModal({
                       if (img.reference) {
                         return img.reference;
                       }
-                      // Generate reference from color if available
+
                       if (img.color) {
                         return `${product.reference}-${img.color.toLowerCase().slice(0, 3)}`;
                       }
@@ -198,8 +189,8 @@ export default function ProductViewModal({
               )}
             </div>
 
-            {/* Category */}
-            {/* Brand and Category */}
+            {}
+            {}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -231,7 +222,7 @@ export default function ProductViewModal({
               </div>
             </div>
 
-            {/* Colors and Sizes */}
+            {}
             {((product.colors && product.colors.length > 0) ||
               (product.sizes && product.sizes.length > 0)) && (
               <div className="grid grid-cols-2 gap-4">
@@ -242,8 +233,7 @@ export default function ProductViewModal({
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {product.colors.map((color) => {
-                        const isAvailable =
-                          product.images[selectedImageIndex]?.color === color;
+                        const isAvailable = selectedImageObj?.color === color;
                         return (
                           <Badge
                             key={color}
@@ -267,9 +257,7 @@ export default function ProductViewModal({
                     <div className="flex flex-wrap gap-2">
                       {product.sizes.map((size) => {
                         const isAvailable =
-                          product.images[selectedImageIndex]?.sizes?.includes(
-                            size,
-                          ) || false;
+                          selectedImageObj?.sizes?.includes(size) || false;
                         return (
                           <Badge
                             key={size}
@@ -325,7 +313,7 @@ export default function ProductViewModal({
               </div>
             )}
 
-            {/* Price and Stock */}
+            {}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -333,18 +321,15 @@ export default function ProductViewModal({
                 </label>
                 <p className="text-2xl font-bold text-indigo-600">
                   {product.images &&
-                  product.images[selectedImageIndex] &&
-                  typeof product.images[selectedImageIndex] === "object" &&
-                  "price" in product.images[selectedImageIndex] &&
-                  product.images[selectedImageIndex].price
-                    ? formatPrice(product.images[selectedImageIndex].price)
+                  selectedImageObj &&
+                  "price" in selectedImageObj &&
+                  selectedImageObj.price
+                    ? formatPrice(selectedImageObj.price)
                     : formatPrice(product.price)}
                 </p>
-                {product.images &&
-                  product.images[selectedImageIndex] &&
-                  typeof product.images[selectedImageIndex] === "object" &&
-                  "price" in product.images[selectedImageIndex] &&
-                  product.images[selectedImageIndex].price && (
+                {selectedImageObj &&
+                  "price" in selectedImageObj &&
+                  selectedImageObj.price && (
                     <p className="text-xs text-gray-500 mt-1">
                       Prix pour cette image (Prix par défaut:{" "}
                       {formatPrice(product.price)})
@@ -381,32 +366,26 @@ export default function ProductViewModal({
                       : "text-lg px-4 py-1"
                   }
                 >
-                  {product.images &&
-                  product.images[selectedImageIndex] &&
-                  typeof product.images[selectedImageIndex] === "object" &&
-                  "stock" in product.images[selectedImageIndex] &&
-                  product.images[selectedImageIndex].stock !== null &&
-                  product.images[selectedImageIndex].stock !== undefined
-                    ? product.images[selectedImageIndex].stock
+                  {selectedImageObj &&
+                  "stock" in selectedImageObj &&
+                  selectedImageObj.stock !== null &&
+                  selectedImageObj.stock !== undefined
+                    ? selectedImageObj.stock
                     : product.stock}{" "}
                   unité
-                  {(product.images &&
-                  product.images[selectedImageIndex] &&
-                  typeof product.images[selectedImageIndex] === "object" &&
-                  "stock" in product.images[selectedImageIndex] &&
-                  product.images[selectedImageIndex].stock !== null &&
-                  product.images[selectedImageIndex].stock !== undefined
-                    ? product.images[selectedImageIndex].stock
+                  {(selectedImageObj &&
+                  "stock" in selectedImageObj &&
+                  selectedImageObj.stock !== null &&
+                  selectedImageObj.stock !== undefined
+                    ? selectedImageObj.stock
                     : product.stock) > 1
                     ? "s"
                     : ""}
                 </Badge>
-                {product.images &&
-                  product.images[selectedImageIndex] &&
-                  typeof product.images[selectedImageIndex] === "object" &&
-                  "stock" in product.images[selectedImageIndex] &&
-                  product.images[selectedImageIndex].stock !== null &&
-                  product.images[selectedImageIndex].stock !== undefined && (
+                {selectedImageObj &&
+                  "stock" in selectedImageObj &&
+                  selectedImageObj.stock !== null &&
+                  selectedImageObj.stock !== undefined && (
                     <p className="text-xs text-gray-500 mt-1">
                       Stock pour cette image
                     </p>
@@ -414,7 +393,7 @@ export default function ProductViewModal({
               </div>
             </div>
 
-            {/* Description */}
+            {}
             {product.description && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -426,7 +405,7 @@ export default function ProductViewModal({
               </div>
             )}
 
-            {/* Additional Info */}
+            {}
             <div className="pt-4 border-t border-gray-200">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>

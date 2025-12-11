@@ -72,7 +72,7 @@ export default function ProductsShowcase() {
   return (
     <section className="products-showcase">
       <div className="products-container">
-        {/* Header */}
+        {}
         <div className="products-header">
           <div>
             <p className="products-subtitle">Eco Essentials Planet-Friendly</p>
@@ -86,9 +86,9 @@ export default function ProductsShowcase() {
           </Link>
         </div>
 
-        {/* Products Grid */}
+        {}
         <div className="products-grid">
-          {/* Previous Arrow */}
+          {}
           <button
             className="products-nav products-nav-prev"
             aria-label="Previous"
@@ -112,7 +112,7 @@ export default function ProductsShowcase() {
 
             return (
               <div key={product.id} className="product-card">
-                {/* Image Container */}
+                {}
                 <div className="product-card-image">
                   <Image
                     src={imageUrl}
@@ -143,9 +143,9 @@ export default function ProductsShowcase() {
                   )}
                 </div>
 
-                {/* Product Info */}
+                {}
                 <div className="product-card-info">
-                  {/* Color Dots */}
+                  {}
                   <div className="product-colors">
                     {colors.slice(0, 4).map((color, index) => (
                       <span
@@ -156,12 +156,12 @@ export default function ProductsShowcase() {
                     ))}
                   </div>
 
-                  {/* Description */}
+                  {}
                   <p className="product-card-desc">
                     {product.description || product.name}
                   </p>
 
-                  {/* Price and Cart */}
+                  {}
                   <div className="product-card-footer">
                     <span className="product-price">
                       ${product.price.toFixed(2)}
@@ -173,7 +173,7 @@ export default function ProductsShowcase() {
             );
           })}
 
-          {/* Next Arrow */}
+          {}
           <button className="products-nav products-nav-next" aria-label="Next">
             <svg
               width="20"

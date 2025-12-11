@@ -7,7 +7,6 @@ export async function POST() {
     { status: 200 },
   );
 
-  // Clear the admin session cookie
   response.cookies.set(ADMIN_SESSION_COOKIE, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

@@ -64,14 +64,12 @@ export default function BannerForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Créer un aperçu
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Upload vers le serveur
     const uploadFormData = new FormData();
     uploadFormData.append("file", file);
 
@@ -141,7 +139,7 @@ export default function BannerForm({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Titre principal */}
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Titre principal *
@@ -157,7 +155,7 @@ export default function BannerForm({
           />
         </div>
 
-        {/* Sous-titre */}
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Sous-titre
@@ -172,7 +170,7 @@ export default function BannerForm({
           />
         </div>
 
-        {/* Description */}
+        {}
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Description
@@ -187,7 +185,7 @@ export default function BannerForm({
           />
         </div>
 
-        {/* Texte du bouton */}
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Texte du bouton
@@ -202,7 +200,7 @@ export default function BannerForm({
           />
         </div>
 
-        {/* Lien du bouton */}
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Lien du bouton
@@ -217,7 +215,7 @@ export default function BannerForm({
           />
         </div>
 
-        {/* Ordre */}
+        {}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Position dans le slider
@@ -236,7 +234,7 @@ export default function BannerForm({
           </select>
         </div>
 
-        {/* Actif */}
+        {}
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -254,7 +252,7 @@ export default function BannerForm({
           </label>
         </div>
 
-        {/* Upload image */}
+        {}
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Image de la bannière *
@@ -325,7 +323,7 @@ export default function BannerForm({
         </div>
       </div>
 
-      {/* Boutons d'action */}
+      {}
       <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
         <button
           type="button"

@@ -151,7 +151,7 @@ export default function ProductForm({
       onSubmit={handleSubmit}
       className="space-y-6 bg-background p-6 rounded-lg border"
     >
-      {/* Header */}
+      {}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
           {product?.id ? "Modifier le produit" : "Nouveau produit"}
@@ -164,7 +164,7 @@ export default function ProductForm({
       <Separator />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Column - Form Fields */}
+        {}
         <div className="space-y-6">
           <ProductFormFields
             formData={formData}
@@ -181,7 +181,7 @@ export default function ProductForm({
           <ProductVariants formData={formData} setFormData={setFormData} />
         </div>
 
-        {/* Right Column - Images */}
+        {}
         <div className="space-y-6">
           <ProductImageUploader
             formData={formData}
@@ -190,7 +190,7 @@ export default function ProductForm({
             setSelectedImageIndex={setSelectedImageIndex}
           />
 
-          {/* Action Buttons */}
+          {}
           <div className="flex gap-3 pt-4 border-t">
             <ElectricButton type="submit" disabled={loading}>
               <Save className="h-5 w-5" />
@@ -210,7 +210,6 @@ export default function ProductForm({
   );
 }
 
-// Re-export sub-components for individual use
 export { ProductFormFields } from "./ProductFormFields";
 export { ProductPricing } from "./ProductPricing";
 export { ProductVariants } from "./ProductVariants";

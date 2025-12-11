@@ -3,12 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// GET - Récupérer tous les produits avec filtrage
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Extract filter parameters
     const search = searchParams.get("search");
     const categoryId = searchParams.get("categoryId");
     const minPrice = searchParams.get("minPrice");
@@ -21,11 +19,8 @@ export async function GET(request: NextRequest) {
     const isPromotion = searchParams.get("isPromotion") === "true";
     const isBestSeller = searchParams.get("isBestSeller") === "true";
 
-    // Build where clause
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
+    const where: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    // Search (Name or Reference)
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
@@ -33,49 +28,41 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Category
+    // ... (rest of the file)
+
     if (categoryId && categoryId !== "all") {
-      // Check if categoryId is a number (ID) or string (Slug/Name)
-      // Assuming ID for now based on frontend
       const catId = parseInt(categoryId);
       if (!isNaN(catId)) {
         where.categoryId = catId;
       } else {
-        // Try to find by name if passed as string
         where.category = { name: categoryId };
       }
     }
 
-    // Price Range
     if (minPrice || maxPrice) {
       where.price = {};
       if (minPrice) where.price.gte = parseFloat(minPrice);
       if (maxPrice) where.price.lte = parseFloat(maxPrice);
     }
 
-    // Brand
     if (brand && brand !== "all") {
       where.brand = brand;
     }
 
-    // Color (Array contains)
     if (color && color !== "all") {
       where.colors = { has: color };
     }
 
-    // Size (Array contains)
     if (size && size !== "all") {
       where.sizes = { has: size };
     }
 
-    // Availability
     if (availability === "in-stock") {
       where.stock = { gt: 0 };
     } else if (availability === "out-of-stock") {
       where.stock = 0;
     }
 
-    // Product Types
     if (isNew) where.isNew = true;
     if (isPromotion) where.isPromotion = true;
     if (isBestSeller) where.isBestSeller = true;
@@ -110,7 +97,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Créer un nouveau produit
+interface ProductImage {
+  url: string;
+  reference?: string;
+  color?: string | null;
+  sizes?: string[];
+  price?: number | null;
+  oldPrice?: number | null;
+  stock?: number | null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -131,7 +127,6 @@ export async function POST(request: NextRequest) {
       isBestSeller,
     } = body;
 
-    // Validation
     if (!name || !reference || price === undefined) {
       return NextResponse.json(
         { error: "Name, reference, and price are required" },
@@ -180,41 +175,40 @@ export async function POST(request: NextRequest) {
         oldPrice: oldPrice ? parseFloat(oldPrice) : null,
         isBestSeller: isBestSeller || false,
         images: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          create: (images || []).map((img: any, index: number) => {
-            const imgColor = typeof img === "string" ? null : img.color;
-            // Generate automatic reference: {productRef}-{colorAbbrev or index}
-            const colorAbbrev = imgColor
-              ? imgColor.toLowerCase().slice(0, 3)
-              : `img${index + 1}`;
-            const autoReference = `${reference}-${colorAbbrev}`;
+          create: (images || []).map(
+            (img: string | ProductImage, index: number) => {
+              const imgColor = typeof img === "string" ? null : img.color;
 
-            return {
-              url: typeof img === "string" ? img : img.url,
-              reference:
-                typeof img === "string"
-                  ? autoReference
-                  : img.reference || autoReference,
-              color: imgColor ?? null,
-              sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-              price:
-                typeof img === "string"
-                  ? null
-                  : img.price !== undefined &&
-                      img.price !== null &&
-                      img.price !== ""
-                    ? img.price
-                    : null,
-              stock:
-                typeof img === "string"
-                  ? null
-                  : img.stock !== undefined &&
-                      img.stock !== null &&
-                      img.stock !== ""
-                    ? img.stock
-                    : null,
-            };
-          }),
+              const colorAbbrev = imgColor
+                ? imgColor.toLowerCase().slice(0, 3)
+                : `img${index + 1}`;
+              const autoReference = `${reference}-${colorAbbrev}`;
+
+              return {
+                url: typeof img === "string" ? img : img.url,
+                reference:
+                  typeof img === "string"
+                    ? autoReference
+                    : img.reference || autoReference,
+                color: imgColor ?? null,
+                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
+                price:
+                  typeof img === "string"
+                    ? null
+                    : img.price !== undefined &&
+                        img.price !== null
+                      ? img.price
+                      : null,
+                stock:
+                  typeof img === "string"
+                    ? null
+                    : img.stock !== undefined &&
+                        img.stock !== null
+                      ? img.stock
+                      : null,
+              };
+            },
+          ),
         },
       },
       include: {

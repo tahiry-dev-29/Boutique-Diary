@@ -118,7 +118,7 @@ export default function BannerList({
             !banner.isActive ? "opacity-60" : ""
           }`}
         >
-          {/* Image */}
+          {}
           <div className="relative h-48 bg-gray-100">
             <Image
               src={banner.imageUrl}
@@ -142,7 +142,7 @@ export default function BannerList({
             </div>
           </div>
 
-          {/* Content */}
+          {}
           <div className="p-4">
             <h3 className="font-bold text-gray-800 truncate">{banner.title}</h3>
             {banner.subtitle && (
@@ -162,7 +162,7 @@ export default function BannerList({
             )}
           </div>
 
-          {/* Actions */}
+          {}
           <div className="px-4 pb-4 flex gap-2">
             <button
               onClick={() => toggleActive(banner)}

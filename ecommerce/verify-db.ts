@@ -11,10 +11,12 @@ async function main() {
         reference: "REF-" + Date.now(),
         price: 100,
         stock: 10,
-        images: [
-          "https://example.com/image1.jpg",
-          "https://example.com/image2.jpg",
-        ],
+        images: {
+          create: [
+            { url: "https://example.com/image1.jpg" },
+            { url: "https://example.com/image2.jpg" },
+          ],
+        },
         description: "This is a test product created via script.",
       },
     });

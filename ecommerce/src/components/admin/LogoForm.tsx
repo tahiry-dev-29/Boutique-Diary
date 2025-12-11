@@ -38,20 +38,17 @@ export default function LogoForm() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Vérification du type de fichier
     if (!file.type.startsWith("image/")) {
       toast.error("Veuillez sélectionner une image");
       return;
     }
 
-    // Créer un aperçu
     const reader = new FileReader();
     reader.onload = (event) => {
       setPreviewUrl(event.target?.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Upload du fichier
     setLoading(true);
     try {
       const formData = new FormData();
@@ -73,7 +70,7 @@ export default function LogoForm() {
     } catch (error) {
       console.error("Erreur upload:", error);
       toast.error("Erreur lors de l'upload de l'image");
-      setPreviewUrl(logoUrl); // Revenir à l'ancien logo
+      setPreviewUrl(logoUrl);
     } finally {
       setLoading(false);
     }
@@ -96,7 +93,7 @@ export default function LogoForm() {
       if (response.ok) {
         setLogoUrl(previewUrl);
         toast.success("Logo enregistré avec succès");
-        // Recharger la page pour mettre à jour le header
+
         window.location.reload();
       } else {
         throw new Error("Erreur sauvegarde");
@@ -157,7 +154,7 @@ export default function LogoForm() {
         </p>
       </div>
 
-      {/* Zone d'upload */}
+      {}
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-emerald-500 transition-colors">
         {previewUrl ? (
           <div className="space-y-4">
@@ -197,7 +194,7 @@ export default function LogoForm() {
         </button>
       </div>
 
-      {/* Actions */}
+      {}
       <div className="flex gap-3">
         <button
           onClick={handleSave}

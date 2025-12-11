@@ -11,9 +11,9 @@ export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [cartState, setCartState] = useState<Record<number, number>>({});
-  // Track selected image index per product (productId -> imageIndex)
+
   const [selectedImages, setSelectedImages] = useState<Record<number, number>>(
-    {}
+    {},
   );
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -43,7 +43,6 @@ export default function ShopPage() {
   const [scrollTarget, setScrollTarget] = useState<number | null>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
 
-  // Reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
     setMaxLoadedPage(1);
@@ -56,10 +55,9 @@ export default function ShopPage() {
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const displayedProducts = filteredProducts.slice(
     0,
-    maxLoadedPage * ITEMS_PER_PAGE
+    maxLoadedPage * ITEMS_PER_PAGE,
   );
 
-  // Infinite Scroll Trigger (Loads more content only)
   const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,10 +65,9 @@ export default function ShopPage() {
       (entries) => {
         if (entries[0].isIntersecting && maxLoadedPage < totalPages) {
           setMaxLoadedPage((prev) => prev + 1);
-          // Removed setCurrentPage from here to avoid premature page jumps
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (observerTarget.current) {
@@ -80,24 +77,21 @@ export default function ShopPage() {
     return () => observer.disconnect();
   }, [totalPages, maxLoadedPage]);
 
-  // Scroll Spy to update Current Page
   useEffect(() => {
     const handleScrollSpy = () => {
       if (isAutoScrolling) return;
 
-      const headerOffset = 150; // Approx header height
-      const threshold = window.innerHeight / 3; // Check sticking point
+      const headerOffset = 150;
 
       let activePage = 1;
 
-      // Check all potentially loaded pages
       for (let i = 1; i <= maxLoadedPage; i++) {
         const productIndex = (i - 1) * ITEMS_PER_PAGE;
         const element = document.getElementById(`product-card-${productIndex}`);
 
         if (element) {
           const rect = element.getBoundingClientRect();
-          // If the element is near the top of the viewport (or above it)
+
           if (rect.top < window.innerHeight / 2 + headerOffset) {
             activePage = i;
           }
@@ -108,7 +102,6 @@ export default function ShopPage() {
         setCurrentPage(activePage);
       }
 
-      // Also handle pagination visibility
       setShowPagination(window.scrollY > 1000);
     };
 
@@ -116,7 +109,6 @@ export default function ShopPage() {
     return () => window.removeEventListener("scroll", handleScrollSpy);
   }, [maxLoadedPage, currentPage, isAutoScrolling]);
 
-  // Handle auto-scroll after page click
   useEffect(() => {
     if (scrollTarget !== null) {
       const element = document.getElementById(`product-card-${scrollTarget}`);
@@ -131,7 +123,6 @@ export default function ShopPage() {
           behavior: "smooth",
         });
 
-        // Clear target and release auto-scroll lock after animation
         setScrollTarget(null);
         setTimeout(() => setIsAutoScrolling(false), 1000);
       }
@@ -139,14 +130,13 @@ export default function ShopPage() {
   }, [displayedProducts, scrollTarget]);
 
   const handlePageClick = (page: number) => {
-    setIsAutoScrolling(true); // Lock spy
+    setIsAutoScrolling(true);
     setCurrentPage(page);
     setMaxLoadedPage((prev) => Math.max(prev, page));
     const targetIndex = (page - 1) * ITEMS_PER_PAGE;
     setScrollTarget(targetIndex);
   };
 
-  // Scroll visibility for pagination (managed in Spy now, but keeping state here)
   const [showPagination, setShowPagination] = useState(false);
 
   const getImageUrl = (url: string) => {
@@ -186,7 +176,6 @@ export default function ShopPage() {
   };
 
   const handleProductClick = (product: Product) => {
-    // Create a slug from the product name
     const slug = product.name
       .toLowerCase()
       .trim()
@@ -228,7 +217,6 @@ export default function ShopPage() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
               {displayedProducts.map((product, index) => {
-                // Calculate effective stock: use first image stock if available, otherwise product stock
                 const firstImage = product.images?.[0];
                 const firstImageStock =
                   typeof firstImage === "object" &&
@@ -247,7 +235,7 @@ export default function ShopPage() {
                     className="group relative bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-gray-200 cursor-pointer overflow-hidden scroll-mt-40"
                     onClick={() => handleProductClick(product)}
                   >
-                    {/* Badges */}
+                    {}
                     <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                       {isOutOfStock && (
                         <span className="bg-gray-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
@@ -276,7 +264,7 @@ export default function ShopPage() {
                                 {Math.round(
                                   ((product.oldPrice - product.price) /
                                     product.oldPrice) *
-                                    100
+                                    100,
                                 )}
                                 %
                               </span>
@@ -285,12 +273,12 @@ export default function ShopPage() {
                       )}
                     </div>
 
-                    {/* Wishlist Heart - Hidden by default, visible on hover */}
+                    {}
                     <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold">
                       <button
                         className="text-emerald-700 hover:scale-110 transition-transform"
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation
+                          e.stopPropagation();
                           console.log("Wishlist click");
                         }}
                       >
@@ -298,7 +286,7 @@ export default function ShopPage() {
                       </button>
                     </div>
 
-                    {/* Image */}
+                    {}
                     {(() => {
                       const selectedIndex = selectedImages[product.id!] ?? 0;
                       const displayImage =
@@ -329,7 +317,7 @@ export default function ShopPage() {
                       );
                     })()}
 
-                    {/* Content */}
+                    {}
                     <div className="space-y-2">
                       <h3 className="text-sm font-[800] text-[#1f2937] leading-tight min-h-[40px] line-clamp-2 hover:text-rose-600 transition-colors">
                         {product.name}
@@ -339,9 +327,8 @@ export default function ShopPage() {
                         {product.description || "Aucune description"}
                       </p>
 
-                      {/* Color Dots - from product images or product.colors */}
+                      {}
                       {(() => {
-                        // Extract unique colors from images with their indices
                         const imageColorsWithIndex = product.images
                           ?.map((img, index) => ({
                             color: typeof img === "object" ? img.color : null,
@@ -349,10 +336,9 @@ export default function ShopPage() {
                           }))
                           .filter(
                             (item): item is { color: string; index: number } =>
-                              item.color !== null && item.color !== undefined
+                              item.color !== null && item.color !== undefined,
                           );
 
-                        // Get unique colors (keep first occurrence index for each color)
                         const colorIndexMap = new Map<string, number>();
                         imageColorsWithIndex?.forEach((item) => {
                           if (!colorIndexMap.has(item.color)) {
@@ -361,7 +347,7 @@ export default function ShopPage() {
                         });
 
                         const uniqueColors = Array.from(
-                          colorIndexMap.keys()
+                          colorIndexMap.keys(),
                         ).slice(0, 6);
                         const currentSelectedIndex =
                           selectedImages[product.id!] ?? 0;
@@ -421,7 +407,7 @@ export default function ShopPage() {
                           )}
                         </div>
 
-                        {/* Cart Interaction UI */}
+                        {}
                         {cartState[product.id!] ? (
                           <div
                             className="flex items-center justify-between min-w-[100px] h-10 rounded-full border border-emerald-500 bg-white shadow-sm px-1 transition-all"
@@ -452,7 +438,7 @@ export default function ShopPage() {
                                     ...prev,
                                     [product.id!]: Math.min(
                                       val,
-                                      effectiveStock
+                                      effectiveStock,
                                     ),
                                   }));
                                 }
@@ -508,14 +494,14 @@ export default function ShopPage() {
               })}
             </div>
 
-            {/* Infinite Scroll Sentinel - Invisible Trigger */}
+            {}
             <div
               ref={observerTarget}
               className="h-4 w-full"
               aria-hidden="true"
             />
 
-            {/* Pagination Controls - Fixed Bottom, Visible on Scroll */}
+            {}
             {totalPages > 1 && (
               <div
                 className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-4 px-4 sm:px-6 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-transform duration-300 ${
@@ -523,10 +509,10 @@ export default function ShopPage() {
                 }`}
               >
                 <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-                  {/* Empty spacer for centering */}
+                  {}
                   <div className="hidden sm:block w-[100px]"></div>
 
-                  {/* Page Numbers */}
+                  {}
                   <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar mx-auto">
                     <button
                       onClick={() =>
@@ -582,7 +568,7 @@ export default function ShopPage() {
                     </button>
                   </div>
 
-                  {/* Filter Button */}
+                  {}
                   <div className="hidden sm:flex w-[100px] justify-end">
                     <button className="flex items-center gap-2 px-4 py-2 bg-[#104f32] text-white rounded-lg font-bold hover:bg-[#0d3f28] transition-colors">
                       <span>Filtrer</span>

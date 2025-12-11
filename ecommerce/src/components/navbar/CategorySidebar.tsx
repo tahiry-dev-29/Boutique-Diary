@@ -5,16 +5,18 @@ import { Menu, X, ChevronRight, Snowflake, Gift } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-// Using distinct emojis to match the visual style of the screenshot "realistic icons"
-// Categories are now fetched dynamically from API
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 export default function CategorySidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Helper to map category names to icons/badges
   const getCategoryInfo = (name: string) => {
     const lower = name.toLowerCase();
     if (lower.includes("noël"))
@@ -49,7 +51,7 @@ export default function CategorySidebar() {
     if (lower.includes("santé") || lower.includes("pharmacie"))
       return { icon: "🧴" };
     if (lower.includes("entretien") || lower.includes("ménage"))
-      return { icon: "🧹" }; // Corrected icon for cleaning
+      return { icon: "🧹" };
     if (lower.includes("maison") || lower.includes("cuisine"))
       return { icon: "🍳" };
     if (
@@ -58,7 +60,7 @@ export default function CategorySidebar() {
       lower.includes("chat")
     )
       return { icon: "🐾" };
-    return { icon: "📦" }; // Default icon
+    return { icon: "📦" };
   };
 
   useEffect(() => {
@@ -102,14 +104,14 @@ export default function CategorySidebar() {
           "hidden lg:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-200 z-50 relative select-none",
           isOpen
             ? "bg-white text-gray-900 border border-gray-900 shadow-sm"
-            : "bg-white text-[#104f32] border border-[#104f32] hover:bg-gray-50"
+            : "bg-white text-[#104f32] border border-[#104f32] hover:bg-gray-50",
         )}
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
         <span>Toutes les catégories</span>
       </button>
 
-      {/* Dropdown Menu - Aligned left and below */}
+      {}
       {isOpen && (
         <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-40 animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="flex flex-col py-3 max-h-[80vh] overflow-y-auto">
@@ -132,7 +134,7 @@ export default function CategorySidebar() {
                       className="flex items-center justify-between px-6 py-3.5 hover:bg-green-50/30 transition-colors group"
                     >
                       <div className="flex items-center gap-4">
-                        {/* Icon */}
+                        {}
                         <span className="text-2xl w-8 text-center leading-none filter drop-shadow-sm transform group-hover:scale-110 transition-transform duration-200">
                           {info.icon}
                         </span>
@@ -142,7 +144,7 @@ export default function CategorySidebar() {
                             {category.name}
                           </span>
 
-                          {/* Optional Badge Icons */}
+                          {}
                           {info.badge && (
                             <info.badge
                               size={14}

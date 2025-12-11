@@ -72,15 +72,12 @@ export default function ProductList({
     }
   };
 
-  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
 
-  // Filter products
   const filteredProducts = filterProducts(products, filters);
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const currentProducts = filteredProducts.slice(
@@ -94,16 +91,16 @@ export default function ProductList({
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      {/* Sidebar Filters */}
+      {}
       <ProductFilters
         filters={filters}
         onFiltersChange={setFilters}
         products={products}
       />
 
-      {/* Main Content */}
+      {}
       <div className="flex-1 space-y-4">
-        {/* Product Table */}
+        {}
         <ProductTable
           products={currentProducts}
           expandedProductId={expandedProductId}
@@ -113,7 +110,7 @@ export default function ProductList({
           onDelete={handleDelete}
         />
 
-        {/* Pagination */}
+        {}
         <ProductPagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -126,7 +123,6 @@ export default function ProductList({
   );
 }
 
-// Re-export components
 export { ProductFilters } from "./ProductFilters";
 export type { ProductFiltersState } from "./ProductFilters";
 export { ProductTable } from "./ProductTable";

@@ -205,7 +205,7 @@ export function ProductImageUploader({
     <div className="space-y-4">
       <Label>Galerie d&apos;images (Max 6)</Label>
 
-      {/* Add Image Controls */}
+      {}
       <div className="flex gap-2">
         <Input
           type="text"
@@ -240,7 +240,7 @@ export function ProductImageUploader({
         </label>
       </div>
 
-      {/* Main Image Display */}
+      {}
       <div className="relative w-full aspect-video bg-muted border-2 border-dashed border-muted-foreground/25 rounded-lg overflow-hidden flex items-center justify-center">
         {currentImage ? (
           <>
@@ -276,7 +276,7 @@ export function ProductImageUploader({
         )}
       </div>
 
-      {/* Thumbnails Row */}
+      {}
       <div className="grid grid-cols-6 gap-2">
         {images.map((img, index) => (
           <div
@@ -301,7 +301,7 @@ export function ProductImageUploader({
           </div>
         ))}
 
-        {/* Empty slots */}
+        {}
         {Array.from({ length: Math.max(0, 6 - images.length) }).map((_, i) => (
           <div
             key={`empty-${i}`}
@@ -312,14 +312,14 @@ export function ProductImageUploader({
         ))}
       </div>
 
-      {/* Image Attributes Settings */}
+      {}
       {currentImageAsProductImage && (
         <div className="bg-muted/50 p-4 rounded-lg border">
           <h4 className="text-sm font-medium mb-3">
             Paramètres de l&apos;image {selectedImageIndex + 1}
           </h4>
 
-          {/* Reference Display */}
+          {}
           <div className="mb-3 p-2 bg-primary/10 rounded-lg border border-primary/20">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">
@@ -337,7 +337,7 @@ export function ProductImageUploader({
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Color */}
+            {}
             <div className="space-y-2">
               <Label className="text-xs">Couleur associée</Label>
               <Select
@@ -380,7 +380,7 @@ export function ProductImageUploader({
               />
             </div>
 
-            {/* Old Price */}
+            {}
             <div className="space-y-2">
               <Label className="text-xs">Ancien prix (Ar)</Label>
               <Input
@@ -400,7 +400,7 @@ export function ProductImageUploader({
               />
             </div>
 
-            {/* Stock */}
+            {}
             <div className="space-y-2">
               <Label className="text-xs">Stock</Label>
               <Input
@@ -419,7 +419,7 @@ export function ProductImageUploader({
               />
             </div>
 
-            {/* Sizes */}
+            {}
             <div className="col-span-2 space-y-2">
               <Label className="text-xs">Tailles associées</Label>
               <div className="flex flex-wrap gap-2">

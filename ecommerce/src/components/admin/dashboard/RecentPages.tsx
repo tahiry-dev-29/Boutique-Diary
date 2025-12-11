@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Eye, MousePointer } from "lucide-react";
-import Image from "next/image";
+import { MousePointer } from "lucide-react";
 
 interface PageStat {
   id: string;
@@ -65,7 +64,7 @@ const RecentPages: React.FC = () => {
                 <td className="py-4 pl-2">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-lg relative overflow-hidden flex-shrink-0">
-                      {/* Placeholder for page thumb */}
+                      {}
                       <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
                         <MousePointer className="w-4 h-4 text-gray-400" />
                       </div>

@@ -1,6 +1,3 @@
-// Products feature exports
-
-// Components
 export { default as ProductForm } from "./components/ProductForm";
 export {
   ProductFormFields,
@@ -19,8 +16,6 @@ export {
 export type { ProductFiltersState } from "./components/ProductList";
 export type { ProductListProps } from "./components/ProductList";
 
-// Hooks
 export { useProducts } from "./hooks/useProducts";
 
-// Types
 export type { Product, ProductImage, ProductVariation } from "@/types/admin";

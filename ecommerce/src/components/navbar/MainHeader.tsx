@@ -2,18 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import { Search, User, ShoppingCart, Heart, Headset, Menu } from "lucide-react";
+import { Search, User, ShoppingCart, Heart, Headset } from "lucide-react";
 import CategorySidebar from "./CategorySidebar";
 
 const MainHeader = () => {
   return (
     <div className="py-4 px-4 md:px-8 border-b border-gray-100 bg-white">
       <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8 relative">
-        {/* Left: Logo & Catalog Button */}
+        {}
         <div className="flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-start">
           <Link href="/" className="flex-shrink-0">
-            {/* Using a placeholder for Greenweez style logo if actual image not available, 
-                 but trying to match text style if no image */}
+            {}
             <div className="flex flex-col leading-none">
               <span className="text-[#104f32] font-bold text-2xl tracking-tighter">
                 GREEN
@@ -28,9 +27,9 @@ const MainHeader = () => {
           <CategorySidebar />
         </div>
 
-        {/* Center: Search Bar & Badges */}
+        {}
         <div className="flex-1 w-full flex flex-col md:flex-row items-center gap-4">
-          {/* Badges - Hidden on small mobile to save space if needed, or kept */}
+          {}
           <div className="flex items-center gap-2 flex-shrink-0 self-start md:self-center">
             <Link
               href="/shop?promo=true"
@@ -46,7 +45,7 @@ const MainHeader = () => {
             </Link>
           </div>
 
-          {/* Search Input */}
+          {}
           <div className="relative w-full">
             <input
               type="text"
@@ -60,7 +59,7 @@ const MainHeader = () => {
           </div>
         </div>
 
-        {/* Right: Actions */}
+        {}
         <div className="flex items-center gap-6 lg:gap-8 flex-shrink-0 w-full lg:w-auto justify-around lg:justify-end">
           <a href="#" className="flex flex-col items-center gap-1 group">
             <div className="p-2 rounded-full group-hover:bg-gray-100 transition-colors text-[#104f32]">

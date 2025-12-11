@@ -17,7 +17,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
 
   return (
     <div className="space-y-4">
-      {/* Price */}
+      {}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="price">
@@ -60,7 +60,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
         )}
       </div>
 
-      {/* Product Type Checkboxes */}
+      {}
       <div className="space-y-3">
         <Label>Type de produit</Label>
         <div className="flex gap-6">

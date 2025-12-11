@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET: Récupérer toutes les bannières actives (ordonnées)
 export async function GET() {
   try {
     const banners = await prisma.banner.findMany({
@@ -17,7 +16,6 @@ export async function GET() {
   }
 }
 
-// POST: Créer une nouvelle bannière
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -39,7 +37,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérifier le nombre de bannières existantes (max 5)
     const count = await prisma.banner.count();
     if (count >= 5) {
       return NextResponse.json(

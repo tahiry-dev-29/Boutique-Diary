@@ -94,7 +94,7 @@ export default function CustomerList({ refreshTrigger }: CustomerListProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      {/* Header with Search */}
+      {}
       <div className="p-6 border-b border-gray-100">
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
           <div>
@@ -118,7 +118,7 @@ export default function CustomerList({ refreshTrigger }: CustomerListProps) {
         </div>
       </div>
 
-      {/* Customer List */}
+      {}
       {filteredCustomers.length === 0 ? (
         <div className="p-12 text-center">
           <User className="h-12 w-12 text-gray-300 mx-auto mb-4" />

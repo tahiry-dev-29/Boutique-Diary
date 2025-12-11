@@ -65,11 +65,10 @@ export default function ProductDetailClient({
   const [selectedImage, setSelectedImage] = useState(
     product.images[0]?.url || "/placeholder.png",
   );
-  // Initialize color from the first image if available, otherwise fallback to first color
+
   const initialColor = product.images[0]?.color || product.colors[0] || null;
   const [selectedColor, setSelectedColor] = useState(initialColor);
 
-  // Initialize size: if first image has specific sizes, pick the first one, otherwise fallback
   const initialSize =
     product.images[0]?.sizes && product.images[0].sizes.length > 0
       ? product.images[0].sizes[0]
@@ -84,24 +83,20 @@ export default function ProductDetailClient({
   const currentImage =
     selectedImageIndex !== -1 ? product.images[selectedImageIndex] : null;
 
-  // Ensure quantity doesn't exceed available stock when image changes
   const currentStock =
     currentImage?.stock !== undefined && currentImage?.stock !== null
       ? currentImage.stock
       : product.stock;
 
-  // Helper to safely update image and ensure quantity respects stock
   const selectImageAndSyncStock = (imgUrl: string) => {
     setSelectedImage(imgUrl);
 
-    // Find the image object to get its stock
     const img = product.images.find((i) => i.url === imgUrl);
     const newStock =
       img?.stock !== undefined && img?.stock !== null
         ? img.stock
         : product.stock;
 
-    // Adjust quantity if current quantity exceeds new stock
     if (quantity > newStock) {
       setQuantity(Math.max(1, newStock > 0 ? newStock : 1));
     }
@@ -131,10 +126,10 @@ export default function ProductDetailClient({
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Left Column: Images */}
-        {/* Left Column: Images */}
+        {}
+        {}
         <div className="flex flex-col-reverse md:flex-row gap-6">
-          {/* Thumbnails - Vertical on Desktop, Horizontal on Mobile */}
+          {}
           {product.images.length > 1 && (
             <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:max-h-[500px] w-full md:w-24 flex-shrink-0 scrollbar-hide py-2 md:py-0">
               {product.images.map((img, idx) => (
@@ -163,7 +158,7 @@ export default function ProductDetailClient({
             </div>
           )}
 
-          {/* Main Image */}
+          {}
           <div className="relative aspect-square flex-1 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
             <Image
               src={getImageUrl(selectedImage)}
@@ -175,7 +170,7 @@ export default function ProductDetailClient({
           </div>
         </div>
 
-        {/* Right Column: Details */}
+        {}
         <div className="space-y-8">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -198,7 +193,7 @@ export default function ProductDetailClient({
                 "No description available for this product."}
             </p>
 
-            {/* Ratings */}
+            {}
             {product.rating && product.rating > 0 && (
               <div className="flex items-center gap-4 mt-4">
                 <div className="flex text-rose-400">
@@ -226,7 +221,7 @@ export default function ProductDetailClient({
 
           <div className="h-px bg-gray-100" />
 
-          {/* Price */}
+          {}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               {currentOldPrice && currentOldPrice > currentPrice && (
@@ -268,7 +263,7 @@ export default function ProductDetailClient({
                       key={color}
                       onClick={() => {
                         setSelectedColor(color);
-                        // Find first image with this color
+
                         const imageWithColor = product.images.find(
                           (img) => img.color === color,
                         );
@@ -292,7 +287,7 @@ export default function ProductDetailClient({
             </div>
           )}
 
-          {/* Size Selector */}
+          {}
           {product.sizes.length > 0 && (
             <div className="space-y-3">
               <span className="text-sm font-medium text-gray-500">
@@ -302,7 +297,7 @@ export default function ProductDetailClient({
               <div className="flex flex-wrap gap-3">
                 {product.sizes.map((size) => {
                   let isAvailable = true;
-                  // If the current image has specific sizes defined, filter by them
+
                   if (
                     currentImage &&
                     currentImage.sizes &&
@@ -332,9 +327,9 @@ export default function ProductDetailClient({
             </div>
           )}
 
-          {/* Quantity and Actions */}
+          {}
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            {/* Quantity */}
+            {}
             <div className="flex items-center border border-gray-200 rounded-lg p-1 w-max">
               <button
                 onClick={() => handleQuantityChange(-1)}
@@ -363,7 +358,7 @@ export default function ProductDetailClient({
             </div>
           </div>
 
-          {/* Buttons */}
+          {}
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-4">
               <button className="py-4 rounded-lg font-bold text-gray-700 border-2 border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-all uppercase tracking-wider text-sm">
