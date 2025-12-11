@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ProductImage, Product } from "@/types/admin";
+import { Category } from "@/types/category";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -16,12 +17,14 @@ import {
 } from "@/components/ui/select";
 import { X, Upload, Plus, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { generateRandomReference } from "@/lib/stringUtils";
 
 interface ProductImageUploaderProps {
   formData: Product;
   setFormData: React.Dispatch<React.SetStateAction<Product>>;
   selectedImageIndex: number;
   setSelectedImageIndex: React.Dispatch<React.SetStateAction<number>>;
+  categories: Category[];
 }
 
 export function ProductImageUploader({
@@ -29,6 +32,7 @@ export function ProductImageUploader({
   setFormData,
   selectedImageIndex,
   setSelectedImageIndex,
+  categories,
 }: ProductImageUploaderProps) {
   const [urlInput, setUrlInput] = useState("");
 
@@ -78,6 +82,9 @@ export function ProductImageUploader({
         url,
         color: null,
         sizes: [],
+        reference: generateRandomReference(),
+        stock: 0, // Default to 0? Or maybe assume some default
+        price: null,
       }));
       setFormData((prev) => ({
         ...prev,
@@ -123,7 +130,14 @@ export function ProductImageUploader({
         ...prev,
         images: [
           ...(prev.images || []),
-          { url: data.path, color: null, sizes: [] },
+          { 
+            url: data.path, 
+            color: null, 
+            sizes: [],
+            reference: generateRandomReference(),
+            stock: 0,
+            price: null
+          },
         ],
       }));
 
@@ -164,31 +178,35 @@ export function ProductImageUploader({
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes" | "price" | "oldPrice" | "stock" | "reference",
-    value: string | string[] | number | null,
+    field: "color" | "sizes" | "price" | "oldPrice" | "stock" | "reference" | "categoryId" | "isNew" | "isPromotion",
+    value: string | string[] | number | boolean | null,
   ) => {
     const images = formData.images || [];
     const newImages = [...images];
     if (newImages[index] && typeof newImages[index] !== "string") {
       let newValue = value;
       if (value === "" || value === null || value === undefined) {
-        newValue = field === "sizes" ? [] : null;
+        if (field === "sizes") newValue = [];
+        else if (field === "isNew" || field === "isPromotion") newValue = false;
+        else newValue = null;
       }
 
       let autoReference = (newImages[index] as ProductImage).reference;
-      if (field === "color" && newValue && typeof newValue === "string") {
-        const productRef = formData.reference || "";
-        const colorAbbrev = newValue.toLowerCase().slice(0, 3);
-        autoReference = `${productRef}-${colorAbbrev}`;
-      } else if (field === "color" && !newValue) {
-        const productRef = formData.reference || "";
-        autoReference = `${productRef}-img${index + 1}`;
+      
+      // Only auto-generate if reference is empty (or on initial creation, which is handled above)
+      // But user wants manual control or random, so we might want to expose a specific 'reference' field update
+      if (field === "reference") {
+         autoReference = newValue as string;
       }
 
+      // If changing color, maybe we DON'T check/change reference automatically anymore if we want it random/fixed?
+      // The user said "chaque images a son propres reference randoms". 
+      // If they change color, we should probably Keep the random reference, unless they explicitly change the reference.
+      
       newImages[index] = {
         ...(newImages[index] as ProductImage),
         [field]: newValue,
-        ...(field === "color" && { reference: autoReference }),
+        reference: field === "reference" ? newValue as string : autoReference
       };
       setFormData({ ...formData, images: newImages });
     }
@@ -205,7 +223,7 @@ export function ProductImageUploader({
     <div className="space-y-4">
       <Label>Galerie d&apos;images (Max 6)</Label>
 
-      {}
+      {/* URL Input & Upload Button */}
       <div className="flex gap-2">
         <Input
           type="text"
@@ -240,7 +258,7 @@ export function ProductImageUploader({
         </label>
       </div>
 
-      {}
+      {/* Main Image Preview */}
       <div className="relative w-full aspect-video bg-muted border-2 border-dashed border-muted-foreground/25 rounded-lg overflow-hidden flex items-center justify-center">
         {currentImage ? (
           <>
@@ -276,7 +294,7 @@ export function ProductImageUploader({
         )}
       </div>
 
-      {}
+      {/* Thumbnails Grid */}
       <div className="grid grid-cols-6 gap-2">
         {images.map((img, index) => (
           <div
@@ -301,7 +319,7 @@ export function ProductImageUploader({
           </div>
         ))}
 
-        {}
+        {/* Empty slots */}
         {Array.from({ length: Math.max(0, 6 - images.length) }).map((_, i) => (
           <div
             key={`empty-${i}`}
@@ -312,45 +330,117 @@ export function ProductImageUploader({
         ))}
       </div>
 
-      {}
+      {/* Image Specific Settings */}
       {currentImageAsProductImage && (
         <div className="bg-muted/50 p-4 rounded-lg border">
           <h4 className="text-sm font-medium mb-3">
             Paramètres de l&apos;image {selectedImageIndex + 1}
           </h4>
 
-          {}
-          <div className="mb-3 p-2 bg-primary/10 rounded-lg border border-primary/20">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">
-                Référence image:
-              </span>
-              <span className="text-sm font-bold text-primary">
-                {currentImageAsProductImage.reference ||
-                  `${formData.reference || ""}-img${selectedImageIndex + 1}`}
-              </span>
+          {/* Reference */}
+          <div className="mb-3 p-3 bg-card rounded-lg border shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Référence Unique (SKU)</span>
+              <Badge variant="outline" className="font-mono">
+                {currentImageAsProductImage.reference}
+              </Badge>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              La référence est générée automatiquement à partir de la couleur
-              sélectionnée
+            
+            <div className="flex gap-2">
+              <Input 
+                value={currentImageAsProductImage.reference || ""}
+                onChange={(e) => handleUpdateImageAttribute(selectedImageIndex, "reference", e.target.value)}
+                placeholder="#REF123"
+                className="font-mono text-sm h-9"
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon" 
+                className="h-9 w-9 shrink-0"
+                onClick={() => handleUpdateImageAttribute(selectedImageIndex, "reference", generateRandomReference())}
+                title="Générer une nouvelle référence aléatoire"
+              >
+                <div className="h-4 w-4 rotate-45 border-2 border-current border-t-transparent border-l-transparent rounded-full" />
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              Chaque variante d&apos;image possède sa propre référence unique (générée aléatoirement ou personnalisable).
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
+            {/* Organization & Status - Per Image */}
+             <div className="space-y-2">
+              <Label className="text-xs">Catégorie</Label>
+               <Select
+                value={currentImageAsProductImage.categoryId?.toString() || "uncategorized"}
+                onValueChange={(value) =>
+                  handleUpdateImageAttribute(selectedImageIndex, "categoryId", value === "uncategorized" ? null : parseInt(value))
+                }
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue placeholder="Non classé" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="uncategorized">Non classé</SelectItem>
+                  {categories?.map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id?.toString() || ""}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs">Statut Nouveauté</Label>
+               <Select
+                value={currentImageAsProductImage.isNew ? "new" : "standard"}
+                onValueChange={(value) => handleUpdateImageAttribute(selectedImageIndex, "isNew", value === "new")}
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="new">Nouveauté</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+             <div className="space-y-2">
+              <Label className="text-xs">Type Promotion</Label>
+               <Select
+                  value={currentImageAsProductImage.isPromotion ? "promo" : "standard"}
+                  onValueChange={(value) => handleUpdateImageAttribute(selectedImageIndex, "isPromotion", value === "promo")}
+                >
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Standard" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="standard">Standard</SelectItem>
+                    <SelectItem value="promo">En Promotion</SelectItem>
+                  </SelectContent>
+                </Select>
+            </div>
             {}
             <div className="space-y-2">
               <Label className="text-xs">Couleur associée</Label>
               <Select
-                value={currentImageAsProductImage.color || ""}
+                value={currentImageAsProductImage.color || "none"}
                 onValueChange={(value) =>
-                  handleUpdateImageAttribute(selectedImageIndex, "color", value)
+                  handleUpdateImageAttribute(selectedImageIndex, "color", value === "none" ? null : value)
                 }
               >
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue placeholder="Aucune" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Aucune</SelectItem>
+                  <SelectItem value="none">Aucune</SelectItem>
                   {formData.colors?.map((color) => (
                     <SelectItem key={color} value={color}>
                       {color}

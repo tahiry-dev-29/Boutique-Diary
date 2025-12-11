@@ -27,14 +27,13 @@ export default function ProductViewModal({
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const selectedImageRaw = product?.images?.[selectedImageIndex];
-  const selectedImageObj =
-    typeof selectedImageRaw === "object" ? selectedImageRaw : null;
-  const selectedImageUrl =
-    typeof selectedImageRaw === "string"
-      ? selectedImageRaw
-      : selectedImageRaw?.url;
+  const selectedImageObj = typeof selectedImageRaw === 'object' ? selectedImageRaw : null;
+  const selectedImageUrl = typeof selectedImageRaw === 'string' ? selectedImageRaw : selectedImageRaw?.url;
 
-  const currentImage = selectedImageObj;
+  const currentImage =
+    selectedImageObj !== null
+      ? selectedImageObj
+      : null;
 
   const currentPrice =
     currentImage && currentImage.price
@@ -47,6 +46,13 @@ export default function ProductViewModal({
     currentImage.oldPrice !== null
       ? currentImage.oldPrice
       : product?.oldPrice;
+
+  const _currentStock =
+    currentImage &&
+    currentImage.stock !== undefined &&
+    currentImage.stock !== null
+      ? currentImage.stock
+      : product?.stock || 0;
 
   if (!product) return null;
 
@@ -86,9 +92,9 @@ export default function ProductViewModal({
         <div
           className={`grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 ${isFullscreen ? "flex-1 overflow-y-auto" : ""}`}
         >
-          {/* Gallery Section */}
+          {}
           <div className="space-y-3">
-            {/* Main Image */}
+            {}
             <div
               className={`relative w-full ${isFullscreen ? "aspect-video" : "aspect-square"} bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden flex items-center justify-center`}
             >
@@ -99,7 +105,7 @@ export default function ProductViewModal({
                     alt={product.name}
                     className="w-full h-full object-contain"
                   />
-                  {/* Image specific badges */}
+                  {}
                   {(selectedImageObj?.color ||
                     (selectedImageObj?.sizes &&
                       selectedImageObj.sizes.length > 0)) && (
@@ -118,7 +124,9 @@ export default function ProductViewModal({
                             variant="secondary"
                             className="bg-white/90 shadow-sm"
                           >
-                            {selectedImageObj.sizes.join(", ")}
+                            {selectedImageObj.sizes.join(
+                              ", ",
+                            )}
                           </Badge>
                         )}
                     </div>
@@ -131,7 +139,7 @@ export default function ProductViewModal({
               )}
             </div>
 
-            {/* Thumbnails */}
+            {}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {product.images.map((img, index) => (
@@ -257,7 +265,9 @@ export default function ProductViewModal({
                     <div className="flex flex-wrap gap-2">
                       {product.sizes.map((size) => {
                         const isAvailable =
-                          selectedImageObj?.sizes?.includes(size) || false;
+                            selectedImageObj?.sizes?.includes(
+                              size,
+                            ) || false;
                         return (
                           <Badge
                             key={size}

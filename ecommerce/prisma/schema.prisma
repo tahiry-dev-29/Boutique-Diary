@@ -107,6 +107,10 @@ model ProductImage {
   price     Float?
   oldPrice  Float?
   stock     Int?
+  isNew     Boolean  @default(false)
+  isPromotion Boolean @default(false)
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
   productId Int
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
@@ -117,6 +121,7 @@ model Category {
   description String?   @db.Text
   slug        String    @unique @db.VarChar(255)
   products    Product[]
+  images      ProductImage[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

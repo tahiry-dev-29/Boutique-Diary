@@ -79,6 +79,9 @@ export async function PUT(
       price?: number | null;
       oldPrice?: number | null;
       stock?: number | null;
+      isNew?: boolean;
+      isPromotion?: boolean;
+      categoryId?: number | null;
     }
 
     if (price !== undefined && parseFloat(price) < 0) {
@@ -148,20 +151,24 @@ export async function PUT(
                     typeof img === "string"
                       ? null
                       : img.price !== undefined && img.price !== null
-                        ? img.price
+                        ? parseFloat(String(img.price))
                         : null,
                   oldPrice:
                     typeof img === "string"
                       ? null
                       : img.oldPrice !== undefined && img.oldPrice !== null
-                        ? img.oldPrice
+                        ? parseFloat(String(img.oldPrice))
                         : null,
                   stock:
                     typeof img === "string"
                       ? null
-                      : img.stock !== undefined && img.stock !== null
+                      : img.stock !== undefined &&
+                          img.stock !== null
                         ? img.stock
                         : null,
+                  isNew: typeof img === "string" ? false : img.isNew ?? false,
+                  isPromotion: typeof img === "string" ? false : img.isPromotion ?? false,
+                  categoryId: typeof img === "string" ? null : img.categoryId ?? null,
                 };
               },
             ),

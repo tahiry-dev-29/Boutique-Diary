@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
+import { Header } from "@/components/admin/Header";
 
 export default function AdminLayout({
   children,
@@ -16,7 +17,10 @@ export default function AdminLayout({
         isExpanded={isSidebarExpanded}
         setIsExpanded={setIsSidebarExpanded}
       />
-      <main className="flex-1 overflow-x-hidden p-6 md:p-8">{children}</main>
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 overflow-x-hidden p-6 md:p-8">{children}</main>
+      </div>
     </div>
   );
 }
