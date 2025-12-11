@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -21,7 +20,6 @@ interface CategoryListProps {
   refreshTrigger: number;
 }
 
-// Generate a consistent color based on category name
 const getInitialColor = (name: string) => {
   const colors = [
     "bg-indigo-600",
@@ -37,7 +35,6 @@ const getInitialColor = (name: string) => {
   return colors[index];
 };
 
-// Get initials from category name
 const getInitials = (name: string) => {
   return name
     .split(" ")
@@ -54,7 +51,7 @@ export default function CategoryList({
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedCategoryId, setExpandedCategoryId] = useState<number | null>(
-    null
+    null,
   );
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -130,13 +127,11 @@ export default function CategoryList({
     }
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(categories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentCategories = categories.slice(startIndex, endIndex);
 
-  // Generate page numbers to display
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     if (totalPages <= 7) {
@@ -181,7 +176,7 @@ export default function CategoryList({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-      {/* Header */}
+      {}
       <div className="px-6 py-5 flex items-center justify-between border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">
           Liste des Catégories
@@ -198,7 +193,7 @@ export default function CategoryList({
         </div>
       </div>
 
-      {/* Table */}
+      {}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -219,7 +214,7 @@ export default function CategoryList({
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {/* Expand Icon */}
+                      {}
                       <div className="text-gray-400">
                         {expandedCategoryId === category.id ? (
                           <ChevronDown className="w-4 h-4" />
@@ -227,13 +222,13 @@ export default function CategoryList({
                           <ChevronRight className="w-4 h-4" />
                         )}
                       </div>
-                      {/* Initial Badge */}
+                      {}
                       <div
                         className={`w-10 h-10 rounded-lg ${getInitialColor(category.name)} flex items-center justify-center text-white font-semibold text-sm`}
                       >
                         {getInitials(category.name)}
                       </div>
-                      {/* Name */}
+                      {}
                       <span className="font-medium text-gray-900">
                         {category.name}
                       </span>
@@ -287,7 +282,7 @@ export default function CategoryList({
                   </td>
                 </tr>
 
-                {/* Expanded Products Row */}
+                {}
                 {expandedCategoryId === category.id && (
                   <tr>
                     <td colSpan={5} className="px-0 py-0">
@@ -357,11 +352,11 @@ export default function CategoryList({
         </table>
       </div>
 
-      {/* Pagination */}
+      {}
       {totalPages > 1 && (
         <div className="px-6 py-4 flex items-center justify-center border-t border-gray-100">
           <div className="flex items-center gap-1">
-            {/* Previous Button */}
+            {}
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
@@ -370,7 +365,7 @@ export default function CategoryList({
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* Page Numbers */}
+            {}
             {getPageNumbers().map((page, index) => (
               <button
                 key={index}
@@ -388,7 +383,7 @@ export default function CategoryList({
               </button>
             ))}
 
-            {/* Next Button */}
+            {}
             <button
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))

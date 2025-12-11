@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET - Fetch a specific customer by ID
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -41,7 +40,6 @@ export async function GET(
   }
 }
 
-// DELETE - Delete a customer by ID
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },

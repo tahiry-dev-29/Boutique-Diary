@@ -41,7 +41,6 @@ export function ProductFilters({
   onFiltersChange,
   products,
 }: ProductFiltersProps) {
-  // Get unique categories for filter dropdown
   const categories = Array.from(
     new Set(
       products
@@ -50,7 +49,6 @@ export function ProductFilters({
     ),
   ).sort();
 
-  // Get unique brands
   const brands = Array.from(
     new Set(
       products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
@@ -91,7 +89,7 @@ export function ProductFilters({
         </h3>
 
         <div className="space-y-4">
-          {/* Search */}
+          {}
           <div className="space-y-2">
             <Label>Recherche</Label>
             <div className="relative">
@@ -106,7 +104,7 @@ export function ProductFilters({
             </div>
           </div>
 
-          {/* Category */}
+          {}
           <div className="space-y-2">
             <Label>Catégorie</Label>
             <Select
@@ -127,7 +125,7 @@ export function ProductFilters({
             </Select>
           </div>
 
-          {/* Price */}
+          {}
           <div className="space-y-2">
             <Label>Prix (Ar)</Label>
             <div className="grid grid-cols-2 gap-2">
@@ -146,7 +144,7 @@ export function ProductFilters({
             </div>
           </div>
 
-          {/* Brand */}
+          {}
           <div className="space-y-2">
             <Label>Marque</Label>
             <Select
@@ -167,7 +165,7 @@ export function ProductFilters({
             </Select>
           </div>
 
-          {/* Color */}
+          {}
           <div className="space-y-2">
             <Label>Couleur</Label>
             <Select
@@ -188,7 +186,7 @@ export function ProductFilters({
             </Select>
           </div>
 
-          {/* Size */}
+          {}
           <div className="space-y-2">
             <Label>Taille</Label>
             <Select
@@ -209,7 +207,7 @@ export function ProductFilters({
             </Select>
           </div>
 
-          {/* Availability */}
+          {}
           <div className="space-y-2">
             <Label>Disponibilité</Label>
             <Select
@@ -262,18 +260,15 @@ export function filterProducts(
   filters: ProductFiltersState,
 ): Product[] {
   return products.filter((product) => {
-    // Search term (Name or Reference)
     const searchLower = filters.searchTerm.toLowerCase();
     const matchesSearch =
       product.name.toLowerCase().includes(searchLower) ||
       product.reference.toLowerCase().includes(searchLower);
 
-    // Category
     const matchesCategory =
       filters.selectedCategory === "all" ||
       product.category?.name === filters.selectedCategory;
 
-    // Price range
     const price = product.price;
     const matchesMinPrice =
       filters.minPrice === "" || price >= parseFloat(filters.minPrice);
@@ -291,7 +286,6 @@ export function filterProducts(
       filters.selectedSize === "all" ||
       product.sizes?.includes(filters.selectedSize);
 
-    // Calculate total stock from images
     const totalStock =
       product.images?.reduce((sum, img) => {
         const imgStock = typeof img === "string" ? 0 : img.stock || 0;

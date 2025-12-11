@@ -13,7 +13,7 @@ interface DashboardHeaderProps {
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-      {/* Search Bar */}
+      {}
       <div className="relative w-full sm:w-96">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
@@ -22,7 +22,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         />
       </div>
 
-      {/* Right Actions */}
+      {}
       <div className="flex items-center space-x-4 self-end sm:self-auto">
         <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
           <Grid className="h-5 w-5" />

@@ -1,21 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET - Récupérer les paramètres du site
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const key = searchParams.get("key");
 
     if (key) {
-      // Récupérer une clé spécifique
       const setting = await prisma.siteSettings.findUnique({
         where: { key },
       });
       return NextResponse.json(setting);
     }
 
-    // Récupérer tous les paramètres
     const settings = await prisma.siteSettings.findMany();
     return NextResponse.json(settings);
   } catch (error) {
@@ -27,7 +24,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Créer ou mettre à jour un paramètre
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -40,7 +36,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upsert - créer ou mettre à jour
     const setting = await prisma.siteSettings.upsert({
       where: { key },
       update: { value },
@@ -57,7 +52,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE - Supprimer un paramètre
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

@@ -22,7 +22,6 @@ export function ProductPagination({
 
   if (totalItems === 0) return null;
 
-  // Create page numbers to display
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -31,14 +30,12 @@ export function ProductPagination({
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
-    // Always show first page
     pages.push(1);
 
     if (currentPage > 3) {
       pages.push("...");
     }
 
-    // Show pages around current page
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
 
@@ -52,7 +49,6 @@ export function ProductPagination({
       pages.push("...");
     }
 
-    // Always show last page
     if (!pages.includes(totalPages)) {
       pages.push(totalPages);
     }

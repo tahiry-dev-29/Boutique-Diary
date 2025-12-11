@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// Fonction utilitaire pour générer un slug à partir d'un nom
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -54,7 +53,6 @@ export async function GET(
   }
 }
 
-// PUT - Mettre à jour une catégorie
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -74,7 +72,6 @@ export async function PUT(
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
-    // Générer le nouveau slug
     const slug = generateSlug(name);
 
     const category = await prisma.category.update({
@@ -117,7 +114,6 @@ export async function PUT(
   }
 }
 
-// DELETE - Supprimer une catégorie
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -130,7 +126,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    // Vérifier s'il y a des produits associés
     const category = await prisma.category.findUnique({
       where: { id },
       include: {

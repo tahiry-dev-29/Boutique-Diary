@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
-// For development, use a simple string. In production, load this from environment variables.
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "jwt-secret-ecommerce",
 );
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Missing fields" }, { status: 400 });
     }
 
-    // Find user by email or username
     const user = await prisma.user.findFirst({
       where: {
         OR: [{ email: identifier }, { username: identifier }],
@@ -45,7 +43,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create JWT
     const token = await new SignJWT({
       userId: user.id,
       username: user.username,
@@ -53,10 +50,9 @@ export async function POST(request: Request) {
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
-      .setExpirationTime(rememberMe ? "7d" : "24h") // 7 days if rememberMe, 24 hours otherwise
+      .setExpirationTime(rememberMe ? "7d" : "24h")
       .sign(JWT_SECRET);
 
-    // Set cookie
     const response = NextResponse.json(
       { message: "Login successful" },
       { status: 200 },
@@ -64,7 +60,7 @@ export async function POST(request: Request) {
     response.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24, // 7 days or 24 hours
+      maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
       path: "/",
     });
 

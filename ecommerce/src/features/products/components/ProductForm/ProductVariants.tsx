@@ -56,7 +56,7 @@ export function ProductVariants({
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {/* Colors */}
+      {}
       <div className="space-y-2">
         <Label>Couleurs</Label>
         <Select onValueChange={(value) => addColor(value)}>
@@ -93,7 +93,7 @@ export function ProductVariants({
         </div>
       </div>
 
-      {/* Sizes */}
+      {}
       <div className="space-y-2">
         <Label>Tailles</Label>
         <Select onValueChange={(value) => addSize(value)}>

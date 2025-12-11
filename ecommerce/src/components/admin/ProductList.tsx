@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   AlertDialog,
@@ -37,15 +38,25 @@ import {
   Trash2,
   Edit,
   Search,
-  X,
   Eye,
   Filter,
   ChevronDown,
   ChevronRight,
+  MoreHorizontal,
+  Settings2,
+  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AVAILABLE_COLORS, AVAILABLE_SIZES } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -63,8 +74,8 @@ export default function ProductList({
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
     null,
   );
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [minPrice, setMinPrice] = useState("");
@@ -74,14 +85,13 @@ export default function ProductList({
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [selectedColor, setSelectedColor] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
-  const [availability, setAvailability] = useState("all"); // all, in-stock, out-of-stock
+  const [availability, setAvailability] = useState("all");
   const [productType, setProductType] = useState({
     isNew: false,
     isPromotion: false,
     isBestSeller: false,
   });
 
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 
@@ -121,7 +131,6 @@ export default function ProductList({
     }
   };
 
-  // Get unique categories for filter dropdown
   const categories = Array.from(
     new Set(
       products
@@ -130,26 +139,21 @@ export default function ProductList({
     ),
   ).sort();
 
-  // Get unique brands
   const brands = Array.from(
     new Set(
       products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
     ),
   ).sort();
 
-  // Filter products
   const filteredProducts = products.filter((product) => {
-    // Search term (Name or Reference)
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch =
       product.name.toLowerCase().includes(searchLower) ||
       product.reference.toLowerCase().includes(searchLower);
 
-    // Category
     const matchesCategory =
       selectedCategory === "all" || product.category?.name === selectedCategory;
 
-    // Price range
     const price = product.price;
     const matchesMinPrice = minPrice === "" || price >= parseFloat(minPrice);
     const matchesMaxPrice = maxPrice === "" || price <= parseFloat(maxPrice);
@@ -162,7 +166,6 @@ export default function ProductList({
     const matchesSize =
       selectedSize === "all" || product.sizes?.includes(selectedSize);
 
-    // Calculate total stock from images
     const totalStock =
       product.images?.reduce((sum, img) => {
         const imgStock = typeof img === "string" ? 0 : img.stock || 0;
@@ -192,13 +195,31 @@ export default function ProductList({
     );
   });
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // Reset to page 1 when filters change
+  const toggleSelectAll = () => {
+    if (selectedRows.length === currentProducts.length) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(
+        currentProducts
+          .map((p) => p.id)
+          .filter((id): id is number => id !== undefined),
+      );
+    }
+  };
+
+  const toggleSelectRow = (id: number) => {
+    if (selectedRows.includes(id)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+    } else {
+      setSelectedRows([...selectedRows, id]);
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
   }, [
@@ -214,516 +235,474 @@ export default function ProductList({
   ]);
 
   if (loading) {
-    return <div className="text-center py-8">Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      {/* Sidebar Filters */}
-      <div className="w-full md:w-64 shrink-0 space-y-6">
-        <div className="bg-white p-4 rounded-lg border shadow-sm space-y-6">
-          <h3 className="font-semibold flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtres
-          </h3>
+    <div className="flex flex-col gap-6">
+      {}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-2 flex-1 min-w-[300px]">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Rechercher un produit..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors rounded-lg"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-gray-200 text-gray-700 gap-2 rounded-lg"
+                >
+                  <Filter className="h-4 w-4" />
+                  Filtres
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 p-2">
+                {}
+                <DropdownMenuLabel>Filtres rapides</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="p-2">
+                  <Label className="text-xs text-gray-500 mb-1.5 block">
+                    Catégorie
+                  </Label>
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={setSelectedCategory}
+                  >
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Toutes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes</SelectItem>
+                      {categories.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="p-2 space-y-4">
+                  <div>
+                    <Label className="text-xs text-gray-500 mb-1.5 block">
+                      Disponibilité
+                    </Label>
+                    <Select
+                      value={availability}
+                      onValueChange={setAvailability}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Tous" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tous</SelectItem>
+                        <SelectItem value="in-stock">En stock</SelectItem>
+                        <SelectItem value="out-of-stock">Rupture</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-          <div className="space-y-4">
-            {/* Search */}
-            <div className="space-y-2">
-              <Label>Recherche</Label>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                  type="text"
-                  placeholder="Nom ou référence..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
+                  <div>
+                    <Label className="text-xs text-gray-500 mb-1.5 block">
+                      Marque
+                    </Label>
+                    <Select
+                      value={selectedBrand}
+                      onValueChange={setSelectedBrand}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Toutes" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes</SelectItem>
+                        {brands.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            {/* Category */}
-            <div className="space-y-2">
-              <Label>Catégorie</Label>
-              <Select
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Toutes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les catégories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                  <div>
+                    <Label className="text-xs text-gray-500 mb-1.5 block">
+                      Couleur
+                    </Label>
+                    <Select
+                      value={selectedColor}
+                      onValueChange={setSelectedColor}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Toutes" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes</SelectItem>
+                        {AVAILABLE_COLORS.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            {/* Price */}
-            <div className="space-y-2">
-              <Label>Prix (Ar)</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                />
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Brand */}
-            <div className="space-y-2">
-              <Label>Marque</Label>
-              <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Toutes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les marques</SelectItem>
-                  {brands.map((brand) => (
-                    <SelectItem key={brand} value={brand}>
-                      {brand}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Color */}
-            <div className="space-y-2">
-              <Label>Couleur</Label>
-              <Select value={selectedColor} onValueChange={setSelectedColor}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Toutes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les couleurs</SelectItem>
-                  {AVAILABLE_COLORS.map((color) => (
-                    <SelectItem key={color} value={color}>
-                      {color}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Size */}
-            <div className="space-y-2">
-              <Label>Taille</Label>
-              <Select value={selectedSize} onValueChange={setSelectedSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Toutes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les tailles</SelectItem>
-                  {AVAILABLE_SIZES.map((size) => (
-                    <SelectItem key={size} value={size}>
-                      {size}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Availability */}
-            <div className="space-y-2">
-              <Label>Disponibilité</Label>
-              <Select value={availability} onValueChange={setAvailability}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les stocks</SelectItem>
-                  <SelectItem value="in-stock">En stock</SelectItem>
-                  <SelectItem value="out-of-stock">Rupture de stock</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                  <div>
+                    <Label className="text-xs text-gray-500 mb-1.5 block">
+                      Taille
+                    </Label>
+                    <Select
+                      value={selectedSize}
+                      onValueChange={setSelectedSize}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Toutes" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes</SelectItem>
+                        {AVAILABLE_SIZES.map((s) => (
+                          <SelectItem key={s} value={s}>
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               variant="outline"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-                setMinPrice("");
-                setMaxPrice("");
-                setSelectedBrand("all");
-                setSelectedColor("all");
-                setSelectedSize("all");
-                setAvailability("all");
-                setProductType({
-                  isNew: false,
-                  isPromotion: false,
-                  isBestSeller: false,
-                });
-              }}
-              className="w-full text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="border-gray-200 text-gray-700 gap-2 rounded-lg"
             >
-              <X className="h-4 w-4 mr-2" />
-              Réinitialiser
+              <Settings2 className="h-4 w-4" />
+              Colonnes
             </Button>
           </div>
         </div>
+
+        <div className="flex items-center gap-2">
+          <Button className="bg-black text-white hover:bg-gray-800 rounded-lg gap-2">
+            <Plus className="h-4 w-4" />
+            Ajouter
+          </Button>
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 space-y-4">
-        {/* Product Table */}
-        <div className="rounded-md border bg-white overflow-x-auto">
+      {}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-10"></TableHead>
-                <TableHead>Image</TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Référence</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead>Prix</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+            <TableHeader className="bg-gray-50/50">
+              <TableRow className="border-b border-gray-100 hover:bg-transparent">
+                <TableHead className="w-12 text-center">
+                  <Checkbox
+                    checked={
+                      selectedRows.length === currentProducts.length &&
+                      currentProducts.length > 0
+                    }
+                    onCheckedChange={toggleSelectAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
+                <TableHead className="w-12"></TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Produit
+                </TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Catégorie
+                </TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Status
+                </TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Prix
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.length === 0 ? (
+              {currentProducts.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="h-24 text-center text-gray-500"
-                  >
-                    Aucun produit trouvé
+                  <TableCell colSpan={7} className="h-32 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <Search className="h-8 w-8 mb-2 opacity-20" />
+                      <p>Aucun produit trouvé</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                currentProducts.map((product) => (
-                  <React.Fragment key={product.id}>
-                    <TableRow
-                      className="cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() =>
-                        setExpandedProductId(
-                          expandedProductId === product.id
-                            ? null
-                            : (product.id ?? null),
-                        )
-                      }
-                    >
-                      <TableCell>
-                        <div className="text-gray-400">
-                          {expandedProductId === product.id ? (
-                            <ChevronDown className="w-4 h-4" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4" />
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {product.images && product.images[0] ? (
-                          <div className="relative">
-                            <img
-                              src={
-                                typeof product.images[0] === "string"
-                                  ? product.images[0]
-                                  : product.images[0].url
-                              }
-                              alt={product.name}
-                              className="h-10 w-10 object-cover rounded-md"
-                            />
-                            {product.images.length > 1 && (
-                              <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                                {product.images.length}
-                              </span>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
-                            <span className="text-gray-400 text-[10px]">
-                              No img
-                            </span>
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        <div>{product.name}</div>
-                        {product.description && (
-                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
-                            {product.description}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>{product.reference}</TableCell>
-                      <TableCell>
-                        {product.category ? (
-                          <Badge variant="secondary">
-                            {product.category.name}
-                          </Badge>
-                        ) : (
-                          <span className="text-gray-400 italic text-sm">
-                            Non classé
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>{formatPrice(product.price)}</TableCell>
-                      <TableCell>
-                        {(() => {
-                          const totalStock =
-                            product.images?.reduce((sum, img) => {
-                              const imgStock =
-                                typeof img === "string" ? 0 : img.stock || 0;
-                              return sum + imgStock;
-                            }, 0) || 0;
-                          return (
-                            <Badge
-                              variant={
-                                totalStock > 0 ? "outline" : "destructive"
-                              }
-                              className={
-                                totalStock > 0
-                                  ? "bg-green-50 text-green-700 border-green-200"
-                                  : ""
-                              }
-                            >
-                              {totalStock}
-                            </Badge>
-                          );
-                        })()}
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onView(product);
-                          }}
-                          title="Voir les détails"
-                        >
-                          <Eye className="h-4 w-4 text-blue-500" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(product);
-                          }}
-                          title="Modifier"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Êtes-vous absolument sûr ?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action ne peut pas être annulée. Cela
-                                supprimera définitivement le produit &quot;
-                                {product.name}&quot; de la base de données.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() =>
-                                  product.id && handleDelete(product.id)
-                                }
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </TableCell>
-                    </TableRow>
+                currentProducts.map((product) => {
+                  const totalStock =
+                    product.images?.reduce((sum, img) => {
+                      const imgStock =
+                        typeof img === "string" ? 0 : img.stock || 0;
+                      return sum + imgStock;
+                    }, 0) || 0;
+                  const isSelected = selectedRows.includes(
+                    product.id as number,
+                  );
+                  const isExpanded = expandedProductId === product.id;
 
-                    {/* Expanded Images Row */}
-                    {expandedProductId === product.id &&
-                      product.images &&
-                      product.images.length > 0 && (
-                        <TableRow>
-                          <TableCell colSpan={8} className="p-0">
-                            <div className="bg-gradient-to-r from-gray-50 to-white border-t border-b border-gray-100 p-4">
-                              <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-indigo-600"></span>
-                                Images du produit ({product.images.length})
-                              </h4>
-                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                                {product.images.map((img, index) => {
-                                  const imageData =
-                                    typeof img === "string"
-                                      ? { url: img }
-                                      : img;
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-                                    >
-                                      <div className="aspect-square relative">
-                                        <img
-                                          src={imageData.url}
-                                          alt={`${product.name} - Image ${index + 1}`}
-                                          className="w-full h-full object-cover"
-                                        />
-                                        {index === 0 && (
-                                          <span className="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full">
-                                            Principal
-                                          </span>
-                                        )}
-                                      </div>
-                                      <div className="p-2 space-y-1">
-                                        {imageData.reference && (
-                                          <div className="flex items-center gap-1">
-                                            <span className="text-xs text-gray-500">
-                                              Réf:
-                                            </span>
-                                            <span className="text-xs font-bold text-indigo-600">
-                                              {imageData.reference}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {imageData.color && (
-                                          <div className="flex items-center gap-1">
-                                            <span className="text-xs text-gray-500">
-                                              Couleur:
-                                            </span>
-                                            <span className="text-xs font-medium text-gray-700">
-                                              {imageData.color}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {imageData.sizes &&
-                                          imageData.sizes.length > 0 && (
-                                            <div className="flex items-center gap-1 flex-wrap">
-                                              <span className="text-xs text-gray-500">
-                                                Tailles:
-                                              </span>
-                                              {imageData.sizes.map(
-                                                (size: string, i: number) => (
-                                                  <span
-                                                    key={i}
-                                                    className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded"
-                                                  >
-                                                    {size}
-                                                  </span>
-                                                ),
-                                              )}
-                                            </div>
-                                          )}
-                                        {imageData.price !== undefined &&
-                                          imageData.price !== null && (
-                                            <div className="flex items-center gap-1">
-                                              <span className="text-xs text-gray-500">
-                                                Prix:
-                                              </span>
-                                              <span className="text-xs font-bold text-indigo-600">
-                                                {formatPrice(imageData.price)}
-                                              </span>
-                                            </div>
-                                          )}
-                                        {imageData.stock !== undefined &&
-                                          imageData.stock !== null && (
-                                            <div className="flex items-center gap-1">
-                                              <span className="text-xs text-gray-500">
-                                                Stock:
-                                              </span>
-                                              <span
-                                                className={`text-xs font-medium ${imageData.stock > 0 ? "text-green-600" : "text-red-600"}`}
-                                              >
-                                                {imageData.stock}
-                                              </span>
-                                            </div>
-                                          )}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
+                  return (
+                    <React.Fragment key={product.id}>
+                      <TableRow
+                        className={`group transition-all border-b border-gray-50 hover:bg-gray-50/50 ${isSelected ? "bg-blue-50/30" : ""}`}
+                        onClick={() => toggleSelectRow(product.id as number)}
+                      >
+                        <TableCell
+                          className="text-center"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() =>
+                              toggleSelectRow(product.id as number)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell
+                          className="p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedProductId(
+                              isExpanded ? null : (product.id as number),
+                            );
+                          }}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-400 hover:text-gray-600"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
+                              <img
+                                src={
+                                  product.images && product.images[0]
+                                    ? typeof product.images[0] === "string"
+                                      ? product.images[0]
+                                      : product.images[0].url
+                                    : "/placeholder.png"
+                                }
+                                alt={product.name}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {product.name}
                               </div>
+                              <div className="text-xs text-gray-500">
+                                {product.reference}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {product.category ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                              {product.category.name}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-xs italic">
+                              Sans catégorie
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={`gap-1.5 font-normal ${
+                              totalStock > 0
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-red-50 text-red-700 border-red-200"
+                            }`}
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${totalStock > 0 ? "bg-emerald-600" : "bg-red-600"}`}
+                            />
+                            {totalStock > 0 ? "En stock" : "Rupture"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium text-gray-900">
+                          {formatPrice(product.price)}
+                        </TableCell>
+                        <TableCell
+                          className="text-right"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+                              >
+                                <span className="sr-only">Menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => onView(product)}>
+                                <Eye className="mr-2 h-4 w-4" /> Voir détails
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onEdit(product)}>
+                                <Edit className="mr-2 h-4 w-4" /> Modifier
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 focus:text-red-600 focus:bg-red-50">
+                                    <Trash2 className="mr-2 h-4 w-4" />{" "}
+                                    Supprimer
+                                  </div>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Confirmer la suppression
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Êtes-vous sûr de vouloir supprimer &quot;
+                                      {product.name}&quot; ? Cette action est
+                                      irréversible.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                      Annuler
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() =>
+                                        product.id && handleDelete(product.id)
+                                      }
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      Supprimer
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+
+                      {}
+                      {isExpanded && (
+                        <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                          <TableCell colSpan={7} className="p-4 shadow-inner">
+                            <div className="grid grid-cols-6 gap-4">
+                              {product.images?.map((img, idx) => {
+                                const imgData =
+                                  typeof img === "string" ? { url: img } : img;
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="bg-white p-2 rounded-lg border border-gray-200 text-xs shadow-sm"
+                                  >
+                                    <div className="aspect-square bg-gray-100 rounded-md mb-2 overflow-hidden">
+                                      <img
+                                        src={imgData.url}
+                                        className="w-full h-full object-cover"
+                                        alt=""
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      {imgData.reference && (
+                                        <div className="text-gray-500">
+                                          Ref:{" "}
+                                          <span className="text-gray-900 font-medium">
+                                            {imgData.reference}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {imgData.color && (
+                                        <div className="flex items-center gap-1">
+                                          <span
+                                            className="w-3 h-3 rounded-full border border-gray-200"
+                                            style={{
+                                              backgroundColor:
+                                                imgData.color === "Noir"
+                                                  ? "black"
+                                                  : imgData.color === "Blanc"
+                                                    ? "white"
+                                                    : "gray",
+                                            }}
+                                          ></span>{" "}
+                                          {imgData.color}
+                                        </div>
+                                      )}
+                                      {imgData.stock !== undefined && (
+                                        <div>Stock: {imgData.stock}</div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </TableCell>
                         </TableRow>
                       )}
-                  </React.Fragment>
-                ))
+                    </React.Fragment>
+                  );
+                })
               )}
             </TableBody>
           </Table>
         </div>
 
-        {/* Pagination */}
-        {filteredProducts.length > 0 && (
-          <div className="flex items-center justify-between px-4 py-3 bg-white border-t rounded-b-md">
-            <div className="text-sm text-gray-700">
-              Affichage de <span className="font-medium">{startIndex + 1}</span>{" "}
-              à{" "}
-              <span className="font-medium">
-                {Math.min(endIndex, filteredProducts.length)}
-              </span>{" "}
-              sur <span className="font-medium">{filteredProducts.length}</span>{" "}
-              produits
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Précédent
-              </Button>
-
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-8 h-8 p-0 ${
-                        currentPage === page
-                          ? "bg-black text-white hover:bg-gray-800"
-                          : ""
-                      }`}
-                    >
-                      {page}
-                    </Button>
-                  ),
-                )}
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Suivant
-              </Button>
-            </div>
+        {}
+        <div className="border-t border-gray-200 p-4 flex items-center justify-between bg-gray-50/30">
+          <div className="text-sm text-gray-500">
+            Affichage de{" "}
+            <span className="font-medium text-gray-900">
+              {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)}
+            </span>{" "}
+            sur{" "}
+            <span className="font-medium text-gray-900">
+              {filteredProducts.length}
+            </span>{" "}
+            produits
           </div>
-        )}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="h-8 text-xs"
+            >
+              Précédent
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="h-8 text-xs"
+            >
+              Suivant
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

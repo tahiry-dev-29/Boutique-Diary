@@ -6,9 +6,9 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ElementType;
-  percentage?: number; // e.g. 10 for +10%, -5 for -5%
-  color?: string; // Hex color or tailwind class for icon background
-  subtitle?: string; // "Ventas totales", etc.
+  percentage?: number;
+  color?: string;
+  subtitle?: string;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({

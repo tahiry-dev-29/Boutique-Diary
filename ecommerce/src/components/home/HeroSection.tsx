@@ -72,12 +72,12 @@ export default function HeroSection() {
 
   return (
     <section className="hero-wrapper">
-      {/* Background decorative circles */}
+      {}
       <div className="hero-bg-circle hero-bg-circle-1"></div>
       <div className="hero-bg-circle hero-bg-circle-2"></div>
 
       <div className="hero-main">
-        {/* Left Content */}
+        {}
         <div className="hero-left">
           <h1 className="hero-heading">
             <span className="hero-heading-gradient">{currentBanner.title}</span>
@@ -99,12 +99,12 @@ export default function HeroSection() {
           )}
         </div>
 
-        {/* Right Image Section */}
+        {}
         <div className="hero-right">
-          {/* Arch outline */}
+          {}
           <div className="hero-arch-border"></div>
 
-          {/* Arch fill with image */}
+          {}
           <div className="hero-arch-container">
             <Image
               src={currentBanner.imageUrl}
@@ -116,13 +116,13 @@ export default function HeroSection() {
             />
           </div>
 
-          {/* Decorative elements */}
+          {}
           <div className="hero-dot hero-dot-top"></div>
           <div className="hero-blob hero-blob-top-right"></div>
           <div className="hero-dot hero-dot-bottom-right"></div>
           <div className="hero-blob hero-blob-bottom-left"></div>
 
-          {/* Navigation */}
+          {}
           {banners.length > 1 && (
             <div className="hero-nav">
               <button

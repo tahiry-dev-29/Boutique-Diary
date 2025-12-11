@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
-    // Validate URL format
     let imageUrl: URL;
     try {
       imageUrl = new URL(url);
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Download the image
     const response = await fetch(imageUrl.toString(), {
       method: "GET",
       headers: {
@@ -37,7 +35,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check content type
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.startsWith("image/")) {
       return NextResponse.json(
@@ -46,7 +43,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check file size (max 5MB)
     const contentLength = response.headers.get("content-length");
     if (contentLength && parseInt(contentLength) > 5 * 1024 * 1024) {
       return NextResponse.json(
@@ -55,7 +51,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get file extension from content type
     const extension = contentType.split("/")[1].split(";")[0];
     const validExtensions = ["jpeg", "jpg", "png", "gif", "webp"];
     if (!validExtensions.includes(extension)) {
@@ -65,20 +60,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
     const filename = `image-${timestamp}-${randomStr}.${extension === "jpeg" ? "jpg" : extension}`;
 
-    // Convert response to buffer
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Save to public/urlProducts
     const publicPath = join(process.cwd(), "public", "urlProducts", filename);
     await writeFile(publicPath, buffer);
 
-    // Return the public URL path
     const publicUrl = `/urlProducts/${filename}`;
 
     return NextResponse.json({ path: publicUrl }, { status: 200 });

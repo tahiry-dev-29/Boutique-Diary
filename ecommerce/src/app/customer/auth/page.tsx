@@ -11,7 +11,6 @@ export default function CustomerAuthPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Form states
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -62,7 +61,6 @@ export default function CustomerAuthPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Les mots de passe ne correspondent pas");
       return;
@@ -114,9 +112,9 @@ export default function CustomerAuthPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Card Container */}
+        {}
         <div className="bg-white rounded-3xl shadow-2xl shadow-emerald-100/50 overflow-hidden">
-          {/* Header */}
+          {}
           <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-10 text-center">
             <h1 className="text-3xl font-bold text-white mb-2">
               {isLogin ? "Bienvenue !" : "Créer un compte"}
@@ -128,13 +126,13 @@ export default function CustomerAuthPage() {
             </p>
           </div>
 
-          {/* Form Container */}
+          {}
           <div className="px-8 py-8">
             <form
               onSubmit={isLogin ? handleLogin : handleRegister}
               className="space-y-5"
             >
-              {/* Username - Only for Register */}
+              {}
               {!isLogin && (
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -150,7 +148,7 @@ export default function CustomerAuthPage() {
                 </div>
               )}
 
-              {/* Email */}
+              {}
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
@@ -164,7 +162,7 @@ export default function CustomerAuthPage() {
                 />
               </div>
 
-              {/* Password */}
+              {}
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
@@ -189,7 +187,7 @@ export default function CustomerAuthPage() {
                 </button>
               </div>
 
-              {/* Confirm Password - Only for Register */}
+              {}
               {!isLogin && (
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -205,7 +203,7 @@ export default function CustomerAuthPage() {
                 </div>
               )}
 
-              {/* Remember Me - Only for Login */}
+              {}
               {isLogin && (
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -229,7 +227,7 @@ export default function CustomerAuthPage() {
                 </div>
               )}
 
-              {/* Submit Button */}
+              {}
               <button
                 type="submit"
                 disabled={loading}
@@ -246,7 +244,7 @@ export default function CustomerAuthPage() {
               </button>
             </form>
 
-            {/* Toggle Login/Register */}
+            {}
             <div className="mt-8 text-center">
               <p className="text-gray-600">
                 {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
@@ -271,7 +269,7 @@ export default function CustomerAuthPage() {
           </div>
         </div>
 
-        {/* Footer */}
+        {}
         <p className="text-center text-gray-500 text-sm mt-6">
           En continuant, vous acceptez nos{" "}
           <a href="#" className="text-emerald-600 hover:underline">

@@ -34,7 +34,6 @@ export default function ShopProductModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // State initialization assumes component is re-mounted when product changes (via key prop in parent)
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(
     product?.sizes && product.sizes.length > 0 ? product.sizes[0] : null,
@@ -44,13 +43,11 @@ export default function ShopProductModal({
 
   const currentImage = product.images?.[selectedImageIndex];
 
-  // Helper to determine current price (image specific or product default)
   const currentPrice =
     currentImage && typeof currentImage === "object" && currentImage.price
       ? currentImage.price
       : product.price;
 
-  // Helper to determine current old price (image specific or product default)
   const currentOldPrice =
     currentImage &&
     typeof currentImage === "object" &&
@@ -59,7 +56,6 @@ export default function ShopProductModal({
       ? currentImage.oldPrice
       : product.oldPrice;
 
-  // Helper to determine current stock (image specific or product default)
   const currentStock =
     currentImage &&
     typeof currentImage === "object" &&
@@ -83,7 +79,7 @@ export default function ShopProductModal({
       selectedSize,
       price: currentPrice,
     });
-    // TODO: Implement actual cart logic
+
     onClose();
   };
 
@@ -95,7 +91,7 @@ export default function ShopProductModal({
       selectedSize,
       price: currentPrice,
     });
-    // TODO: Implement checkout redirect
+
     onClose();
   };
 
@@ -135,9 +131,9 @@ export default function ShopProductModal({
         <div
           className={`grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 ${isFullscreen ? "flex-1 overflow-y-auto" : ""}`}
         >
-          {/* Left Column: Image Gallery */}
+          {}
           <div className="space-y-4">
-            {/* Main Image */}
+            {}
             <div
               className={`relative w-full ${isFullscreen ? "aspect-video" : "aspect-square"} bg-white border border-gray-100 rounded-2xl overflow-hidden flex items-center justify-center shadow-sm`}
             >
@@ -153,7 +149,7 @@ export default function ShopProductModal({
                     className="w-full h-full object-contain p-4 transition-transform duration-300 hover:scale-105"
                   />
 
-                  {/* Image Badges */}
+                  {}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {product.isNew && (
                       <Badge className="bg-blue-500 text-white">Nouveau</Badge>
@@ -176,7 +172,7 @@ export default function ShopProductModal({
                       )}
                   </div>
 
-                  {/* Image Specific Details Overlay */}
+                  {}
                   {typeof currentImage === "object" &&
                     (currentImage.color || currentImage.sizes) && (
                       <div className="absolute bottom-4 left-4 flex gap-2">
@@ -198,7 +194,7 @@ export default function ShopProductModal({
               )}
             </div>
 
-            {/* Thumbnails */}
+            {}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-5 gap-3">
                 {product.images.map((img, index) => (
@@ -222,15 +218,15 @@ export default function ShopProductModal({
             )}
           </div>
 
-          {/* Right Column: Details & Actions */}
+          {}
           <div className="flex flex-col h-full space-y-6">
-            {/* Header Info */}
+            {}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-500 font-medium tracking-wide uppercase">
                   {product.reference}
                 </span>
-                {product.rating !== undefined && product.rating > 0 && (
+                {product.rating != null && product.rating > 0 && (
                   <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-100">
                     <span className="text-yellow-500 text-sm">★</span>
                     <span className="text-sm font-bold text-gray-800">
@@ -246,7 +242,7 @@ export default function ShopProductModal({
                 {product.name}
               </h3>
 
-              {/* Categories/Brand chips */}
+              {}
               <div className="flex flex-wrap gap-2 mt-3">
                 {product.brand && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -261,7 +257,7 @@ export default function ShopProductModal({
               </div>
             </div>
 
-            {/* Price section */}
+            {}
             <div className="py-4 border-y border-gray-100">
               <div className="flex items-end gap-3">
                 <span className="text-4xl font-bold text-gray-900">
@@ -301,9 +297,9 @@ export default function ShopProductModal({
               </div>
             </div>
 
-            {/* Selectors */}
+            {}
             <div className="space-y-6">
-              {/* Color Info (Visual only since driven by loop usually) */}
+              {}
               {product.colors && product.colors.length > 0 && (
                 <div>
                   <span className="block text-sm font-medium text-gray-700 mb-2">
@@ -320,7 +316,6 @@ export default function ShopProductModal({
                             ? "bg-gray-900 text-white border-gray-900"
                             : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
                         }`}
-                        // Optional: Add logic to switch to image of this color
                       >
                         {color}
                       </button>
@@ -329,7 +324,7 @@ export default function ShopProductModal({
                 </div>
               )}
 
-              {/* Size Selector */}
+              {}
               {product.sizes && product.sizes.length > 0 && (
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -359,9 +354,9 @@ export default function ShopProductModal({
               )}
             </div>
 
-            {/* Actions */}
+            {}
             <div className="mt-auto space-y-4 pt-6">
-              {/* Quantity */}
+              {}
               <div className="flex items-center gap-4">
                 <div className="w-32 flex items-center justify-between border border-gray-200 rounded-lg p-1">
                   <button
@@ -390,7 +385,7 @@ export default function ShopProductModal({
                 </span>
               </div>
 
-              {/* Buttons */}
+              {}
               <div className="grid grid-cols-2 gap-4">
                 <Button
                   variant="outline"
@@ -412,7 +407,7 @@ export default function ShopProductModal({
               </div>
             </div>
 
-            {/* Description accordion or simple block */}
+            {}
             <div className="pt-6 border-t border-gray-100">
               <h4 className="font-medium text-gray-900 mb-2">Description</h4>
               <p className="text-sm text-gray-600 leading-relaxed">

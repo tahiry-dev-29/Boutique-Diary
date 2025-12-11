@@ -1,9 +1,16 @@
 import { Category } from "./category";
 
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  role: "ADMIN" | "SUPER_ADMIN"; // Adjust roles as needed based on your auth system
+}
+
 export interface ProductImage {
   id?: number;
   url: string;
-  reference?: string | null; // Référence unique pour cette image (ex: 456RB-vrt)
+  reference?: string | null;
   color?: string | null;
   sizes?: string[];
   price?: number | null;
@@ -17,7 +24,7 @@ export interface ProductVariation {
   productId?: number;
   color?: string | null;
   size?: string | null;
-  price: number | string; // Decimal can be string or number
+  price: number | string;
   stock: number;
   isActive?: boolean;
   createdAt?: string;

@@ -13,7 +13,7 @@ interface ImageUploaderProps {
   onChange: (url: string | null) => void;
   onRemove?: () => void;
   accept?: string;
-  maxSize?: number; // in MB
+  maxSize?: number;
   className?: string;
   showUrlInput?: boolean;
   aspectRatio?: "square" | "video" | "auto";

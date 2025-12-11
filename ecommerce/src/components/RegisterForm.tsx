@@ -36,8 +36,7 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // alert(data.message);
-        router.push("/login"); // Redirect to login page after successful registration
+        router.push("/login");
       } else {
         setError(data.message || "Échec de l'inscription");
       }
@@ -139,7 +138,7 @@ export default function RegisterForm() {
         </button>
       </form>
 
-      {/* Divider */}
+      {}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200"></div>
@@ -149,7 +148,7 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      {/* Login Link Button */}
+      {}
       <Link
         href="/login"
         className="block w-full py-3 px-4 border-2 border-[#1e293b] rounded-full text-center text-base font-bold text-[#1e293b] hover:bg-gray-50 transition-colors"

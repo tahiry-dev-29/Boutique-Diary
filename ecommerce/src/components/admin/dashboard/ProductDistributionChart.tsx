@@ -16,15 +16,14 @@ interface ProductDistributionProps {
 }
 
 const defaultData = [
-  { name: "Electronics", value: 400, color: "#be185d" }, // Pink
-  { name: "Clothing", value: 300, color: "#16a34a" }, // Green
-  { name: "Home", value: 300, color: "#1e1b4b" }, // Dark Blue
+  { name: "Electronics", value: 400, color: "#be185d" },
+  { name: "Clothing", value: 300, color: "#16a34a" },
+  { name: "Home", value: 300, color: "#1e1b4b" },
 ];
 
 const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
   data = defaultData,
 }) => {
-  // Calculate total for the center text
   const total = data.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
@@ -55,7 +54,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
               ))}
             </Pie>
             <Tooltip
-              formatter={(value, name, props) => [value, name]}
+              formatter={(value, name) => [value, name]}
               contentStyle={{
                 borderRadius: "8px",
                 border: "none",
@@ -70,7 +69,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
             />
           </PieChart>
         </ResponsiveContainer>
-        {/* Center Text */}
+        {}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mb-4">
           <span className="text-3xl font-bold text-gray-800 block">
             {total}

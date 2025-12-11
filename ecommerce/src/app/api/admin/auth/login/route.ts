@@ -6,7 +6,6 @@ import {
   getCookieOptions,
   UserPayload,
   ADMIN_SESSION_COOKIE,
-  isAdmin,
 } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -28,7 +27,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -40,7 +38,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user has admin role
     console.log("User role from DB:", user.role, "Type:", typeof user.role);
     console.log(
       "Is admin check:",
@@ -54,7 +51,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user is active
     if (!user.isActive) {
       return NextResponse.json(
         { error: "Ce compte est désactivé" },
@@ -62,7 +58,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -72,7 +67,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create JWT payload
     const payload: UserPayload = {
       userId: user.id,
       username: user.username,
@@ -80,10 +74,8 @@ export async function POST(request: Request) {
       role: user.role as "CUSTOMER" | "EMPLOYEE" | "ADMIN" | "SUPERADMIN",
     };
 
-    // Create token
     const token = await createToken(payload, rememberMe);
 
-    // Set cookie and return response
     const cookieOptions = getCookieOptions(ADMIN_SESSION_COOKIE, rememberMe);
     const response = NextResponse.json(
       {

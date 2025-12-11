@@ -5,15 +5,12 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "jwt-secret-ecommerce",
 );
 
-// Role hierarchy (lower index = less permissions)
 const ROLE_HIERARCHY = ["CUSTOMER", "EMPLOYEE", "ADMIN", "SUPERADMIN"] as const;
 export type Role = (typeof ROLE_HIERARCHY)[number];
 
-// Cookie names
 export const SESSION_COOKIE = "session";
 export const ADMIN_SESSION_COOKIE = "admin_session";
 
-// JWT Payload interface
 export interface UserPayload {
   userId: number;
   username: string;
@@ -21,7 +18,6 @@ export interface UserPayload {
   role: Role;
 }
 
-// Verify user token from cookie
 export async function verifyToken(
   cookieName: string = SESSION_COOKIE,
 ): Promise<UserPayload | null> {
@@ -40,7 +36,6 @@ export async function verifyToken(
   }
 }
 
-// Verify admin token (convenience function)
 export async function verifyAdminToken(): Promise<UserPayload | null> {
   const user = await verifyToken(ADMIN_SESSION_COOKIE);
   if (!user || !hasMinRole(user.role, "ADMIN")) {
@@ -49,7 +44,6 @@ export async function verifyAdminToken(): Promise<UserPayload | null> {
   return user;
 }
 
-// Create JWT token
 export async function createToken(
   payload: UserPayload,
   rememberMe = false,
@@ -61,7 +55,6 @@ export async function createToken(
     .sign(JWT_SECRET);
 }
 
-// Get cookie options
 export function getCookieOptions(cookieName: string, rememberMe = false) {
   return {
     name: cookieName,
@@ -72,29 +65,24 @@ export function getCookieOptions(cookieName: string, rememberMe = false) {
   };
 }
 
-// Check if user has minimum required role
 export function hasMinRole(userRole: Role, requiredRole: Role): boolean {
   const userIndex = ROLE_HIERARCHY.indexOf(userRole);
   const requiredIndex = ROLE_HIERARCHY.indexOf(requiredRole);
   return userIndex >= requiredIndex;
 }
 
-// Check if user has exact role
 export function hasRole(userRole: Role, role: Role): boolean {
   return userRole === role;
 }
 
-// Check if user is admin (ADMIN or SUPERADMIN)
 export function isAdmin(role: Role): boolean {
   return hasMinRole(role, "ADMIN");
 }
 
-// Check if user is superadmin
 export function isSuperAdmin(role: Role): boolean {
   return role === "SUPERADMIN";
 }
 
-// Legacy exports for backward compatibility
 export const AdminPayload = {} as UserPayload;
 export type AdminPayload = UserPayload;
 export const createAdminToken = createToken;

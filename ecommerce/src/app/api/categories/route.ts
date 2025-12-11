@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// Fonction utilitaire pour générer un slug à partir d'un nom
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -40,18 +39,15 @@ export async function GET() {
   }
 }
 
-// POST - Créer une nouvelle catégorie
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, description } = body;
 
-    // Validation
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
-    // Générer le slug
     const slug = generateSlug(name);
 
     const category = await prisma.category.create({
@@ -66,7 +62,6 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error("Error creating category:", error);
 
-    // Check for unique constraint violation
     if (
       typeof error === "object" &&
       error !== null &&

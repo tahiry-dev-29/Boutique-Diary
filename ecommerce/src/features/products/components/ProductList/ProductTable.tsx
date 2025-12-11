@@ -222,7 +222,7 @@ export function ProductTable({
                 </TableCell>
               </TableRow>
 
-              {/* Expanded Images Row */}
+              {}
               {expandedProductId === product.id &&
                 product.images &&
                 product.images.length > 0 && (

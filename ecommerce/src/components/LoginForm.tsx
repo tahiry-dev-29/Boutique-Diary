@@ -28,7 +28,6 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // alert(data.message); // Removed alert for smoother UX
         router.push("/");
       } else {
         setError(data.message || "Échec de la connexion");
@@ -103,7 +102,7 @@ export default function LoginForm() {
         </button>
       </form>
 
-      {/* Divider */}
+      {}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200"></div>
@@ -113,7 +112,7 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* Register Link Button */}
+      {}
       <Link
         href="/register"
         className="block w-full py-3 px-4 border-2 border-[#1e293b] rounded-full text-center text-base font-bold text-[#1e293b] hover:bg-gray-50 transition-colors"

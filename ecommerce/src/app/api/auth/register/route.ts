@@ -15,7 +15,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Missing fields" }, { status: 400 });
     }
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -27,7 +26,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if username already exists
     const existingUsername = await prisma.user.findUnique({
       where: { username },
     });

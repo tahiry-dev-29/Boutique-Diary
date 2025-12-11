@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import ElectricButton from "@/components/ui/ElectricButton";
 import { Calendar } from "lucide-react";
 
 interface RevenueChartProps {

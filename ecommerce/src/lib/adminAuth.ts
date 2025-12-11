@@ -13,7 +13,6 @@ export interface AdminPayload {
   role: string;
 }
 
-// Verify admin token from cookie
 export async function verifyAdminToken(): Promise<AdminPayload | null> {
   try {
     const cookieStore = await cookies();
@@ -30,7 +29,6 @@ export async function verifyAdminToken(): Promise<AdminPayload | null> {
   }
 }
 
-// Create admin JWT token
 export async function createAdminToken(
   payload: AdminPayload,
   rememberMe = false,
@@ -42,7 +40,6 @@ export async function createAdminToken(
     .sign(JWT_SECRET);
 }
 
-// Get cookie options
 export function getAdminCookieOptions(rememberMe = false) {
   return {
     name: ADMIN_COOKIE_NAME,

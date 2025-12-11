@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérifier le type de fichier
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         { error: "Le fichier doit être une image" },
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer un nom de fichier unique
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -30,18 +28,14 @@ export async function POST(request: NextRequest) {
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const fileName = `${timestamp}-${originalName}`;
 
-    // Chemin vers le dossier uploads dans public
     const uploadDir = path.join(process.cwd(), "public", "uploads");
 
-    // Créer le dossier s'il n'existe pas
     await mkdir(uploadDir, { recursive: true });
 
     const filePath = path.join(uploadDir, fileName);
 
-    // Écrire le fichier
     await writeFile(filePath, buffer);
 
-    // Retourner l'URL relative
     const url = `/uploads/${fileName}`;
 
     return NextResponse.json({ url, fileName });
