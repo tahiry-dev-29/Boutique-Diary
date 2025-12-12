@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 interface Employee {
   id: number;
@@ -101,16 +102,10 @@ export default function EmployeesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Gestion des employés
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {employees.length} employé(s) au total
-          </p>
-        </div>
+      <PageHeader
+        title="Gestion des employés"
+        description={`${employees.length} employé(s) au total`}
+      >
         <Link
           href="/admin/employees/new"
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
@@ -118,7 +113,7 @@ export default function EmployeesPage() {
           <UserPlus size={18} />
           Ajouter un employé
         </Link>
-      </div>
+      </PageHeader>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">

@@ -50,7 +50,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
     };
 
     fetchUser();
-  }, [pathname, router]);
+  }, [pathname]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

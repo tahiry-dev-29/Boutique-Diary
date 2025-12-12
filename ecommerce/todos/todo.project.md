@@ -31,15 +31,6 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 - [x] Endpoint: `auth/customer/register` (avec assignation de groupe par défaut).
 - [x] Endpoint: `auth/customer/login`.
 
-### 📂 Catalog Structure (Categories & Features)
-
-- [] Modèle Prisma `Category` (Arborescence `parentId`).
-- [] Modèle Prisma `AttributeGroup` et `AttributeValue` (ex: Taille -> L, XL).
-- [] Service CRUD `CategoryService` (avec gestion de l'arbre parent/enfant).
-- [] Service CRUD `FeatureService`.
-- [] Service CRUD `AttributeService`.
-- [] Endpoints Admin pour gérer les catégories et attributs.
-
 ### 📦 Products Core (Le gros morceau)
 
 - [] Modèle Prisma `Product` (Champs de base + `ProductLang` pour i18n).
