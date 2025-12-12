@@ -2,11 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import {
-  createToken,
-  getCookieOptions,
-  UserPayload,
-  ADMIN_SESSION_COOKIE,
-} from "@/lib/auth";
+  createAdminToken,
+  getAdminCookieOptions,
+  AdminPayload,
+} from "@/lib/adminAuth";
 
 export async function POST(request: Request) {
   try {
@@ -52,22 +51,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Map admin role to UserPayload role type
-    const roleMap: Record<string, "ADMIN" | "SUPERADMIN"> = {
-      admin: "ADMIN",
-      superadmin: "SUPERADMIN",
-    };
-
-    const payload: UserPayload = {
-      userId: admin.id,
+    const payload: AdminPayload = {
+      adminId: admin.id,
       username: admin.name,
       email: admin.email,
-      role: roleMap[admin.role] || "ADMIN",
+      role: admin.role,
     };
 
-    const token = await createToken(payload, rememberMe);
+    const token = await createAdminToken(payload, rememberMe);
 
-    const cookieOptions = getCookieOptions(ADMIN_SESSION_COOKIE, rememberMe);
+    const cookieOptions = getAdminCookieOptions(rememberMe);
     const response = NextResponse.json(
       {
         message: "Connexion réussie",
@@ -97,4 +90,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
