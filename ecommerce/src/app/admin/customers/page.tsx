@@ -12,6 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 interface Customer {
   id: number;
@@ -77,17 +78,10 @@ export default function CustomerPage() {
 
   return (
     <div className="flex h-full flex-1 flex-col space-y-6 p-8">
-      {/* Header */}
-      <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Clients
-          </h2>
-          <p className="text-muted-foreground">
-            {customers.length} client(s) enregistré(s)
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Clients"
+        description={`${customers.length} client(s) enregistré(s)`}
+      />
 
       {/* Search */}
       <div className="relative max-w-md">
