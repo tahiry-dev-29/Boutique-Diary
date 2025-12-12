@@ -15,6 +15,8 @@ import {
   Percent,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/admin/PageHeader";
+import Link from "next/link";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -30,22 +32,15 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Produits
-          </h2>
-          <p className="text-muted-foreground">Gestion des produits.</p>
-        </div>
-        <Button
-          onClick={() => router.push("/admin/products/new")}
-          className="bg-black text-white hover:bg-gray-800 rounded-lg gap-2 shadow-sm transition-transform active:scale-95"
+      <PageHeader title="Produits" description="Gestion du catalogue produit">
+        <Link
+          href="/admin/products/new"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
         >
-          <Plus className="h-4 w-4" />
+          <Plus size={18} />
           Nouveau produit
-        </Button>
-      </div>
+        </Link>
+      </PageHeader>
 
       <ProductList
         onEdit={handleEdit}

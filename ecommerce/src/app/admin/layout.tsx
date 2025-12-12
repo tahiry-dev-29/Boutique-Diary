@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import { Header } from "@/components/admin/Header";
+import { Breadcrumbs } from "@/components/admin/Breadcrumbs";
 import { usePathname } from "next/navigation";
 
 export default function AdminLayout({
@@ -30,7 +31,10 @@ export default function AdminLayout({
       />
       <div className="flex-1 flex flex-col">
         <Header onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 overflow-x-hidden p-6 md:p-8">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-6 md:p-8">
+          <Breadcrumbs />
+          {children}
+        </main>
       </div>
     </div>
   );
