@@ -26,15 +26,13 @@ interface AdminDashboardProps {
 
 const AdminDashboard = ({ user }: AdminDashboardProps) => {
   return (
-    <div className="p-6 min-h-screen font-sans">
-      <DashboardHeader user={user} />
-
+    <div className="min-h-screen font-sans">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-          Bienvenido {user.username} <span className="text-2xl">👋</span>
+          Bienvenue {user.username} <span className="text-2xl">👋</span>
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Martes 02 de febrero de 2025
+          Tableau de bord administrateur
         </p>
       </div>
 
