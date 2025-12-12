@@ -23,15 +23,13 @@ export default async function CustomerPage() {
   const customers = await getCustomers();
 
   return (
-    <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="flex h-full flex-1 flex-col space-y-8 p-8">
+      <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Welcome back!
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            Clients
           </h2>
-          <p className="text-muted-foreground dark:text-gray-400">
-            Here&apos;s a list of your customers.
-          </p>
+          <p className="text-muted-foreground">Gestion des clients.</p>
         </div>
       </div>
       <ClientDataTable data={customers} columns={columns} />

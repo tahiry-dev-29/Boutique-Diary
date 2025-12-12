@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { UserNav } from "./UserNav";
 import { AdminPayload } from "@/lib/adminAuth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PanelLeft, Search, Bell, Sun, Moon, Settings } from "lucide-react";
@@ -27,14 +27,25 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
   const pathname = usePathname();
   const { colorMode, setColorMode } = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
+    // Don't do auth check on login page
+    if (pathname === "/admin/login") {
+      setLoading(false);
+      return;
+    }
+
     const fetchUser = async () => {
       try {
         const response = await fetch("/api/admin/auth/me");
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
+        } else if (response.status === 401) {
+          // Redirect to login if unauthorized
+          router.push("/admin/login");
+          return;
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -44,7 +55,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
     };
 
     fetchUser();
-  }, []);
+  }, [pathname]);
 
   // Keyboard shortcut for search (Cmd+K / Ctrl+K)
   useEffect(() => {
@@ -92,7 +103,9 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               id="admin-search"
               placeholder="Search..."
               className={`pl-9 pr-16 h-9 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg transition-all ${
-                searchFocused ? "ring-2 ring-gray-200 dark:ring-gray-600 bg-white dark:bg-gray-700" : ""
+                searchFocused
+                  ? "ring-2 ring-gray-200 dark:ring-gray-600 bg-white dark:bg-gray-700"
+                  : ""
               }`}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
