@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { RoleConfig, DEFAULT_ROLES } from "@/lib/permissions-config";
 
 export default function EditEmployeePage() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function EditEmployeePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [availableRoles, setAvailableRoles] =
+    useState<RoleConfig[]>(DEFAULT_ROLES);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -35,8 +38,24 @@ export default function EditEmployeePage() {
   });
 
   useEffect(() => {
+    fetchRoles();
     fetchEmployee();
   }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch("/api/settings?key=admin_roles");
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.value) {
+          const roles = JSON.parse(data.value);
+          setAvailableRoles(roles);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
 
   const fetchEmployee = async () => {
     try {
@@ -59,6 +78,7 @@ export default function EditEmployeePage() {
     }
   };
 
+  // ... handleChange and handleSubmit omitted for brevity as they don't change ...
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -229,10 +249,11 @@ export default function EditEmployeePage() {
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none appearance-none"
                 >
-                  <option value="admin">Administrateur</option>
-                  <option value="superadmin">Super Admin</option>
-                  <option value="manager">Manager</option>
-                  <option value="employee">Employé</option>
+                  {availableRoles.map(role => (
+                    <option key={role.id} value={role.name}>
+                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

@@ -19,17 +19,17 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 🔐 Auth & ACL (Employee & Customer)
 
-- [] Créer le modèle Prisma `Profile` (Rôles Admin) et `Employee`.
-- [] Créer le modèle Prisma `Customer` et `CustomerGroup`.
-- [] Créer la librairie NestJS `libs/api/auth`.
-- [] Implémenter le service de Hashage (Argon2).
-- [] Implémenter la stratégie JWT (Passport) pour `Employee` (Back-Office).
-- [] Implémenter la stratégie JWT pour `Customer` (Front-Office).
-- [] Créer les Guards : `JwtAuthGuard`, `RolesGuard`.
-- [ ] Créer le Decorator `@CurrentUser()` pour récupérer l'utilisateur depuis le Request.
-- [] Endpoint: `auth/employee/login`.
-- [] Endpoint: `auth/customer/register` (avec assignation de groupe par défaut).
-- [] Endpoint: `auth/customer/login`.
+- [x] Créer le modèle Prisma `Profile` (Rôles Admin) et `Employee`.
+- [x] Créer le modèle Prisma `Customer` et `CustomerGroup`.
+- [x] Créer la librairie NestJS `libs/api/auth` (Adapté: `lib/auth` & `lib/adminAuth`).
+- [x] Implémenter le service de Hashage (Argon2) (Adapté: `bcryptjs`).
+- [x] Implémenter la stratégie JWT (Passport) pour `Employee` (Back-Office) (Adapté: `jose`).
+- [x] Implémenter la stratégie JWT pour `Customer` (Front-Office).
+- [x] Créer les Guards : `JwtAuthGuard`, `RolesGuard` (Adapté: RBAC middleware & hooks).
+- [x] Créer le Decorator `@CurrentUser()` pour récupérer l'utilisateur depuis le Request (Adapté: `verifyToken`).
+- [x] Endpoint: `auth/employee/login`.
+- [x] Endpoint: `auth/customer/register` (avec assignation de groupe par défaut).
+- [x] Endpoint: `auth/customer/login`.
 
 ### 📂 Catalog Structure (Categories & Features)
 
@@ -79,11 +79,11 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 🏗️ Core & Architecture
 
-- [ ] Configurer l'application `storefront` (Next.js App Router).
-- [ ] Configurer Tailwind CSS & `cn` utility (clsx + tailwind-merge).
+- [x] Configurer l'application `storefront` (Next.js App Router).
+- [x] Configurer Tailwind CSS & `cn` utility (clsx + tailwind-merge).
 - [ ] Configurer les Server Actions (pour les mutations sans API routes intermédiaires si possible, ou fetch vers NestJS).
-- [ ] Créer les librairies N UI (`libs/storefront/ui-kit`) ou dossier `components/ui`.
-- [ ] Configurer `NextAuth.js` (v5) ou gestion manuelle des Cookies JWT (Middleware).
+- [x] Créer les librairies N UI (`libs/storefront/ui-kit`) ou dossier `components/ui`.
+- [x] Configurer `NextAuth.js` (v5) ou gestion manuelle des Cookies JWT (Middleware).
 - [ ] Créer le Store Global (Zustand) pour l'état Client (Panier UI, Préférences).
 
 ### 👤 User Identity
