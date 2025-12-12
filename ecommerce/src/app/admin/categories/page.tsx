@@ -20,7 +20,7 @@ export default function CategoriesPage() {
   };
 
   const handleSuccess = () => {
-    setRefreshTrigger((prev) => prev + 1);
+    setRefreshTrigger(prev => prev + 1);
     setShowForm(false);
     setSelectedCategory(null);
   };
@@ -28,7 +28,9 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Catégories</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Catégories
+        </h1>
         {!showForm && (
           <Button
             onClick={() => setShowForm(true)}
@@ -41,7 +43,7 @@ export default function CategoriesPage() {
       </div>
 
       {showForm ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <CategoryForm
             category={selectedCategory}
             onSuccess={handleSuccess}

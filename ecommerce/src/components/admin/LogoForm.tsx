@@ -44,7 +44,7 @@ export default function LogoForm() {
     }
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = event => {
       setPreviewUrl(event.target?.result as string);
     };
     reader.readAsDataURL(file);
@@ -133,7 +133,7 @@ export default function LogoForm() {
 
   if (fetching) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="h-32 bg-gray-200 rounded"></div>
@@ -143,7 +143,7 @@ export default function LogoForm() {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6 space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
           Logo du site

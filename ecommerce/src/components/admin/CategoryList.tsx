@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Category } from "@/types/category";
 import { Product } from "@/types/admin";
 import { toast } from "sonner";
@@ -12,8 +12,17 @@ import {
   Trash2,
   Filter,
   Calendar,
+  Search,
+  X,
 } from "lucide-react";
 import { formatPrice } from "@/lib/formatPrice";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface CategoryListProps {
   onEdit: (category: Category) => void;
@@ -38,7 +47,7 @@ const getInitialColor = (name: string) => {
 const getInitials = (name: string) => {
   return name
     .split(" ")
-    .map((word) => word[0])
+    .map(word => word[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -56,9 +65,60 @@ export default function CategoryList({
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
+  // Filter state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [minProducts, setMinProducts] = useState("");
+  const [maxProducts, setMaxProducts] = useState("");
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+
+  // Filter categories
+  const filteredCategories = useMemo(() => {
+    return categories.filter(category => {
+      // Search filter
+      const matchesSearch =
+        searchTerm === "" ||
+        category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (category.description
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ??
+          false);
+
+      // Date filter (assuming createdAt exists)
+      const createdAt = category.createdAt
+        ? new Date(category.createdAt)
+        : null;
+      const matchesDateFrom =
+        !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+      const matchesDateTo =
+        !dateTo || (createdAt && createdAt <= new Date(dateTo + "T23:59:59"));
+
+      // Product count filter
+      const productCount = category._count?.products || 0;
+      const matchesMinProducts =
+        !minProducts || productCount >= parseInt(minProducts);
+      const matchesMaxProducts =
+        !maxProducts || productCount <= parseInt(maxProducts);
+
+      return (
+        matchesSearch &&
+        matchesDateFrom &&
+        matchesDateTo &&
+        matchesMinProducts &&
+        matchesMaxProducts
+      );
+    });
+  }, [categories, searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
 
   useEffect(() => {
     fetchCategories();
@@ -116,7 +176,7 @@ export default function CategoryList({
       });
 
       if (response.ok) {
-        setCategories(categories.filter((c) => c.id !== id));
+        setCategories(categories.filter(c => c.id !== id));
         toast.success("Catégorie supprimée avec succès");
       } else {
         toast.error("Erreur lors de la suppression");
@@ -127,10 +187,10 @@ export default function CategoryList({
     }
   };
 
-  const totalPages = Math.ceil(categories.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCategories = categories.slice(startIndex, endIndex);
+  const currentCategories = filteredCategories.slice(startIndex, endIndex);
 
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
@@ -158,7 +218,7 @@ export default function CategoryList({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-8">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-8">
         <div className="text-center py-8 text-gray-500">Chargement...</div>
       </div>
     );
@@ -166,7 +226,7 @@ export default function CategoryList({
 
   if (categories.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-8">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-8">
         <div className="text-center py-12">
           <p className="text-gray-500">Aucune catégorie trouvée</p>
         </div>
@@ -175,21 +235,159 @@ export default function CategoryList({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-      {}
-      <div className="px-6 py-5 flex items-center justify-between border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">
-          Liste des Catégories
-        </h2>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
-            <Calendar className="w-4 h-4" />
-            Choisir Date
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-colors">
-            <Filter className="w-4 h-4" />
-            Filtrer
-          </button>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden">
+      {/* Header with Search and Filters */}
+      <div className="px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Liste des Catégories
+          </h2>
+          <span className="text-sm text-gray-500">
+            ({filteredCategories.length} résultat
+            {filteredCategories.length > 1 ? "s" : ""})
+          </span>
+        </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="pl-9 h-10 w-[200px] border-gray-200 rounded-full"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Date Picker Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={`flex items-center gap-2 px-4 py-2 text-sm border rounded-full transition-colors ${
+                  dateFrom || dateTo
+                    ? "text-indigo-600 bg-indigo-50 border-indigo-200"
+                    : "text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
+              >
+                <Calendar className="w-4 h-4" />
+                {dateFrom || dateTo ? "Date filtrée" : "Choisir Date"}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-900 dark:text-white">
+                  Filtrer par date
+                </h4>
+                <div className="grid gap-3">
+                  <div className="grid gap-1.5">
+                    <label className="text-sm text-gray-600">
+                      Date de début
+                    </label>
+                    <Input
+                      type="date"
+                      value={dateFrom}
+                      onChange={e => setDateFrom(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm text-gray-600">Date de fin</label>
+                    <Input
+                      type="date"
+                      value={dateTo}
+                      onChange={e => setDateTo(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                </div>
+                {(dateFrom || dateTo) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setDateFrom("");
+                      setDateTo("");
+                    }}
+                    className="w-full text-gray-500"
+                  >
+                    Effacer les dates
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Filter Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={`flex items-center gap-2 px-4 py-2 text-sm rounded-full transition-colors ${
+                  minProducts || maxProducts
+                    ? "text-white bg-indigo-600 hover:bg-indigo-700"
+                    : "text-white bg-gray-900 hover:bg-gray-800"
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+                Filtrer
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-4" align="end">
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-900 dark:text-white">
+                  Filtrer par produits
+                </h4>
+                <div className="grid gap-3">
+                  <div className="grid gap-1.5">
+                    <label className="text-sm text-gray-600">
+                      Nombre min de produits
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={minProducts}
+                      onChange={e => setMinProducts(e.target.value)}
+                      className="h-9"
+                      min="0"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm text-gray-600">
+                      Nombre max de produits
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="∞"
+                      value={maxProducts}
+                      onChange={e => setMaxProducts(e.target.value)}
+                      className="h-9"
+                      min="0"
+                    />
+                  </div>
+                </div>
+                {(minProducts || maxProducts) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setMinProducts("");
+                      setMaxProducts("");
+                    }}
+                    className="w-full text-gray-500"
+                  >
+                    Effacer les filtres
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -206,7 +404,7 @@ export default function CategoryList({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {currentCategories.map((category) => (
+            {currentCategories.map(category => (
               <React.Fragment key={category.id}>
                 <tr
                   className="hover:bg-gray-50/50 cursor-pointer transition-colors group"
@@ -229,7 +427,7 @@ export default function CategoryList({
                         {getInitials(category.name)}
                       </div>
                       {}
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {category.name}
                       </span>
                     </div>
@@ -252,7 +450,7 @@ export default function CategoryList({
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           onEdit(category);
                         }}
@@ -262,7 +460,7 @@ export default function CategoryList({
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           if (category.id) handleDelete(category.id);
                         }}
@@ -286,7 +484,7 @@ export default function CategoryList({
                 {expandedCategoryId === category.id && (
                   <tr>
                     <td colSpan={5} className="px-0 py-0">
-                      <div className="bg-gradient-to-r from-gray-50 to-white border-t border-b border-gray-100">
+                      <div className="bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900 border-t border-b border-gray-700">
                         {loadingProducts ? (
                           <div className="text-center py-6 text-gray-500">
                             Chargement des produits...
@@ -297,17 +495,17 @@ export default function CategoryList({
                           </div>
                         ) : (
                           <div className="p-5">
-                            <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-gray-300 mb-4 flex items-center gap-2">
                               <span
                                 className={`w-2 h-2 rounded-full ${getInitialColor(category.name)}`}
                               ></span>
                               Produits de &quot;{category.name}&quot;
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                              {categoryProducts.map((product) => (
+                              {categoryProducts.map(product => (
                                 <div
                                   key={product.id}
-                                  className="flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-sm transition-all"
+                                  className="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
                                 >
                                   {product.images && product.images[0] ? (
                                     <img
@@ -320,14 +518,14 @@ export default function CategoryList({
                                       className="w-12 h-12 object-cover rounded-lg"
                                     />
                                   ) : (
-                                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
                                       <span className="text-gray-400 text-xs">
                                         N/A
                                       </span>
                                     </div>
                                   )}
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                                       {product.name}
                                     </p>
                                     <p className="text-xs text-gray-400">
@@ -358,7 +556,7 @@ export default function CategoryList({
           <div className="flex items-center gap-1">
             {}
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -386,7 +584,7 @@ export default function CategoryList({
             {}
             <button
               onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                setCurrentPage(prev => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
