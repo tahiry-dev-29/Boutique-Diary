@@ -27,9 +27,9 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
   const total = data.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
-    <Card className="border-none shadow-sm h-full">
+    <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-bold text-gray-800">
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Productos
         </CardTitle>
       </CardHeader>
@@ -71,7 +71,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
         </ResponsiveContainer>
         {}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mb-4">
-          <span className="text-3xl font-bold text-gray-800 block">
+          <span className="text-3xl font-bold text-gray-800 dark:text-white block">
             {total}
           </span>
         </div>

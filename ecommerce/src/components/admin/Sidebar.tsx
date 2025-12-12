@@ -193,26 +193,26 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const isSectionActive = (item: MenuItem) => {
     if (item.href === pathname) return true;
     if (item.subItems) {
-      return item.subItems.some((sub) => pathname.startsWith(sub.href));
+      return item.subItems.some(sub => pathname.startsWith(sub.href));
     }
     return false;
   };
 
   React.useEffect(() => {
-    navItems.forEach((item) => {
+    navItems.forEach(item => {
       if (
         item.subItems &&
         isSectionActive(item) &&
         !expandedSections.includes(item.id)
       ) {
-        setExpandedSections((prev) => [...prev, item.id]);
+        setExpandedSections(prev => [...prev, item.id]);
       }
     });
   }, [pathname]);
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
-      setExpandedSections(expandedSections.filter((id) => id !== sectionId));
+      setExpandedSections(expandedSections.filter(id => id !== sectionId));
     } else {
       setExpandedSections([...expandedSections, sectionId]);
     }
@@ -220,7 +220,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
   return (
     <div
-      className={`bg-[#F3F4F6] border-r border-gray-200 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
+      className={`bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
         isExpanded ? "w-64" : "w-20"
       }`}
     >
@@ -230,29 +230,21 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
       >
         <div className="flex items-center space-x-3">
           {}
-          <div className="h-8 w-8 bg-black rounded-lg flex items-center justify-center text-white font-bold">
+          <div className="h-8 w-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
             B
           </div>
           {isExpanded && (
-            <h2 className="text-lg font-bold text-gray-900 whitespace-nowrap">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
               Boutique Dialy
             </h2>
           )}
         </div>
-        {isExpanded && (
-          <button
-            onClick={() => setIsExpanded(false)}
-            className="p-1.5 hover:bg-gray-200 text-gray-500 rounded-lg transition-colors"
-          >
-            <ChevronRight className="w-5 h-5 rotate-180" />
-          </button>
-        )}
       </div>
 
       {!isExpanded && (
         <button
           onClick={() => setIsExpanded(true)}
-          className="mx-auto mb-6 p-2 hover:bg-gray-200 text-gray-500 rounded-lg transition-colors"
+          className="mx-auto mb-6 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-lg transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -260,7 +252,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
       {}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto no-scrollbar">
-        {navItems.map((item) => {
+        {navItems.map(item => {
           const isActive = isSectionActive(item);
           const isOpen = expandedSections.includes(item.id);
 
@@ -273,13 +265,13 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                   isExpanded ? "px-3 py-2" : "p-2 justify-center"
                 } ${
                   isActive
-                    ? "bg-gray-100 text-gray-900 font-medium"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 <div className="relative flex items-center justify-center">
                   <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900" : "text-gray-500 group-hover:text-gray-700"}`}
+                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
                   />
                 </div>
                 {isExpanded && (
@@ -306,13 +298,13 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                   isExpanded ? "px-3 py-2" : "p-2 justify-center"
                 } ${
                   isActive
-                    ? "text-gray-900" // Parent just gets darker text, no background unless focused/hover
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    ? "text-gray-900 dark:text-white"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 <div className="flex items-center">
                   <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900" : "text-gray-500 group-hover:text-gray-700"}`}
+                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
                   />
                   {isExpanded && (
                     <span className="ml-3 font-medium whitespace-nowrap text-sm">
@@ -322,15 +314,15 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 </div>
                 {isExpanded && (
                   <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
                   />
                 )}
               </button>
 
               {}
               {isExpanded && isOpen && (
-                <div className="ml-4 pl-4 border-l border-gray-100 space-y-1 py-1">
-                  {item.subItems.map((subItem) => {
+                <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
+                  {item.subItems.map(subItem => {
                     const isSubActive = pathname === subItem.href;
                     return (
                       <Link
@@ -338,8 +330,8 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                         href={subItem.href}
                         className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
                           isSubActive
-                            ? "bg-gray-100 text-gray-900 font-medium"
-                            : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                            ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                            : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                       >
                         {subItem.label}
@@ -353,13 +345,15 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         })}
       </nav>
 
-      <div className={`mt-auto pt-4 px-3 border-t border-gray-200 space-y-1`}>
+      <div
+        className={`mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800 space-y-1`}
+      >
         <button
-          className={`w-full flex items-center rounded-lg text-gray-600 hover:bg-white hover:shadow-sm transition-all ${
+          className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all ${
             isExpanded ? "px-3 py-2" : "p-2 justify-center"
           }`}
         >
-          <User className="w-5 h-5 text-gray-500" />
+          <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           {isExpanded && (
             <span className="ml-3 text-sm font-medium whitespace-nowrap">
               Profil
@@ -367,11 +361,11 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           )}
         </button>
         <button
-          className={`w-full flex items-center rounded-lg text-gray-600 hover:bg-white hover:shadow-sm transition-all group ${
+          className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all group ${
             isExpanded ? "px-3 py-2" : "p-2 justify-center"
           }`}
         >
-          <Trash className="w-5 h-5 text-gray-500 group-hover:text-red-500" />
+          <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
           {isExpanded && (
             <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">
               Corbeille
