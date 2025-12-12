@@ -53,7 +53,7 @@ export default function BannerForm({
     >,
   ) => {
     const { name, value, type } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
@@ -82,7 +82,7 @@ export default function BannerForm({
       if (!response.ok) throw new Error("Erreur lors de l'upload");
 
       const data = await response.json();
-      setFormData((prev) => ({ ...prev, imageUrl: data.url }));
+      setFormData(prev => ({ ...prev, imageUrl: data.url }));
     } catch (err) {
       console.error(err);
       setError("Erreur lors de l'upload de l'image");
@@ -126,7 +126,7 @@ export default function BannerForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-2xl p-6 shadow-sm"
+      className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm"
     >
       <h2 className="text-xl font-bold text-gray-800 mb-6">
         {banner ? "Modifier la bannière" : "Nouvelle bannière"}
@@ -226,7 +226,7 @@ export default function BannerForm({
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           >
-            {[1, 2, 3, 4, 5].map((num) => (
+            {[1, 2, 3, 4, 5].map(num => (
               <option key={num} value={num}>
                 Position {num}
               </option>
@@ -299,7 +299,7 @@ export default function BannerForm({
                   type="button"
                   onClick={() => {
                     setImagePreview("");
-                    setFormData((prev) => ({ ...prev, imageUrl: "" }));
+                    setFormData(prev => ({ ...prev, imageUrl: "" }));
                   }}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                 >

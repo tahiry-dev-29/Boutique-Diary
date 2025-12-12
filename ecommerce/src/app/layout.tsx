@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
+import { ThemeProvider } from "@/contexts/theme-context";
 
 export default function RootLayout({
   children,
@@ -14,11 +15,13 @@ export default function RootLayout({
   const isAdminPage = pathname?.startsWith("/admin");
 
   return (
-    <html lang="en">
-      <body className="antialiased">
-        {!isAdminPage && <Navbar />}
-        {children}
-        <Toaster />
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased bg-background text-foreground">
+        <ThemeProvider>
+          {!isAdminPage && <Navbar />}
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

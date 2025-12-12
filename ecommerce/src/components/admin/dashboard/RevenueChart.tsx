@@ -31,9 +31,9 @@ const defaultData = [
 
 const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
   return (
-    <Card className="border-none shadow-sm h-full">
+    <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-bold text-gray-800">
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Rendimiento de ventas
         </CardTitle>
         <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-100 transition-colors">
@@ -75,7 +75,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#9ca3af", fontSize: 12 }}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={value => `$${value}`}
               />
               <Tooltip
                 contentStyle={{

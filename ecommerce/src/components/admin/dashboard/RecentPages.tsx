@@ -41,19 +41,19 @@ const defaultPages: PageStat[] = [
 
 const RecentPages: React.FC = () => {
   return (
-    <Card className="border-none shadow-sm h-full flex flex-col">
+    <Card className="border-none shadow-sm h-full flex flex-col bg-white dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
-        <CardTitle className="text-xl font-bold text-gray-800">
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Páginas de destino
         </CardTitle>
-        <button className="text-sm text-gray-500 hover:text-gray-900 font-medium">
+        <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium">
           Ver todo
         </button>
       </CardHeader>
       <CardContent className="flex-1 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="text-gray-500 text-sm border-b border-gray-100">
+            <tr className="text-gray-500 dark:text-gray-400 text-sm border-b border-gray-100 dark:border-gray-700">
               <th className="font-medium pb-3 pl-2">Página de destino</th>
               <th className="font-medium pb-3">Tasa de conversión</th>
             </tr>
@@ -63,14 +63,14 @@ const RecentPages: React.FC = () => {
               <tr key={`${page.id}-${index}`} className="group">
                 <td className="py-4 pl-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg relative overflow-hidden flex-shrink-0">
+                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg relative overflow-hidden flex-shrink-0">
                       {}
-                      <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                         <MousePointer className="w-4 h-4 text-gray-400" />
                       </div>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-800 text-sm">
+                      <p className="font-semibold text-gray-800 dark:text-white text-sm">
                         {page.title}
                       </p>
                       <div
@@ -94,7 +94,7 @@ const RecentPages: React.FC = () => {
                 </td>
                 <td className="py-4 align-middle">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-800">
+                    <span className="text-sm font-bold text-gray-800 dark:text-white">
                       {page.visits}
                     </span>
                     <div
