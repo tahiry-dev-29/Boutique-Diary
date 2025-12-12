@@ -136,7 +136,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter((p) => p.id !== id));
+        setProducts(products.filter(p => p.id !== id));
         toast.success("Produit supprimé avec succès");
       } else {
         toast.error("Erreur lors de la suppression");
@@ -150,18 +150,16 @@ export default function ProductList({
   const categories = Array.from(
     new Set(
       products
-        .map((p) => p.category?.name)
+        .map(p => p.category?.name)
         .filter((c): c is string => Boolean(c)),
     ),
   ).sort();
 
   const brands = Array.from(
-    new Set(
-      products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
-    ),
+    new Set(products.map(p => p.brand).filter((b): b is string => Boolean(b))),
   ).sort();
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = products.filter(product => {
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch =
       product.name.toLowerCase().includes(searchLower) ||
@@ -222,7 +220,7 @@ export default function ProductList({
     } else {
       setSelectedRows(
         currentProducts
-          .map((p) => p.id)
+          .map(p => p.id)
           .filter((id): id is number => id !== undefined),
       );
     }
@@ -230,7 +228,7 @@ export default function ProductList({
 
   const toggleSelectRow = (id: number) => {
     if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
     } else {
       setSelectedRows([...selectedRows, id]);
     }
@@ -266,137 +264,159 @@ export default function ProductList({
         <div className="flex items-center gap-3 flex-1 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
           {/* Search */}
           <div className="relative min-w-[200px] max-w-sm">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-             <Input
-               placeholder="Rechercher..."
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               className="pl-9 h-11 border-gray-100 bg-white shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200"
-             />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="pl-9 h-11 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200 dark:focus:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
+            />
           </div>
 
           {/* Status Filter */}
           <div className="w-[150px]">
-              <Select value={availability} onValueChange={setAvailability}>
-                <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white text-gray-600 hover:bg-gray-50 transition-colors px-4">
-                   <div className="flex items-center gap-2">
-                       <span className="text-gray-400 font-light">×</span>
-                       <span className="font-medium">Statut</span>
-                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                   <SelectItem value="all">Tous les status</SelectItem>
-                   <SelectItem value="in-stock">En stock</SelectItem>
-                   <SelectItem value="out-of-stock">Rupture</SelectItem>
-                </SelectContent>
-              </Select>
+            <Select value={availability} onValueChange={setAvailability}>
+              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400 font-light">×</span>
+                  <span className="font-medium">Statut</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les status</SelectItem>
+                <SelectItem value="in-stock">En stock</SelectItem>
+                <SelectItem value="out-of-stock">Rupture</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Category Filter */}
           <div className="w-[160px]">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white text-gray-600 hover:bg-gray-50 transition-colors px-4">
-                   <div className="flex items-center gap-2">
-                       <span className="text-gray-400 font-light">×</span>
-                       <span className="truncate font-medium">{selectedCategory === 'all' ? 'Catégorie' : selectedCategory}</span>
-                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                   <SelectItem value="all">Toutes</SelectItem>
-                   {categories.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                   ))}
-                </SelectContent>
-              </Select>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
+              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400 font-light">×</span>
+                  <span className="truncate font-medium">
+                    {selectedCategory === "all"
+                      ? "Catégorie"
+                      : selectedCategory}
+                  </span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes</SelectItem>
+                {categories.map(c => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-           {/* Price Range */}
-           <div className="w-[170px]">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white rounded-xl text-gray-600 font-medium hover:bg-gray-50">
-                        <span className="truncate">
-                          {(minPrice || maxPrice) ? `${minPrice || '0'} - ${maxPrice || '∞'}` : 'Prix'}
-                        </span>
-                        <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-4">
-                     <div className="flex gap-2 items-center">
-                        <div className="grid gap-2 flex-1">
-                           <Label htmlFor="minPrice">Min</Label>
-                           <Input 
-                              id="minPrice"
-                              type="number" 
-                              placeholder="Min" 
-                              value={minPrice} 
-                              onChange={(e) => setMinPrice(e.target.value)} 
-                           />
-                        </div>
-                        <span className="pt-6">-</span>
-                        <div className="grid gap-2 flex-1">
-                           <Label htmlFor="maxPrice">Max</Label>
-                           <Input 
-                              id="maxPrice"
-                              type="number" 
-                              placeholder="Max" 
-                              value={maxPrice} 
-                              onChange={(e) => setMaxPrice(e.target.value)} 
-                           />
-                        </div>
-                     </div>
-                  </PopoverContent>
-                </Popover>
-           </div>
+          {/* Price Range */}
+          <div className="w-[170px]">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  <span className="truncate">
+                    {minPrice || maxPrice
+                      ? `${minPrice || "0"} - ${maxPrice || "∞"}`
+                      : "Prix"}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4">
+                <div className="flex gap-2 items-center">
+                  <div className="grid gap-2 flex-1">
+                    <Label htmlFor="minPrice">Min</Label>
+                    <Input
+                      id="minPrice"
+                      type="number"
+                      placeholder="Min"
+                      value={minPrice}
+                      onChange={e => setMinPrice(e.target.value)}
+                    />
+                  </div>
+                  <span className="pt-6">-</span>
+                  <div className="grid gap-2 flex-1">
+                    <Label htmlFor="maxPrice">Max</Label>
+                    <Input
+                      id="maxPrice"
+                      type="number"
+                      placeholder="Max"
+                      value={maxPrice}
+                      onChange={e => setMaxPrice(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
-             <DropdownMenu>
-               <DropdownMenuTrigger asChild>
-                 <Button
-                   variant="outline"
-                   className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white text-gray-700 gap-2 rounded-xl font-semibold hover:bg-gray-50"
-                 >
-                   <span>Colonnes</span>
-                   <Settings2 className="h-4 w-4" />
-                 </Button>
-               </DropdownMenuTrigger>
-               <DropdownMenuContent align="end">
-                  <DropdownMenuCheckboxItem
-                    checked={visibleColumns.product}
-                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, product: checked }))}
-                  >
-                    Produit
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={visibleColumns.category}
-                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, category: checked }))}
-                  >
-                    Catégorie
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={visibleColumns.status}
-                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, status: checked }))}
-                  >
-                    Statut
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={visibleColumns.price}
-                    onCheckedChange={(checked) => setVisibleColumns(prev => ({ ...prev, price: checked }))}
-                  >
-                    Prix
-                  </DropdownMenuCheckboxItem>
-               </DropdownMenuContent>
-             </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 gap-2 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                <span>Colonnes</span>
+                <Settings2 className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.product}
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, product: checked }))
+                }
+              >
+                Produit
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.category}
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, category: checked }))
+                }
+              >
+                Catégorie
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.status}
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, status: checked }))
+                }
+              >
+                Statut
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={visibleColumns.price}
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, price: checked }))
+                }
+              >
+                Prix
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
       {}
-      <div className="bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 dark:border-gray-700/50 overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-gray-50/30">
-              <TableRow className="border-b border-gray-100 hover:bg-transparent">
+            <TableHeader className="bg-gray-50/30 dark:bg-gray-900/50">
+              <TableRow className="border-b border-gray-100 dark:border-gray-700 hover:bg-transparent">
                 <TableHead className="w-12 text-center pl-4">
                   <Checkbox
                     checked={
@@ -442,7 +462,7 @@ export default function ProductList({
                   </TableCell>
                 </TableRow>
               ) : (
-                currentProducts.map((product) => {
+                currentProducts.map(product => {
                   const totalStock =
                     product.images?.reduce((sum, img) => {
                       const imgStock =
@@ -457,12 +477,16 @@ export default function ProductList({
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group transition-all border-b border-gray-50 hover:bg-gray-50/50 ${isExpanded ? "bg-gray-50" : "bg-white"} h-20 cursor-pointer`}
-                        onClick={() => setExpandedProductId(isExpanded ? null : (product.id as number))}
+                        className={`group transition-all border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${isExpanded ? "bg-gray-50 dark:bg-gray-700" : "bg-white dark:bg-gray-800"} h-20 cursor-pointer`}
+                        onClick={() =>
+                          setExpandedProductId(
+                            isExpanded ? null : (product.id as number),
+                          )
+                        }
                       >
                         <TableCell
                           className="text-center pl-4"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           <Checkbox
                             checked={isSelected}
@@ -474,7 +498,7 @@ export default function ProductList({
                         </TableCell>
                         <TableCell
                           className="p-2"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             setExpandedProductId(
                               isExpanded ? null : (product.id as number),
@@ -510,7 +534,7 @@ export default function ProductList({
                                 />
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-gray-900 dark:text-white">
                                   {product.name}
                                 </div>
                                 <div className="text-xs text-gray-500">
@@ -535,27 +559,27 @@ export default function ProductList({
                         )}
                         {visibleColumns.status && (
                           <TableCell>
-                             {totalStock > 0 ? (
-                                 <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                                    En stock
-                                 </div>
-                             ) : (
-                                 <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-                                    Rupture
-                                 </div>
-                             )}
+                            {totalStock > 0 ? (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                                En stock
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100">
+                                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                Rupture
+                              </div>
+                            )}
                           </TableCell>
                         )}
                         {visibleColumns.price && (
-                          <TableCell className="font-medium text-gray-900">
+                          <TableCell className="font-medium text-gray-900 dark:text-white">
                             {formatPrice(product.price)}
                           </TableCell>
                         )}
                         <TableCell
                           className="text-right"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -616,7 +640,7 @@ export default function ProductList({
 
                       {}
                       {isExpanded && (
-                        <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                        <TableRow className="bg-gray-50/50 dark:bg-gray-700/50 hover:bg-gray-50/50">
                           <TableCell colSpan={7} className="p-4 shadow-inner">
                             <div className="grid grid-cols-6 gap-4">
                               {product.images?.map((img, idx) => {
@@ -625,7 +649,7 @@ export default function ProductList({
                                 return (
                                   <div
                                     key={idx}
-                                    className="bg-white p-2 rounded-lg border border-gray-200 text-xs shadow-sm"
+                                    className="bg-white dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600 text-xs shadow-sm dark:text-gray-300"
                                   >
                                     <div className="aspect-square bg-gray-100 rounded-md mb-2 overflow-hidden">
                                       <img
@@ -638,7 +662,7 @@ export default function ProductList({
                                       {imgData.reference && (
                                         <div className="text-gray-500">
                                           Ref:{" "}
-                                          <span className="text-gray-900 font-medium">
+                                          <span className="text-gray-900 dark:text-white font-medium">
                                             {imgData.reference}
                                           </span>
                                         </div>
@@ -648,9 +672,14 @@ export default function ProductList({
                                           <span
                                             className="w-3 h-3 rounded-full border border-gray-200"
                                             style={{
-                                              background: COLOR_MAP[imgData.color || ''] || imgData.color?.toLowerCase() || 'gray'
+                                              background:
+                                                COLOR_MAP[
+                                                  imgData.color || ""
+                                                ] ||
+                                                imgData.color?.toLowerCase() ||
+                                                "gray",
                                             }}
-                                            title={imgData.color || ''}
+                                            title={imgData.color || ""}
                                           ></span>{" "}
                                           {imgData.color}
                                         </div>
@@ -675,14 +704,14 @@ export default function ProductList({
         </div>
 
         {}
-        <div className="border-t border-gray-200 p-4 flex items-center justify-between bg-gray-50/30">
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/30">
           <div className="text-sm text-gray-500">
             Affichage de{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-white">
               {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)}
             </span>{" "}
             sur{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-white">
               {filteredProducts.length}
             </span>{" "}
             produits
@@ -692,7 +721,7 @@ export default function ProductList({
               variant="outline"
               size="sm"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
+              onClick={() => setCurrentPage(prev => prev - 1)}
               className="h-8 text-xs"
             >
               Précédent
@@ -701,7 +730,7 @@ export default function ProductList({
               variant="outline"
               size="sm"
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={() => setCurrentPage(prev => prev + 1)}
               className="h-8 text-xs"
             >
               Suivant
