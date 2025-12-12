@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { checkApiPermission } from "@/lib/backend-permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export async function GET() {
         email: true,
         role: true,
         isActive: true,
+        lastSeen: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -27,7 +29,7 @@ export async function GET() {
     console.error("Error fetching employees:", error);
     return NextResponse.json(
       { error: "Failed to fetch employees" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -41,9 +43,13 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Nom, email et mot de passe sont requis" },
-        { status: 400 }
+        { status: 400 },
       );
     }
+
+    // Check permission
+    const permissionError = await checkApiPermission("employees.edit");
+    if (permissionError) return permissionError;
 
     // Check if email already exists
     const existingAdmin = await prisma.admin.findUnique({
@@ -53,7 +59,7 @@ export async function POST(request: NextRequest) {
     if (existingAdmin) {
       return NextResponse.json(
         { error: "Un employé avec cet email existe déjà" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -84,7 +90,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating employee:", error);
     return NextResponse.json(
       { error: "Failed to create employee" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { checkApiPermission } from "@/lib/backend-permissions";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET - Get single employee by ID
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -31,7 +32,7 @@ export async function GET(
     if (!employee) {
       return NextResponse.json(
         { error: "Employé non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -40,7 +41,7 @@ export async function GET(
     console.error("Error fetching employee:", error);
     return NextResponse.json(
       { error: "Failed to fetch employee" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,7 +49,7 @@ export async function GET(
 // PUT - Update employee
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -59,6 +60,10 @@ export async function PUT(
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
+
+    // Check permission
+    const permissionError = await checkApiPermission("employees.edit");
+    if (permissionError) return permissionError;
 
     // Build update data
     const updateData: {
@@ -103,13 +108,13 @@ export async function PUT(
     ) {
       return NextResponse.json(
         { error: "Employé non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to update employee" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -117,7 +122,7 @@ export async function PUT(
 // DELETE - Delete employee
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
@@ -126,6 +131,10 @@ export async function DELETE(
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
+
+    // Check permission
+    const permissionError = await checkApiPermission("employees.edit");
+    if (permissionError) return permissionError;
 
     await prisma.admin.delete({
       where: { id },
@@ -143,13 +152,13 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         { error: "Employé non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to delete employee" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

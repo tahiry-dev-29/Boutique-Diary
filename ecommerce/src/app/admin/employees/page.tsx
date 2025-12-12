@@ -20,6 +20,7 @@ interface Employee {
   email: string;
   role: string;
   isActive: boolean;
+  lastSeen?: string;
   createdAt: string;
 }
 
@@ -56,6 +57,12 @@ export default function EmployeesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const isOnline = (lastSeen?: string) => {
+    if (!lastSeen) return false;
+    const diff = new Date().getTime() - new Date(lastSeen).getTime();
+    return diff < 5 * 60 * 1000; // 5 minutes threshold
   };
 
   const filteredEmployees = employees.filter(emp => {
@@ -157,11 +164,11 @@ export default function EmployeesPage() {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden md:table-cell">
                   Email
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden lg:table-cell">
-                  Date d&apos;ajout
+                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                  Statut (Compte)
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Statut
+                  Connexion
                 </th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
                   Actions
@@ -169,74 +176,81 @@ export default function EmployeesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredEmployees.map(employee => (
-                <tr
-                  key={employee.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
-                        {employee.name.charAt(0).toUpperCase()}
+              {filteredEmployees.map(employee => {
+                const online = isOnline(employee.lastSeen);
+                return (
+                  <tr
+                    key={employee.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
+                          {employee.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {employee.name}
+                          </p>
+                          <p className="text-sm text-muted-foreground md:hidden">
+                            {employee.email}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {employee.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground md:hidden">
-                          {employee.email}
-                        </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${roleColors[employee.role] || roleColors.admin}`}
+                      >
+                        {roleLabels[employee.role] || employee.role}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Mail size={14} />
+                        {employee.email}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${roleColors[employee.role] || roleColors.admin}`}
-                    >
-                      {roleLabels[employee.role] || employee.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 hidden md:table-cell">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Mail size={14} />
-                      {employee.email}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 hidden lg:table-cell">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar size={14} />
-                      {new Date(employee.createdAt).toLocaleDateString("fr-FR")}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        employee.isActive
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                      }`}
-                    >
-                      {employee.isActive ? "Actif" : "Inactif"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/admin/employees/${employee.id}/edit`}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          employee.isActive
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        }`}
                       >
-                        <Edit size={16} />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(employee.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {employee.isActive ? "Activé" : "Désactivé"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-2 h-2 rounded-full ${online ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"}`}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {online ? "En ligne" : "Hors ligne"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/admin/employees/${employee.id}/edit`}
+                          className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                        >
+                          <Edit size={16} />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(employee.id)}
+                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
