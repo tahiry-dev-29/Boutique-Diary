@@ -8,7 +8,7 @@ const ADMIN_COOKIE_NAME = "admin_session";
 
 export interface AdminPayload {
   adminId: number;
-  name: string;
+  username: string;
   email: string;
   role: string;
 }

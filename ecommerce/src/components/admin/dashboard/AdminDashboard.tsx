@@ -16,7 +16,15 @@ interface AdminDashboardProps {
   };
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
+interface AdminDashboardProps {
+  user: {
+    username: string;
+    email: string;
+    avatarUrl?: string;
+  };
+}
+
+const AdminDashboard = ({ user }: AdminDashboardProps) => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen font-sans">
       <DashboardHeader user={user} />
@@ -28,8 +36,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
         <p className="text-gray-500 mt-1">Martes 02 de febrero de 2025</p>
       </div>
 
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {}
           <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 text-white shadow-lg flex flex-col justify-between h-[180px]">
             <div className="p-3 bg-white/20 rounded-xl w-fit">
               <FileText className="w-6 h-6 text-white" />
@@ -40,6 +51,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             </div>
           </div>
 
+          {}
           <div className="h-[180px]">
             <StatsCard
               title="Comisión total"

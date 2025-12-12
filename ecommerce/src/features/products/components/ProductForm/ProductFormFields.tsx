@@ -5,13 +5,7 @@ import { Category } from "@/types/category";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 
 interface ProductFormFieldsProps {
   formData: Product;
@@ -28,28 +22,13 @@ export function ProductFormFields({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleReferenceChange = (newRef: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      reference: newRef,
-      images: prev.images?.map((img, idx) => {
-        if (typeof img === "string") return img;
-        const suffix = img.color
-          ? img.color.toLowerCase().slice(0, 3)
-          : `img${idx + 1}`;
-        return {
-          ...img,
-          reference: `${newRef}-${suffix}`,
-        };
-      }),
-    }));
-  };
+
 
   return (
     <div className="space-y-4">
       {}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <Label htmlFor="name">Nom *</Label>
           <Input
             id="name"
@@ -60,48 +39,11 @@ export function ProductFormFields({
             placeholder="Nom du produit"
           />
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="reference">Référence *</Label>
-          <Input
-            id="reference"
-            type="text"
-            required
-            value={formData.reference}
-            onChange={(e) => handleReferenceChange(e.target.value)}
-            placeholder="REF-001"
-          />
-        </div>
       </div>
 
       {}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Catégorie</Label>
-          <Select
-            value={formData.categoryId?.toString() || ""}
-            onValueChange={(value) =>
-              handleChange("categoryId", value ? parseInt(value) : null)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Non classé" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Non classé</SelectItem>
-              {categories.map((category) => (
-                <SelectItem
-                  key={category.id}
-                  value={category.id?.toString() || ""}
-                >
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <Label htmlFor="brand">Marque</Label>
           <Input
             id="brand"
@@ -124,6 +66,27 @@ export function ProductFormFields({
           placeholder="Description du produit..."
         />
       </div>
+
+       {/* Synced Global Settings (Read-Only) */}
+       <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div className="space-y-2">
+            <Label className="text-muted-foreground text-xs">Catégorie (Synchronisé)</Label>
+            <div className="h-9 px-3 py-2 rounded-md border bg-muted text-sm text-muted-foreground flex items-center">
+              {categories.find(c => c.id === formData.categoryId)?.name || "Non classé"}
+            </div>
+          </div>
+          <div className="space-y-2">
+             <Label className="text-muted-foreground text-xs">Statuts (Synchronisé)</Label>
+             <div className="flex gap-2">
+                <div className={`h-9 px-3 rounded-md border flex items-center text-sm ${formData.isNew ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-muted text-muted-foreground"}`}>
+                  {formData.isNew ? "Nouveauté" : "Standard"}
+                </div>
+                 <div className={`h-9 px-3 rounded-md border flex items-center text-sm ${formData.isPromotion ? "bg-red-50 border-red-200 text-red-700" : "bg-muted text-muted-foreground"}`}>
+                  {formData.isPromotion ? "Promo" : "Standard"}
+                </div>
+             </div>
+          </div>
+       </div>
     </div>
   );
 }

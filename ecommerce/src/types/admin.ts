@@ -16,6 +16,9 @@ export interface ProductImage {
   price?: number | null;
   oldPrice?: number | null;
   stock?: number | null;
+  isNew?: boolean;
+  isPromotion?: boolean;
+  categoryId?: number | null;
 }
 
 export interface ProductVariation {

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "CUST-001",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "User",
+    "createdAt": "2023-01-15T10:30:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=a042581f4e29026024d"
+  },
+  {
+    "id": "CUST-002",
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "role": "Admin",
+    "createdAt": "2023-02-20T14:00:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=a042581f4e29026704d"
+  },
+  {
+    "id": "CUST-003",
+    "name": "Peter Jones",
+    "email": "peter.jones@example.com",
+    "role": "User",
+    "createdAt": "2023-03-10T09:00:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=a04258114e29026702d"
+  },
+  {
+    "id": "CUST-004",
+    "name": "Mary Johnson",
+    "email": "mary.johnson@example.com",
+    "role": "SuperAdmin",
+    "createdAt": "2023-04-05T18:45:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=a048581f4e29026701d"
+  },
+  {
+    "id": "CUST-005",
+    "name": "David Williams",
+    "email": "david.williams@example.com",
+    "role": "User",
+    "createdAt": "2023-05-21T11:20:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=a092581f4e29026703d"
+  },
+  {
+    "id": "CUST-006",
+    "name": "Sarah Brown",
+    "email": "sarah.brown@example.com",
+    "role": "Admin",
+    "createdAt": "2023-06-30T16:10:00Z",
+    "avatar": "https://i.pravatar.cc/150?u=b042581f4e29026705d"
+  }
+]

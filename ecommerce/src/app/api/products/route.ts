@@ -105,6 +105,9 @@ interface ProductImage {
   price?: number | null;
   oldPrice?: number | null;
   stock?: number | null;
+  isNew?: boolean;
+  isPromotion?: boolean;
+  categoryId?: number | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -195,17 +198,18 @@ export async function POST(request: NextRequest) {
                 price:
                   typeof img === "string"
                     ? null
-                    : img.price !== undefined &&
-                        img.price !== null
+                    : img.price !== undefined && img.price !== null
                       ? img.price
                       : null,
                 stock:
                   typeof img === "string"
                     ? null
-                    : img.stock !== undefined &&
-                        img.stock !== null
+                    : img.stock !== null && img.stock !== undefined
                       ? img.stock
                       : null,
+                isNew: typeof img === "string" ? false : img.isNew ?? false,
+                isPromotion: typeof img === "string" ? false : img.isPromotion ?? false,
+                categoryId: typeof img === "string" ? null : img.categoryId ?? null,
               };
             },
           ),

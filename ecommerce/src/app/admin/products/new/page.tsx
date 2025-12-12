@@ -1,25 +1,15 @@
-"use client";
-
 import React from "react";
-import { useRouter } from "next/navigation";
-import ProductForm from "@/components/admin/ProductForm";
+import { prisma } from "@/lib/prisma";
+import NewProductFormWrapper from "./NewProductFormWrapper";
 
-export default function NewProductPage() {
-  const router = useRouter();
-
-  const handleSuccess = () => {
-    router.push("/admin/products");
-  };
-
-  const handleCancel = () => {
-    router.push("/admin/products");
-  };
+export default async function NewProductPage() {
+  const categories = await prisma.category.findMany({
+    orderBy: { name: 'asc' }
+  });
 
   return (
-    <ProductForm
-      product={null}
-      onSuccess={handleSuccess}
-      onCancel={handleCancel}
-    />
+    <div className="space-y-6">
+      <NewProductFormWrapper categories={categories} />
+    </div>
   );
 }

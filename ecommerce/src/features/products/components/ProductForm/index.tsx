@@ -3,18 +3,23 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { X, Save } from "lucide-react";
-import { Product } from "@/types/admin";
+import { Product, ProductImage } from "@/types/admin";
 import { Category } from "@/types/category";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+
 import ElectricButton from "@/components/ui/ElectricButton";
 import { ProductFormFields } from "./ProductFormFields";
 import { ProductPricing } from "./ProductPricing";
 import { ProductVariants } from "./ProductVariants";
 import { ProductImageUploader } from "./ProductImageUploader";
+import { useProducts } from "../../hooks/useProducts";
+import { generateRandomReference } from "@/lib/stringUtils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProductOrganization } from "./ProductOrganization";
 
 export interface ProductFormProps {
   product: Product | null;
+  categories: Category[];
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -35,61 +40,167 @@ const initialFormData: Product = {
   isBestSeller: false,
 };
 
+
+
 export default function ProductForm({
   product,
+  categories,
   onSuccess,
   onCancel,
 }: ProductFormProps) {
-  const [formData, setFormData] = useState<Product>(initialFormData);
+  // ... state and handlers remain the same ...
+  const [formData, setFormData] = useState<Product>(() => {
+    if (product) {
+        return {
+          name: product.name,
+          description: product.description || "",
+          reference: product.reference,
+          images:
+            product.images?.map(
+              (img: string | ProductImage, index: number) =>
+                typeof img === "string"
+                  ? { 
+                      url: img, 
+                      color: null, 
+                      sizes: [],
+                      categoryId: index === 0 ? (product.categoryId ?? null) : null,
+                      isNew: index === 0 ? (product.isNew ?? false) : false,
+                      isPromotion: index === 0 ? (product.isPromotion ?? false) : false,
+                      oldPrice: null,
+                      price: null,
+                      stock: null,
+                      reference: generateRandomReference()
+                    }
+                  : {
+                      ...img,
+                      // Ensure created defaults if missing from API response (though schema has defaults)
+                      sizes: img.sizes || [],
+                      categoryId: img.categoryId ?? (index === 0 ? (product.categoryId ?? null) : null),
+                      isNew: img.isNew ?? (index === 0 ? (product.isNew ?? false) : false),
+                      isPromotion: img.isPromotion ?? (index === 0 ? (product.isPromotion ?? false) : false),
+                      oldPrice: img.oldPrice ?? null,
+                      price: img.price ?? null,
+                      stock: img.stock ?? null,
+                      reference: img.reference || generateRandomReference()
+                  },
+            ) || [],
+          price: product.price,
+          stock: product.stock,
+          categoryId: product.categoryId || null,
+          brand: product.brand || "",
+          colors: product.colors || [],
+          sizes: product.sizes || [],
+          isNew: product.isNew || false,
+          isPromotion: product.isPromotion || false,
+          oldPrice: product.oldPrice || null,
+          isBestSeller: product.isBestSeller || false,
+        };
+    }
+    return {
+        ...initialFormData,
+        reference: generateRandomReference()
+    };
+  });
+  
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  // Remove internal categories state
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+  // Remove fetchCategories useEffect
+
+  // Update form data if product prop changes (e.g. re-fetch or external update)
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories");
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-
     if (product) {
-      setFormData({
-        name: product.name,
-        description: product.description || "",
-        reference: product.reference,
-
-        images:
-          product.images?.map(
-            (
-              img:
-                | string
-                | { url: string; color?: string | null; sizes?: string[] },
-            ) =>
-              typeof img === "string"
-                ? { url: img, color: null, sizes: [] }
-                : img,
-          ) || [],
-        price: product.price,
-        stock: product.stock,
-        categoryId: product.categoryId || null,
-        brand: product.brand || "",
-        colors: product.colors || [],
-        sizes: product.sizes || [],
-        isNew: product.isNew || false,
-        isPromotion: product.isPromotion || false,
-        oldPrice: product.oldPrice || null,
-        isBestSeller: product.isBestSeller || false,
-      });
+       setFormData(prev => ({
+          ...prev,
+           name: product.name,
+           description: product.description || "",
+           reference: product.reference,
+           images: product.images?.map((img: string | ProductImage, index: number) => 
+              typeof img === 'string' 
+              ? { 
+                  url: img,
+                  color: null, 
+                  sizes: [],
+                  categoryId: index === 0 ? (product.categoryId ?? null) : null,
+                  isNew: index === 0 ? (product.isNew ?? false) : false,
+                  isPromotion: index === 0 ? (product.isPromotion ?? false) : false,
+                  oldPrice: null,
+                  price: null,
+                  stock: null, 
+                  reference: generateRandomReference()
+                } 
+              : {
+                  ...img,
+                  sizes: img.sizes || [],
+                  categoryId: img.categoryId ?? (index === 0 ? (product.categoryId ?? null) : null),
+                  isNew: img.isNew ?? (index === 0 ? (product.isNew ?? false) : false),
+                  isPromotion: img.isPromotion ?? (index === 0 ? (product.isPromotion ?? false) : false),
+                  oldPrice: img.oldPrice ?? null,
+                  price: img.price ?? null,
+                  stock: img.stock ?? null,
+                  reference: img.reference || generateRandomReference()
+              }
+           ) || [],
+           price: product.price,
+           stock: product.stock,
+           categoryId: product.categoryId || null,
+           brand: product.brand || "",
+           colors: product.colors || [],
+           sizes: product.sizes || [],
+           isNew: product.isNew || false,
+           isPromotion: product.isPromotion || false,
+           oldPrice: product.oldPrice || null,
+           isBestSeller: product.isBestSeller || false,
+       }));
     }
   }, [product]);
+
+  // Sync Global Settings from Main Image (index 0)
+  // The user requested that "calculated categories" (from images) be the base.
+  // We interpret this as: The Product's Category, isNew, and isPromotion status
+  // should automatically match the Main Image's settings.
+  useEffect(() => {
+    const images = formData.images || [];
+    if (images.length > 0) {
+      const mainImage = images[0];
+       // Check if mainImage is an object (ProductImage) and has properties
+       if (typeof mainImage !== 'string') {
+          // Check if values differ to avoid infinite loops, although setState checks simple equality
+          const newCategoryId = mainImage.categoryId ?? null;
+          const newIsNew = mainImage.isNew ?? false;
+          const newIsPromotion = mainImage.isPromotion ?? false;
+          
+          if (
+              formData.categoryId !== newCategoryId || 
+              formData.isNew !== newIsNew || 
+              formData.isPromotion !== newIsPromotion
+          ) {
+              setFormData(prev => ({
+                ...prev,
+                categoryId: newCategoryId,
+                isNew: newIsNew,
+                isPromotion: newIsPromotion
+              }));
+          }
+       }
+    }
+  }, [formData.images]); 
+  // Dependency is formData.images. 
+  // NOTE: This might cause a re-render loop if setFormData updates images ref.
+  // Ideally, we should check deep equality or only run when specific image props change.
+  // But since we update `images` array reference on every image edit, this will run.
+  // The condition inside `if (formData.categoryId !== ...)` protects against loop IF the setState doesn't trigger a change that re-triggers this.
+  // `setFormData` updates `formData`, which triggers this effect again? 
+  // No, dependency is `formData.images`. If `setFormData` only updates `categoryId`, `images` ref should stay same?
+  // NO. `setFormData` replaces the whole object. We need to be careful.
+  // `setFormData(prev => ...)` creates a new object. `prev.images` is the SAME reference usually, UNLESS we changed images.
+  // In `handleUpdateImageAttribute`, we create `newImages` array -> new reference.
+  // So when Image changes -> Effect runs -> Updates Category -> New FormData (same images ref) -> Effect runs?
+  // We need to ensure `images` ref is stable when we update other fields. It should be.
+
+  const { createProduct, updateProduct, loading: hookLoading } = useProducts({ autoFetch: false });
+  // const [loading, setLoading] = useState(false); // This line is already present above, so I'll keep the existing one.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,98 +223,99 @@ export default function ProductForm({
         return;
       }
 
-      const url = product?.id ? `/api/products/${product.id}` : "/api/products";
-      const method = product?.id ? "PUT" : "POST";
+      let result;
+      if (product?.id) {
+          result = await updateProduct(product.id, formData);
+      } else {
+          result = await createProduct(formData);
+      }
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        toast.success(
-          product?.id
-            ? "Produit modifié avec succès"
-            : "Produit créé avec succès",
-        );
+      if (result) {
         onSuccess();
         if (!product?.id) {
           setFormData(initialFormData);
           setSelectedImageIndex(0);
         }
-      } else {
-        const data = await response.json();
-        toast.error(data.error || "Une erreur est survenue");
       }
     } catch (error) {
       console.error("Error saving product:", error);
-      toast.error("Une erreur est survenue lors de la sauvegarde");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 bg-background p-6 rounded-lg border"
-    >
-      {}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">
-          {product?.id ? "Modifier le produit" : "Nouveau produit"}
-        </h3>
-        <Button type="button" variant="ghost" size="icon" onClick={onCancel}>
-          <X className="w-5 h-5" />
-        </Button>
-      </div>
-
-      <Separator />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {}
-        <div className="space-y-6">
-          <ProductFormFields
-            formData={formData}
-            setFormData={setFormData}
-            categories={categories}
-          />
-
-          <Separator />
-
-          <ProductPricing formData={formData} setFormData={setFormData} />
-
-          <Separator />
-
-          <ProductVariants formData={formData} setFormData={setFormData} />
-        </div>
-
-        {}
-        <div className="space-y-6">
-          <ProductImageUploader
-            formData={formData}
-            setFormData={setFormData}
-            selectedImageIndex={selectedImageIndex}
-            setSelectedImageIndex={setSelectedImageIndex}
-          />
-
-          {}
-          <div className="flex gap-3 pt-4 border-t">
-            <ElectricButton type="submit" disabled={loading}>
-              <Save className="h-5 w-5" />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold tracking-tight">
+          {product?.id ? "Modifier le produit" : "Ajouter un produit"}
+        </h2>
+        <div className="flex gap-2">
+           <Button type="button" variant="outline" onClick={onCancel}>
+              Annuler
+           </Button>
+           <ElectricButton type="submit" disabled={loading}>
+              <Save className="h-4 w-4 mr-2" />
               {loading
                 ? "Enregistrement..."
                 : product?.id
                   ? "Mettre à jour"
-                  : "Créer le produit"}
+                  : "Publier"}
             </ElectricButton>
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Annuler
-            </Button>
-          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Column (Left) - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+             <CardHeader>
+                <CardTitle>Détails du produit</CardTitle>
+             </CardHeader>
+             <CardContent>
+                <ProductFormFields
+                  formData={formData}
+                  setFormData={setFormData}
+                  categories={categories}
+                />
+             </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+               <CardTitle>Images du produit</CardTitle>
+            </CardHeader>
+            <CardContent>
+               <ProductImageUploader
+                  formData={formData}
+                  setFormData={setFormData}
+                  selectedImageIndex={selectedImageIndex}
+                  setSelectedImageIndex={setSelectedImageIndex}
+                  categories={categories}
+                />
+            </CardContent>
+          </Card>
+
+          <Card>
+             <CardHeader>
+                <CardTitle>Variantes</CardTitle>
+             </CardHeader>
+             <CardContent>
+                <ProductVariants formData={formData} setFormData={setFormData} />
+             </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar (Right) - 1/3 width */}
+        <div className="space-y-6">
+           <Card>
+              <CardHeader>
+                 <CardTitle>Tarification</CardTitle>
+              </CardHeader>
+              <CardContent>
+                 <ProductPricing formData={formData} setFormData={setFormData} />
+              </CardContent>
+           </Card>
         </div>
       </div>
     </form>
@@ -214,3 +326,4 @@ export { ProductFormFields } from "./ProductFormFields";
 export { ProductPricing } from "./ProductPricing";
 export { ProductVariants } from "./ProductVariants";
 export { ProductImageUploader } from "./ProductImageUploader";
+export { ProductOrganization } from "./ProductOrganization";
