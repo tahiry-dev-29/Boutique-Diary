@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock, Mail, Shield } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Shield, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -52,6 +53,15 @@ export default function AdminLoginPage() {
           backgroundSize: "50px 50px",
         }}
       />
+
+      {/* Back to site */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+      >
+        <ArrowLeft size={16} />
+        Retour au site
+      </Link>
 
       <div className="relative w-full max-w-md">
         {/* Login card */}

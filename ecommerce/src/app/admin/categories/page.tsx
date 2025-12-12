@@ -28,9 +28,12 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Catégories
-        </h1>
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            Catégories
+          </h2>
+          <p className="text-muted-foreground">Gestion des catégories.</p>
+        </div>
         {!showForm && (
           <Button
             onClick={() => setShowForm(true)}
