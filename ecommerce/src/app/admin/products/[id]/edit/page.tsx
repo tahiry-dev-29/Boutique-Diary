@@ -9,12 +9,14 @@ interface EditProductPageProps {
   }>;
 }
 
-export default async function EditProductPage({ params }: EditProductPageProps) {
+export default async function EditProductPage({
+  params,
+}: EditProductPageProps) {
   const { id } = await params;
   const productId = parseInt(id, 10);
-  
+
   if (isNaN(productId)) {
-     notFound();
+    notFound();
   }
 
   const product = await prisma.product.findUnique({
@@ -22,8 +24,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     include: {
       images: {
         orderBy: {
-          id: 'asc' 
-        }
+          id: "asc",
+        },
       },
       category: true,
     },
@@ -34,7 +36,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   }
 
   // Transform Prisma result to Admin Product type
-  
+
   const serializedProduct: Product = {
     id: product.id,
     name: product.name,
@@ -51,7 +53,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     oldPrice: product.oldPrice,
     isBestSeller: product.isBestSeller,
     // Map Prisma images to ProductImage type
-    images: product.images.map((img) => ({
+    images: product.images.map(img => ({
       url: img.url,
       color: img.color,
       sizes: img.sizes,
@@ -61,30 +63,22 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       reference: img.reference || "",
       isNew: img.isNew,
       isPromotion: img.isPromotion,
-      categoryId: img.categoryId
+      categoryId: img.categoryId,
     })),
     createdAt: product.createdAt.toISOString(),
-    updatedAt: product.updatedAt.toISOString()
+    updatedAt: product.updatedAt.toISOString(),
   };
 
   // Fetch categories for the form
   const categories = await prisma.category.findMany({
-    orderBy: { name: 'asc' }
+    orderBy: { name: "asc" },
   });
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <ProductFormWrapper product={serializedProduct} categories={categories} />
-      </div>
+      <ProductFormWrapper product={serializedProduct} categories={categories} />
     </div>
   );
 }
-
-// Client wrapper to handle navigation logic which uses useRouter
-// Since ProductForm uses callbacks, we can define them here or pass simple client components.
-// Actually ProductForm is "use client", so we can just use it directly, but we need to pass props including handlers.
-// The handlers (onSuccess, onCancel) typically need useRouter, which must be in a client component.
-// So we can extract a small client wrapper.
 
 import ProductFormWrapper from "./ProductFormWrapper";
