@@ -19,6 +19,7 @@ import {
   ChevronDown,
   User,
   Trash,
+  Package,
 } from "lucide-react";
 
 interface MenuItem {
@@ -38,150 +39,186 @@ interface SubMenuItem {
   permission?: string;
 }
 
-const navItems: MenuItem[] = [
+interface NavSection {
+  title?: string;
+  items: MenuItem[];
+}
+
+const navSections: NavSection[] = [
   {
-    id: "dashboard",
-    label: "Vue d'ensemble",
-    icon: LayoutDashboard,
-    href: "/admin",
-  },
-  {
-    id: "products",
-    label: "Produits",
-    icon: ShoppingBag,
-    href: "/admin/products",
-    permission: "products.view",
-  },
-  {
-    id: "orders",
-    label: "Commandes",
-    icon: ShoppingCart,
-    href: "/admin/orders",
-    permission: "orders.view",
-  },
-  {
-    id: "customers",
-    label: "Clients",
-    icon: Users,
-    href: "/admin/customers",
-    permission: "customers.view",
-  },
-  {
-    id: "employees",
-    label: "Employés",
-    icon: User,
-    href: "/admin/employees",
-    permission: "employees.view",
-  },
-  {
-    id: "marketing",
-    label: "Marketing",
-    icon: Tags,
-    permission: "settings.view",
-    subItems: [
+    items: [
       {
-        id: "promo-codes",
-        label: "Codes promo",
-        href: "/admin/marketing/codes",
-        permission: "settings.view",
-      },
-      {
-        id: "promotions",
-        label: "Promotions",
-        href: "/admin/marketing/promotions",
-        permission: "settings.view",
+        id: "dashboard",
+        label: "Vue d'ensemble",
+        icon: LayoutDashboard,
+        href: "/admin",
       },
     ],
   },
   {
-    id: "payment",
-    label: "Paiement",
-    icon: CreditCard,
-    permission: "settings.view",
-    subItems: [
+    title: "Catalogue",
+    items: [
       {
-        id: "payment-methods",
-        label: "Méthodes de paiement",
-        href: "/admin/payment/methods",
-        permission: "settings.view",
-      },
-      {
-        id: "transactions",
-        label: "Transactions",
-        href: "/admin/payment/transactions",
-        permission: "settings.view",
-      },
-    ],
-  },
-  {
-    id: "shipping",
-    label: "Livraison",
-    icon: Truck,
-    permission: "settings.view",
-    subItems: [
-      {
-        id: "shipping-methods",
-        label: "Méthodes de livraison",
-        href: "/admin/shipping/methods",
-        permission: "settings.view",
-      },
-      {
-        id: "shipping-zones",
-        label: "Zones de livraison",
-        href: "/admin/shipping/zones",
-        permission: "settings.view",
-      },
-    ],
-  },
-  {
-    id: "reports",
-    label: "Rapports",
-    icon: BarChart,
-    permission: "reports.view",
-    subItems: [
-      {
-        id: "sales-reports",
-        label: "Ventes",
-        href: "/admin/reports/sales",
-        permission: "reports.view",
-      },
-      {
-        id: "product-reports",
+        id: "products",
         label: "Produits",
-        href: "/admin/reports/products",
-        permission: "reports.view",
+        icon: ShoppingBag,
+        href: "/admin/products",
+        permission: "products.view",
       },
       {
-        id: "customer-reports",
-        label: "Clients",
-        href: "/admin/reports/customers",
-        permission: "reports.view",
+        id: "stock",
+        label: "Gestion des Stocks",
+        icon: Package,
+        href: "/admin/products/stock",
+        permission: "products.edit", // Assuming stock edit needs edit permission
       },
     ],
   },
   {
-    id: "appearance",
-    label: "Apparence",
-    icon: Palette,
-    permission: "appearance.edit",
-    subItems: [
+    title: "Ventes",
+    items: [
       {
-        id: "logo",
-        label: "Logo",
-        href: "/admin/appearance/logo",
-        permission: "appearance.edit",
+        id: "orders",
+        label: "Commandes",
+        icon: ShoppingCart,
+        href: "/admin/orders",
+        permission: "orders.view",
       },
       {
-        id: "banner",
-        label: "Bannière",
-        href: "/admin/appearance/banner",
-        permission: "appearance.edit",
+        id: "customers",
+        label: "Clients",
+        icon: Users,
+        href: "/admin/customers",
+        permission: "customers.view",
+      },
+    ],
+  },
+  {
+    title: "Gestion",
+    items: [
+      {
+        id: "employees",
+        label: "Employés",
+        icon: User,
+        href: "/admin/employees",
+        permission: "employees.view",
       },
       {
-        id: "layout",
-        label: "Disposition",
-        href: "/admin/appearance/layout",
+        id: "marketing",
+        label: "Marketing",
+        icon: Tags,
+        permission: "settings.view",
+        subItems: [
+          {
+            id: "promo-codes",
+            label: "Codes promo",
+            href: "/admin/marketing/codes",
+            permission: "settings.view",
+          },
+          {
+            id: "promotions",
+            label: "Promotions",
+            href: "/admin/marketing/promotions",
+            permission: "settings.view",
+          },
+        ],
+      },
+      {
+        id: "reports",
+        label: "Rapports",
+        icon: BarChart,
+        permission: "reports.view",
+        subItems: [
+          {
+            id: "sales-reports",
+            label: "Ventes",
+            href: "/admin/reports/sales",
+            permission: "reports.view",
+          },
+          {
+            id: "product-reports",
+            label: "Produits",
+            href: "/admin/reports/products",
+            permission: "reports.view",
+          },
+          {
+            id: "customer-reports",
+            label: "Clients",
+            href: "/admin/reports/customers",
+            permission: "reports.view",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Paramètres",
+    items: [
+      {
+        id: "payment",
+        label: "Paiement",
+        icon: CreditCard,
+        permission: "settings.view",
+        subItems: [
+          {
+            id: "payment-methods",
+            label: "Méthodes de paiement",
+            href: "/admin/payment/methods",
+            permission: "settings.view",
+          },
+          {
+            id: "transactions",
+            label: "Transactions",
+            href: "/admin/payment/transactions",
+            permission: "settings.view",
+          },
+        ],
+      },
+      {
+        id: "shipping",
+        label: "Livraison",
+        icon: Truck,
+        permission: "settings.view",
+        subItems: [
+          {
+            id: "shipping-methods",
+            label: "Méthodes de livraison",
+            href: "/admin/shipping/methods",
+            permission: "settings.view",
+          },
+          {
+            id: "shipping-zones",
+            label: "Zones de livraison",
+            href: "/admin/shipping/zones",
+            permission: "settings.view",
+          },
+        ],
+      },
+      {
+        id: "appearance",
+        label: "Apparence",
+        icon: Palette,
         permission: "appearance.edit",
+        subItems: [
+          {
+            id: "logo",
+            label: "Logo",
+            href: "/admin/appearance/logo",
+            permission: "appearance.edit",
+          },
+          {
+            id: "banner",
+            label: "Bannière",
+            href: "/admin/appearance/banner",
+            permission: "appearance.edit",
+          },
+          {
+            id: "layout",
+            label: "Disposition",
+            href: "/admin/appearance/layout",
+            permission: "appearance.edit",
+          },
+        ],
       },
     ],
   },
@@ -197,30 +234,30 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const { hasPermission, loading } = usePermissions();
 
-  // Helper to filter items based on permissions
   const filterMenuItem = (item: MenuItem): boolean => {
-    // If no permission specified, or permission granted
     return !item.permission || hasPermission(item.permission);
   };
 
-  const getFilteredItems = () => {
-    return (
-      navItems
-        .filter(filterMenuItem)
-        .map(item => ({
-          ...item,
-          subItems: item.subItems?.filter(
-            sub => !sub.permission || hasPermission(sub.permission),
-          ),
-        }))
-        // Filter out items with no sub-items left if they originally had sub-items
-        .filter(item => !item.subItems || item.subItems.length > 0)
-    );
+  const getFilteredSections = (): NavSection[] => {
+    return navSections
+      .map(section => ({
+        ...section,
+        items: section.items
+          .filter(filterMenuItem)
+          .map(item => ({
+            ...item,
+            subItems: item.subItems?.filter(
+              sub => !sub.permission || hasPermission(sub.permission),
+            ),
+          }))
+          .filter(item => !item.subItems || item.subItems.length > 0),
+      }))
+      .filter(section => section.items.length > 0);
   };
 
-  const filteredNavItems = getFilteredItems();
+  const filteredSections = getFilteredSections();
 
-  const isSectionActive = (item: MenuItem) => {
+  const isItemActive = (item: MenuItem) => {
     if (item.href === pathname) return true;
     if (item.subItems) {
       return item.subItems.some(sub => pathname.startsWith(sub.href));
@@ -229,16 +266,18 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   };
 
   React.useEffect(() => {
-    filteredNavItems.forEach(item => {
-      if (
-        item.subItems &&
-        isSectionActive(item) &&
-        !expandedSections.includes(item.id)
-      ) {
-        setExpandedSections(prev => [...prev, item.id]);
-      }
+    filteredSections.forEach(section => {
+      section.items.forEach(item => {
+        if (
+          item.subItems &&
+          isItemActive(item) &&
+          !expandedSections.includes(item.id)
+        ) {
+          setExpandedSections(prev => [...prev, item.id]);
+        }
+      });
     });
-  }, [pathname, filteredNavItems]);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
@@ -248,7 +287,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
     }
   };
 
-  // Render skeleton while loading permissions
   if (loading) {
     return (
       <div
@@ -274,7 +312,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         className={`flex items-center mb-8 px-4 ${isExpanded ? "justify-between" : "justify-center"}`}
       >
         <div className="flex items-center space-x-3">
-          {/* Logo placeholder */}
           <div className="h-8 w-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
             B
           </div>
@@ -287,98 +324,111 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 overflow-y-auto no-scrollbar">
-        {filteredNavItems.map(item => {
-          const isActive = isSectionActive(item);
-          const isOpen = expandedSections.includes(item.id);
+      <nav className="flex-1 space-y-6 px-3 overflow-y-auto no-scrollbar">
+        {filteredSections.map((section, index) => (
+          <div key={index} className="space-y-1">
+            {isExpanded && section.title && (
+              <h3 className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                {section.title}
+              </h3>
+            )}
+            {/* Divider for collapsed mode if needed, but spacing usually enough */}
+            {!isExpanded && section.title && index > 0 && (
+              <div className="h-px bg-gray-200 dark:bg-gray-800 my-2 mx-2" />
+            )}
 
-          if (!item.subItems) {
-            return (
-              <Link
-                key={item.id}
-                href={item.href || "#"}
-                className={`w-full flex items-center rounded-lg transition-all group ${
-                  isExpanded ? "px-3 py-2" : "p-2 justify-center"
-                } ${
-                  isActive
-                    ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                }`}
-              >
-                <div className="relative flex items-center justify-center">
-                  <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
-                  />
-                </div>
-                {isExpanded && (
-                  <span className="ml-3 font-medium whitespace-nowrap text-sm">
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            );
-          }
+            {section.items.map(item => {
+              const isActive = isItemActive(item);
+              const isOpen = expandedSections.includes(item.id);
 
-          return (
-            <div key={item.id} className="space-y-1">
-              <button
-                onClick={() => {
-                  if (isExpanded) {
-                    toggleSection(item.id);
-                  } else {
-                    setIsExpanded(true);
-                    setExpandedSections([item.id]);
-                  }
-                }}
-                className={`w-full flex items-center justify-between rounded-lg transition-all group ${
-                  isExpanded ? "px-3 py-2" : "p-2 justify-center"
-                } ${
-                  isActive
-                    ? "text-gray-900 dark:text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                }`}
-              >
-                <div className="flex items-center">
-                  <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
-                  />
-                  {isExpanded && (
-                    <span className="ml-3 font-medium whitespace-nowrap text-sm">
-                      {item.label}
-                    </span>
+              if (!item.subItems) {
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href || "#"}
+                    className={`w-full flex items-center rounded-lg transition-all group ${
+                      isExpanded ? "px-3 py-2" : "p-2 justify-center"
+                    } ${
+                      isActive
+                        ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <item.icon
+                        className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
+                      />
+                    </div>
+                    {isExpanded && (
+                      <span className="ml-3 font-medium whitespace-nowrap text-sm">
+                        {item.label}
+                      </span>
+                    )}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={item.id} className="space-y-1">
+                  <button
+                    onClick={() => {
+                      if (isExpanded) {
+                        toggleSection(item.id);
+                      } else {
+                        setIsExpanded(true);
+                        setExpandedSections([item.id]);
+                      }
+                    }}
+                    className={`w-full flex items-center justify-between rounded-lg transition-all group ${
+                      isExpanded ? "px-3 py-2" : "p-2 justify-center"
+                    } ${
+                      isActive
+                        ? "text-gray-900 dark:text-white"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <item.icon
+                        className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
+                      />
+                      {isExpanded && (
+                        <span className="ml-3 font-medium whitespace-nowrap text-sm">
+                          {item.label}
+                        </span>
+                      )}
+                    </div>
+                    {isExpanded && (
+                      <ChevronDown
+                        className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      />
+                    )}
+                  </button>
+
+                  {isExpanded && isOpen && (
+                    <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
+                      {item.subItems.map(subItem => {
+                        const isSubActive = pathname === subItem.href;
+                        return (
+                          <Link
+                            key={subItem.id}
+                            href={subItem.href}
+                            className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
+                              isSubActive
+                                ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                                : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
-                {isExpanded && (
-                  <ChevronDown
-                    className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                  />
-                )}
-              </button>
-
-              {/* Submenu */}
-              {isExpanded && isOpen && (
-                <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
-                  {item.subItems.map(subItem => {
-                    const isSubActive = pathname === subItem.href;
-                    return (
-                      <Link
-                        key={subItem.id}
-                        href={subItem.href}
-                        className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
-                          isSubActive
-                            ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
-                            : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
-                        }`}
-                      >
-                        {subItem.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Footer */}

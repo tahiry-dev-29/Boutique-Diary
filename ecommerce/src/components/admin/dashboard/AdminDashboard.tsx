@@ -3,6 +3,7 @@ import DashboardHeader from "./DashboardHeader";
 import StatsCard from "./StatsCard";
 import RevenueChart from "./RevenueChart";
 import ProductDistributionChart from "./ProductDistributionChart";
+import StockDistributionChart from "./StockDistributionChart";
 import RecentPages from "./RecentPages";
 import {
   Copy,
@@ -137,7 +138,9 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="h-[400px]">
           <RecentPages />
         </div>
-        {/* Placeholder for another widget or remove empty space */}
+        <div className="lg:col-span-1 h-[400px]">
+          <StockDistributionChart data={stats.categoryDistribution} />
+        </div>
       </div>
     </div>
   );
