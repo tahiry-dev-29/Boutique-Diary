@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { RoleConfig, DEFAULT_ROLES } from "@/lib/permissions-config";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export default function EditEmployeePage() {
   const router = useRouter();
@@ -146,31 +147,22 @@ export default function EditEmployeePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link
-          href="/admin/employees"
-          className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft size={20} />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Modifier un employé
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Modifier les informations et les accès
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Modifier un employé"
+        description="Modifier les informations et les accès"
+        backHref="/admin/employees"
+      />
 
       {/* Form */}
-      <div className="bg-card border border-border rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Status Toggle */}
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
             <div>
-              <h3 className="font-medium text-foreground">Statut du compte</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-medium text-gray-900 dark:text-white">
+                Statut du compte
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Désactiver pour bloquer l&apos;accès temporairement
               </p>
             </div>
@@ -192,12 +184,12 @@ export default function EditEmployeePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Nom complet *
               </label>
               <div className="relative">
                 <User
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={18}
                 />
                 <input
@@ -206,19 +198,19 @@ export default function EditEmployeePage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Email *
               </label>
               <div className="relative">
                 <Mail
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={18}
                 />
                 <input
@@ -227,19 +219,19 @@ export default function EditEmployeePage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Role */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Rôle *
               </label>
               <div className="relative">
                 <Shield
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={18}
                 />
                 <select
@@ -247,7 +239,7 @@ export default function EditEmployeePage() {
                   value={formData.role}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none appearance-none"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none appearance-none transition-colors"
                 >
                   {availableRoles.map(role => (
                     <option key={role.id} value={role.name}>
@@ -258,23 +250,23 @@ export default function EditEmployeePage() {
               </div>
             </div>
 
-            <div className="md:col-span-2 border-t border-border pt-6">
-              <h3 className="text-lg font-medium text-foreground mb-4">
+            <div className="md:col-span-2 border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                 Changer le mot de passe
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Laisser vide pour conserver le mot de passe actuel.
               </p>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Nouveau mot de passe
               </label>
               <div className="relative">
                 <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={18}
                 />
                 <input
@@ -283,12 +275,12 @@ export default function EditEmployeePage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Nouveau mot de passe"
-                  className="w-full pl-10 pr-10 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -297,12 +289,12 @@ export default function EditEmployeePage() {
 
             {/* Confirm password */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Confirmer le mot de passe
               </label>
               <div className="relative">
                 <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={18}
                 />
                 <input
@@ -311,17 +303,17 @@ export default function EditEmployeePage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirmer le nouveau mot de passe"
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
                 />
               </div>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-4 pt-4 border-t border-border">
+          <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Link
               href="/admin/employees"
-              className="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="px-4 py-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               Annuler
             </Link>

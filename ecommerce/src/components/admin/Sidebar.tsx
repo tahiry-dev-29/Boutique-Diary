@@ -49,111 +49,35 @@ const navItems: MenuItem[] = [
     id: "products",
     label: "Produits",
     icon: ShoppingBag,
+    href: "/admin/products",
     permission: "products.view",
-    subItems: [
-      {
-        id: "all-products",
-        label: "Tous les produits",
-        href: "/admin/products",
-        permission: "products.view",
-      },
-      {
-        id: "add-product",
-        label: "Ajouter un produit",
-        href: "/admin/products/new",
-        permission: "products.edit",
-      },
-      {
-        id: "categories",
-        label: "Catégories",
-        href: "/admin/categories",
-        permission: "products.view",
-      },
-      {
-        id: "stock",
-        label: "Stock / inventaire",
-        href: "/admin/products/stock",
-        permission: "products.edit",
-      },
-    ],
   },
   {
     id: "orders",
     label: "Commandes",
     icon: ShoppingCart,
+    href: "/admin/orders",
     permission: "orders.view",
-    subItems: [
-      {
-        id: "all-orders",
-        label: "Liste des commandes",
-        href: "/admin/orders",
-        permission: "orders.view",
-      },
-      {
-        id: "pending-orders",
-        label: "Commandes en attente",
-        href: "/admin/orders/pending",
-        permission: "orders.view",
-      },
-      {
-        id: "returns",
-        label: "Retours / remboursements",
-        href: "/admin/orders/returns",
-        permission: "orders.edit",
-      },
-    ],
   },
   {
     id: "customers",
     label: "Clients",
     icon: Users,
+    href: "/admin/customers",
     permission: "customers.view",
-    subItems: [
-      {
-        id: "all-customers",
-        label: "Liste des clients",
-        href: "/admin/customers",
-        permission: "customers.view",
-      },
-      {
-        id: "purchase-history",
-        label: "Historique des achats",
-        href: "/admin/customers/history",
-        permission: "customers.view",
-      },
-    ],
   },
   {
     id: "employees",
     label: "Employés",
     icon: User,
+    href: "/admin/employees",
     permission: "employees.view",
-    subItems: [
-      {
-        id: "all-employees",
-        label: "Liste des employés",
-        href: "/admin/employees",
-        permission: "employees.view",
-      },
-      {
-        id: "add-employee",
-        label: "Ajouter un employé",
-        href: "/admin/employees/new",
-        permission: "employees.edit",
-      },
-      {
-        id: "roles",
-        label: "Gestion des rôles",
-        href: "/admin/employees/roles",
-        permission: "employees.edit",
-      },
-    ],
   },
   {
     id: "marketing",
     label: "Marketing",
     icon: Tags,
-    permission: "settings.view", // Simplified permission mapping
+    permission: "settings.view",
     subItems: [
       {
         id: "promo-codes",
@@ -362,15 +286,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         </div>
       </div>
 
-      {!isExpanded && (
-        <button
-          onClick={() => setIsExpanded(true)}
-          className="mx-auto mb-6 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-lg transition-colors"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-      )}
-
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto no-scrollbar">
         {filteredNavItems.map(item => {
@@ -466,6 +381,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         })}
       </nav>
 
+      {/* Footer */}
       <div
         className={`mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800 space-y-1`}
       >
@@ -523,6 +439,25 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
             <span className="ml-3 text-sm font-medium whitespace-nowrap">
               Déconnexion
             </span>
+          )}
+        </button>
+
+        {/* Toggle Sidebar Button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`w-full flex items-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all mt-4 ${
+            isExpanded ? "px-3 py-2 justify-end" : "p-2 justify-center"
+          }`}
+        >
+          {isExpanded ? (
+            <div className="flex items-center">
+              <span className="mr-2 text-xs font-medium uppercase tracking-wider">
+                Réduire
+              </span>
+              <ChevronRight className="w-4 h-4 rotate-180" />
+            </div>
+          ) : (
+            <ChevronRight className="w-5 h-5" />
           )}
         </button>
       </div>

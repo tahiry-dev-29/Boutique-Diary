@@ -66,7 +66,7 @@ export function ProductImageUploader({
 
     if (validFiles.length === 0) return;
 
-    const base64Promises = validFiles.map((file) => {
+    const base64Promises = validFiles.map(file => {
       return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -78,7 +78,7 @@ export function ProductImageUploader({
 
     try {
       const base64Strings = await Promise.all(base64Promises);
-      const newImages: ProductImage[] = base64Strings.map((url) => ({
+      const newImages: ProductImage[] = base64Strings.map(url => ({
         url,
         color: null,
         sizes: [],
@@ -86,7 +86,7 @@ export function ProductImageUploader({
         stock: 0, // Default to 0? Or maybe assume some default
         price: null,
       }));
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         images: [...(prev.images || []), ...newImages],
       }));
@@ -126,17 +126,17 @@ export function ProductImageUploader({
         return;
       }
 
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         images: [
           ...(prev.images || []),
-          { 
-            url: data.path, 
-            color: null, 
+          {
+            url: data.path,
+            color: null,
             sizes: [],
             reference: generateRandomReference(),
             stock: 0,
-            price: null
+            price: null,
           },
         ],
       }));
@@ -153,12 +153,12 @@ export function ProductImageUploader({
 
   const handleRemoveImage = (index: number) => {
     const images = formData.images || [];
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       images: (prev.images || []).filter((_, i) => i !== index),
     }));
     if (selectedImageIndex >= index && selectedImageIndex > 0) {
-      setSelectedImageIndex((prev) => prev - 1);
+      setSelectedImageIndex(prev => prev - 1);
     } else if (selectedImageIndex === index && images.length === 1) {
       setSelectedImageIndex(0);
     } else if (selectedImageIndex === index && index === images.length - 1) {
@@ -172,13 +172,22 @@ export function ProductImageUploader({
     const newImages = [...images];
     const [selectedImage] = newImages.splice(index, 1);
     newImages.unshift(selectedImage);
-    setFormData((prev) => ({ ...prev, images: newImages }));
+    setFormData(prev => ({ ...prev, images: newImages }));
     setSelectedImageIndex(0);
   };
 
   const handleUpdateImageAttribute = (
     index: number,
-    field: "color" | "sizes" | "price" | "oldPrice" | "stock" | "reference" | "categoryId" | "isNew" | "isPromotion",
+    field:
+      | "color"
+      | "sizes"
+      | "price"
+      | "oldPrice"
+      | "stock"
+      | "reference"
+      | "categoryId"
+      | "isNew"
+      | "isPromotion",
     value: string | string[] | number | boolean | null,
   ) => {
     const images = formData.images || [];
@@ -192,21 +201,21 @@ export function ProductImageUploader({
       }
 
       let autoReference = (newImages[index] as ProductImage).reference;
-      
+
       // Only auto-generate if reference is empty (or on initial creation, which is handled above)
       // But user wants manual control or random, so we might want to expose a specific 'reference' field update
       if (field === "reference") {
-         autoReference = newValue as string;
+        autoReference = newValue as string;
       }
 
       // If changing color, maybe we DON'T check/change reference automatically anymore if we want it random/fixed?
-      // The user said "chaque images a son propres reference randoms". 
+      // The user said "chaque images a son propres reference randoms".
       // If they change color, we should probably Keep the random reference, unless they explicitly change the reference.
-      
+
       newImages[index] = {
         ...(newImages[index] as ProductImage),
         [field]: newValue,
-        reference: field === "reference" ? newValue as string : autoReference
+        reference: field === "reference" ? (newValue as string) : autoReference,
       };
       setFormData({ ...formData, images: newImages });
     }
@@ -228,7 +237,7 @@ export function ProductImageUploader({
         <Input
           type="text"
           value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
+          onChange={e => setUrlInput(e.target.value)}
           placeholder="URL de l'image..."
           className="flex-1"
         />
@@ -259,7 +268,7 @@ export function ProductImageUploader({
       </div>
 
       {/* Main Image Preview */}
-      <div className="relative w-full aspect-video bg-muted border-2 border-dashed border-muted-foreground/25 rounded-lg overflow-hidden flex items-center justify-center">
+      <div className="relative w-full aspect-video bg-gray-50 dark:bg-gray-900/50 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
         {currentImage ? (
           <>
             <img
@@ -287,7 +296,7 @@ export function ProductImageUploader({
             </Button>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-muted-foreground">
+          <div className="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
             <ImageIcon className="w-16 h-16 mb-2" />
             <span className="text-sm">Aucune image sélectionnée</span>
           </div>
@@ -297,36 +306,37 @@ export function ProductImageUploader({
       {/* Thumbnails Grid */}
       <div className="grid grid-cols-6 gap-2">
         {images.map((img, index) => {
-           const uniqueKey = typeof img === 'string' ? img : (img.reference || `img-${index}`);
-           return (
-          <div
-            key={uniqueKey}
-            onClick={() => setSelectedImageIndex(index)}
-            className={`relative aspect-square bg-muted border-2 rounded-lg overflow-hidden cursor-pointer transition-all ${
-              index === selectedImageIndex
-                ? "border-primary ring-2 ring-primary/20"
-                : "border-border hover:border-primary/50"
-            }`}
-          >
-            <img
-              src={typeof img === "string" ? img : img.url}
-              alt={`Vue ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
-            {index === 0 && (
-              <div className="absolute bottom-0 left-0 right-0 bg-primary text-primary-foreground text-[8px] text-center py-0.5">
-                MAIN
-              </div>
-            )}
-          </div>
-        );
+          const uniqueKey =
+            typeof img === "string" ? img : img.reference || `img-${index}`;
+          return (
+            <div
+              key={uniqueKey}
+              onClick={() => setSelectedImageIndex(index)}
+              className={`relative aspect-square bg-gray-50 dark:bg-gray-900/50 border-2 rounded-lg overflow-hidden cursor-pointer transition-all ${
+                index === selectedImageIndex
+                  ? "border-primary ring-2 ring-primary/20"
+                  : "border-gray-200 dark:border-gray-700 hover:border-primary/50"
+              }`}
+            >
+              <img
+                src={typeof img === "string" ? img : img.url}
+                alt={`Vue ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              {index === 0 && (
+                <div className="absolute bottom-0 left-0 right-0 bg-primary text-primary-foreground text-[8px] text-center py-0.5">
+                  MAIN
+                </div>
+              )}
+            </div>
+          );
         })}
 
         {/* Empty slots */}
         {Array.from({ length: Math.max(0, 6 - images.length) }).map((_, i) => (
           <div
             key={`empty-${i}`}
-            className="aspect-square bg-muted border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center text-muted-foreground"
+            className="aspect-square bg-gray-50 dark:bg-gray-900/50 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500"
           >
             <span className="text-xs">{images.length + i + 1}</span>
           </div>
@@ -335,51 +345,73 @@ export function ProductImageUploader({
 
       {/* Image Specific Settings */}
       {currentImageAsProductImage && (
-        <div className="bg-muted/50 p-4 rounded-lg border">
+        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
           <h4 className="text-sm font-medium mb-3">
             Paramètres de l&apos;image {selectedImageIndex + 1}
           </h4>
 
           {/* Reference */}
-          <div className="mb-3 p-3 bg-card rounded-lg border shadow-sm">
+          <div className="mb-3 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Référence Unique (SKU)</span>
+              <span className="text-sm font-medium">
+                Référence Unique (SKU)
+              </span>
               <Badge variant="outline" className="font-mono">
                 {currentImageAsProductImage.reference}
               </Badge>
             </div>
-            
+
             <div className="flex gap-2">
-              <Input 
+              <Input
                 value={currentImageAsProductImage.reference || ""}
-                onChange={(e) => handleUpdateImageAttribute(selectedImageIndex, "reference", e.target.value)}
+                onChange={e =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "reference",
+                    e.target.value,
+                  )
+                }
                 placeholder="#REF123"
                 className="font-mono text-sm h-9"
               />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="icon" 
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
                 className="h-9 w-9 shrink-0"
-                onClick={() => handleUpdateImageAttribute(selectedImageIndex, "reference", generateRandomReference())}
+                onClick={() =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "reference",
+                    generateRandomReference(),
+                  )
+                }
                 title="Générer une nouvelle référence aléatoire"
               >
                 <div className="h-4 w-4 rotate-45 border-2 border-current border-t-transparent border-l-transparent rounded-full" />
               </Button>
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
-              Chaque variante d&apos;image possède sa propre référence unique (générée aléatoirement ou personnalisable).
+              Chaque variante d&apos;image possède sa propre référence unique
+              (générée aléatoirement ou personnalisable).
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             {/* Organization & Status - Per Image */}
-             <div className="space-y-2">
+            <div className="space-y-2">
               <Label className="text-xs">Catégorie</Label>
-               <Select
-                value={currentImageAsProductImage.categoryId?.toString() || "uncategorized"}
-                onValueChange={(value) =>
-                  handleUpdateImageAttribute(selectedImageIndex, "categoryId", value === "uncategorized" ? null : parseInt(value))
+              <Select
+                value={
+                  currentImageAsProductImage.categoryId?.toString() ||
+                  "uncategorized"
+                }
+                onValueChange={value =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "categoryId",
+                    value === "uncategorized" ? null : parseInt(value),
+                  )
                 }
               >
                 <SelectTrigger className="h-8 text-sm">
@@ -387,7 +419,7 @@ export function ProductImageUploader({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="uncategorized">Non classé</SelectItem>
-                  {categories?.map((category) => (
+                  {categories?.map(category => (
                     <SelectItem
                       key={category.id}
                       value={category.id?.toString() || ""}
@@ -401,9 +433,15 @@ export function ProductImageUploader({
 
             <div className="space-y-2">
               <Label className="text-xs">Statut Nouveauté</Label>
-               <Select
+              <Select
                 value={currentImageAsProductImage.isNew ? "new" : "standard"}
-                onValueChange={(value) => handleUpdateImageAttribute(selectedImageIndex, "isNew", value === "new")}
+                onValueChange={value =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "isNew",
+                    value === "new",
+                  )
+                }
               >
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue />
@@ -415,28 +453,40 @@ export function ProductImageUploader({
               </Select>
             </div>
 
-             <div className="space-y-2">
+            <div className="space-y-2">
               <Label className="text-xs">Type Promotion</Label>
-               <Select
-                  value={currentImageAsProductImage.isPromotion ? "promo" : "standard"}
-                  onValueChange={(value) => handleUpdateImageAttribute(selectedImageIndex, "isPromotion", value === "promo")}
-                >
-                  <SelectTrigger className="h-8 text-sm">
-                    <SelectValue placeholder="Standard" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="standard">Standard</SelectItem>
-                    <SelectItem value="promo">En Promotion</SelectItem>
-                  </SelectContent>
-                </Select>
+              <Select
+                value={
+                  currentImageAsProductImage.isPromotion ? "promo" : "standard"
+                }
+                onValueChange={value =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "isPromotion",
+                    value === "promo",
+                  )
+                }
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue placeholder="Standard" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="promo">En Promotion</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             {}
             <div className="space-y-2">
               <Label className="text-xs">Couleur associée</Label>
               <Select
                 value={currentImageAsProductImage.color || "none"}
-                onValueChange={(value) =>
-                  handleUpdateImageAttribute(selectedImageIndex, "color", value === "none" ? null : value)
+                onValueChange={value =>
+                  handleUpdateImageAttribute(
+                    selectedImageIndex,
+                    "color",
+                    value === "none" ? null : value,
+                  )
                 }
               >
                 <SelectTrigger className="h-8 text-sm">
@@ -444,7 +494,7 @@ export function ProductImageUploader({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Aucune</SelectItem>
-                  {formData.colors?.map((color) => (
+                  {formData.colors?.map(color => (
                     <SelectItem key={color} value={color}>
                       {color}
                     </SelectItem>
@@ -462,7 +512,7 @@ export function ProductImageUploader({
                 step="0.01"
                 placeholder="Prix par défaut"
                 value={currentImageAsProductImage.price || ""}
-                onChange={(e) =>
+                onChange={e =>
                   handleUpdateImageAttribute(
                     selectedImageIndex,
                     "price",
@@ -482,7 +532,7 @@ export function ProductImageUploader({
                 step="0.01"
                 placeholder="Ex: 15000"
                 value={currentImageAsProductImage.oldPrice || ""}
-                onChange={(e) =>
+                onChange={e =>
                   handleUpdateImageAttribute(
                     selectedImageIndex,
                     "oldPrice",
@@ -501,7 +551,7 @@ export function ProductImageUploader({
                 min="0"
                 placeholder="Stock spécifique"
                 value={currentImageAsProductImage.stock || ""}
-                onChange={(e) =>
+                onChange={e =>
                   handleUpdateImageAttribute(
                     selectedImageIndex,
                     "stock",
@@ -516,7 +566,7 @@ export function ProductImageUploader({
             <div className="col-span-2 space-y-2">
               <Label className="text-xs">Tailles associées</Label>
               <div className="flex flex-wrap gap-2">
-                {formData.sizes?.map((size) => (
+                {formData.sizes?.map(size => (
                   <label
                     key={size}
                     className="flex items-center gap-1.5 text-xs cursor-pointer bg-background px-2 py-1 rounded border hover:border-primary/50"
@@ -526,12 +576,12 @@ export function ProductImageUploader({
                         currentImageAsProductImage.sizes?.includes(size) ||
                         false
                       }
-                      onCheckedChange={(checked) => {
+                      onCheckedChange={checked => {
                         const currentSizes =
                           currentImageAsProductImage.sizes || [];
                         const newSizes = checked
                           ? [...currentSizes, size]
-                          : currentSizes.filter((s) => s !== size);
+                          : currentSizes.filter(s => s !== size);
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "sizes",

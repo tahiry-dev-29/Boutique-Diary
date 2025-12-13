@@ -25,7 +25,7 @@ export function ProductOrganization({
   categories,
 }: ProductOrganizationProps) {
   return (
-    <Card>
+    <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <CardHeader>
         <CardTitle>Organisation du produit</CardTitle>
       </CardHeader>
@@ -35,7 +35,7 @@ export function ProductOrganization({
           <Label htmlFor="category">Catégorie Principale</Label>
           <Select
             value={formData.categoryId?.toString() || "uncategorized"}
-            onValueChange={(value) =>
+            onValueChange={value =>
               setFormData({
                 ...formData,
                 categoryId: value === "uncategorized" ? null : parseInt(value),
@@ -47,8 +47,11 @@ export function ProductOrganization({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="uncategorized">Non classé</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id?.toString() || ""}>
+              {categories.map(category => (
+                <SelectItem
+                  key={category.id}
+                  value={category.id?.toString() || ""}
+                >
                   {category.name}
                 </SelectItem>
               ))}
@@ -60,13 +63,13 @@ export function ProductOrganization({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label className="text-base">Nouveauté</Label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Marquer comme nouveau produit
             </p>
           </div>
           <Switch
             checked={formData.isNew}
-            onCheckedChange={(checked) =>
+            onCheckedChange={checked =>
               setFormData({ ...formData, isNew: checked })
             }
           />
@@ -75,28 +78,28 @@ export function ProductOrganization({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label className="text-base">En Promotion</Label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Marquer comme produit en promo
             </p>
           </div>
           <Switch
             checked={formData.isPromotion}
-            onCheckedChange={(checked) =>
+            onCheckedChange={checked =>
               setFormData({ ...formData, isPromotion: checked })
             }
           />
         </div>
-        
-         <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label className="text-base">Meilleure vente</Label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Marquer comme best-seller
             </p>
           </div>
           <Switch
             checked={formData.isBestSeller}
-            onCheckedChange={(checked) =>
+            onCheckedChange={checked =>
               setFormData({ ...formData, isBestSeller: checked })
             }
           />
