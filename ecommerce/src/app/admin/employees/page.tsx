@@ -120,7 +120,7 @@ export default function EmployeesPage() {
         {/* Search */}
         <div className="relative flex-1">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
             size={18}
           />
           <input
@@ -128,7 +128,7 @@ export default function EmployeesPage() {
             placeholder="Rechercher par nom ou email..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function EmployeesPage() {
         <select
           value={selectedRole}
           onChange={e => setSelectedRole(e.target.value)}
-          className="px-4 py-2.5 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+          className="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
         >
           <option value="all">Tous les rôles</option>
           <option value="superadmin">Super Admin</option>
@@ -145,38 +145,38 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employees table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-muted/50">
+            <thead className="bg-gray-50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Employé
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Rôle
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden md:table-cell">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white hidden md:table-cell">
                   Email
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Statut (Compte)
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Connexion
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredEmployees.map(employee => {
                 const online = isOnline(employee.lastSeen);
                 return (
                   <tr
                     key={employee.id}
-                    className="hover:bg-muted/30 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -184,10 +184,10 @@ export default function EmployeesPage() {
                           {employee.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-medium text-foreground">
+                          <p className="font-medium text-gray-900 dark:text-white">
                             {employee.name}
                           </p>
-                          <p className="text-sm text-muted-foreground md:hidden">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 md:hidden">
                             {employee.email}
                           </p>
                         </div>
@@ -201,7 +201,7 @@ export default function EmployeesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <Mail size={14} />
                         {employee.email}
                       </div>
@@ -222,7 +222,7 @@ export default function EmployeesPage() {
                         <div
                           className={`w-2 h-2 rounded-full ${online ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"}`}
                         />
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {online ? "En ligne" : "Hors ligne"}
                         </span>
                       </div>
@@ -231,13 +231,13 @@ export default function EmployeesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/admin/employees/${employee.id}/edit`}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         >
                           <Edit size={16} />
                         </Link>
                         <button
                           onClick={() => handleDelete(employee.id)}
-                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                          className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -252,7 +252,7 @@ export default function EmployeesPage() {
 
         {filteredEmployees.length === 0 && (
           <div className="p-12 text-center">
-            <p className="text-muted-foreground">
+            <p className="text-gray-500 dark:text-gray-400">
               {employees.length === 0
                 ? "Aucun employé enregistré"
                 : "Aucun employé trouvé avec ces critères"}
@@ -265,17 +265,17 @@ export default function EmployeesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/admin/employees/roles"
-          className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400">
               <Shield size={24} />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                 Gestion des rôles
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Configurer les permissions
               </p>
             </div>
@@ -283,17 +283,17 @@ export default function EmployeesPage() {
         </Link>
         <Link
           href="/admin/employees/new"
-          className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400">
               <UserPlus size={24} />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                 Ajouter un employé
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Créer un nouveau compte
               </p>
             </div>

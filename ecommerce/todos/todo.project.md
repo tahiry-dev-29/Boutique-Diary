@@ -33,16 +33,16 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 📦 Products Core (Le gros morceau)
 
-- [] Modèle Prisma `Product` (Champs de base + `ProductLang` pour i18n).
-- [] Modèle Prisma `ProductCombination` (Variantes).
-- [] Modèle Prisma `Stock` (Lié au produit OU à la combinaison).
-- [] Modèle Prisma `Image` (Gestion des médias).
-- [] DTO `CreateProductInput` (Complet: incluant features et infos de base).
-- [] Service `ProductService`: Création de produit simple.
-- [] Service `ProductVariantService`: Générateur de combinaisons (Algorithme de croisement des attributs).
-- [] Service `StockService`: Gestion des mouvements de stock (`increment`, `decrement`).
-- [] Endpoint Public: `GET /products` (avec filtres et pagination).
-- [] Endpoint Public: `GET /products/:id` (incluant les groupes d'attributs pour le selecteur).
+- [x] Modèle Prisma `Product` (Champs de base + `ProductLang` pour i18n).
+- [x] Modèle Prisma `ProductCombination` (Variantes).
+- [x] Modèle Prisma `Stock` (Lié au produit OU à la combinaison).
+- [x] Modèle Prisma `Image` (Gestion des médias).
+- [x] DTO `CreateProductInput` (Complet: incluant features et infos de base).
+- [x] Service `ProductService`: Création de produit simple.
+- [x] Service `ProductVariantService`: Générateur de combinaisons (Algorithme de croisement des attributs).
+- [x] Service `StockService`: Gestion des mouvements de stock (`increment`, `decrement`).
+- [x] Endpoint Public: `GET /products` (avec filtres et pagination).
+- [x] Endpoint Public: `GET /products/:id` (incluant les groupes d'attributs pour le selecteur).
 
 ### 💰 Pricing Engine (Moteur de Prix)
 

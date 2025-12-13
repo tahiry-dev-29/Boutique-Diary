@@ -47,7 +47,7 @@ export default function CustomerWishlist() {
       </div>
 
       {wishlistItems.length === 0 ? (
-        <div className="bg-card border border-border rounded-xl p-12 text-center">
+        <div className="dark:border-gray-700/50 border border-border rounded-xl p-12 text-center">
           <Heart size={48} className="mx-auto text-muted-foreground mb-4" />
           <h2 className="text-lg font-semibold text-foreground">
             Votre liste est vide
@@ -67,7 +67,7 @@ export default function CustomerWishlist() {
           {wishlistItems.map(item => (
             <div
               key={item.id}
-              className="bg-card border border-border rounded-xl overflow-hidden group"
+              className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden group"
             >
               {/* Image */}
               <div className="relative aspect-square bg-muted">
@@ -85,7 +85,7 @@ export default function CustomerWishlist() {
                   </div>
                 )}
                 {/* Remove button */}
-                <button className="absolute top-3 right-3 p-2 bg-card rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground">
+                <button className="absolute top-3 right-3 p-2 dark:border-gray-700/50 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground">
                   <Trash2 size={16} />
                 </button>
               </div>

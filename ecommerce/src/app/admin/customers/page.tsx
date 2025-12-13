@@ -86,7 +86,7 @@ export default function CustomerPage() {
       {/* Search */}
       <div className="relative max-w-md">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
           size={18}
         />
         <input
@@ -94,35 +94,35 @@ export default function CustomerPage() {
           placeholder="Rechercher par nom ou email..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+          className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
         />
       </div>
 
       {/* Customers table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-muted/50">
+            <thead className="bg-gray-50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Client
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
                   Email
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden md:table-cell">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white hidden md:table-cell">
                   Date d&apos;inscription
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredCustomers.map(customer => (
                 <tr
                   key={customer.id}
-                  className="hover:bg-muted/30 transition-colors"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -130,32 +130,32 @@ export default function CustomerPage() {
                         {customer.username.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-foreground">
+                        <p className="font-medium text-gray-900 dark:text-white">
                           {customer.username}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Mail size={14} />
                       {customer.email}
                     </div>
                   </td>
                   <td className="px-6 py-4 hidden md:table-cell">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Calendar size={14} />
                       {new Date(customer.createdAt).toLocaleDateString("fr-FR")}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground">
+                      <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                         <Eye size={16} />
                       </button>
                       <button
                         onClick={() => handleDelete(customer.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                        className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -169,8 +169,8 @@ export default function CustomerPage() {
 
         {filteredCustomers.length === 0 && (
           <div className="p-12 text-center">
-            <User className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">
+            <User className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+            <p className="text-gray-500 dark:text-gray-400">
               {customers.length === 0
                 ? "Aucun client enregistré"
                 : "Aucun client trouvé avec ces critères"}

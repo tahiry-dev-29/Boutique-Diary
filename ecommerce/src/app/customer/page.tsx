@@ -43,7 +43,7 @@ export default function CustomerDashboard() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow group"
+            className="dark:border-gray-700/50 border border-border rounded-xl p-6 hover:shadow-lg transition-shadow group"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -63,7 +63,7 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Recent orders */}
-      <div className="bg-card border border-border rounded-xl p-6">
+      <div className="dark:border-gray-700/50 border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Clock size={20} className="text-muted-foreground" />
@@ -119,7 +119,7 @@ export default function CustomerDashboard() {
         </Link>
         <Link
           href="/customer/settings"
-          className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow"
+          className="dark:border-gray-700/50 border border-border rounded-xl p-6 hover:shadow-lg transition-shadow"
         >
           <h3 className="font-semibold text-lg text-foreground">
             Gérer votre compte
