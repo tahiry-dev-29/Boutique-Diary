@@ -82,43 +82,43 @@ export function DashboardStats({ products }: DashboardStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => {
         const Icon = stat.icon || stat.iconComponent;
         return (
           <Card
             key={index}
-            className="relative overflow-hidden border-none shadow-md bg-white dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700"
+            className="relative overflow-hidden border-none shadow-sm bg-white dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50"
           >
             {/* Background glowing effect */}
             <div
-              className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${stat.color} opacity-[0.08] dark:opacity-[0.12] blur-3xl rounded-bl-full -mr-6 -mt-6 transition-transform group-hover:scale-110`}
+              className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.06] dark:opacity-[0.10] blur-2xl rounded-bl-full -mr-5 -mt-5 transition-transform group-hover:scale-105`}
             />
 
-            <CardContent className="p-6 relative z-10">
+            <CardContent className="p-5 relative z-10">
               <div className="flex justify-between items-start">
-                <div className="flex flex-col justify-between h-full space-y-3">
+                <div className="flex flex-col justify-between h-full space-y-2">
                   <div className="space-y-1">
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                    <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {stat.label}
                     </p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
                       {stat.value}
                     </h3>
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1">
+                  <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-3">
+                <div className="flex flex-col items-end gap-2">
                   <div
-                    className={`p-3 rounded-xl ${stat.iconBg} shadow-sm flex items-center justify-center bg-opacity-10`}
+                    className={`p-2.5 rounded-xl ${stat.iconBg} shadow-sm flex items-center justify-center bg-opacity-10`}
                   >
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-5 h-5" />
                   </div>
                   {stat.change && (
-                    <div className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-600/50">
                       {stat.change}
                     </div>
                   )}

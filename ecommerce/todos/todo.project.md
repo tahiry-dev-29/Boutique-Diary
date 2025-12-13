@@ -79,11 +79,11 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 👤 User Identity
 
-- [ ] Page `(auth)/login/page.ts` (Server Action `loginAction`).
-- [ ] Page `(auth)/register/page.ts` (React Hook Form + Zod).
-- [ ] Layout `(dashboard)/layout.ts` (Protection via Middleware).
-- [ ] Page `(dashboard)/account/page.ts` (Dashboard client - Server Component).
-- [ ] Page `(dashboard)/addresses/page.ts` (CRUD Adresses via Server Actions).
+- [x] Page `(auth)/login/page.ts` (Server Action `loginAction`).
+- [x] Page `(auth)/register/page.ts` (React Hook Form + Zod).
+- [x] Layout `(dashboard)/layout.ts` (Protection via Middleware).
+- [x] Page `(dashboard)/account/page.ts` (Dashboard client - Server Component).
+- [x] Page `(dashboard)/addresses/page.ts` (CRUD Adresses via Server Actions).
 
 ### 🛍️ Product Catalog UI
 

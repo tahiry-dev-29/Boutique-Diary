@@ -71,34 +71,35 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
         {/* Value Card */}
-        <div className="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg flex flex-col justify-between h-[160px]">
-          <div className="p-3 bg-white/20 rounded-xl w-fit">
-            <TrendingUp className="w-6 h-6 text-white" />
+        <div className="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl p-5 text-white shadow-sm flex flex-col justify-between h-[150px] border border-white/10">
+          <div className="p-2.5 bg-white/20 rounded-lg w-fit">
+            <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-white/80 font-medium">Valeur du Stock</p>
-            <h3 className="text-2xl font-bold mt-1">
+            <p className="text-white/80 text-[11px] font-medium uppercase tracking-wider">
+              Valeur du Stock
+            </p>
+            <h3 className="text-2xl lg:text-3xl font-bold mt-1">
               {loading ? "..." : formatCurrency(stats.totalStockValue)}
             </h3>
           </div>
         </div>
 
         {/* Total Products */}
-        <div className="h-[160px]">
+        <div className="h-[150px]">
           <StatsCard
             title="Total Produits"
             value={loading ? "..." : stats.totalProducts.toString()}
             icon={Package}
             color="bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
-            percentage={0} // Can implement growth logic later
+            percentage={0}
           />
         </div>
 
-        {/* In Stock (Calculated as Total - Low Stock for simple viz, or accurate if API allows) */}
-        {/* For now let's show Total Available items if we had that, or just generic "En Stock" */}
-        <div className="h-[160px]">
+        {/* In Stock */}
+        <div className="h-[150px]">
           <StatsCard
             title="En Stock"
             value={
@@ -113,7 +114,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         </div>
 
         {/* Low Stock */}
-        <div className="h-[160px]">
+        <div className="h-[150px]">
           <StatsCard
             title="Rupture / Faible Stock"
             value={loading ? "..." : stats.lowStockCount.toString()}
