@@ -21,6 +21,7 @@ import {
   Trash,
   Package,
 } from "lucide-react";
+import { Modal } from "@/components/ui/Modal";
 
 interface MenuItem {
   id: string;
@@ -287,6 +288,19 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
     }
   };
 
+  /* User Menu State */
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
+      window.location.href = "/admin-login";
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   if (loading) {
     return (
       <div
@@ -302,215 +316,263 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   }
 
   return (
-    <div
-      className={`bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
-        isExpanded ? "w-64" : "w-20"
-      }`}
-    >
-      {/* Brand */}
-      <div
-        className={`flex items-center mb-8 px-4 ${isExpanded ? "justify-between" : "justify-center"}`}
+    <>
+      <Modal
+        title="Confirmer la déconnexion"
+        description="Êtes-vous sûr de vouloir vous déconnecter ?"
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
       >
-        <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
-            B
-          </div>
-          {isExpanded && (
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
-              Boutique Dialy
-            </h2>
-          )}
+        <div className="flex justify-end space-x-2 pt-4">
+          <button
+            onClick={() => setShowLogoutConfirm(false)}
+            className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            Annuler
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Déconnexion
+          </button>
         </div>
-      </div>
+      </Modal>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-6 px-3 overflow-y-auto no-scrollbar">
-        {filteredSections.map((section, index) => (
-          <div key={index} className="space-y-1">
-            {isExpanded && section.title && (
-              <h3 className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                {section.title}
-              </h3>
+      <div
+        className={`bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
+          isExpanded ? "w-64" : "w-20"
+        }`}
+      >
+        {/* Brand */}
+        <div
+          className={`flex items-center mb-8 px-4 ${isExpanded ? "justify-between" : "justify-center"}`}
+        >
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
+              B
+            </div>
+            {isExpanded && (
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                Boutique Dialy
+              </h2>
             )}
-            {/* Divider for collapsed mode if needed, but spacing usually enough */}
-            {!isExpanded && section.title && index > 0 && (
-              <div className="h-px bg-gray-200 dark:bg-gray-800 my-2 mx-2" />
-            )}
+          </div>
+        </div>
 
-            {section.items.map(item => {
-              const isActive = isItemActive(item);
-              const isOpen = expandedSections.includes(item.id);
+        {/* Navigation */}
+        <nav className="flex-1 space-y-6 px-3 overflow-y-auto no-scrollbar">
+          {filteredSections.map((section, index) => (
+            <div key={index} className="space-y-1">
+              {isExpanded && section.title && (
+                <h3 className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  {section.title}
+                </h3>
+              )}
+              {/* Divider for collapsed mode if needed, but spacing usually enough */}
+              {!isExpanded && section.title && index > 0 && (
+                <div className="h-px bg-gray-200 dark:bg-gray-800 my-2 mx-2" />
+              )}
 
-              if (!item.subItems) {
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href || "#"}
-                    className={`w-full flex items-center rounded-lg transition-all group ${
-                      isExpanded ? "px-3 py-2" : "p-2 justify-center"
-                    } ${
-                      isActive
-                        ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                    }`}
-                  >
-                    <div className="relative flex items-center justify-center">
-                      <item.icon
-                        className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
-                      />
-                    </div>
-                    {isExpanded && (
-                      <span className="ml-3 font-medium whitespace-nowrap text-sm">
-                        {item.label}
-                      </span>
-                    )}
-                  </Link>
-                );
-              }
+              {section.items.map(item => {
+                const isActive = isItemActive(item);
+                const isOpen = expandedSections.includes(item.id);
 
-              return (
-                <div key={item.id} className="space-y-1">
-                  <button
-                    onClick={() => {
-                      if (isExpanded) {
-                        toggleSection(item.id);
-                      } else {
-                        setIsExpanded(true);
-                        setExpandedSections([item.id]);
-                      }
-                    }}
-                    className={`w-full flex items-center justify-between rounded-lg transition-all group ${
-                      isExpanded ? "px-3 py-2" : "p-2 justify-center"
-                    } ${
-                      isActive
-                        ? "text-gray-900 dark:text-white"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <item.icon
-                        className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
-                      />
+                if (!item.subItems) {
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.href || "#"}
+                      className={`w-full flex items-center rounded-lg transition-all group ${
+                        isExpanded ? "px-3 py-2" : "p-2 justify-center"
+                      } ${
+                        isActive
+                          ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <div className="relative flex items-center justify-center">
+                        <item.icon
+                          className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
+                        />
+                      </div>
                       {isExpanded && (
                         <span className="ml-3 font-medium whitespace-nowrap text-sm">
                           {item.label}
                         </span>
                       )}
-                    </div>
-                    {isExpanded && (
-                      <ChevronDown
-                        className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                      />
+                    </Link>
+                  );
+                }
+
+                return (
+                  <div key={item.id} className="space-y-1">
+                    <button
+                      onClick={() => {
+                        if (isExpanded) {
+                          toggleSection(item.id);
+                        } else {
+                          setIsExpanded(true);
+                          setExpandedSections([item.id]);
+                        }
+                      }}
+                      className={`w-full flex items-center justify-between rounded-lg transition-all group ${
+                        isExpanded ? "px-3 py-2" : "p-2 justify-center"
+                      } ${
+                        isActive
+                          ? "text-gray-900 dark:text-white"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <item.icon
+                          className={`w-5 h-5 shrink-0 ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300"}`}
+                        />
+                        {isExpanded && (
+                          <span className="ml-3 font-medium whitespace-nowrap text-sm">
+                            {item.label}
+                          </span>
+                        )}
+                      </div>
+                      {isExpanded && (
+                        <ChevronDown
+                          className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      )}
+                    </button>
+
+                    {isExpanded && isOpen && (
+                      <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
+                        {item.subItems.map(subItem => {
+                          const isSubActive = pathname === subItem.href;
+                          return (
+                            <Link
+                              key={subItem.id}
+                              href={subItem.href}
+                              className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
+                                isSubActive
+                                  ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
+                              }`}
+                            >
+                              {subItem.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-                  </button>
-
-                  {isExpanded && isOpen && (
-                    <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
-                      {item.subItems.map(subItem => {
-                        const isSubActive = pathname === subItem.href;
-                        return (
-                          <Link
-                            key={subItem.id}
-                            href={subItem.href}
-                            className={`flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
-                              isSubActive
-                                ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
-                                : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
-                            }`}
-                          >
-                            {subItem.label}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
-
-      {/* Footer */}
-      <div
-        className={`mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800 space-y-1`}
-      >
-        <button
-          className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all ${
-            isExpanded ? "px-3 py-2" : "p-2 justify-center"
-          }`}
-        >
-          <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          {isExpanded && (
-            <span className="ml-3 text-sm font-medium whitespace-nowrap">
-              Profil
-            </span>
-          )}
-        </button>
-        <button
-          className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all group ${
-            isExpanded ? "px-3 py-2" : "p-2 justify-center"
-          }`}
-        >
-          <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
-          {isExpanded && (
-            <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">
-              Corbeille
-            </span>
-          )}
-        </button>
-
-        <button
-          onClick={async () => {
-            await fetch("/api/admin/auth/logout", { method: "POST" });
-            window.location.href = "/admin-login";
-          }}
-          className={`w-full flex items-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 hover:shadow-sm transition-all group ${
-            isExpanded ? "px-3 py-2" : "p-2 justify-center"
-          }`}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-5 h-5 shrink-0"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" x2="9" y1="12" y2="12" />
-          </svg>
-          {isExpanded && (
-            <span className="ml-3 text-sm font-medium whitespace-nowrap">
-              Déconnexion
-            </span>
-          )}
-        </button>
-
-        {/* Toggle Sidebar Button */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`w-full flex items-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all mt-4 ${
-            isExpanded ? "px-3 py-2 justify-end" : "p-2 justify-center"
-          }`}
-        >
-          {isExpanded ? (
-            <div className="flex items-center">
-              <span className="mr-2 text-xs font-medium uppercase tracking-wider">
-                Réduire
-              </span>
-              <ChevronRight className="w-4 h-4 rotate-180" />
+                  </div>
+                );
+              })}
             </div>
-          ) : (
-            <ChevronRight className="w-5 h-5" />
+          ))}
+        </nav>
+
+        {/* User Menu (Collapsible) */}
+        {isExpanded && (
+          <div
+            className={`px-3 space-y-1 overflow-hidden transition-all duration-300 ${
+              isUserMenuOpen ? "max-h-48 opacity-100 mb-2" : "max-h-0 opacity-0"
+            }`}
+          >
+            <button
+              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all px-3 py-2`}
+            >
+              <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <span className="ml-3 text-sm font-medium whitespace-nowrap">
+                Profil
+              </span>
+            </button>
+            <button
+              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all group px-3 py-2`}
+            >
+              <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
+              <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">
+                Corbeille
+              </span>
+            </button>
+
+            <button
+              onClick={() => setShowLogoutConfirm(true)}
+              className={`w-full flex items-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 hover:shadow-sm transition-all group px-3 py-2`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5 shrink-0"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" x2="9" y1="12" y2="12" />
+              </svg>
+              <span className="ml-3 text-sm font-medium whitespace-nowrap">
+                Déconnexion
+              </span>
+            </button>
+          </div>
+        )}
+
+        {/* Footer Bar */}
+        <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className={`flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all ${
+                isExpanded
+                  ? "p-2 px-3 flex-1 mr-2"
+                  : "p-2 justify-center w-full"
+              }`}
+            >
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold shrink-0">
+                AD
+              </div>
+              {isExpanded && (
+                <div className="ml-3 text-left overflow-hidden">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    Admin
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    admin@store.com
+                  </p>
+                </div>
+              )}
+              {isExpanded && (
+                <ChevronDown
+                  className={`w-4 h-4 ml-auto text-gray-400 transition-transform ${
+                    isUserMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              )}
+            </button>
+
+            {isExpanded && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
+                title="Réduire la barre latérale"
+              >
+                <ChevronRight className="w-5 h-5 rotate-180" />
+              </button>
+            )}
+          </div>
+
+          {!isExpanded && (
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="w-full flex items-center justify-center p-2 mt-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           )}
-        </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
