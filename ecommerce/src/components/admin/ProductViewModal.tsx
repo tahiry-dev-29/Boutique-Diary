@@ -28,13 +28,14 @@ export default function ProductViewModal({
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const selectedImageRaw = product?.images?.[selectedImageIndex];
-  const selectedImageObj = typeof selectedImageRaw === 'object' ? selectedImageRaw : null;
-  const selectedImageUrl = typeof selectedImageRaw === 'string' ? selectedImageRaw : selectedImageRaw?.url;
+  const selectedImageObj =
+    typeof selectedImageRaw === "object" ? selectedImageRaw : null;
+  const selectedImageUrl =
+    typeof selectedImageRaw === "string"
+      ? selectedImageRaw
+      : selectedImageRaw?.url;
 
-  const currentImage =
-    selectedImageObj !== null
-      ? selectedImageObj
-      : null;
+  const currentImage = selectedImageObj !== null ? selectedImageObj : null;
 
   const currentPrice =
     currentImage && currentImage.price
@@ -107,19 +108,22 @@ export default function ProductViewModal({
                     className="w-full h-full object-contain"
                   />
                   {}
-                      {(selectedImageObj?.color ||
+                  {(selectedImageObj?.color ||
                     (selectedImageObj?.sizes &&
                       selectedImageObj.sizes.length > 0)) && (
                     <div className="absolute bottom-2 left-2 flex gap-1">
                       {selectedImageObj.color && (
                         <Badge
                           variant="secondary"
-                          className="bg-white/90 shadow-sm flex items-center gap-1.5"
+                          className="bg-gray-100/90 shadow-sm flex items-center gap-1.5"
                         >
                           <span
-                             className="w-2 h-2 rounded-full border border-gray-200"
-                             style={{ background: COLOR_MAP[selectedImageObj.color] || 'gray' }}
-                           />
+                            className="w-2 h-2 rounded-full border border-gray-200"
+                            style={{
+                              background:
+                                COLOR_MAP[selectedImageObj.color] || "gray",
+                            }}
+                          />
                           {selectedImageObj.color}
                         </Badge>
                       )}
@@ -127,11 +131,9 @@ export default function ProductViewModal({
                         selectedImageObj.sizes.length > 0 && (
                           <Badge
                             variant="secondary"
-                            className="bg-white/90 shadow-sm"
+                            className="bg-gray-100/90 shadow-sm"
                           >
-                            {selectedImageObj.sizes.join(
-                              ", ",
-                            )}
+                            {selectedImageObj.sizes.join(", ")}
                           </Badge>
                         )}
                     </div>
@@ -245,19 +247,21 @@ export default function ProductViewModal({
                       Couleurs
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.colors.map((color) => {
+                      {product.colors.map(color => {
                         const isAvailable = selectedImageObj?.color === color;
                         return (
                           <Badge
                             key={color}
                             variant="outline"
                             className={
-                              isAvailable ? "border-pink-500 border-2 gap-1.5 pl-1.5" : "gap-1.5 pl-1.5"
+                              isAvailable
+                                ? "border-pink-500 border-2 gap-1.5 pl-1.5"
+                                : "gap-1.5 pl-1.5"
                             }
                           >
                             <span
-                               className="w-3 h-3 rounded-full border border-gray-200"
-                               style={{ background: COLOR_MAP[color] || 'gray' }}
+                              className="w-3 h-3 rounded-full border border-gray-200"
+                              style={{ background: COLOR_MAP[color] || "gray" }}
                             />
                             {color}
                           </Badge>
@@ -272,11 +276,9 @@ export default function ProductViewModal({
                       Tailles
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.sizes.map((size) => {
+                      {product.sizes.map(size => {
                         const isAvailable =
-                            selectedImageObj?.sizes?.includes(
-                              size,
-                            ) || false;
+                          selectedImageObj?.sizes?.includes(size) || false;
                         return (
                           <Badge
                             key={size}

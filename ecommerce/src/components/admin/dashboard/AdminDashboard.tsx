@@ -74,7 +74,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
         {/* Value Card */}
         <div className="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl p-5 text-white shadow-sm flex flex-col justify-between h-[150px] border border-white/10">
-          <div className="p-2.5 bg-white/20 rounded-lg w-fit">
+          <div className="p-2.5 bg-gray-100/20 rounded-lg w-fit">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>

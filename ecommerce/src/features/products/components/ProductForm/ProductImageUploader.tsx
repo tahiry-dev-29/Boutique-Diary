@@ -351,7 +351,7 @@ export function ProductImageUploader({
           </h4>
 
           {/* Reference */}
-          <div className="mb-3 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+          <div className="mb-3 p-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
                 Référence Unique (SKU)

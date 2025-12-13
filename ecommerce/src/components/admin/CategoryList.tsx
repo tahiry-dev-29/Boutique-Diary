@@ -218,7 +218,7 @@ export default function CategoryList({
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-8">
+      <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm p-8">
         <div className="text-center py-8 text-gray-500">Chargement...</div>
       </div>
     );
@@ -226,7 +226,7 @@ export default function CategoryList({
 
   if (categories.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-8">
+      <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm p-8">
         <div className="text-center py-12">
           <p className="text-gray-500">Aucune catégorie trouvée</p>
         </div>
@@ -235,7 +235,7 @@ export default function CategoryList({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden">
       {/* Header with Search and Filters */}
       <div className="px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100">
         <div className="flex items-center gap-4">
@@ -274,7 +274,7 @@ export default function CategoryList({
                 className={`flex items-center gap-2 px-4 py-2 text-sm border rounded-full transition-colors ${
                   dateFrom || dateTo
                     ? "text-indigo-600 bg-indigo-50 border-indigo-200"
-                    : "text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    : "text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <Calendar className="w-4 h-4" />
@@ -505,7 +505,7 @@ export default function CategoryList({
                               {categoryProducts.map(product => (
                                 <div
                                   key={product.id}
-                                  className="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
+                                  className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
                                 >
                                   {product.images && product.images[0] ? (
                                     <img

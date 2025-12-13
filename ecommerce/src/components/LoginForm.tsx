@@ -60,7 +60,7 @@ export default function LoginForm() {
             type="text"
             id="identifier"
             value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            onChange={e => setIdentifier(e.target.value)}
             placeholder="Adresse électronique"
             className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
             required
@@ -78,7 +78,7 @@ export default function LoginForm() {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             placeholder="Mot de passe"
             className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
             required
@@ -108,7 +108,7 @@ export default function LoginForm() {
           <div className="w-full border-t border-gray-200"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-white text-gray-500">ou</span>
+          <span className="px-4 bg-gray-100 text-gray-500">ou</span>
         </div>
       </div>
 

@@ -74,7 +74,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-40">
+    <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 sticky top-0 z-40">
       <div className="flex h-14 items-center px-4">
         <Button
           variant="ghost"
@@ -93,7 +93,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               placeholder="Search..."
               className={`pl-9 pr-16 h-9 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg transition-all ${
                 searchFocused
-                  ? "ring-2 ring-gray-200 dark:ring-gray-600 bg-white dark:bg-gray-700"
+                  ? "ring-2 ring-gray-200 dark:ring-gray-600 bg-gray-100 dark:bg-gray-700"
                   : ""
               }`}
               onFocus={() => setSearchFocused(true)}

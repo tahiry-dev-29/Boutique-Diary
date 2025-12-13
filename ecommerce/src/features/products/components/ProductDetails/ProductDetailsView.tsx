@@ -185,7 +185,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             {stats.map((stat, i) => (
               <Card
                 key={i}
-                className="border-none shadow-sm bg-white dark:bg-gray-800"
+                className="border-none shadow-sm bg-gray-100 dark:bg-gray-800"
               >
                 <CardContent className="p-4 flex flex-col gap-2">
                   <div
@@ -214,7 +214,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
           </div>
 
           {/* Tabbed Content */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <Tabs defaultValue="details" className="w-full">
               <div className="px-6 pt-6 border-b border-gray-100 dark:border-gray-700">
                 <TabsList className="bg-transparent p-0 gap-6">

@@ -11,7 +11,7 @@ export default function Navbar() {
       <PromoBanner />
 
       {}
-      <div className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="sticky top-0 z-50 bg-gray-100 shadow-sm">
         <MainHeader />
         <CategoryNav />
       </div>

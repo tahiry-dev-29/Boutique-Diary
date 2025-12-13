@@ -40,6 +40,7 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  orders    Order[]
 }
 
 model Product {
@@ -72,6 +73,7 @@ model Product {
   stockMovements StockMovement[] // Relation for history
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+  orderItems     OrderItem[]
 }
 
 model ProductVariation {
@@ -189,4 +191,34 @@ model StockMovement {
 
   @@index([productId])
   @@index([productImageId])
+}
+
+model Order {
+  id        String @id @default(cuid())
+  reference String @unique
+  total     Float
+  status    String @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED, COMPLETED
+
+  customerId Int?
+  customer   User? @relation(fields: [customerId], references: [id])
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+  price    Float
+
+  @@index([orderId])
+  @@index([productId])
 }

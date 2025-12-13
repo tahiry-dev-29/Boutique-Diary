@@ -23,7 +23,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { InventoryAuditModal } from "@/components/admin/InventoryAuditModal";
-import { useDebounce } from "@/hooks/use-debounce"; // Assuming hook exists, if not I'll implement debounce manually
 
 // Manual debounce if hook missing
 function useDebounceValue<T>(value: T, delay: number): T {
@@ -263,41 +262,47 @@ export default function StockPage() {
     };
   };
 
-  const flattenItems = products.flatMap(p => {
-    if (p.images && p.images.length > 0) {
-      const stockImages = p.images.filter(img => img.stock !== null);
-      if (stockImages.length > 0) {
-        return stockImages.map(img => ({
-          type: "variation",
-          uniqueId: `i-${img.id}`,
-          productId: p.id,
-          imageId: img.id,
-          name: p.name,
-          reference: img.reference || p.reference,
-          variant: img.color || "Standard",
-          stock: img.stock || 0,
-          price: p.price,
-          image: img.url,
-          category: p.category?.name,
-        }));
+  const flattenItems: (AuditItem & {
+    type: string;
+    price: number;
+    category?: string;
+  })[] = products.flatMap(
+    (p): (AuditItem & { type: string; price: number; category?: string })[] => {
+      if (p.images && p.images.length > 0) {
+        const stockImages = p.images.filter(img => img.stock !== null);
+        if (stockImages.length > 0) {
+          return stockImages.map(img => ({
+            type: "variation",
+            uniqueId: `i-${img.id}`,
+            productId: p.id,
+            imageId: img.id,
+            name: p.name,
+            reference: img.reference || p.reference,
+            variant: img.color || "Standard",
+            stock: img.stock || 0,
+            price: p.price,
+            image: img.url,
+            category: p.category?.name,
+          }));
+        }
       }
-    }
-    return [
-      {
-        type: "product",
-        uniqueId: `p-${p.id}`,
-        productId: p.id,
-        imageId: null,
-        name: p.name,
-        reference: p.reference,
-        variant: "-",
-        stock: p.stock,
-        price: p.price,
-        image: p.images?.[0]?.url || "/placeholder.png",
-        category: p.category?.name,
-      },
-    ];
-  });
+      return [
+        {
+          type: "product",
+          uniqueId: `p-${p.id}`,
+          productId: p.id,
+          imageId: null,
+          name: p.name,
+          reference: p.reference,
+          variant: "-",
+          stock: p.stock,
+          price: p.price,
+          image: p.images?.[0]?.url || "/placeholder.png",
+          category: p.category?.name,
+        },
+      ];
+    },
+  );
 
   // No client-side filtering needed as API handles it via search param
 
@@ -310,7 +315,7 @@ export default function StockPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400 shrink-0">
               <TrendingUp size={24} />
@@ -336,7 +341,7 @@ export default function StockPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl text-orange-600 dark:text-orange-400 shrink-0">
               <AlertTriangle size={24} />
@@ -352,7 +357,7 @@ export default function StockPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-600 dark:text-red-400 shrink-0">
               <XCircle size={24} />
@@ -385,7 +390,7 @@ export default function StockPage() {
                 setSearchQuery(e.target.value);
                 setPage(1); // Reset page on search
               }}
-              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
               autoFocus
             />
           </div>
@@ -398,7 +403,7 @@ export default function StockPage() {
           </Button>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-gray-50 dark:bg-gray-900/50">
@@ -500,7 +505,7 @@ export default function StockPage() {
                             type="number"
                             min="0"
                             className={cn(
-                              "w-20 h-9 text-center bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-primary",
+                              "w-20 h-9 text-center bg-gray-100 dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-primary",
                               isModified &&
                                 "ring-2 ring-blue-500 border-blue-500",
                             )}
@@ -568,7 +573,7 @@ export default function StockPage() {
           {/* Pagination Footer */}
           <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              Affichage de page {meta.page} sur {meta.totalPages} ({meta.total}{" "}
+              Affichage de page {page} sur {meta.totalPages} ({meta.total}{" "}
               produits)
             </div>
             <div className="flex items-center gap-2">

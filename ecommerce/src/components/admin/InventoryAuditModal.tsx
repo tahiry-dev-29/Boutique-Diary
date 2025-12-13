@@ -132,10 +132,10 @@ export function InventoryAuditModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-2xl sm:rounded-2xl border-gray-200 dark:border-gray-700">
+      <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-2xl sm:rounded-2xl border-gray-200 dark:border-gray-700">
         <div className="flex flex-col lg:flex-row h-[700px]">
           {/* LEFT: ACTION PANEL (60%) */}
-          <div className="flex-[3] p-8 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 relative bg-white dark:bg-gray-800">
+          <div className="flex-[3] p-8 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 relative bg-gray-100 dark:bg-gray-800">
             <DialogHeader className="mb-8">
               <DialogTitle className="text-xl font-medium tracking-tight text-gray-900 dark:text-white flex items-center gap-3">
                 <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
@@ -205,7 +205,7 @@ export function InventoryAuditModal({
                           "cursor-pointer relative p-4 rounded-xl border transition-all duration-200 group hover:bg-gray-50 dark:hover:bg-gray-700",
                           isSelected
                             ? "bg-primary/5 border-primary/50 shadow-sm"
-                            : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
+                            : "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
                         )}
                       >
                         <div className="flex items-start gap-3">
@@ -285,7 +285,7 @@ export function InventoryAuditModal({
           {/* RIGHT: CONTEXT PANEL (40%) */}
           <div className="flex-[2] bg-gray-50 dark:bg-gray-900/50 p-8 flex flex-col border-l border-gray-200 dark:border-gray-700 relative overflow-hidden">
             {/* Product Card */}
-            <div className="relative mb-8 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="relative mb-8 p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex gap-4">
                 <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 shrink-0">
                   <img

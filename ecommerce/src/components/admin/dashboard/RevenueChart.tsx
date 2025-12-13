@@ -31,7 +31,7 @@ const defaultData = [
 
 const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
   return (
-    <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
+    <Card className="border-none shadow-sm h-full bg-gray-100 dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Performance des ventes

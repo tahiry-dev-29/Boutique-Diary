@@ -85,7 +85,7 @@ export default function BannerList({
 
   if (banners.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 text-center shadow-sm">
+      <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl p-8 text-center shadow-sm">
         <svg
           className="mx-auto h-16 w-16 text-gray-400"
           fill="none"
@@ -114,7 +114,7 @@ export default function BannerList({
       {banners.map(banner => (
         <div
           key={banner.id}
-          className={`bg-white dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden transition-all ${
+          className={`bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden transition-all ${
             !banner.isActive ? "opacity-60" : ""
           }`}
         >

@@ -103,8 +103,8 @@ export default function CategorySidebar() {
         className={cn(
           "hidden lg:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-200 z-50 relative select-none",
           isOpen
-            ? "bg-white text-gray-900 border border-gray-900 shadow-sm"
-            : "bg-white text-[#104f32] border border-[#104f32] hover:bg-gray-50",
+            ? "bg-gray-100 text-gray-900 border border-gray-900 shadow-sm"
+            : "bg-gray-100 text-[#104f32] border border-[#104f32] hover:bg-gray-50",
         )}
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -113,7 +113,7 @@ export default function CategorySidebar() {
 
       {}
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-40 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 top-full mt-2 w-[300px] bg-gray-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-40 animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="flex flex-col py-3 max-h-[80vh] overflow-y-auto">
             {loading ? (
               <li className="px-6 py-4 text-center text-gray-400 text-sm">
@@ -124,7 +124,7 @@ export default function CategorySidebar() {
                 Aucune catégorie
               </li>
             ) : (
-              categories.map((category) => {
+              categories.map(category => {
                 const info = getCategoryInfo(category.name);
                 return (
                   <li key={category.id || category.name}>
