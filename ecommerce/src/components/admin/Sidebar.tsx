@@ -20,6 +20,7 @@ import {
   User,
   Trash,
   Package,
+  Layers,
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 
@@ -64,6 +65,13 @@ const navSections: NavSection[] = [
         label: "Produits",
         icon: ShoppingBag,
         href: "/admin/products",
+        permission: "products.view",
+      },
+      {
+        id: "categories",
+        label: "Catégories",
+        icon: Layers,
+        href: "/admin/categories",
         permission: "products.view",
       },
       {

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Category } from "@/types/category";
 import { Product } from "@/types/admin";
 import { toast } from "sonner";
+import Link from "next/link";
 import {
   ChevronDown,
   ChevronRight,
@@ -503,9 +504,10 @@ export default function CategoryList({
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                               {categoryProducts.map(product => (
-                                <div
+                                <Link
+                                  href={`/admin/products/${product.id}`}
                                   key={product.id}
-                                  className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
+                                  className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all cursor-pointer group/product"
                                 >
                                   {product.images && product.images[0] ? (
                                     <img
@@ -515,7 +517,7 @@ export default function CategoryList({
                                           : product.images[0].url
                                       }
                                       alt={product.name}
-                                      className="w-12 h-12 object-cover rounded-lg"
+                                      className="w-12 h-12 object-cover rounded-lg group-hover/product:scale-105 transition-transform"
                                     />
                                   ) : (
                                     <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
@@ -525,7 +527,7 @@ export default function CategoryList({
                                     </div>
                                   )}
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover/product:text-indigo-600 dark:group-hover/product:text-indigo-400 transition-colors">
                                       {product.name}
                                     </p>
                                     <p className="text-xs text-gray-400">
@@ -535,7 +537,7 @@ export default function CategoryList({
                                       {formatPrice(product.price)}
                                     </p>
                                   </div>
-                                </div>
+                                </Link>
                               ))}
                             </div>
                           </div>
