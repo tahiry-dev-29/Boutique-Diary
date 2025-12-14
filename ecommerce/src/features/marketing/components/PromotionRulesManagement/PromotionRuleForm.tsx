@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { PromotionRule } from "../../types";
+import { useCategories } from "@/features/categories/hooks/useCategories";
 
 const formSchema = z.object({
   name: z.string().min(3, "Le nom est trop court").max(255),
@@ -57,6 +58,8 @@ export function PromotionRuleForm({
   onCancel,
   isLoading,
 }: PromotionRuleFormProps) {
+  const { categories } = useCategories();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
@@ -70,12 +73,18 @@ export function PromotionRuleForm({
     },
   });
 
+  // Local state for UI builder
+  const [selectedCategoryId, setSelectedCategoryId] =
+    React.useState<string>("");
+  const [isNew, setIsNew] = React.useState<boolean>(false);
+  const [isBestSeller, setIsBestSeller] = React.useState<boolean>(false);
+  const [discountPercent, setDiscountPercent] = React.useState<string>("");
+
   useEffect(() => {
     if (initialData) {
       form.reset({
         name: initialData.name,
         priority: initialData.priority,
-        conditions: JSON.stringify(initialData.conditions, null, 2),
         actions: JSON.stringify(initialData.actions, null, 2),
         startDate: initialData.startDate
           ? new Date(initialData.startDate).toISOString().split("T")[0]
@@ -87,6 +96,22 @@ export function PromotionRuleForm({
       });
     }
   }, [initialData, form]);
+
+  // Sync UI state to JSON strings
+  useEffect(() => {
+    const conditions: any = {};
+    if (selectedCategoryId)
+      conditions.categoryId = parseInt(selectedCategoryId);
+    if (isNew) conditions.isNew = true;
+    if (isBestSeller) conditions.isBestSeller = true;
+
+    const actions: any = {};
+    if (discountPercent)
+      actions.discountPercentage = parseFloat(discountPercent);
+
+    form.setValue("conditions", JSON.stringify(conditions));
+    form.setValue("actions", JSON.stringify(actions));
+  }, [selectedCategoryId, isNew, isBestSeller, discountPercent, form]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const formattedData = {
@@ -153,76 +178,110 @@ export function PromotionRuleForm({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date de début</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} value={field.value || ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex gap-4">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Date de début</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} value={field.value || ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date de fin</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} value={field.value || ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Date de fin</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} value={field.value || ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="conditions"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Conditions (JSON)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    className="font-mono text-xs min-h-[150px]"
-                    placeholder={'{\n  "cart_total_gt": 100\n}'}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Conditions pour appliquer la règle.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="space-y-4 border rounded-xl p-4 bg-gray-50 dark:bg-gray-800/50">
+          <h3 className="font-medium text-sm text-gray-900 dark:text-gray-100 mb-2">
+            Conditions d'application
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <FormLabel>Catégorie cible</FormLabel>
+              <select
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={selectedCategoryId}
+                onChange={e => setSelectedCategoryId(e.target.value)}
+              >
+                <option value="">Toutes les catégories</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              <FormDescription>
+                Appliquer uniquement aux produits de cette catégorie.
+              </FormDescription>
+            </div>
 
-          <FormField
-            control={form.control}
-            name="actions"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Actions (JSON)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    className="font-mono text-xs min-h-[150px]"
-                    placeholder={'{\n  "discount_percent": 20\n}'}
-                  />
-                </FormControl>
-                <FormDescription>Actions à effectuer.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <div className="space-y-4">
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base text-sm">
+                    Produits "Nouveauté"
+                  </FormLabel>
+                </div>
+                <Switch checked={isNew} onCheckedChange={setIsNew} />
+              </div>
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base text-sm">
+                    Produits "Best-seller"
+                  </FormLabel>
+                </div>
+                <Switch
+                  checked={isBestSeller}
+                  onCheckedChange={setIsBestSeller}
+                />
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div className="space-y-4 border rounded-xl p-4 bg-indigo-50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-800">
+          <h3 className="font-medium text-sm text-indigo-900 dark:text-indigo-100 mb-2">
+            Action (Réduction)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <FormLabel>Pourcentage de réduction (%)</FormLabel>
+              <Input
+                type="number"
+                placeholder="Ex: 20"
+                value={discountPercent}
+                onChange={e => setDiscountPercent(e.target.value)}
+                min="0"
+                max="100"
+              />
+              <FormDescription>
+                Le prix sera réduit de ce pourcentage (ex: 20% de remise).
+              </FormDescription>
+            </div>
+          </div>
+        </div>
+
+        {/* Hidden fields to store JSON for form submission */}
+        <input type="hidden" {...form.register("conditions")} />
+        <input type="hidden" {...form.register("actions")} />
 
         <div className="flex justify-end gap-4 pt-4 border-t">
           <Button type="button" variant="outline" onClick={onCancel}>

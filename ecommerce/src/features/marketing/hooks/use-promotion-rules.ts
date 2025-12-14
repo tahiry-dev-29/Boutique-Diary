@@ -87,6 +87,38 @@ export function usePromotionRules() {
     }
   };
 
+  const applyRule = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/marketing/promotions/${id}/apply`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur d'application");
+
+      toast.success(data.message || "Promotion appliquée avec succès");
+      return true;
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de l'application");
+      return false;
+    }
+  };
+
+  const revertRule = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/marketing/promotions/${id}/revert`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur d'annulation");
+
+      toast.success(data.message || "Promotion annulée avec succès");
+      return true;
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de l'annulation");
+      return false;
+    }
+  };
+
   return {
     rules,
     loading,
@@ -94,6 +126,8 @@ export function usePromotionRules() {
     createRule,
     updateRule,
     deleteRule,
+    applyRule,
+    revertRule,
     refresh: fetchRules,
   };
 }

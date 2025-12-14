@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Play, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -20,12 +20,16 @@ interface PromotionTableProps {
   data: PromotionRule[];
   onEdit: (rule: PromotionRule) => void;
   onDelete: (id: number) => void;
+  onApply: (id: number) => void;
+  onRevert: (id: number) => void;
 }
 
 export function PromotionTable({
   data,
   onEdit,
   onDelete,
+  onApply,
+  onRevert,
 }: PromotionTableProps) {
   const getStatusBadge = (rule: PromotionRule) => {
     if (!rule.isActive)
@@ -122,6 +126,24 @@ export function PromotionTable({
 
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                    title="Appliquer au catalogue"
+                    onClick={() => onApply(rule.id)}
+                  >
+                    <Play className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-gray-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                    title="Annuler sur le catalogue"
+                    onClick={() => onRevert(rule.id)}
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"

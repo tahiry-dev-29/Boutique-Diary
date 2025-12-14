@@ -17,8 +17,15 @@ import {
 } from "@/components/ui/dialog";
 
 export default function PromotionRulesPage() {
-  const { rules, loading, createRule, updateRule, deleteRule } =
-    usePromotionRules();
+  const {
+    rules,
+    loading,
+    createRule,
+    updateRule,
+    deleteRule,
+    applyRule,
+    revertRule,
+  } = usePromotionRules();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRule, setSelectedRule] = useState<PromotionRule | null>(null);
 
@@ -80,6 +87,8 @@ export default function PromotionRulesPage() {
           data={rules}
           onEdit={handleEdit}
           onDelete={deleteRule}
+          onApply={applyRule}
+          onRevert={revertRule}
         />
       )}
 

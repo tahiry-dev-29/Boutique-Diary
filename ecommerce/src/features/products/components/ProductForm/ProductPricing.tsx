@@ -12,7 +12,7 @@ interface ProductPricingProps {
 
 export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
   const handleChange = (field: keyof Product, value: unknown) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -30,7 +30,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
             min="0"
             step="0.01"
             value={isNaN(formData.price) ? "" : formData.price}
-            onChange={(e) => handleChange("price", parseFloat(e.target.value))}
+            onChange={e => handleChange("price", parseFloat(e.target.value))}
             placeholder="0.00"
           />
         </div>
@@ -48,7 +48,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
                   ? ""
                   : formData.oldPrice
               }
-              onChange={(e) =>
+              onChange={e =>
                 handleChange(
                   "oldPrice",
                   e.target.value ? parseFloat(e.target.value) : null,
@@ -68,7 +68,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
             <Checkbox
               id="isNew"
               checked={formData.isNew || false}
-              onCheckedChange={(checked) => handleChange("isNew", checked)}
+              onCheckedChange={checked => handleChange("isNew", checked)}
             />
             <label
               htmlFor="isNew"
@@ -82,9 +82,7 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
             <Checkbox
               id="isPromotion"
               checked={formData.isPromotion || false}
-              onCheckedChange={(checked) =>
-                handleChange("isPromotion", checked)
-              }
+              onCheckedChange={checked => handleChange("isPromotion", checked)}
             />
             <label
               htmlFor="isPromotion"
@@ -98,15 +96,29 @@ export function ProductPricing({ formData, setFormData }: ProductPricingProps) {
             <Checkbox
               id="isBestSeller"
               checked={formData.isBestSeller || false}
-              onCheckedChange={(checked) =>
-                handleChange("isBestSeller", checked)
-              }
+              onCheckedChange={checked => handleChange("isBestSeller", checked)}
             />
             <label
               htmlFor="isBestSeller"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
             >
               Best-seller
+            </label>
+          </div>
+
+          <div className="flex items-center space-x-2 border-l pl-6 border-gray-200 dark:border-gray-700">
+            <Checkbox
+              id="applyPromotions"
+              checked={formData.applyPromotions || false}
+              onCheckedChange={checked =>
+                handleChange("applyPromotions", checked)
+              }
+            />
+            <label
+              htmlFor="applyPromotions"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Appliquer promotions
             </label>
           </div>
         </div>

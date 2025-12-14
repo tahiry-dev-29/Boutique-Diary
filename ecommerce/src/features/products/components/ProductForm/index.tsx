@@ -39,6 +39,7 @@ const initialFormData: Product = {
   isPromotion: false,
   oldPrice: null,
   isBestSeller: false,
+  applyPromotions: false,
 };
 
 export default function ProductForm({
