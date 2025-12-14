@@ -40,6 +40,7 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  orders    Order[]
 }
 
 model Product {
@@ -66,11 +67,13 @@ model Product {
   rating      Float? @default(0)
   reviewCount Int    @default(0)
 
-  categoryId Int?
-  category   Category?          @relation(fields: [categoryId], references: [id])
-  variations ProductVariation[]
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
+  categoryId     Int?
+  category       Category?          @relation(fields: [categoryId], references: [id])
+  variations     ProductVariation[]
+  stockMovements StockMovement[] // Relation for history
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  orderItems     OrderItem[]
 }
 
 model ProductVariation {
@@ -99,31 +102,32 @@ model ProductVariation {
 }
 
 model ProductImage {
-  id        Int      @id @default(autoincrement())
-  url       String   @db.Text
-  reference String?  @db.VarChar(100)
-  color     String?  @db.VarChar(50)
-  sizes     String[] @default([])
-  price     Float?
-  oldPrice  Float?
-  stock     Int?
-  isNew     Boolean  @default(false)
-  isPromotion Boolean @default(false)
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id             Int             @id @default(autoincrement())
+  url            String          @db.Text
+  reference      String?         @db.VarChar(100)
+  color          String?         @db.VarChar(50)
+  sizes          String[]        @default([])
+  price          Float?
+  oldPrice       Float?
+  stock          Int?
+  isNew          Boolean         @default(false)
+  isPromotion    Boolean         @default(false)
+  categoryId     Int?
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  productId      Int
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockMovements StockMovement[] // Relation for history
 }
 
 model Category {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(255)
-  description String?   @db.Text
-  slug        String    @unique @db.VarChar(255)
+  id          Int            @id @default(autoincrement())
+  name        String         @db.VarChar(255)
+  description String?        @db.Text
+  slug        String         @unique @db.VarChar(255)
   products    Product[]
   images      ProductImage[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 model SiteSettings {
@@ -152,12 +156,69 @@ model Banner {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(100)
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  email     String    @unique
   password  String
-  role      String   @default("admin") // "admin" | "superadmin"
-  isActive  Boolean  @default(true)
+  role      String    @default("admin") // "admin" | "superadmin"
+  isActive  Boolean   @default(true)
+  lastSeen  DateTime? // Track online status
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// New model for Stock Audit/History
+model StockMovement {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  productImageId Int?
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id], onDelete: SetNull)
+
+  type          String // "ADJUSTMENT", "ORDER", "RETURN", "RECEIVED"
+  quantity      Int // The change amount (e.g. +10, -5) or final amount? Usually change. But for Audit "Physical Count" we calc diff.
+  previousStock Int // Snapshot before change
+  newStock      Int // Snapshot after change
+
+  reason String? // "Damage", "Expire", "Stocktake", etc.
+  note   String? @db.Text
+
+  createdBy String? // Admin username or ID
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([productImageId])
+}
+
+model Order {
+  id        String @id @default(cuid())
+  reference String @unique
+  total     Float
+  status    String @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED, COMPLETED
+
+  customerId Int?
+  customer   User? @relation(fields: [customerId], references: [id])
+
+  items OrderItem[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+  price    Float
+
+  @@index([orderId])
+  @@index([productId])
 }

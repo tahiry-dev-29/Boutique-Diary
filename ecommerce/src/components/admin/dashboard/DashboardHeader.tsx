@@ -18,7 +18,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
           placeholder="Buscar aquí..."
-          className="pl-10 bg-white border-gray-200 rounded-xl focus-visible:ring-purple-500"
+          className="pl-10 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-xl focus-visible:ring-purple-500 dark:text-white dark:placeholder:text-gray-500"
         />
       </div>
 

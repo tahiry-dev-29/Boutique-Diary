@@ -88,7 +88,7 @@ export default function CategoryForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-6 rounded-lg border border-gray-200"
+      className="space-y-4 bg-gray-100 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-700"
     >
       <h3 className="text-lg font-semibold text-gray-900">
         {category?.id ? "Modifier la catégorie" : "Nouvelle catégorie"}
@@ -108,7 +108,7 @@ export default function CategoryForm({
           type="text"
           required
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={e => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         />
       </div>

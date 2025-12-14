@@ -42,7 +42,7 @@ export default function BannerList({
     try {
       const response = await fetch(`/api/banners/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Erreur de suppression");
-      setBanners(banners.filter((b) => b.id !== id));
+      setBanners(banners.filter(b => b.id !== id));
     } catch (err) {
       console.error(err);
       setError("Erreur lors de la suppression");
@@ -59,7 +59,7 @@ export default function BannerList({
       if (!response.ok) throw new Error("Erreur de mise à jour");
 
       setBanners(
-        banners.map((b) =>
+        banners.map(b =>
           b.id === banner.id ? { ...b, isActive: !b.isActive } : b,
         ),
       );
@@ -85,7 +85,7 @@ export default function BannerList({
 
   if (banners.length === 0) {
     return (
-      <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
+      <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl p-8 text-center shadow-sm">
         <svg
           className="mx-auto h-16 w-16 text-gray-400"
           fill="none"
@@ -111,10 +111,10 @@ export default function BannerList({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {banners.map((banner) => (
+      {banners.map(banner => (
         <div
           key={banner.id}
-          className={`bg-white rounded-2xl shadow-sm overflow-hidden transition-all ${
+          className={`bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden transition-all ${
             !banner.isActive ? "opacity-60" : ""
           }`}
         >

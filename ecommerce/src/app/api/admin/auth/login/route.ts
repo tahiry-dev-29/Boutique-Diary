@@ -2,14 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import {
-  createToken,
-  getCookieOptions,
-  UserPayload,
-  ADMIN_SESSION_COOKIE,
-} from "@/lib/auth";
+  createAdminToken,
+  getAdminCookieOptions,
+  AdminPayload,
+} from "@/lib/adminAuth";
 
 export async function POST(request: Request) {
-  console.log("=== ADMIN LOGIN DEBUG ===");
   try {
     const body = (await request.json()) as {
       email?: string;
@@ -17,8 +15,6 @@ export async function POST(request: Request) {
       rememberMe?: boolean;
     };
     const { email, password, rememberMe } = body;
-    console.log("Email received:", email);
-    console.log("Password received:", password ? "[PRESENT]" : "[MISSING]");
 
     if (!email || !password) {
       return NextResponse.json(
@@ -27,38 +23,26 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
+    // Use Admin model for employee/admin login
+    const admin = await prisma.admin.findUnique({
       where: { email },
     });
 
-    if (!user) {
+    if (!admin) {
       return NextResponse.json(
         { error: "Identifiants invalides" },
         { status: 401 },
       );
     }
 
-    console.log("User role from DB:", user.role, "Type:", typeof user.role);
-    console.log(
-      "Is admin check:",
-      user.role === "ADMIN" || user.role === "SUPERADMIN",
-    );
-
-    if (user.role !== "ADMIN" && user.role !== "SUPERADMIN") {
-      return NextResponse.json(
-        { error: "Accès non autorisé" },
-        { status: 403 },
-      );
-    }
-
-    if (!user.isActive) {
+    if (!admin.isActive) {
       return NextResponse.json(
         { error: "Ce compte est désactivé" },
         { status: 403 },
       );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
 
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -67,24 +51,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const payload: UserPayload = {
-      userId: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role as "CUSTOMER" | "EMPLOYEE" | "ADMIN" | "SUPERADMIN",
+    const payload: AdminPayload = {
+      adminId: admin.id,
+      username: admin.name,
+      email: admin.email,
+      role: admin.role,
     };
 
-    const token = await createToken(payload, rememberMe);
+    const token = await createAdminToken(payload, rememberMe);
 
-    const cookieOptions = getCookieOptions(ADMIN_SESSION_COOKIE, rememberMe);
+    const cookieOptions = getAdminCookieOptions(rememberMe);
     const response = NextResponse.json(
       {
         message: "Connexion réussie",
         user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          id: admin.id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role,
         },
       },
       { status: 200 },

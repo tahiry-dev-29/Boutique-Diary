@@ -31,14 +31,14 @@ const defaultData = [
 
 const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
   return (
-    <Card className="border-none shadow-sm h-full">
+    <Card className="border-none shadow-sm h-full bg-gray-100 dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-bold text-gray-800">
-          Rendimiento de ventas
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+          Performance des ventes
         </CardTitle>
         <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-100 transition-colors">
           <Calendar className="w-4 h-4" />
-          Esta semana
+          Cette semaine
         </button>
       </CardHeader>
       <CardContent>
@@ -75,7 +75,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#9ca3af", fontSize: 12 }}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={value => `$${value}`}
               />
               <Tooltip
                 contentStyle={{
@@ -85,7 +85,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
                 itemStyle={{ color: "#db2777" }}
-                formatter={(value: number) => [`$${value}`, "Ventas"]}
+                formatter={(value: number) => [`$${value}`, "Ventes"]}
               />
               <Area
                 type="monotone"

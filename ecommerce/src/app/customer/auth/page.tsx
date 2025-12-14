@@ -21,7 +21,7 @@ export default function CustomerAuthPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -113,7 +113,7 @@ export default function CustomerAuthPage() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {}
-        <div className="bg-white rounded-3xl shadow-2xl shadow-emerald-100/50 overflow-hidden">
+        <div className="bg-gray-100 rounded-3xl shadow-2xl shadow-emerald-100/50 overflow-hidden">
           {}
           <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-10 text-center">
             <h1 className="text-3xl font-bold text-white mb-2">
