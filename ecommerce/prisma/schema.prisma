@@ -66,11 +66,12 @@ model Product {
   rating      Float? @default(0)
   reviewCount Int    @default(0)
 
-  categoryId Int?
-  category   Category?          @relation(fields: [categoryId], references: [id])
-  variations ProductVariation[]
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
+  categoryId     Int?
+  category       Category?          @relation(fields: [categoryId], references: [id])
+  variations     ProductVariation[]
+  stockMovements StockMovement[] // Relation for history
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }
 
 model ProductVariation {
@@ -99,20 +100,21 @@ model ProductVariation {
 }
 
 model ProductImage {
-  id          Int       @id @default(autoincrement())
-  url         String    @db.Text
-  reference   String?   @db.VarChar(100)
-  color       String?   @db.VarChar(50)
-  sizes       String[]  @default([])
-  price       Float?
-  oldPrice    Float?
-  stock       Int?
-  isNew       Boolean   @default(false)
-  isPromotion Boolean   @default(false)
-  categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  productId   Int
-  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id             Int             @id @default(autoincrement())
+  url            String          @db.Text
+  reference      String?         @db.VarChar(100)
+  color          String?         @db.VarChar(50)
+  sizes          String[]        @default([])
+  price          Float?
+  oldPrice       Float?
+  stock          Int?
+  isNew          Boolean         @default(false)
+  isPromotion    Boolean         @default(false)
+  categoryId     Int?
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  productId      Int
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockMovements StockMovement[] // Relation for history
 }
 
 model Category {
@@ -161,4 +163,30 @@ model Admin {
   lastSeen  DateTime? // Track online status
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+// New model for Stock Audit/History
+model StockMovement {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  productImageId Int?
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id], onDelete: SetNull)
+
+  type          String // "ADJUSTMENT", "ORDER", "RETURN", "RECEIVED"
+  quantity      Int // The change amount (e.g. +10, -5) or final amount? Usually change. But for Audit "Physical Count" we calc diff.
+  previousStock Int // Snapshot before change
+  newStock      Int // Snapshot after change
+
+  reason String? // "Damage", "Expire", "Stocktake", etc.
+  note   String? @db.Text
+
+  createdBy String? // Admin username or ID
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([productImageId])
 }

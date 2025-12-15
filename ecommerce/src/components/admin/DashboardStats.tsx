@@ -74,54 +74,50 @@ export function DashboardStats({ products }: DashboardStatsProps) {
       subValue: "À réapprovisionner",
       change: `${Math.round((outOfStockCount / (totalProducts || 1)) * 100)}%`,
       trend: "neutral",
-      icon: percent => <Percent {...percent} />,
-      iconComponent: Percent,
+      icon: Percent,
       color: "from-rose-500 to-red-600",
       iconBg: "bg-rose-500/10 text-rose-500",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => {
         const Icon = stat.icon || stat.iconComponent;
         return (
           <Card
             key={index}
-            className="relative overflow-hidden border-none shadow-lg bg-[#1a1f37] dark:bg-[#1a1f37] hover:translate-y-[-2px] transition-all duration-300 group"
+            className="relative overflow-hidden border-none shadow-sm bg-white dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50"
           >
             {/* Background glowing effect */}
             <div
-              className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.15] blur-2xl rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110`}
+              className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.06] dark:opacity-[0.10] blur-2xl rounded-bl-full -mr-5 -mt-5 transition-transform group-hover:scale-105`}
             />
 
-            <CardContent className="p-6 relative z-10">
+            <CardContent className="p-5 relative z-10">
               <div className="flex justify-between items-start">
-                <div className="flex flex-col justify-between h-full space-y-4">
+                <div className="flex flex-col justify-between h-full space-y-2">
                   <div className="space-y-1">
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {stat.label}
                     </p>
-                    <h3 className="text-2xl font-bold text-white tracking-tight">
+                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
                       {stat.value}
                     </h3>
                   </div>
-                  <div className="text-[10px] text-gray-500 font-medium">
+                  <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-3">
+                <div className="flex flex-col items-end gap-2">
                   <div
-                    className={`p-3 rounded-xl ${stat.iconBg} shadow-inner flex items-center justify-center backdrop-blur-md bg-opacity-20`}
-                    style={{
-                      boxShadow: "inset 0 0 10px rgba(255,255,255,0.05)",
-                    }}
+                    className={`p-2.5 rounded-xl ${stat.iconBg} shadow-sm flex items-center justify-center bg-opacity-10`}
                   >
                     <Icon className="w-5 h-5" />
                   </div>
                   {stat.change && (
-                    <div className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-[#1a1f37] border border-gray-700/50 text-white shadow-sm">
+                    <div className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-600/50">
                       {stat.change}
                     </div>
                   )}

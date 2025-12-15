@@ -555,15 +555,20 @@ export default function ProductList({
                         )}
                         {visibleColumns.status && (
                           <TableCell>
-                            {totalStock > 0 ? (
-                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                                En stock
-                              </div>
-                            ) : (
+                            {totalStock === 0 ? (
                               <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
                                 Rupture
+                              </div>
+                            ) : totalStock < 5 ? (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-100 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1.5 animate-pulse"></span>
+                                Faible
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                En stock
                               </div>
                             )}
                           </TableCell>

@@ -220,13 +220,13 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                 <TabsList className="bg-transparent p-0 gap-6">
                   <TabsTrigger
                     value="details"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-black dark:data-[state=active]:border-white rounded-none px-0 pb-2 font-medium text-gray-500 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
+                    className="rounded-2xl px-2 pb-2 font-semibold text-gray-500 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
                   >
                     Détails
                   </TabsTrigger>
                   <TabsTrigger
                     value="reviews"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-black dark:data-[state=active]:border-white rounded-none px-0 pb-2 font-medium text-gray-500 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
+                    className="rounded-2xl px-2 pb-2 font-medium text-gray-500 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
                   >
                     Avis Clients
                   </TabsTrigger>

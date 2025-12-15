@@ -55,18 +55,25 @@ export async function GET() {
       },
     });
 
+    const categoryStock = await prisma.product.groupBy({
+      by: ["categoryId"],
+      _sum: {
+        stock: true,
+      },
+    });
+
     const categoryDistribution = categoryStats.map(stat => {
       const cat = categories.find(c => c.id === stat.categoryId);
+      const stockStat = categoryStock.find(
+        s => s.categoryId === stat.categoryId,
+      );
       return {
         name: cat ? cat.name : "Sans catégorie",
         value: stat._count.id,
+        stock: stockStat?._sum.stock || 0,
       };
     });
 
-    // Calculate approximate stock value. Prisma aggregate _sum is simple sum.
-    // For accurate value we need (price * stock) sum. Prisma doesn't do computed columns in aggregate easily.
-    // We can fetch all id, price, stock and reduce, or use a raw query if performance needed.
-    // For now, let's fetch essential fields to compute.
     const allProducts = await prisma.product.findMany({
       select: { price: true, stock: true },
     });
