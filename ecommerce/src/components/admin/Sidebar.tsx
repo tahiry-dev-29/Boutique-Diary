@@ -121,12 +121,12 @@ const navSections: NavSection[] = [
           {
             id: "promo-codes",
             label: "Codes promo",
-            href: "/admin/marketing/codes",
+            href: "/admin/marketing/codes-promo",
             permission: "settings.view",
           },
           {
             id: "promotions",
-            label: "Promotions",
+            label: "Règles",
             href: "/admin/marketing/promotions",
             permission: "settings.view",
           },

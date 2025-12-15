@@ -51,6 +51,7 @@ export interface Product {
   isPromotion?: boolean;
   oldPrice?: number | null;
   isBestSeller?: boolean;
+  applyPromotions?: boolean; // Form-only field
   rating?: number | null;
   reviewCount?: number;
   variations?: ProductVariation[];

@@ -222,3 +222,53 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+// Marketing Module
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+model PromoCode {
+  id    Int          @id @default(autoincrement())
+  code  String       @unique @db.VarChar(50)
+  type  DiscountType @default(PERCENTAGE)
+  value Float
+
+  // Validity
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Limits
+  usageLimit Int? // Max total uses
+  usageCount Int  @default(0) // Current uses
+
+  minOrderAmount Float? // Min cart total to apply
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
+
+model PromotionRule {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  priority Int    @default(0) // Higher applies first? or last? Usually higher first.
+
+  // Logic stored as JSON for flexibility
+  conditions Json // e.g. { type: "cart_total_gt", value: 100 }
+  actions    Json // e.g. { type: "discount_percentage", value: 20 }
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
