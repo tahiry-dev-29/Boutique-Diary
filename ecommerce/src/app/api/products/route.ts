@@ -9,12 +9,21 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get("categoryId");
     const limit = searchParams.get("limit");
+    const isPromotion = searchParams.get("isPromotion");
+    const promotionRuleId = searchParams.get("promotionRuleId");
+
+    const whereClause: any = {};
+    if (categoryId) whereClause.categoryId = parseInt(categoryId);
+    if (isPromotion === "true") whereClause.isPromotion = true;
+    if (promotionRuleId)
+      whereClause.promotionRuleId = parseInt(promotionRuleId);
 
     const products = await prisma.product.findMany({
-      where: categoryId ? { categoryId: parseInt(categoryId) } : undefined,
+      where: whereClause,
       include: {
         images: true,
         category: true,
+        promotionRule: true,
       },
       orderBy: {
         createdAt: "desc",

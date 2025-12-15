@@ -60,6 +60,16 @@ export async function POST(
       );
     }
 
+    // Check for Specific Product ID
+    if (conditions?.productId) {
+      whereClause.id = parseInt(conditions.productId);
+    }
+
+    // Check for Reference
+    if (conditions?.reference) {
+      whereClause.reference = conditions.reference;
+    }
+
     // Check for Best Seller
     if (conditions?.isBestSeller) {
       whereClause.isBestSeller = true;
@@ -70,13 +80,12 @@ export async function POST(
       whereClause.isNew = true;
     }
 
-    // Safety: Require at least one filtering condition to avoid applying to whole catalog accidentally
-    // unless explicitly intended (which we block for now)
+    // Safety: Require at least one filtering condition
     if (Object.keys(whereClause).length === 0) {
       return NextResponse.json(
         {
           error:
-            "La règle doit avoir au moins une condition de ciblage (Catégorie, Nouveauté, Best-seller).",
+            "La règle doit avoir au moins une condition de ciblage (Produit, Référence, Catégorie, Nouveauté, Best-seller).",
         },
         { status: 400 },
       );
@@ -105,34 +114,61 @@ export async function POST(
       where: whereClause,
     });
 
+    // Also look for matching ProductImages if reference targeting is used
+    let matchingImages: any[] = [];
+    if (conditions?.reference) {
+      matchingImages = await prisma.productImage.findMany({
+        where: { reference: conditions.reference },
+      });
+    }
+
     let updatedCount = 0;
     const factor = (100 - discountPercent) / 100;
 
-    // 4. Update each product
-    // We do this inside a transaction or loop. For safety/logs, loop is fine for reasonable catalog size.
-    // For large catalog, strict raw SQL update is better, but Prisma updateMany helps if logic is simple.
-    // Logic:
-    // IF oldPrice IS NULL THEN oldPrice = price
-    // NEW price = (oldPrice OR price) * factor
-    // isPromotion = true
-
-    // Since we can't do complex conditional updates efficiently in one Prisma `updateMany` (it sets fields to constant values),
-    // and we need to verify `oldPrice` vs `price` per row, we might need raw query or iteration.
-    // Iteration is safer to implement quickly.
-
+    // 4. Update Main Products
     for (const product of products) {
       const basePrice = product.oldPrice ?? product.price;
-      const newPrice = Math.round(basePrice * factor); // Rounding to avoid weird float issues?
+      const newPrice = Math.round(basePrice * factor);
 
       await prisma.product.update({
         where: { id: product.id },
         data: {
-          oldPrice: basePrice, // Ensure oldPrice is set to the base
+          oldPrice: basePrice,
           price: newPrice,
           isPromotion: true,
+          promotionRuleId: id,
         },
       });
       updatedCount++;
+    }
+
+    // 5. Update Matching Images (Variants)
+    for (const img of matchingImages) {
+      if (img.price) {
+        // Only update if price exists
+        const basePrice = img.oldPrice ?? img.price;
+        const newPrice = Math.round(basePrice * factor);
+
+        await prisma.productImage.update({
+          where: { id: img.id },
+          data: {
+            oldPrice: basePrice,
+            price: newPrice,
+            isPromotion: true,
+            // Note: ProductImage has no promotionRuleId in schema, so we rely on linking parent product or just matching logic
+          },
+        });
+
+        // Ensure parent product is marked as promotion so it shows in lists (even if main price isn't changed)
+        await prisma.product.update({
+          where: { id: img.productId },
+          data: {
+            isPromotion: true,
+            promotionRuleId: id, // Link rule to parent for filtering
+          },
+        });
+        updatedCount++;
+      }
     }
 
     return NextResponse.json({

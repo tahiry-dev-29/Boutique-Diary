@@ -71,6 +71,7 @@ export async function POST(
             price: product.oldPrice,
             oldPrice: null,
             isPromotion: false,
+            promotionRuleId: null,
           },
         });
         updatedCount++;

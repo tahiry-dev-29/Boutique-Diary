@@ -17,7 +17,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Loader2 } from "lucide-react";
+import { useProducts } from "@/features/products/hooks/useProducts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { PromotionRule } from "../../types";
 import { useCategories } from "@/features/categories/hooks/useCategories";
 
@@ -59,6 +82,7 @@ export function PromotionRuleForm({
   isLoading,
 }: PromotionRuleFormProps) {
   const { categories } = useCategories();
+  const { products } = useProducts();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema) as any,
@@ -76,16 +100,23 @@ export function PromotionRuleForm({
   // Local state for UI builder
   const [selectedCategoryId, setSelectedCategoryId] =
     React.useState<string>("");
+  const [selectedProductId, setSelectedProductId] = React.useState<string>(""); // NEW
+  const [openProductCombo, setOpenProductCombo] = React.useState(false); // NEW
+  const [targetReference, setTargetReference] = React.useState<string>(""); // NEW
   const [isNew, setIsNew] = React.useState<boolean>(false);
   const [isBestSeller, setIsBestSeller] = React.useState<boolean>(false);
   const [discountPercent, setDiscountPercent] = React.useState<string>("");
 
   useEffect(() => {
     if (initialData) {
+      const conditions = initialData.conditions as any;
+      const actions = initialData.actions as any;
+
       form.reset({
         name: initialData.name,
         priority: initialData.priority,
-        actions: JSON.stringify(initialData.actions, null, 2),
+        actions: JSON.stringify(actions, null, 2),
+        props_conditions: JSON.stringify(conditions, null, 2),
         startDate: initialData.startDate
           ? new Date(initialData.startDate).toISOString().split("T")[0]
           : "",
@@ -93,7 +124,19 @@ export function PromotionRuleForm({
           ? new Date(initialData.endDate).toISOString().split("T")[0]
           : "",
         isActive: initialData.isActive,
-      });
+      } as any);
+
+      // Pre-fill local state
+      if (conditions.categoryId)
+        setSelectedCategoryId(conditions.categoryId.toString());
+      if (conditions.productId)
+        setSelectedProductId(conditions.productId.toString());
+      if (conditions.reference) setTargetReference(conditions.reference);
+      if (conditions.isNew) setIsNew(true);
+      if (conditions.isBestSeller) setIsBestSeller(true);
+
+      if (actions.discountPercentage)
+        setDiscountPercent(actions.discountPercentage.toString());
     }
   }, [initialData, form]);
 
@@ -102,6 +145,8 @@ export function PromotionRuleForm({
     const conditions: any = {};
     if (selectedCategoryId)
       conditions.categoryId = parseInt(selectedCategoryId);
+    if (selectedProductId) conditions.productId = parseInt(selectedProductId); // NEW
+    if (targetReference) conditions.reference = targetReference; // NEW
     if (isNew) conditions.isNew = true;
     if (isBestSeller) conditions.isBestSeller = true;
 
@@ -111,7 +156,15 @@ export function PromotionRuleForm({
 
     form.setValue("conditions", JSON.stringify(conditions));
     form.setValue("actions", JSON.stringify(actions));
-  }, [selectedCategoryId, isNew, isBestSeller, discountPercent, form]);
+  }, [
+    selectedCategoryId,
+    selectedProductId,
+    targetReference,
+    isNew,
+    isBestSeller,
+    discountPercent,
+    form,
+  ]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const formattedData = {
@@ -124,7 +177,10 @@ export function PromotionRuleForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto overflow-x-hidden p-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -211,43 +267,149 @@ export function PromotionRuleForm({
 
         <div className="space-y-4 border rounded-xl p-4 bg-gray-50 dark:bg-gray-800/50">
           <h3 className="font-medium text-sm text-gray-900 dark:text-gray-100 mb-2">
-            Conditions d'application
+            Ciblage & Conditions
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div className="space-y-6">
+            {/* 1. Category Targeting */}
             <div className="space-y-2">
-              <FormLabel>Catégorie cible</FormLabel>
+              <FormLabel>Par Catégorie</FormLabel>
               <select
-                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                 value={selectedCategoryId}
-                onChange={e => setSelectedCategoryId(e.target.value)}
+                onChange={e => {
+                  setSelectedCategoryId(e.target.value);
+                  if (e.target.value) {
+                    setSelectedProductId(""); // Clear specific product if category selected
+                    setTargetReference("");
+                  }
+                }}
               >
-                <option value="">Toutes les catégories</option>
+                <option value="">-- Ignorer Catégorie --</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
                 ))}
               </select>
-              <FormDescription>
-                Appliquer uniquement aux produits de cette catégorie.
-              </FormDescription>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base text-sm">
-                    Produits "Nouveauté"
-                  </FormLabel>
+            <Separator className="my-2" />
+
+            {/* 2. Specific Product Targeting */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="space-y-2 flex flex-col">
+                  <FormLabel>Par Produit Spécifique</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !selectedProductId && "text-muted-foreground",
+                        )}
+                      >
+                        {selectedProductId
+                          ? products.find(
+                              p => p.id?.toString() === selectedProductId,
+                            )?.name
+                          : "Choisir un produit..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[400px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Rechercher produit par nom ou ref..." />
+                        <CommandList>
+                          <CommandEmpty>Aucun produit trouvé.</CommandEmpty>
+                          <CommandGroup>
+                            <CommandItem
+                              value="none"
+                              onSelect={() => {
+                                setSelectedProductId("");
+                                setOpenProductCombo(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedProductId === ""
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              -- Aucun --
+                            </CommandItem>
+                            {products.map(product => (
+                              <CommandItem
+                                key={product.id}
+                                value={`${product.name} ${product.reference}`}
+                                onSelect={() => {
+                                  setSelectedProductId(
+                                    product.id?.toString() || "",
+                                  );
+                                  if (product.id) setSelectedCategoryId(""); // Clear category
+                                  setOpenProductCombo(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedProductId === product.id?.toString()
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                <div className="flex flex-col">
+                                  <span>{product.name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {product.reference}
+                                  </span>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    Recherche par Nom ou Référence. La règle s'appliquera
+                    UNIQUEMENT à ce produit.
+                  </FormDescription>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <FormLabel>Par Référence Exacte</FormLabel>
+                <Input
+                  placeholder="Ex: PANT-HE-001"
+                  value={targetReference}
+                  onChange={e => {
+                    setTargetReference(e.target.value);
+                    if (e.target.value) setSelectedCategoryId("");
+                  }}
+                />
+                <FormDescription>
+                  Ciblage manuel par code référence.
+                </FormDescription>
+              </div>
+            </div>
+
+            <Separator className="my-2" />
+
+            {/* 3. Attributes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
+                <FormLabel className="text-sm">Seulement "Nouveauté"</FormLabel>
                 <Switch checked={isNew} onCheckedChange={setIsNew} />
               </div>
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base text-sm">
-                    Produits "Best-seller"
-                  </FormLabel>
-                </div>
+                <FormLabel className="text-sm">
+                  Seulement "Best-seller"
+                </FormLabel>
                 <Switch
                   checked={isBestSeller}
                   onCheckedChange={setIsBestSeller}
