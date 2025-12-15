@@ -1,22 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import ProductList from "@/components/admin/ProductList";
-import { Product } from "@/types/admin";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  ShoppingCart,
-  Users,
-  Percent,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/admin/PageHeader";
+import ProductList from "@/components/admin/ProductList";
+import { ProductNav } from "@/components/admin/ProductNav";
+import { Product } from "@/types/admin";
+import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -41,6 +32,8 @@ export default function ProductsPage() {
           Nouveau produit
         </Link>
       </PageHeader>
+
+      <ProductNav />
 
       <ProductList
         onEdit={handleEdit}

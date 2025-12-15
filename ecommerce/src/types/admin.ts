@@ -56,5 +56,7 @@ export interface Product {
   reviewCount?: number;
   variations?: ProductVariation[];
   createdAt?: string;
+  promotionRuleId?: number | null;
+  promotionRule?: any; // Avoiding circular dependency with full type for now
   updatedAt?: string;
 }

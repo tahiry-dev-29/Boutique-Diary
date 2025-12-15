@@ -93,7 +93,7 @@ export default function PromotionRulesPage() {
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[700px]">
+        <DialogContent className="sm:max-w-[800px]">
           <DialogHeader>
             <DialogTitle>
               {selectedRule
@@ -101,8 +101,8 @@ export default function PromotionRulesPage() {
                 : "Créer une règle de promotion"}
             </DialogTitle>
             <DialogDescription>
-              Définissez les conditions et actions. Utilisez le format JSON pour
-              l'instant.
+              Définir les conditions et les actions de la promotion dans le
+              selecteur.
             </DialogDescription>
           </DialogHeader>
 

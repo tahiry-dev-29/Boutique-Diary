@@ -115,3 +115,7 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 - [ ] Composant `Badge` (Pour les stocks/promos).
 - [ ] Composant `Toast` (Sonner ou React-Hot-Toast).
 - [ ] Composant `Skeleton` (Pour les loading states Suspense).
+
+---
+
+- on peut publier ou sauvegarder seulement et mettre dans le corbeille les produits.

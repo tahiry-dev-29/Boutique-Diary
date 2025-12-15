@@ -9,7 +9,7 @@ import { COLOR_MAP } from "@/lib/constants";
 import { formatPrice } from "@/lib/formatPrice";
 import { DollarSign, Edit, Package, Share2, Star, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 interface ProductImage {
@@ -55,6 +55,33 @@ interface ProductDetailsViewProps {
 export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null);
+
+  // Auto-select image based on URL reference parameter
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const targetRef = params.get("reference");
+
+    if (
+      targetRef &&
+      product.images &&
+      product.images.length > 0 &&
+      targetRef !== autoSelectedRef
+    ) {
+      const index = product.images.findIndex(
+        img => img.reference === targetRef,
+      );
+      if (index !== -1) {
+        setSelectedImageIndex(index);
+        setAutoSelectedRef(targetRef);
+        console.log(
+          `[ProductDetailsView] Auto-selected image index ${index} for reference ${targetRef}`,
+        );
+      }
+    }
+  }, [product.images, autoSelectedRef]);
 
   // Derive current image object
   const currentImage = product.images[selectedImageIndex];
@@ -336,7 +363,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                           SKU / Ref
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
-                          {product.reference}
+                          {displayRef}
                         </p>
                       </div>
                     </div>

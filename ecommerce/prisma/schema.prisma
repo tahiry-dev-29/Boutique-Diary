@@ -67,8 +67,12 @@ model Product {
   rating      Float? @default(0)
   reviewCount Int    @default(0)
 
-  categoryId     Int?
-  category       Category?          @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  promotionRuleId Int?
+  promotionRule   PromotionRule? @relation(fields: [promotionRuleId], references: [id])
+
   variations     ProductVariation[]
   stockMovements StockMovement[] // Relation for history
   createdAt      DateTime           @default(now())
@@ -265,6 +269,8 @@ model PromotionRule {
 
   startDate DateTime?
   endDate   DateTime?
+
+  products Product[]
 
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
