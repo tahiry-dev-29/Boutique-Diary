@@ -112,6 +112,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             percentage={0}
           />
         </div>
+      </div>
 
         {/* Low Stock */}
         <div className="h-[150px]">

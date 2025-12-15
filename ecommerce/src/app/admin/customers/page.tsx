@@ -283,6 +283,17 @@ export default function CustomerPage() {
             </div>
           )}
         </div>
+
+        {filteredCustomers.length === 0 && (
+          <div className="p-12 text-center">
+            <User className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+            <p className="text-gray-500 dark:text-gray-400">
+              {customers.length === 0
+                ? "Aucun client enregistré"
+                : "Aucun client trouvé avec ces critères"}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Customer Details Sheet */}
