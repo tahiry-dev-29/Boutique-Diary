@@ -44,18 +44,18 @@ const RecentPages: React.FC = () => {
     <Card className="border-none shadow-sm h-full flex flex-col bg-white dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
-          Páginas de destino
+          Pages récentes
         </CardTitle>
         <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium">
-          Ver todo
+          Voir tout
         </button>
       </CardHeader>
       <CardContent className="flex-1 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="text-gray-500 dark:text-gray-400 text-sm border-b border-gray-100 dark:border-gray-700">
-              <th className="font-medium pb-3 pl-2">Página de destino</th>
-              <th className="font-medium pb-3">Tasa de conversión</th>
+              <th className="font-medium pb-3 pl-2">Page de destination</th>
+              <th className="font-medium pb-3">Taux de conversion</th>
             </tr>
           </thead>
           <tbody className="space-y-4">
@@ -87,7 +87,7 @@ const RecentPages: React.FC = () => {
                               : "bg-orange-500"
                           }`}
                         ></span>
-                        {page.status === "Published" ? "Publicado" : "Borrador"}
+                        {page.status === "Published" ? "Publié" : "Brouillon"}
                       </div>
                     </div>
                   </div>

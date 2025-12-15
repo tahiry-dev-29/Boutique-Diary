@@ -13,13 +13,17 @@ import {
   EyeOff,
   Save,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { RoleConfig, DEFAULT_ROLES } from "@/lib/permissions-config";
 
-export default function NewEmployeePage() {
+export default function EditEmployeePage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [availableRoles, setAvailableRoles] =
     useState<RoleConfig[]>(DEFAULT_ROLES);
@@ -30,10 +34,12 @@ export default function NewEmployeePage() {
     password: "",
     confirmPassword: "",
     role: "admin",
+    isActive: true,
   });
 
   useEffect(() => {
     fetchRoles();
+    fetchEmployee();
   }, []);
 
   const fetchRoles = async () => {
@@ -51,56 +57,91 @@ export default function NewEmployeePage() {
     }
   };
 
+  const fetchEmployee = async () => {
+    try {
+      const response = await fetch(`/api/admin/employees/${params.id}`);
+      if (!response.ok) throw new Error("Failed to fetch");
+      const employee = await response.json();
+      setFormData(prev => ({
+        ...prev,
+        name: employee.name,
+        email: employee.email,
+        role: employee.role,
+        isActive: employee.isActive,
+      }));
+    } catch (error) {
+      console.error("Error fetching employee:", error);
+      toast.error("Impossible de charger les informations de l'employé");
+      router.push("/admin/employees");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... handleChange and handleSubmit omitted for brevity as they don't change ...
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password && formData.password !== formData.confirmPassword) {
       toast.error("Les mots de passe ne correspondent pas");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (formData.password && formData.password.length < 6) {
       toast.error("Le mot de passe doit contenir au moins 6 caractères");
       return;
     }
 
-    setLoading(true);
+    setSaving(true);
 
     try {
-      const response = await fetch("/api/admin/employees", {
-        method: "POST",
+      const response = await fetch(`/api/admin/employees/${params.id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password,
           role: formData.role,
+          isActive: formData.isActive,
+          ...(formData.password ? { password: formData.password } : {}),
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error || "Erreur lors de la création");
+        toast.error(data.error || "Erreur lors de la mise à jour");
         return;
       }
 
-      toast.success("Employé créé avec succès");
+      toast.success("Employé mis à jour avec succès");
       router.push("/admin/employees");
     } catch (error) {
-      console.error("Error creating employee:", error);
-      toast.error("Erreur lors de la création de l'employé");
+      console.error("Error updating employee:", error);
+      toast.error("Erreur lors de la mise à jour");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -114,10 +155,10 @@ export default function NewEmployeePage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Ajouter un employé
+            Modifier un employé
           </h1>
           <p className="text-muted-foreground mt-1">
-            Créer un nouveau compte employé
+            Modifier les informations et les accès
           </p>
         </div>
       </div>
@@ -125,6 +166,28 @@ export default function NewEmployeePage() {
       {/* Form */}
       <div className="bg-card border border-border rounded-xl p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Status Toggle */}
+          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
+            <div>
+              <h3 className="font-medium text-foreground">Statut du compte</h3>
+              <p className="text-sm text-muted-foreground">
+                Désactiver pour bloquer l&apos;accès temporairement
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, isActive: e.target.checked }))
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+            </label>
+          </div>
+
           {/* Grid layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
@@ -143,7 +206,6 @@ export default function NewEmployeePage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  placeholder="John Doe"
                   className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
                 />
               </div>
@@ -165,58 +227,6 @@ export default function NewEmployeePage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder="email@boutique.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Mot de passe *
-              </label>
-              <div className="relative">
-                <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  size={18}
-                />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Min. 6 caractères"
-                  className="w-full pl-10 pr-10 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm password */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Confirmer le mot de passe *
-              </label>
-              <div className="relative">
-                <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  size={18}
-                />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  placeholder="Confirmer le mot de passe"
                   className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
                 />
               </div>
@@ -246,10 +256,64 @@ export default function NewEmployeePage() {
                   ))}
                 </select>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Les permissions seront appliquées automatiquement selon le rôle
-                choisi
+            </div>
+
+            <div className="md:col-span-2 border-t border-border pt-6">
+              <h3 className="text-lg font-medium text-foreground mb-4">
+                Changer le mot de passe
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Laisser vide pour conserver le mot de passe actuel.
               </p>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Nouveau mot de passe
+              </label>
+              <div className="relative">
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={18}
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Nouveau mot de passe"
+                  className="w-full pl-10 pr-10 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm password */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Confirmer le mot de passe
+              </label>
+              <div className="relative">
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={18}
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirmer le nouveau mot de passe"
+                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+                />
+              </div>
             </div>
           </div>
 
@@ -263,18 +327,18 @@ export default function NewEmployeePage() {
             </Link>
             <button
               type="submit"
-              disabled={loading}
+              disabled={saving}
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {loading ? (
+              {saving ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  Création...
+                  Sauvegarde...
                 </>
               ) : (
                 <>
                   <Save size={18} />
-                  Créer l&apos;employé
+                  Enregistrer les modifications
                 </>
               )}
             </button>

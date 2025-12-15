@@ -1,6 +1,3 @@
-// src/components/admin/Header.tsx
-"use client";
-
 import { useEffect, useState } from "react";
 import { UserNav } from "./UserNav";
 import { AdminPayload } from "@/lib/adminAuth";
@@ -30,7 +27,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Don't do auth check on login page
     if (pathname === "/admin/login") {
       setLoading(false);
       return;
@@ -43,7 +39,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
           const userData = await response.json();
           setUser(userData);
         } else if (response.status === 401) {
-          // Redirect to login if unauthorized
           router.push("/admin/login");
           return;
         }
@@ -57,7 +52,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
     fetchUser();
   }, [pathname]);
 
-  // Keyboard shortcut for search (Cmd+K / Ctrl+K)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -72,7 +66,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   }, []);
 
   if (pathname === "/admin/login") {
-    return null; // Don't show header on login page
+    return null;
   }
 
   const toggleColorMode = () => {
@@ -81,8 +75,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
 
   return (
     <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-40">
-      <div className="flex h-14 items-center px-4 gap-4">
-        {/* Sidebar Toggle */}
+      <div className="flex h-14 items-center px-4">
         <Button
           variant="ghost"
           size="icon"
@@ -91,12 +84,8 @@ export function Header({ onToggleSidebar }: HeaderProps) {
         >
           <PanelLeft className="h-5 w-5" />
         </Button>
-
-        {/* Divider */}
-        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
-
-        {/* Search Bar */}
-        <div className="flex-1 max-w-xl">
+        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-4" />
+        <div className="max-w-md w-full">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -110,7 +99,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
             />
-            {/* Keyboard Shortcut Hint */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 text-xs text-gray-400 dark:text-gray-500 pointer-events-none">
               <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-[10px] font-medium">
                 ⌘K
@@ -118,21 +106,15 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             </div>
           </div>
         </div>
-
-        {/* Right Side Actions */}
-        <div className="flex items-center gap-1">
-          {/* Notification Bell */}
+        <div className="flex items-center gap-1 ml-auto">
           <Button
             variant="ghost"
             size="icon"
             className="h-9 w-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 relative"
           >
             <Bell className="h-5 w-5" />
-            {/* Notification Indicator */}
             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
           </Button>
-
-          {/* Theme Toggle (Sun/Moon) */}
           <Button
             variant="ghost"
             size="icon"
@@ -145,8 +127,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               <Sun className="h-5 w-5" />
             )}
           </Button>
-
-          {/* Settings Gear with Theme Panel */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -161,8 +141,6 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               <ThemeSettings />
             </PopoverContent>
           </Popover>
-
-          {/* User Avatar */}
           {loading ? (
             <Skeleton className="h-8 w-8 rounded-full ml-2" />
           ) : user ? (

@@ -4,103 +4,108 @@ import React, { useState, useEffect } from "react";
 import {
   UserPlus,
   Search,
-  MoreVertical,
   Edit,
   Trash2,
   Shield,
   Mail,
-  Phone,
   Calendar,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 interface Employee {
-  id: string;
-  username: string;
+  id: number;
+  name: string;
   email: string;
-  role: "SUPER_ADMIN" | "ADMIN" | "MANAGER" | "EMPLOYEE";
-  phone?: string;
-  createdAt: string;
+  role: string;
   isActive: boolean;
+  lastSeen?: string;
+  createdAt: string;
 }
 
 const roleColors: Record<string, string> = {
-  SUPER_ADMIN:
+  superadmin:
     "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-  ADMIN: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  MANAGER:
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  EMPLOYEE: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
+  admin: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
 };
 
 const roleLabels: Record<string, string> = {
-  SUPER_ADMIN: "Super Admin",
-  ADMIN: "Administrateur",
-  MANAGER: "Manager",
-  EMPLOYEE: "Employé",
+  superadmin: "Super Admin",
+  admin: "Administrateur",
 };
 
-// Mock data
-const mockEmployees: Employee[] = [
-  {
-    id: "1",
-    username: "admin",
-    email: "admin@boutique.com",
-    role: "SUPER_ADMIN",
-    phone: "+261 34 00 000 00",
-    createdAt: "2024-01-15",
-    isActive: true,
-  },
-  {
-    id: "2",
-    username: "manager1",
-    email: "manager@boutique.com",
-    role: "MANAGER",
-    phone: "+261 34 11 111 11",
-    createdAt: "2024-03-20",
-    isActive: true,
-  },
-  {
-    id: "3",
-    username: "employee1",
-    email: "employee@boutique.com",
-    role: "EMPLOYEE",
-    createdAt: "2024-06-10",
-    isActive: false,
-  },
-];
-
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
 
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch("/api/admin/employees");
+      if (!response.ok) throw new Error("Failed to fetch");
+      const data = await response.json();
+      setEmployees(data);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      toast.error("Erreur lors du chargement des employés");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isOnline = (lastSeen?: string) => {
+    if (!lastSeen) return false;
+    const diff = new Date().getTime() - new Date(lastSeen).getTime();
+    return diff < 5 * 60 * 1000; // 5 minutes threshold
+  };
+
   const filteredEmployees = employees.filter(emp => {
     const matchesSearch =
-      emp.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = selectedRole === "all" || emp.role === selectedRole;
     return matchesSearch && matchesRole;
   });
 
-  const handleDelete = (id: string) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) {
+  const handleDelete = async (id: number) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/employees/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete");
+
       setEmployees(prev => prev.filter(e => e.id !== id));
+      toast.success("Employé supprimé avec succès");
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Gestion des employés
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {employees.length} employé(s) au total
-          </p>
-        </div>
+      <PageHeader
+        title="Gestion des employés"
+        description={`${employees.length} employé(s) au total`}
+      >
         <Link
           href="/admin/employees/new"
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
@@ -108,7 +113,7 @@ export default function EmployeesPage() {
           <UserPlus size={18} />
           Ajouter un employé
         </Link>
-      </div>
+      </PageHeader>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -134,10 +139,8 @@ export default function EmployeesPage() {
           className="px-4 py-2.5 bg-card border border-border rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
         >
           <option value="all">Tous les rôles</option>
-          <option value="SUPER_ADMIN">Super Admin</option>
-          <option value="ADMIN">Administrateur</option>
-          <option value="MANAGER">Manager</option>
-          <option value="EMPLOYEE">Employé</option>
+          <option value="superadmin">Super Admin</option>
+          <option value="admin">Administrateur</option>
         </select>
       </div>
 
@@ -154,13 +157,13 @@ export default function EmployeesPage() {
                   Rôle
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden md:table-cell">
-                  Contact
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden lg:table-cell">
-                  Date d&apos;ajout
+                  Email
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Statut
+                  Statut (Compte)
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                  Connexion
                 </th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
                   Actions
@@ -168,84 +171,92 @@ export default function EmployeesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredEmployees.map(employee => (
-                <tr
-                  key={employee.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
-                        {employee.username.charAt(0).toUpperCase()}
+              {filteredEmployees.map(employee => {
+                const online = isOnline(employee.lastSeen);
+                return (
+                  <tr
+                    key={employee.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
+                          {employee.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {employee.name}
+                          </p>
+                          <p className="text-sm text-muted-foreground md:hidden">
+                            {employee.email}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {employee.username}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {employee.email}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${roleColors[employee.role]}`}
-                    >
-                      {roleLabels[employee.role]}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 hidden md:table-cell">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Mail size={14} />
-                      {employee.email}
-                    </div>
-                    {employee.phone && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                        <Phone size={14} />
-                        {employee.phone}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 hidden lg:table-cell">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar size={14} />
-                      {new Date(employee.createdAt).toLocaleDateString("fr-FR")}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        employee.isActive
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                      }`}
-                    >
-                      {employee.isActive ? "Actif" : "Inactif"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground">
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(employee.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${roleColors[employee.role] || roleColors.admin}`}
                       >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {roleLabels[employee.role] || employee.role}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Mail size={14} />
+                        {employee.email}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          employee.isActive
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        }`}
+                      >
+                        {employee.isActive ? "Activé" : "Désactivé"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-2 h-2 rounded-full ${online ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"}`}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {online ? "En ligne" : "Hors ligne"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/admin/employees/${employee.id}/edit`}
+                          className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                        >
+                          <Edit size={16} />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(employee.id)}
+                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
         {filteredEmployees.length === 0 && (
           <div className="p-12 text-center">
-            <p className="text-muted-foreground">Aucun employé trouvé</p>
+            <p className="text-muted-foreground">
+              {employees.length === 0
+                ? "Aucun employé enregistré"
+                : "Aucun employé trouvé avec ces critères"}
+            </p>
           </div>
         )}
       </div>

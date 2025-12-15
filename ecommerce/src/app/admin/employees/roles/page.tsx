@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Shield,
   Check,
@@ -13,8 +13,10 @@ import {
   BarChart,
   Settings,
   Palette,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Permission {
   id: string;
@@ -48,10 +50,10 @@ const allPermissions: Permission[] = [
   { id: "appearance.edit", label: "Modifier l'apparence", icon: Palette },
 ];
 
-const initialRoles: Role[] = [
+const defaultRoles: Role[] = [
   {
-    id: "super_admin",
-    name: "SUPER_ADMIN",
+    id: "superadmin",
+    name: "superadmin",
     label: "Super Admin",
     description: "Accès complet à toutes les fonctionnalités",
     color:
@@ -61,7 +63,7 @@ const initialRoles: Role[] = [
   },
   {
     id: "admin",
-    name: "ADMIN",
+    name: "admin",
     label: "Administrateur",
     description: "Gestion complète sauf création d'admins",
     color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -72,7 +74,7 @@ const initialRoles: Role[] = [
   },
   {
     id: "manager",
-    name: "MANAGER",
+    name: "manager",
     label: "Manager",
     description: "Gestion des produits, commandes et clients",
     color:
@@ -89,7 +91,7 @@ const initialRoles: Role[] = [
   },
   {
     id: "employee",
-    name: "EMPLOYEE",
+    name: "employee",
     label: "Employé",
     description: "Consultation des données uniquement",
     color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
@@ -99,9 +101,71 @@ const initialRoles: Role[] = [
 ];
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState<Role[]>(initialRoles);
+  const [roles, setRoles] = useState<Role[]>(defaultRoles);
+  const [loading, setLoading] = useState(true);
   const [editingRole, setEditingRole] = useState<string | null>(null);
   const [editedPermissions, setEditedPermissions] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch("/api/settings?key=admin_roles");
+      if (response.ok) {
+        const data = await response.json();
+        // If roles exist in DB, parse/use them
+        if (data && data.value) {
+          try {
+            const parsedRoles = JSON.parse(data.value);
+            // Ensure superadmin is never editable and has all permissions
+            const securedRoles = parsedRoles.map((r: Role) =>
+              r.id === "superadmin"
+                ? {
+                    ...r,
+                    isEditable: false,
+                    permissions: allPermissions.map(p => p.id),
+                  }
+                : r,
+            );
+            setRoles(securedRoles);
+          } catch (e) {
+            console.error("Failed to parse roles config", e);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      toast.error("Erreur lors du chargement des rôles");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveRolesConfig = async (newRoles: Role[]) => {
+    setSaving(true);
+    try {
+      const response = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key: "admin_roles",
+          value: JSON.stringify(newRoles),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save roles");
+      toast.success("Configuration des rôles enregistrée");
+    } catch (error) {
+      console.error("Error saving roles:", error);
+      toast.error("Erreur lors de la sauvegarde");
+      // Revert changes on error?
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const startEditing = (role: Role) => {
     setEditingRole(role.id);
@@ -113,16 +177,19 @@ export default function RolesPage() {
     setEditedPermissions([]);
   };
 
-  const saveEditing = () => {
-    setRoles(prev =>
-      prev.map(role =>
-        role.id === editingRole
-          ? { ...role, permissions: editedPermissions }
-          : role,
-      ),
+  const saveEditing = async () => {
+    const updatedRoles = roles.map(role =>
+      role.id === editingRole
+        ? { ...role, permissions: editedPermissions }
+        : role,
     );
+
+    setRoles(updatedRoles);
     setEditingRole(null);
     setEditedPermissions([]);
+
+    // Persist to DB
+    await saveRolesConfig(updatedRoles);
   };
 
   const togglePermission = (permId: string) => {
@@ -132,6 +199,14 @@ export default function RolesPage() {
         : [...prev, permId],
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -165,7 +240,11 @@ export default function RolesPage() {
           return (
             <div
               key={role.id}
-              className="bg-card border border-border rounded-xl overflow-hidden"
+              className={`bg-card border rounded-xl overflow-hidden transition-all ${
+                isEditing
+                  ? "border-primary ring-2 ring-primary/20"
+                  : "border-border"
+              }`}
             >
               {/* Role header */}
               <div className="p-4 bg-muted/50 flex items-center justify-between">
@@ -185,6 +264,7 @@ export default function RolesPage() {
                   <button
                     onClick={() => startEditing(role)}
                     className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                    title="Modifier les permissions"
                   >
                     <Edit size={16} />
                   </button>
@@ -193,15 +273,23 @@ export default function RolesPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={cancelEditing}
+                      disabled={saving}
                       className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                      title="Annuler"
                     >
                       <X size={16} />
                     </button>
                     <button
                       onClick={saveEditing}
+                      disabled={saving}
                       className="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary"
+                      title="Enregistrer"
                     >
-                      <Save size={16} />
+                      {saving ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <Save size={16} />
+                      )}
                     </button>
                   </div>
                 )}
@@ -224,7 +312,9 @@ export default function RolesPage() {
                     <div
                       key={perm.id}
                       className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
-                        isEditing ? "hover:bg-muted cursor-pointer" : ""
+                        isEditing
+                          ? "hover:bg-muted cursor-pointer"
+                          : "opacity-80"
                       }`}
                       onClick={() => isEditing && togglePermission(perm.id)}
                     >
@@ -235,7 +325,7 @@ export default function RolesPage() {
                         </span>
                       </div>
                       <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                        className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
                           hasPermission
                             ? "bg-green-500 text-white"
                             : "bg-muted text-muted-foreground"

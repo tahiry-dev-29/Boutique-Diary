@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkApiPermission } from "@/lib/backend-permissions";
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,6 +37,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Special permission for roles
+    if (key === "admin_roles") {
+      const permError = await checkApiPermission("employees.edit");
+      if (permError) return permError;
+    } else {
+      // General settings permission
+      const permError = await checkApiPermission("settings.edit");
+      if (permError) return permError;
+    }
+
     const setting = await prisma.siteSettings.upsert({
       where: { key },
       update: { value },
@@ -62,6 +73,16 @@ export async function DELETE(request: NextRequest) {
         { error: "La clé est requise" },
         { status: 400 },
       );
+    }
+
+    // Special permission for roles
+    if (key === "admin_roles") {
+      const permError = await checkApiPermission("employees.edit");
+      if (permError) return permError;
+    } else {
+      // General settings permission
+      const permError = await checkApiPermission("settings.edit");
+      if (permError) return permError;
     }
 
     await prisma.siteSettings.delete({

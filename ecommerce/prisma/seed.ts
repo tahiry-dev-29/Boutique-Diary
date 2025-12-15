@@ -179,25 +179,44 @@ async function main() {
     });
   }
 
-  // Create default admin user with SUPERADMIN role
-  const existingAdmin = await prisma.user.findUnique({
+  // Create default admin user in ADMIN table (for back-office)
+  const existingAdmin = await prisma.admin.findUnique({
     where: { email: "admin@boutique.com" },
   });
 
   if (!existingAdmin) {
     const hashedPassword = await bcrypt.hash("admin123", 10);
-    await prisma.user.create({
+    await prisma.admin.create({
       data: {
-        username: "admin",
+        name: "Super Admin",
         email: "admin@boutique.com",
         password: hashedPassword,
-        role: "SUPERADMIN",
+        role: "superadmin",
         isActive: true,
       },
     });
-    console.log("Created default admin: admin@boutique.com / admin123");
+    console.log("Created default back-office admin: admin@boutique.com / admin123");
   } else {
-    console.log("Admin already exists, skipping...");
+    console.log("Back-office Admin already exists, skipping...");
+  }
+
+  // Create default customer in USER table (for storefront)
+  const existingUser = await prisma.user.findUnique({
+    where: { email: "client@boutique.com" },
+  });
+
+  if (!existingUser) {
+    const hashedPassword = await bcrypt.hash("client123", 10);
+    await prisma.user.create({
+      data: {
+        username: "Jean Dupont",
+        email: "client@boutique.com",
+        password: hashedPassword,
+        role: "CUSTOMER", // Uses Role enum
+        isActive: true,
+      },
+    });
+    console.log("Created default customer: client@boutique.com / client123");
   }
 
   console.log("Seeding finished. Created 50 products.");
