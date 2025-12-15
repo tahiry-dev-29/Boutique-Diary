@@ -109,8 +109,35 @@ export default function ProductForm({
   });
 
   const [loading, setLoading] = useState(false);
-  // Remove internal categories state
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null); // Track if we already auto-selected
+
+  // Auto-select variant based on URL query param (runs after product data loads)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const targetRef = params.get("reference");
+
+    // Only auto-select once per reference, and only if images are loaded
+    if (
+      targetRef &&
+      formData.images &&
+      formData.images.length > 0 &&
+      targetRef !== autoSelectedRef
+    ) {
+      const index = formData.images.findIndex(
+        img => typeof img !== "string" && img.reference === targetRef,
+      );
+      if (index !== -1) {
+        setSelectedImageIndex(index);
+        setAutoSelectedRef(targetRef); // Mark as processed
+        console.log(
+          `[ProductForm] Auto-selected image index ${index} for reference ${targetRef}`,
+        );
+      }
+    }
+  }, [formData.images, autoSelectedRef]);
 
   // Remove fetchCategories useEffect
 

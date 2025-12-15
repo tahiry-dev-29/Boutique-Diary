@@ -253,7 +253,9 @@ export default function PromotionsPage() {
                       )}
                     </div>
 
-                    <Link href={`/admin/products/${product.id}/edit`}>
+                    <Link
+                      href={`/admin/products/${product.id}/edit?reference=${finalReference || ""}`}
+                    >
                       <Button
                         size="icon"
                         className="h-12 w-12 rounded-full bg-[#84D52C] hover:bg-[#72be24] text-white shadow-lg shadow-green-200 dark:shadow-none transition-transform hover:scale-105"
