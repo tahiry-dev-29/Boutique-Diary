@@ -87,7 +87,7 @@ const RecentPages: React.FC = () => {
                               : "bg-orange-500"
                           }`}
                         ></span>
-                        {page.status === "Published" ? "Publicado" : "Borrador"}
+                        {page.status === "Published" ? "Publié" : "Brouillon"}
                       </div>
                     </div>
                   </div>

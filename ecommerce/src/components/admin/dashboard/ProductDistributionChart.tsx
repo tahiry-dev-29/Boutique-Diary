@@ -16,15 +16,29 @@ interface ProductDistributionProps {
 }
 
 const defaultData = [
-  { name: "Electronics", value: 400, color: "#be185d" },
-  { name: "Clothing", value: 300, color: "#16a34a" },
-  { name: "Home", value: 300, color: "#1e1b4b" },
+  { name: "Électronique", value: 400, color: "#be185d" },
+  { name: "Vêtements", value: 300, color: "#16a34a" },
+  { name: "Maison", value: 300, color: "#1e1b4b" },
 ];
 
 const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
-  data = defaultData,
+  data = [],
 }) => {
-  const total = data.reduce((acc, curr) => acc + curr.value, 0);
+  const COLORS = [
+    "#be185d",
+    "#16a34a",
+    "#1e1b4b",
+    "#f59e0b",
+    "#3b82f6",
+    "#8b5cf6",
+  ];
+
+  const processedData = data.map((item, index) => ({
+    ...item,
+    color: item.color || COLORS[index % COLORS.length],
+  }));
+
+  const total = processedData.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
     <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
@@ -37,7 +51,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={processedData}
               cx="50%"
               cy="50%"
               innerRadius={70}
@@ -49,7 +63,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
               startAngle={90}
               endAngle={-270}
             >
-              {data.map((entry, index) => (
+              {processedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>

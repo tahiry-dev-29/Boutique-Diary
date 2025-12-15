@@ -43,9 +43,11 @@ export function DashboardStats({ products }: DashboardStatsProps) {
         currency: "MGA",
       }).format(totalValue),
       subValue: "Valeur totale estimée",
-      change: null, // No trend
+      change: null,
       trend: "neutral",
       icon: DollarSign,
+      color: "from-blue-500 to-indigo-600",
+      iconBg: "bg-blue-500/10 text-blue-500",
     },
     {
       label: "Total Produits",
@@ -54,22 +56,29 @@ export function DashboardStats({ products }: DashboardStatsProps) {
       change: null,
       trend: "neutral",
       icon: ShoppingBag,
+      color: "from-purple-500 to-pink-600",
+      iconBg: "bg-purple-500/10 text-purple-500",
     },
     {
       label: "En Stock",
       value: inStockCount.toLocaleString(),
       subValue: "Produits disponibles",
-      change: `${Math.round((inStockCount / (totalProducts || 1)) * 100)}%`, // Real percentage
-      trend: "up",
-      icon: Users, // Could swap icon
+      change: `${Math.round((inStockCount / (totalProducts || 1)) * 100)}%`,
+      trend: "neutral",
+      icon: Users,
+      color: "from-emerald-500 to-teal-600",
+      iconBg: "bg-emerald-500/10 text-emerald-500",
     },
     {
       label: "Rupture de Stock",
-      value: outOfStockCount.toLocaleString(), // Real
+      value: outOfStockCount.toLocaleString(),
       subValue: "À réapprovisionner",
       change: `${Math.round((outOfStockCount / (totalProducts || 1)) * 100)}%`,
-      trend: "down",
-      icon: Percent, // Could swap icon
+      trend: "neutral",
+      icon: percent => <Percent {...percent} />,
+      iconComponent: Percent,
+      color: "from-rose-500 to-red-600",
+      iconBg: "bg-rose-500/10 text-rose-500",
     },
   ];
 

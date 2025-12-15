@@ -508,7 +508,7 @@ export default function ProductList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 text-gray-400 hover:text-gray-600"
+                            className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-full transition-colors"
                           >
                             {isExpanded ? (
                               <ChevronDown className="h-4 w-4" />
@@ -547,7 +547,7 @@ export default function ProductList({
                         {visibleColumns.category && (
                           <TableCell>
                             {product.category ? (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                                 {product.category.name}
                               </span>
                             ) : (
@@ -651,12 +651,20 @@ export default function ProductList({
                                     key={idx}
                                     className="bg-white dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600 text-xs shadow-sm dark:text-gray-300"
                                   >
-                                    <div className="aspect-square bg-gray-100 rounded-md mb-2 overflow-hidden">
+                                    <div className="aspect-square bg-gray-50 dark:bg-gray-900 relative">
                                       <img
                                         src={imgData.url}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         alt=""
                                       />
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                        <p className="text-white text-xs font-medium truncate">
+                                          {product.name}
+                                        </p>
+                                        <p className="text-white/80 text-[10px]">
+                                          {imgData.reference}
+                                        </p>
+                                      </div>
                                     </div>
                                     <div className="space-y-1">
                                       {imgData.reference && (
@@ -683,10 +691,21 @@ export default function ProductList({
                                           ></span>{" "}
                                           {imgData.color}
                                         </div>
-                                      )}
-                                      {imgData.stock !== undefined && (
-                                        <div>Stock: {imgData.stock}</div>
-                                      )}
+                                        {imgData.stock !== undefined && (
+                                          <Badge
+                                            variant="secondary"
+                                            className={`${
+                                              imgData.stock > 0
+                                                ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100"
+                                                : "bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100"
+                                            } text-[10px] px-1.5 py-0 h-5 font-semibold border`}
+                                          >
+                                            {imgData.stock > 0
+                                              ? `${imgData.stock}`
+                                              : "0"}
+                                          </Badge>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 );

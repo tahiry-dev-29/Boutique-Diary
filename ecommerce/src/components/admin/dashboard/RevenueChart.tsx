@@ -38,7 +38,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
         </CardTitle>
         <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-100 transition-colors">
           <Calendar className="w-4 h-4" />
-          Esta semana
+          Cette semaine
         </button>
       </CardHeader>
       <CardContent>
@@ -85,7 +85,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
                 itemStyle={{ color: "#db2777" }}
-                formatter={(value: number) => [`$${value}`, "Ventas"]}
+                formatter={(value: number) => [`$${value}`, "Ventes"]}
               />
               <Area
                 type="monotone"
