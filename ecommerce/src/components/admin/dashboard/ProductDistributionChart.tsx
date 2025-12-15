@@ -44,7 +44,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
     <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
-          Productos
+          Produits
         </CardTitle>
       </CardHeader>
       <CardContent className="h-[300px] relative">

@@ -478,11 +478,7 @@ export default function ProductList({
                     <React.Fragment key={product.id}>
                       <TableRow
                         className={`group transition-all border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${isExpanded ? "bg-gray-50 dark:bg-gray-700" : "bg-white dark:bg-gray-800"} h-20 cursor-pointer`}
-                        onClick={() =>
-                          setExpandedProductId(
-                            isExpanded ? null : (product.id as number),
-                          )
-                        }
+                        onClick={() => onView(product)}
                       >
                         <TableCell
                           className="text-center pl-4"
@@ -560,12 +556,12 @@ export default function ProductList({
                         {visibleColumns.status && (
                           <TableCell>
                             {totalStock > 0 ? (
-                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
                                 En stock
                               </div>
                             ) : (
-                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100">
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
                                 Rupture
                               </div>
@@ -640,16 +636,16 @@ export default function ProductList({
 
                       {}
                       {isExpanded && (
-                        <TableRow className="bg-gray-50/50 dark:bg-gray-700/50 hover:bg-gray-50/50">
-                          <TableCell colSpan={7} className="p-4 shadow-inner">
-                            <div className="grid grid-cols-6 gap-4">
+                        <TableRow className="bg-gray-50/30 dark:bg-gray-800/50 hover:bg-gray-50/30 border-none">
+                          <TableCell colSpan={7} className="p-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                               {product.images?.map((img, idx) => {
                                 const imgData =
                                   typeof img === "string" ? { url: img } : img;
                                 return (
                                   <div
                                     key={idx}
-                                    className="bg-white dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600 text-xs shadow-sm dark:text-gray-300"
+                                    className="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
                                   >
                                     <div className="aspect-square bg-gray-50 dark:bg-gray-900 relative">
                                       <img
@@ -666,30 +662,33 @@ export default function ProductList({
                                         </p>
                                       </div>
                                     </div>
-                                    <div className="space-y-1">
-                                      {imgData.reference && (
-                                        <div className="text-gray-500">
-                                          Ref:{" "}
-                                          <span className="text-gray-900 dark:text-white font-medium">
-                                            {imgData.reference}
+
+                                    <div className="p-3 space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          {imgData.color && (
+                                            <div
+                                              className="w-4 h-4 rounded-full border border-gray-200 shadow-sm"
+                                              style={{
+                                                background:
+                                                  COLOR_MAP[
+                                                    imgData.color || ""
+                                                  ] ||
+                                                  imgData.color?.toLowerCase() ||
+                                                  "gray",
+                                              }}
+                                              title={imgData.color || ""}
+                                            ></div>
+                                          )}
+                                          <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                            {imgData.color || "Standard"}
                                           </span>
                                         </div>
-                                      )}
-                                      {imgData.color && (
-                                        <div className="flex items-center gap-1">
-                                          <span
-                                            className="w-3 h-3 rounded-full border border-gray-200"
-                                            style={{
-                                              background:
-                                                COLOR_MAP[
-                                                  imgData.color || ""
-                                                ] ||
-                                                imgData.color?.toLowerCase() ||
-                                                "gray",
-                                            }}
-                                            title={imgData.color || ""}
-                                          ></span>{" "}
-                                          {imgData.color}
+                                      </div>
+
+                                      <div className="flex items-center justify-between pt-1 border-t border-gray-50 dark:border-gray-700">
+                                        <div className="text-[10px] text-gray-400">
+                                          Stock
                                         </div>
                                         {imgData.stock !== undefined && (
                                           <Badge

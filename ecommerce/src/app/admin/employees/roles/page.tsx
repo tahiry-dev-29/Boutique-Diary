@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 interface Permission {
   id: string;
@@ -211,23 +212,11 @@ export default function RolesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Shield className="text-primary" size={28} />
-            Gestion des rôles
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Configurez les permissions pour chaque rôle
-          </p>
-        </div>
-        <Link
-          href="/admin/employees"
-          className="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Retour aux employés
-        </Link>
-      </div>
+      <PageHeader
+        title="Gestion des rôles"
+        description="Configurez les permissions pour chaque rôle"
+        backHref="/admin/employees"
+      />
 
       {/* Roles grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -240,14 +229,14 @@ export default function RolesPage() {
           return (
             <div
               key={role.id}
-              className={`bg-card border rounded-xl overflow-hidden transition-all ${
+              className={`bg-white dark:bg-gray-800 border rounded-xl overflow-hidden transition-all ${
                 isEditing
-                  ? "border-primary ring-2 ring-primary/20"
-                  : "border-border"
+                  ? "border-blue-500 ring-2 ring-blue-500/20"
+                  : "border-gray-200 dark:border-gray-700"
               }`}
             >
               {/* Role header */}
-              <div className="p-4 bg-muted/50 flex items-center justify-between">
+              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${role.color}`}
@@ -255,7 +244,7 @@ export default function RolesPage() {
                     {role.label}
                   </span>
                   {!role.isEditable && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       (non modifiable)
                     </span>
                   )}
@@ -263,7 +252,7 @@ export default function RolesPage() {
                 {role.isEditable && !isEditing && (
                   <button
                     onClick={() => startEditing(role)}
-                    className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     title="Modifier les permissions"
                   >
                     <Edit size={16} />
@@ -274,7 +263,7 @@ export default function RolesPage() {
                     <button
                       onClick={cancelEditing}
                       disabled={saving}
-                      className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                      className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:text-red-500"
                       title="Annuler"
                     >
                       <X size={16} />
@@ -282,7 +271,7 @@ export default function RolesPage() {
                     <button
                       onClick={saveEditing}
                       disabled={saving}
-                      className="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary"
+                      className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors text-blue-600 dark:text-blue-400"
                       title="Enregistrer"
                     >
                       {saving ? (
@@ -296,8 +285,8 @@ export default function RolesPage() {
               </div>
 
               {/* Description */}
-              <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm text-muted-foreground">
+              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {role.description}
                 </p>
               </div>
@@ -313,14 +302,17 @@ export default function RolesPage() {
                       key={perm.id}
                       className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
                         isEditing
-                          ? "hover:bg-muted cursor-pointer"
+                          ? "hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
                           : "opacity-80"
                       }`}
                       onClick={() => isEditing && togglePermission(perm.id)}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon size={16} className="text-muted-foreground" />
-                        <span className="text-sm text-foreground">
+                        <Icon
+                          size={16}
+                          className="text-gray-500 dark:text-gray-400"
+                        />
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
                           {perm.label}
                         </span>
                       </div>
@@ -328,7 +320,7 @@ export default function RolesPage() {
                         className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
                           hasPermission
                             ? "bg-green-500 text-white"
-                            : "bg-muted text-muted-foreground"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600"
                         }`}
                       >
                         {hasPermission ? <Check size={12} /> : <X size={12} />}
@@ -339,8 +331,8 @@ export default function RolesPage() {
               </div>
 
               {/* Stats */}
-              <div className="px-4 py-3 bg-muted/30 border-t border-border">
-                <p className="text-xs text-muted-foreground">
+              <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {currentPermissions.length} / {allPermissions.length}{" "}
                   permissions actives
                 </p>

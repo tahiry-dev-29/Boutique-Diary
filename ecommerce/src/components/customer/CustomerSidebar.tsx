@@ -45,7 +45,7 @@ export default function CustomerSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-card border-r border-border h-full min-h-screen p-4">
+    <aside className="w-64 dark:border-gray-700/50 border-r border-border h-full min-h-screen p-4">
       {/* User info */}
       <div className="mb-6 p-4 bg-muted rounded-xl">
         <div className="flex items-center gap-3">

@@ -83,7 +83,7 @@ export default function CustomerOrders() {
         {orders.map(order => (
           <div
             key={order.id}
-            className="bg-card border border-border rounded-xl overflow-hidden"
+            className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden"
           >
             {/* Order header */}
             <div className="flex items-center justify-between p-4 bg-muted/50">

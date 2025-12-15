@@ -25,12 +25,10 @@ export function DashboardStats({ products }: DashboardStatsProps) {
 
   const inStockCount = products.filter(p => {
     const stock =
-      p.stock ||
       p.images?.reduce(
         (acc, img) => acc + (typeof img === "string" ? 0 : img.stock || 0),
         0,
-      ) ||
-      0;
+      ) || 0;
     return stock > 0;
   }).length;
   const outOfStockCount = totalProducts - inStockCount;
@@ -41,6 +39,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
       value: new Intl.NumberFormat("fr-FR", {
         style: "currency",
         currency: "MGA",
+        maximumFractionDigits: 0,
       }).format(totalValue),
       subValue: "Valeur totale estimée",
       change: null,
@@ -84,39 +83,54 @@ export function DashboardStats({ products }: DashboardStatsProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat, index) => (
-        <Card
-          key={index}
-          className="border-none shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 rounded-2xl hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.3)] transition-all duration-300"
-        >
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {stat.label}
-                </p>
-                <h3 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {stat.value}
-                </h3>
-              </div>
-              {stat.change && (
-                <div
-                  className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
-                    stat.trend === "up"
-                      ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
-                      : "bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
-                  }`}
-                >
-                  {stat.change}
+      {stats.map((stat, index) => {
+        const Icon = stat.icon || stat.iconComponent;
+        return (
+          <Card
+            key={index}
+            className="relative overflow-hidden border-none shadow-lg bg-[#1a1f37] dark:bg-[#1a1f37] hover:translate-y-[-2px] transition-all duration-300 group"
+          >
+            {/* Background glowing effect */}
+            <div
+              className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.15] blur-2xl rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110`}
+            />
+
+            <CardContent className="p-6 relative z-10">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col justify-between h-full space-y-4">
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      {stat.label}
+                    </p>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">
+                      {stat.value}
+                    </h3>
+                  </div>
+                  <div className="text-[10px] text-gray-500 font-medium">
+                    {stat.subValue}
+                  </div>
                 </div>
-              )}
-            </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500 font-medium">
-              {stat.subValue}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+
+                <div className="flex flex-col items-end gap-3">
+                  <div
+                    className={`p-3 rounded-xl ${stat.iconBg} shadow-inner flex items-center justify-center backdrop-blur-md bg-opacity-20`}
+                    style={{
+                      boxShadow: "inset 0 0 10px rgba(255,255,255,0.05)",
+                    }}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  {stat.change && (
+                    <div className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-[#1a1f37] border border-gray-700/50 text-white shadow-sm">
+                      {stat.change}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

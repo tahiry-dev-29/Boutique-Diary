@@ -13,7 +13,7 @@ export default function CustomerLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <header className="bg-card border-b border-border px-4 py-3">
+      <header className="dark:border-gray-700/50 border-b border-border px-4 py-3">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link

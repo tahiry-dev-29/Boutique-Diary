@@ -34,7 +34,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
     <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
-          Rendimiento de ventas
+          Performance des ventes
         </CardTitle>
         <button className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg text-sm font-medium hover:bg-pink-100 transition-colors">
           <Calendar className="w-4 h-4" />
