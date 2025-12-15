@@ -60,9 +60,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   return (
     <div className="min-h-screen font-sans">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent inline-block">
-          Bienvenue {user.username}{" "}
-          <span className="text-2xl text-foreground">👋</span>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          Bienvenue {user.username} <span className="text-2xl">👋</span>
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
           Tableau de bord administrateur

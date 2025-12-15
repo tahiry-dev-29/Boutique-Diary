@@ -150,28 +150,6 @@ const navItems: MenuItem[] = [
     ],
   },
   {
-    id: "employees",
-    label: "Employés",
-    icon: User,
-    subItems: [
-      {
-        id: "all-employees",
-        label: "Liste des employés",
-        href: "/admin/employees",
-      },
-      {
-        id: "add-employee",
-        label: "Ajouter un employé",
-        href: "/admin/employees/new",
-      },
-      {
-        id: "roles",
-        label: "Gestion des rôles",
-        href: "/admin/employees/roles",
-      },
-    ],
-  },
-  {
     id: "marketing",
     label: "Marketing",
     icon: Tags,
