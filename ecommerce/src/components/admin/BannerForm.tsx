@@ -126,7 +126,7 @@ export default function BannerForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm"
+      className="bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 shadow-sm"
     >
       <h2 className="text-xl font-bold text-gray-800 mb-6">
         {banner ? "Modifier la bannière" : "Nouvelle bannière"}

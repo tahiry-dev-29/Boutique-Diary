@@ -65,7 +65,7 @@ export default function ShopProductModal({
       : product.stock;
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity((prev) => {
+    setQuantity(prev => {
       const newValue = prev + delta;
       return newValue >= 1 && newValue <= currentStock ? newValue : prev;
     });
@@ -135,7 +135,7 @@ export default function ShopProductModal({
           <div className="space-y-4">
             {}
             <div
-              className={`relative w-full ${isFullscreen ? "aspect-video" : "aspect-square"} bg-white border border-gray-100 rounded-2xl overflow-hidden flex items-center justify-center shadow-sm`}
+              className={`relative w-full ${isFullscreen ? "aspect-video" : "aspect-square"} bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden flex items-center justify-center shadow-sm`}
             >
               {product.images && product.images[selectedImageIndex] ? (
                 <>
@@ -179,7 +179,7 @@ export default function ShopProductModal({
                         {currentImage.color && (
                           <Badge
                             variant="secondary"
-                            className="bg-white/90 backdrop-blur-sm shadow-sm border border-gray-200 text-gray-800"
+                            className="bg-gray-100/90 backdrop-blur-sm shadow-sm border border-gray-200 text-gray-800"
                           >
                             {currentImage.color}
                           </Badge>
@@ -306,7 +306,7 @@ export default function ShopProductModal({
                     Couleurs disponibles
                   </span>
                   <div className="flex flex-wrap gap-2">
-                    {product.colors.map((color) => (
+                    {product.colors.map(color => (
                       <button
                         key={color}
                         className={`px-3 py-1 text-sm border rounded-md transition-colors ${
@@ -314,7 +314,7 @@ export default function ShopProductModal({
                           typeof currentImage === "object" &&
                           currentImage.color === color
                             ? "bg-gray-900 text-white border-gray-900"
-                            : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                            : "bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300"
                         }`}
                       >
                         {color}
@@ -336,7 +336,7 @@ export default function ShopProductModal({
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
+                    {product.sizes.map(size => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}

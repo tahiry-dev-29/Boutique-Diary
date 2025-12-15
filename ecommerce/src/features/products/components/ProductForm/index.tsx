@@ -39,6 +39,7 @@ const initialFormData: Product = {
   isPromotion: false,
   oldPrice: null,
   isBestSeller: false,
+  applyPromotions: false,
 };
 
 export default function ProductForm({
@@ -286,7 +287,7 @@ export default function ProductForm({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Column (Left) - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <CardTitle>Détails du produit</CardTitle>
             </CardHeader>
@@ -299,7 +300,7 @@ export default function ProductForm({
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <CardTitle>Images du produit</CardTitle>
             </CardHeader>
@@ -314,7 +315,7 @@ export default function ProductForm({
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <CardTitle>Variantes</CardTitle>
             </CardHeader>
@@ -326,7 +327,7 @@ export default function ProductForm({
 
         {/* Sidebar (Right) - 1/3 width */}
         <div className="space-y-6">
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <CardHeader>
               <CardTitle>Tarification</CardTitle>
             </CardHeader>

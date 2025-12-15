@@ -229,7 +229,7 @@ export default function RolesPage() {
           return (
             <div
               key={role.id}
-              className={`bg-white dark:bg-gray-800 border rounded-xl overflow-hidden transition-all ${
+              className={`bg-gray-100 dark:bg-gray-800 border rounded-xl overflow-hidden transition-all ${
                 isEditing
                   ? "border-blue-500 ring-2 ring-blue-500/20"
                   : "border-gray-200 dark:border-gray-700"

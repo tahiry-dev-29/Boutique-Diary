@@ -49,7 +49,7 @@ export default function ShopContent() {
   }, [showPromosOnly]);
 
   const filteredProducts = showPromosOnly
-    ? products.filter((p) => p.isPromotion)
+    ? products.filter(p => p.isPromotion)
     : products;
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -62,9 +62,9 @@ export default function ShopContent() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0].isIntersecting && maxLoadedPage < totalPages) {
-          setMaxLoadedPage((prev) => prev + 1);
+          setMaxLoadedPage(prev => prev + 1);
         }
       },
       { threshold: 0.1 },
@@ -132,7 +132,7 @@ export default function ShopContent() {
   const handlePageClick = (page: number) => {
     setIsAutoScrolling(true);
     setCurrentPage(page);
-    setMaxLoadedPage((prev) => Math.max(prev, page));
+    setMaxLoadedPage(prev => Math.max(prev, page));
     const targetIndex = (page - 1) * ITEMS_PER_PAGE;
     setScrollTarget(targetIndex);
   };
@@ -224,7 +224,7 @@ export default function ShopContent() {
                   firstImage?.stock !== null
                     ? firstImage.stock
                     : null;
-                const effectiveStock = 
+                const effectiveStock =
                   firstImageStock !== null ? firstImageStock : product.stock;
                 const isOutOfStock = effectiveStock === 0;
 
@@ -232,10 +232,10 @@ export default function ShopContent() {
                   <div
                     key={product.id}
                     id={`product-card-${index}`}
-                    className="group relative bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-gray-200 cursor-pointer overflow-hidden scroll-mt-40"
+                    className="group relative bg-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-gray-200 cursor-pointer overflow-hidden scroll-mt-40"
                     onClick={() => handleProductClick(product)}
                   >
-                    {} 
+                    {}
                     <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                       {isOutOfStock && (
                         <span className="bg-gray-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
@@ -257,13 +257,13 @@ export default function ShopContent() {
                           <span className="bg-[#e11d48] text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
                             Promo
                           </span>
-                          {product.oldPrice && 
+                          {product.oldPrice &&
                             product.oldPrice > product.price && (
                               <span className="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded shadow-sm border border-rose-200">
-                                - 
+                                -
                                 {Math.round(
                                   ((product.oldPrice - product.price) /
-                                    product.oldPrice) * 
+                                    product.oldPrice) *
                                     100,
                                 )}
                                 %
@@ -273,11 +273,11 @@ export default function ShopContent() {
                       )}
                     </div>
 
-                    {} 
+                    {}
                     <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold">
                       <button
                         className="text-emerald-700 hover:scale-110 transition-transform"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           console.log("Wishlist click");
                         }}
@@ -286,10 +286,10 @@ export default function ShopContent() {
                       </button>
                     </div>
 
-                    {} 
+                    {}
                     {(() => {
                       const selectedIndex = selectedImages[product.id!] ?? 0;
-                      const displayImage = 
+                      const displayImage =
                         product.images?.[selectedIndex] ?? product.images?.[0];
                       const imageUrl = displayImage
                         ? typeof displayImage === "string"
@@ -317,7 +317,7 @@ export default function ShopContent() {
                       );
                     })()}
 
-                    {} 
+                    {}
                     <div className="space-y-2">
                       <h3 className="text-sm font-[800] text-[#1f2937] leading-tight min-h-[40px] line-clamp-2 hover:text-rose-600 transition-colors">
                         {product.name}
@@ -327,7 +327,7 @@ export default function ShopContent() {
                         {product.description || "Aucune description"}
                       </p>
 
-                      {} 
+                      {}
                       {(() => {
                         const imageColorsWithIndex = product.images
                           ?.map((img, index) => ({
@@ -340,7 +340,7 @@ export default function ShopContent() {
                           );
 
                         const colorIndexMap = new Map<string, number>();
-                        imageColorsWithIndex?.forEach((item) => {
+                        imageColorsWithIndex?.forEach(item => {
                           if (!colorIndexMap.has(item.color)) {
                             colorIndexMap.set(item.color, item.index);
                           }
@@ -349,30 +349,30 @@ export default function ShopContent() {
                         const uniqueColors = Array.from(
                           colorIndexMap.keys(),
                         ).slice(0, 6);
-                        const currentSelectedIndex = 
+                        const currentSelectedIndex =
                           selectedImages[product.id!] ?? 0;
 
                         if (uniqueColors.length > 0) {
                           return (
                             <div className="flex items-center gap-2 mt-2">
-                              {uniqueColors.map((color) => {
-                                const imageIndex = 
+                              {uniqueColors.map(color => {
+                                const imageIndex =
                                   colorIndexMap.get(color) ?? 0;
-                                const isSelected = 
+                                const isSelected =
                                   currentSelectedIndex === imageIndex;
 
                                 return (
                                   <button
                                     key={color}
                                     title={color}
-                                    onClick={(e) => {
+                                    onClick={e => {
                                       e.stopPropagation();
-                                      setSelectedImages((prev) => ({
+                                      setSelectedImages(prev => ({
                                         ...prev,
                                         [product.id!]: imageIndex,
                                       }));
                                     }}
-                                    className={`w-5 h-5 rounded-full border-2 shadow-sm transition-all hover:scale-110 ${ 
+                                    className={`w-5 h-5 rounded-full border-2 shadow-sm transition-all hover:scale-110 ${
                                       isSelected
                                         ? "border-gray-800 ring-2 ring-gray-300"
                                         : "border-gray-200"
@@ -407,15 +407,15 @@ export default function ShopContent() {
                           )}
                         </div>
 
-                        {} 
+                        {}
                         {cartState[product.id!] ? (
                           <div
-                            className="flex items-center justify-between min-w-[100px] h-10 rounded-full border border-emerald-500 bg-white shadow-sm px-1 transition-all"
-                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center justify-between min-w-[100px] h-10 rounded-full border border-emerald-500 bg-gray-100 shadow-sm px-1 transition-all"
+                            onClick={e => e.stopPropagation()}
                           >
                             <button
                               onClick={() =>
-                                setCartState((prev) => {
+                                setCartState(prev => {
                                   const newState = { ...prev };
                                   delete newState[product.id!];
                                   return newState;
@@ -431,10 +431,10 @@ export default function ShopContent() {
                               min="1"
                               max={effectiveStock}
                               value={cartState[product.id!]}
-                              onChange={(e) => {
+                              onChange={e => {
                                 const val = parseInt(e.target.value);
                                 if (!isNaN(val) && val > 0) {
-                                  setCartState((prev) => ({
+                                  setCartState(prev => ({
                                     ...prev,
                                     [product.id!]: Math.min(
                                       val,
@@ -444,7 +444,7 @@ export default function ShopContent() {
                                 }
                               }}
                               className="w-12 text-center font-bold text-gray-900 text-sm mx-1 border-b border-emerald-500 focus:outline-none appearance-none"
-                              onClick={(e) => e.stopPropagation()}
+                              onClick={e => e.stopPropagation()}
                             />
 
                             <button
@@ -459,7 +459,7 @@ export default function ShopContent() {
                         ) : (
                           <button
                             disabled={isOutOfStock}
-                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors shadow-sm ${ 
+                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors shadow-sm ${
                               !isOutOfStock
                                 ? "bg-[#15803d] text-white hover:bg-[#166534]"
                                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -474,10 +474,10 @@ export default function ShopContent() {
                                 ? "Rupture de stock"
                                 : "Ajouter au panier"
                             }
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               if (!isOutOfStock) {
-                                setCartState((prev) => ({
+                                setCartState(prev => ({
                                   ...prev,
                                   [product.id!]: 1,
                                 }));
@@ -494,25 +494,25 @@ export default function ShopContent() {
               })}
             </div>
 
-            {} 
+            {}
             <div
               ref={observerTarget}
               className="h-4 w-full"
               aria-hidden="true"
             />
 
-            {} 
+            {}
             {totalPages > 1 && (
               <div
-                className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-4 px-4 sm:px-6 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-transform duration-300 ${ 
+                className={`fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-100 py-4 px-4 sm:px-6 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-transform duration-300 ${
                   showPagination ? "translate-y-0" : "translate-y-full"
                 }`}
               >
                 <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-                  {} 
+                  {}
                   <div className="hidden sm:block w-[100px]"></div>
 
-                  {} 
+                  {}
                   <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar mx-auto">
                     <button
                       onClick={() =>
@@ -525,7 +525,7 @@ export default function ShopContent() {
                     </button>
 
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter((page) => {
+                      .filter(page => {
                         return (
                           page === 1 ||
                           page === totalPages ||
@@ -539,13 +539,11 @@ export default function ShopContent() {
                         return (
                           <div key={page} className="flex items-center">
                             {showEllipsis && (
-                              <span className="mx-1 text-gray-400">
-                                ...
-                              </span>
+                              <span className="mx-1 text-gray-400">...</span>
                             )}
                             <button
                               onClick={() => handlePageClick(page)}
-                              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${ 
+                              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                                 currentPage === page
                                   ? "bg-[#d1fae5] text-[#104f32]" // Active state
                                   : currentPage > page
@@ -561,9 +559,7 @@ export default function ShopContent() {
 
                     <button
                       onClick={() =>
-                        handlePageClick(
-                          Math.min(totalPages, currentPage + 1),
-                        )
+                        handlePageClick(Math.min(totalPages, currentPage + 1))
                       }
                       disabled={currentPage === totalPages}
                       className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent"
@@ -572,11 +568,13 @@ export default function ShopContent() {
                     </button>
                   </div>
 
-                  {} 
+                  {}
                   <div className="hidden sm:flex w-[100px] justify-end">
                     <button className="flex items-center gap-2 px-4 py-2 bg-[#104f32] text-white rounded-lg font-bold hover:bg-[#0d3f28] transition-colors">
                       <span>Filtrer</span>
-                      <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-xs">1</span>
+                      <span className="bg-gray-100/20 px-1.5 py-0.5 rounded-full text-xs">
+                        1
+                      </span>
                     </button>
                   </div>
                 </div>

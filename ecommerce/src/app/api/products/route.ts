@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,22 +48,86 @@ export async function POST(request: NextRequest) {
       colors,
       sizes,
       isNew,
-      isPromotion,
-      oldPrice,
+      isPromotion: initialIsPromotion,
+      oldPrice: initialOldPrice,
       isBestSeller,
+      applyPromotions, // New flag
     } = body;
+
+    let priceToUse = parseFloat(price) || 0;
+    let oldPriceToUse = initialOldPrice ? parseFloat(initialOldPrice) : null;
+    let isPromotionToUse = initialIsPromotion || false;
+
+    // Logic to apply promotions automatically
+    if (applyPromotions) {
+      const activeRules = await prisma.promotionRule.findMany({
+        where: { isActive: true },
+        orderBy: { priority: "desc" }, // Highest priority first
+      });
+
+      const catIdInt = categoryId ? parseInt(categoryId) : null;
+
+      // Find the first matching rule
+      const applicableRule = activeRules.find((rule: any) => {
+        const conditions = rule.conditions;
+
+        // 1. Check Category
+        const targetCatId = conditions?.categoryId || conditions?.category_id;
+        if (targetCatId) {
+          if (!catIdInt || parseInt(targetCatId) !== catIdInt) return false;
+        }
+
+        // 2. Check Best Seller
+        if (conditions?.isBestSeller && !isBestSeller) return false;
+
+        // 3. Check New
+        if (conditions?.isNew && !isNew) return false;
+
+        // If we reach here, all present conditions matched.
+        // We also need to ensure at least ONE condition was present to avoid matching "empty" rules to everything unexpectedly?
+        // Or assume empty rules apply to everything (Global sale)?
+        // For safety, let's require at least one match if we want to be strict, but usually empty conditions = all products.
+        // Given previous logic, I'll allow it if logic is sound.
+
+        return true;
+      });
+
+      if (applicableRule) {
+        const actions = applicableRule.actions as any;
+        let discountPercent = 0;
+        if (actions?.discountPercentage) {
+          discountPercent = parseFloat(actions.discountPercentage);
+        } else if (actions?.percentage) {
+          discountPercent = parseFloat(actions.percentage);
+        } else if (actions?.discount_percent) {
+          discountPercent = parseFloat(actions.discount_percent);
+        }
+
+        if (discountPercent > 0) {
+          // Apply discount
+          // If oldPrice was not set, set it to current price
+          if (oldPriceToUse === null) {
+            oldPriceToUse = priceToUse;
+          }
+          // Calculate new price based on the base price (oldPriceToUse)
+          const factor = (100 - discountPercent) / 100;
+          priceToUse = Math.round(oldPriceToUse * factor);
+          isPromotionToUse = true;
+        }
+      }
+    }
 
     if (!name || !reference) {
       return NextResponse.json(
         { error: "Name and reference are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (price !== undefined && parseFloat(price) < 0) {
       return NextResponse.json(
         { error: "Price cannot be negative" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -85,15 +149,15 @@ export async function POST(request: NextRequest) {
         name,
         description: description || null,
         reference,
-        price: parseFloat(price) || 0,
+        price: priceToUse,
         stock: parseInt(stock) || 0,
         ...(categoryId && { category: { connect: { id: categoryId } } }),
         brand: brand || null,
         colors: colors || [],
         sizes: sizes || [],
         isNew: isNew || false,
-        isPromotion: isPromotion || false,
-        oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+        isPromotion: isPromotionToUse,
+        oldPrice: oldPriceToUse,
         isBestSeller: isBestSeller || false,
         images: {
           create: (images || []).map(
@@ -130,13 +194,13 @@ export async function POST(request: NextRequest) {
                     : img.stock !== undefined && img.stock !== null
                       ? img.stock
                       : null,
-                isNew: typeof img === "string" ? false : img.isNew ?? false,
+                isNew: typeof img === "string" ? false : (img.isNew ?? false),
                 isPromotion:
-                  typeof img === "string" ? false : img.isPromotion ?? false,
+                  typeof img === "string" ? false : (img.isPromotion ?? false),
                 categoryId:
-                  typeof img === "string" ? null : img.categoryId ?? null,
+                  typeof img === "string" ? null : (img.categoryId ?? null),
               };
-            }
+            },
           ),
         },
       },
@@ -158,13 +222,13 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "A product with this reference already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to create product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

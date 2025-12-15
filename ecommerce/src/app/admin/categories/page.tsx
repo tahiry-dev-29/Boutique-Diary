@@ -46,7 +46,7 @@ export default function CategoriesPage() {
       </div>
 
       {showForm ? (
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-gray-100 dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <CategoryForm
             category={selectedCategory}
             onSuccess={handleSuccess}

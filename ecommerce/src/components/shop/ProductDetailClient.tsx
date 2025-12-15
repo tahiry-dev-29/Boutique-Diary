@@ -78,7 +78,7 @@ export default function ProductDetailClient({
   const [quantity, setQuantity] = useState(1);
 
   const selectedImageIndex = product.images.findIndex(
-    (img) => img.url === selectedImage,
+    img => img.url === selectedImage,
   );
   const currentImage =
     selectedImageIndex !== -1 ? product.images[selectedImageIndex] : null;
@@ -91,7 +91,7 @@ export default function ProductDetailClient({
   const selectImageAndSyncStock = (imgUrl: string) => {
     setSelectedImage(imgUrl);
 
-    const img = product.images.find((i) => i.url === imgUrl);
+    const img = product.images.find(i => i.url === imgUrl);
     const newStock =
       img?.stock !== undefined && img?.stock !== null
         ? img.stock
@@ -120,11 +120,11 @@ export default function ProductDetailClient({
   };
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity((prev) => Math.max(1, Math.min(prev + delta, currentStock)));
+    setQuantity(prev => Math.max(1, Math.min(prev + delta, currentStock)));
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 max-w-7xl mx-auto">
+    <div className="bg-gray-100 rounded-xl shadow-lg p-6 md:p-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {}
         {}
@@ -197,7 +197,7 @@ export default function ProductDetailClient({
             {product.rating && product.rating > 0 && (
               <div className="flex items-center gap-4 mt-4">
                 <div className="flex text-rose-400">
-                  {[1, 2, 3, 4, 5].map((star) => (
+                  {[1, 2, 3, 4, 5].map(star => (
                     <Star
                       key={star}
                       size={16}
@@ -255,7 +255,7 @@ export default function ProductDetailClient({
                 <span className="text-gray-900 font-bold">{selectedColor}</span>
               </span>
               <div className="flex flex-wrap gap-3">
-                {product.colors.map((color) => {
+                {product.colors.map(color => {
                   const colorCode = getColorCode(color);
 
                   return (
@@ -265,7 +265,7 @@ export default function ProductDetailClient({
                         setSelectedColor(color);
 
                         const imageWithColor = product.images.find(
-                          (img) => img.color === color,
+                          img => img.color === color,
                         );
                         if (imageWithColor) {
                           selectImageAndSyncStock(imageWithColor.url);
@@ -295,7 +295,7 @@ export default function ProductDetailClient({
                 <span className="text-gray-900 font-bold">{selectedSize}</span>
               </span>
               <div className="flex flex-wrap gap-3">
-                {product.sizes.map((size) => {
+                {product.sizes.map(size => {
                   let isAvailable = true;
 
                   if (

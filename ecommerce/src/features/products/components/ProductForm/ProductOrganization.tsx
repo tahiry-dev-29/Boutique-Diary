@@ -25,7 +25,7 @@ export function ProductOrganization({
   categories,
 }: ProductOrganizationProps) {
   return (
-    <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+    <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <CardHeader>
         <CardTitle>Organisation du produit</CardTitle>
       </CardHeader>
