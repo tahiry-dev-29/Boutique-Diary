@@ -7,7 +7,7 @@ import CategorySidebar from "./CategorySidebar";
 
 const MainHeader = () => {
   return (
-    <div className="py-4 px-4 md:px-8 border-b border-gray-100 bg-white">
+    <div className="py-4 px-4 md:px-8 border-b border-gray-100 bg-gray-100">
       <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8 relative">
         {}
         <div className="flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-start">
@@ -50,7 +50,7 @@ const MainHeader = () => {
             <input
               type="text"
               placeholder="Rechercher un produit, une marque, une catégorie..."
-              className="w-full bg-gray-100/80 border-none rounded-r-full rounded-l-full py-3 pl-12 pr-4 text-gray-700 focus:ring-2 focus:ring-[#104f32] focus:bg-white transition-all outline-none"
+              className="w-full bg-gray-100/80 border-none rounded-r-full rounded-l-full py-3 pl-12 pr-4 text-gray-700 focus:ring-2 focus:ring-[#104f32] focus:bg-gray-100 transition-all outline-none"
             />
             <Search
               className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"

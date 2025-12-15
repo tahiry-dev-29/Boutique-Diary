@@ -21,7 +21,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   const isPositive = percentage && percentage > 0;
 
   return (
-    <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
+    <Card className="border-none shadow-sm h-full bg-gray-100 dark:bg-gray-900">
       <CardContent className="p-6 flex flex-col justify-between h-full">
         <div className="flex justify-between items-start">
           <div className={cn("p-3 rounded-xl", color)}>

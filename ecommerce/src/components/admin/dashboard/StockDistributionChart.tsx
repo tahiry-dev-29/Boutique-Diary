@@ -38,7 +38,7 @@ const StockDistributionChart: React.FC<StockDistributionProps> = ({
   ];
 
   return (
-    <Card className="border-none shadow-sm h-full bg-white dark:bg-gray-900">
+    <Card className="border-none shadow-sm h-full bg-gray-100 dark:bg-gray-900">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Stock par Catégorie

@@ -9,7 +9,7 @@ const PromoBanner = () => {
           Livraison <span className="font-bold">OFFERTE</span> en Mondial Relay
           dès 39€ d&apos;achat pour votre 1ère commande* avec le code
         </span>
-        <div className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-[#ea580c] border-dashed">
+        <div className="inline-flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded border border-[#ea580c] border-dashed">
           <Ticket size={14} className="fill-[#ea580c]/10" />
           <span className="font-bold font-mono">BIENVENUE25</span>
         </div>

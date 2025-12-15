@@ -269,14 +269,14 @@ export default function ProductList({
               placeholder="Rechercher..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="pl-9 h-11 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200 dark:focus:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
+              className="pl-9 h-11 border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-full w-full focus:ring-0 focus:border-gray-200 dark:focus:border-gray-600 dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Status Filter */}
           <div className="w-[150px]">
             <Select value={availability} onValueChange={setAvailability}>
-              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
+              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-400 font-light">×</span>
                   <span className="font-medium">Statut</span>
@@ -296,7 +296,7 @@ export default function ProductList({
               value={selectedCategory}
               onValueChange={setSelectedCategory}
             >
-              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
+              <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-400 font-light">×</span>
                   <span className="truncate font-medium">
@@ -323,7 +323,7 @@ export default function ProductList({
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-between h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="w-full justify-between h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <span className="truncate">
                     {minPrice || maxPrice
@@ -367,7 +367,7 @@ export default function ProductList({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 gap-2 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 gap-2 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <span>Colonnes</span>
                 <Settings2 className="h-4 w-4" />
@@ -412,7 +412,7 @@ export default function ProductList({
       </div>
 
       {}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 dark:border-gray-700/50 overflow-hidden">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 dark:border-gray-700/50 overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-gray-50/30 dark:bg-gray-900/50">
@@ -477,7 +477,7 @@ export default function ProductList({
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group transition-all border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${isExpanded ? "bg-gray-50 dark:bg-gray-700" : "bg-white dark:bg-gray-800"} h-20 cursor-pointer`}
+                        className={`group transition-all border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${isExpanded ? "bg-gray-50 dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"} h-20 cursor-pointer`}
                         onClick={() => onView(product)}
                       >
                         <TableCell
@@ -650,7 +650,7 @@ export default function ProductList({
                                 return (
                                   <div
                                     key={idx}
-                                    className="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
+                                    className="group relative bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
                                   >
                                     <div className="aspect-square bg-gray-50 dark:bg-gray-900 relative">
                                       <img
@@ -695,16 +695,16 @@ export default function ProductList({
                                         <div className="text-[10px] text-gray-400">
                                           Stock
                                         </div>
-                                        {imgData.stock !== undefined && (
+                                        {imgData.stock != null && (
                                           <Badge
                                             variant="secondary"
                                             className={`${
-                                              imgData.stock > 0
+                                              (imgData.stock || 0) > 0
                                                 ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100"
                                                 : "bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100"
                                             } text-[10px] px-1.5 py-0 h-5 font-semibold border`}
                                           >
-                                            {imgData.stock > 0
+                                            {(imgData.stock || 0) > 0
                                               ? `${imgData.stock}`
                                               : "0"}
                                           </Badge>

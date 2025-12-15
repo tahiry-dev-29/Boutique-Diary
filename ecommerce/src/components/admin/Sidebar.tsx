@@ -20,6 +20,7 @@ import {
   User,
   Trash,
   Package,
+  Layers,
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 
@@ -64,6 +65,13 @@ const navSections: NavSection[] = [
         label: "Produits",
         icon: ShoppingBag,
         href: "/admin/products",
+        permission: "products.view",
+      },
+      {
+        id: "categories",
+        label: "Catégories",
+        icon: Layers,
+        href: "/admin/categories",
         permission: "products.view",
       },
       {
@@ -349,7 +357,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           className={`flex items-center mb-8 px-4 ${isExpanded ? "justify-between" : "justify-center"}`}
         >
           <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
+            <div className="h-8 w-8 bg-black dark:bg-gray-100 rounded-lg flex items-center justify-center text-white dark:text-black font-bold">
               B
             </div>
             {isExpanded && (
@@ -476,7 +484,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
             }`}
           >
             <button
-              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all px-3 py-2`}
+              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transition-all px-3 py-2`}
             >
               <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               <span className="ml-3 text-sm font-medium whitespace-nowrap">
@@ -484,7 +492,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
               </span>
             </button>
             <button
-              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all group px-3 py-2`}
+              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transition-all group px-3 py-2`}
             >
               <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
               <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">

@@ -41,7 +41,7 @@ const defaultPages: PageStat[] = [
 
 const RecentPages: React.FC = () => {
   return (
-    <Card className="border-none shadow-sm h-full flex flex-col bg-white dark:bg-gray-900">
+    <Card className="border-none shadow-sm h-full flex flex-col bg-gray-100 dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
           Pages récentes

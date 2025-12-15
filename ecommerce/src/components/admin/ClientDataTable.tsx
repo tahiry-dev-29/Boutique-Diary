@@ -85,7 +85,7 @@ export function ClientDataTable<TData, TValue>({
         </div>
         {/* Add any other toolbar items like a "Add Customer" button here */}
       </div>
-      <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (

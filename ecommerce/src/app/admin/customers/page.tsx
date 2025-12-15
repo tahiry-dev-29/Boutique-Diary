@@ -117,7 +117,7 @@ export default function CustomerPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
               <Users size={24} />
@@ -133,7 +133,7 @@ export default function CustomerPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400">
               <UserPlus size={24} />
@@ -149,7 +149,7 @@ export default function CustomerPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
               <Clock size={24} />
@@ -179,12 +179,12 @@ export default function CustomerPage() {
             placeholder="Rechercher par nom ou email..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
           />
         </div>
 
         {/* Customers table */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-900/50">
@@ -301,7 +301,7 @@ export default function CustomerPage() {
         open={!!selectedCustomer}
         onOpenChange={open => !open && setSelectedCustomer(null)}
       >
-        <SheetContent className="sm:max-w-md bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
+        <SheetContent className="sm:max-w-md bg-gray-100 dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
           <SheetHeader className="mb-6">
             <SheetTitle>Détails du client</SheetTitle>
             <SheetDescription>

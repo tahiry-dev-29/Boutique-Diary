@@ -83,11 +83,11 @@ export function DashboardStats({ products }: DashboardStatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => {
-        const Icon = stat.icon || stat.iconComponent;
+        const Icon = stat.icon;
         return (
           <Card
             key={index}
-            className="relative overflow-hidden border-none shadow-sm bg-white dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50"
+            className="relative overflow-hidden border-none shadow-sm bg-gray-100 dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50"
           >
             {/* Background glowing effect */}
             <div

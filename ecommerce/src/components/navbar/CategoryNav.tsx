@@ -4,7 +4,7 @@ import { Smartphone } from "lucide-react";
 
 const CategoryNav = () => {
   return (
-    <div className="bg-white border-b border-gray-100 shadow-sm hidden md:block">
+    <div className="bg-gray-100 border-b border-gray-100 shadow-sm hidden md:block">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between">
         <nav>
           <ul className="flex items-center gap-6 text-[15px] font-medium text-[#5c6e66]">
