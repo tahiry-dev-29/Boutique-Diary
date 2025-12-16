@@ -128,3 +128,5 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 - [x] **Frontend:** Page `(dashboard)/trash/page.ts` (Corbeille Globale).
   - [x] Affichage centralisé des items supprimés (Produits, Catégories, etc.).
   - [x] Fonctionnalités de Restauration (Restore) et Suppression définitive (Hard Delete).
+
+add all liste the pages on security roles
