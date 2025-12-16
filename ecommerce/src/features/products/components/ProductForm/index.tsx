@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { X, Save, Plus, Link } from "lucide-react";
+import { X, Save, ArrowRight, ArrowLeft, RefreshCw, Box } from "lucide-react";
 import { Product, ProductImage } from "@/types/admin";
 import { Category } from "@/types/category";
 import { Button } from "@/components/ui/button";
 
 import ElectricButton from "@/components/ui/ElectricButton";
 import { ProductFormFields } from "./ProductFormFields";
-import { ProductPricing } from "./ProductPricing";
+// New Promotion Step
+import { ProductPromotions } from "./ProductPromotions";
 import { ProductVariants } from "./ProductVariants";
 import { ProductImageUploader } from "./ProductImageUploader";
 import { useProducts } from "../../hooks/useProducts";
 import { generateRandomReference } from "@/lib/stringUtils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProductOrganization } from "./ProductOrganization";
-import { PageHeader } from "@/components/admin/PageHeader";
+import { ProductFormStep } from "./ProductFormStep";
 
 export interface ProductFormProps {
   product: Product | null;
@@ -39,7 +39,6 @@ const initialFormData: Product = {
   isPromotion: false,
   oldPrice: null,
   isBestSeller: false,
-  applyPromotions: false,
 };
 
 export default function ProductForm({
@@ -48,7 +47,6 @@ export default function ProductForm({
   onSuccess,
   onCancel,
 }: ProductFormProps) {
-  // ... state and handlers remain the same ...
   const [formData, setFormData] = useState<Product>(() => {
     if (product) {
       return {
@@ -73,7 +71,6 @@ export default function ProductForm({
                 }
               : {
                   ...img,
-                  // Ensure created defaults if missing from API response (though schema has defaults)
                   sizes: img.sizes || [],
                   categoryId:
                     img.categoryId ??
@@ -100,6 +97,7 @@ export default function ProductForm({
         isPromotion: product.isPromotion || false,
         oldPrice: product.oldPrice || null,
         isBestSeller: product.isBestSeller || false,
+        promotionRuleId: product.promotionRuleId || null,
       };
     }
     return {
@@ -110,38 +108,12 @@ export default function ProductForm({
 
   const [loading, setLoading] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null); // Track if we already auto-selected
 
-  // Auto-select variant based on URL query param (runs after product data loads)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  // Step Management
+  // 1: Details, 2: Images, 3: Promotions
+  const [currentStep, setCurrentStep] = useState(1);
+  const [furthestStep, setFurthestStep] = useState(1);
 
-    const params = new URLSearchParams(window.location.search);
-    const targetRef = params.get("reference");
-
-    // Only auto-select once per reference, and only if images are loaded
-    if (
-      targetRef &&
-      formData.images &&
-      formData.images.length > 0 &&
-      targetRef !== autoSelectedRef
-    ) {
-      const index = formData.images.findIndex(
-        img => typeof img !== "string" && img.reference === targetRef,
-      );
-      if (index !== -1) {
-        setSelectedImageIndex(index);
-        setAutoSelectedRef(targetRef); // Mark as processed
-        console.log(
-          `[ProductForm] Auto-selected image index ${index} for reference ${targetRef}`,
-        );
-      }
-    }
-  }, [formData.images, autoSelectedRef]);
-
-  // Remove fetchCategories useEffect
-
-  // Update form data if product prop changes (e.g. re-fetch or external update)
   useEffect(() => {
     if (product) {
       setFormData(prev => ({
@@ -193,62 +165,28 @@ export default function ProductForm({
         isPromotion: product.isPromotion || false,
         oldPrice: product.oldPrice || null,
         isBestSeller: product.isBestSeller || false,
+        promotionRuleId: product.promotionRuleId || null,
       }));
     }
   }, [product]);
 
-  // Sync Global Settings from Main Image (index 0)
-  // The user requested that "calculated categories" (from images) be the base.
-  // We interpret this as: The Product's Category, isNew, and isPromotion status
-  // should automatically match the Main Image's settings.
   useEffect(() => {
     const images = formData.images || [];
     if (images.length > 0) {
       const mainImage = images[0];
-      // Check if mainImage is an object (ProductImage) and has properties
       if (typeof mainImage !== "string") {
-        // Check if values differ to avoid infinite loops, although setState checks simple equality
         const newCategoryId = mainImage.categoryId ?? null;
-        const newIsNew = mainImage.isNew ?? false;
-        const newIsPromotion = mainImage.isPromotion ?? false;
-
-        if (
-          formData.categoryId !== newCategoryId ||
-          formData.isNew !== newIsNew ||
-          formData.isPromotion !== newIsPromotion
-        ) {
-          setFormData(prev => ({
-            ...prev,
-            categoryId: newCategoryId,
-            isNew: newIsNew,
-            isPromotion: newIsPromotion,
-          }));
+        if (formData.categoryId !== newCategoryId) {
+          setFormData(prev => ({ ...prev, categoryId: newCategoryId }));
         }
       }
     }
   }, [formData.images]);
-  // Dependency is formData.images.
-  // NOTE: This might cause a re-render loop if setFormData updates images ref.
-  // Ideally, we should check deep equality or only run when specific image props change.
-  // But since we update `images` array reference on every image edit, this will run.
-  // The condition inside `if (formData.categoryId !== ...)` protects against loop IF the setState doesn't trigger a change that re-triggers this.
-  // `setFormData` updates `formData`, which triggers this effect again?
-  // No, dependency is `formData.images`. If `setFormData` only updates `categoryId`, `images` ref should stay same?
-  // NO. `setFormData` replaces the whole object. We need to be careful.
-  // `setFormData(prev => ...)` creates a new object. `prev.images` is the SAME reference usually, UNLESS we changed images.
-  // In `handleUpdateImageAttribute`, we create `newImages` array -> new reference.
-  // So when Image changes -> Effect runs -> Updates Category -> New FormData (same images ref) -> Effect runs?
-  // We need to ensure `images` ref is stable when we update other fields. It should be.
 
-  const {
-    createProduct,
-    updateProduct,
-    loading: hookLoading,
-  } = useProducts({ autoFetch: false });
-  // const [loading, setLoading] = useState(false); // This line is already present above, so I'll keep the existing one.
+  const { createProduct, updateProduct } = useProducts({ autoFetch: false });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
 
     try {
@@ -256,13 +194,10 @@ export default function ProductForm({
         !formData.name ||
         !formData.reference ||
         isNaN(formData.price) ||
-        formData.price < 0 ||
-        (formData.oldPrice !== null &&
-          formData.oldPrice !== undefined &&
-          formData.oldPrice < 0)
+        formData.price < 0
       ) {
         toast.error(
-          "Veuillez remplir tous les champs obligatoires correctement.",
+          "Veuillez remplir les champs obligatoires (Nom, Référence, Prix).",
         );
         setLoading(false);
         return;
@@ -280,6 +215,8 @@ export default function ProductForm({
         if (!product?.id) {
           setFormData(initialFormData);
           setSelectedImageIndex(0);
+          setCurrentStep(1);
+          setFurthestStep(1);
         }
       }
     } catch (error) {
@@ -289,18 +226,46 @@ export default function ProductForm({
     }
   };
 
+  const handleNextStep = () => {
+    const next = currentStep + 1;
+    setCurrentStep(next);
+    if (next > furthestStep) setFurthestStep(next);
+  };
+
+  const handleDataValidation = (step: number): boolean => {
+    if (step === 1) {
+      if (!formData.name) {
+        toast.error("Le nom du produit est requis.");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const onNext = () => {
+    if (handleDataValidation(currentStep)) {
+      handleNextStep();
+    }
+  };
+
+  const toggleStep = (step: number) => {
+    if (step <= furthestStep) {
+      setCurrentStep(currentStep === step ? 0 : step);
+      if (step !== currentStep) setCurrentStep(step);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 pb-20">
       <div className="flex justify-between items-center mb-6">
-        <PageHeader
-          title={product?.id ? "Modifier le produit" : "Ajouter un produit"}
-          description="Gérer les détails du produit"
-        ></PageHeader>
+        <h2 className="text-2xl font-bold tracking-tight">
+          {product?.id ? "Modifier le produit" : "Ajouter un produit"}
+        </h2>
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={onCancel}>
             Annuler
           </Button>
-          <ElectricButton type="submit" disabled={loading}>
+          <ElectricButton onClick={() => handleSubmit()} disabled={loading}>
             <Save className="h-4 w-4 mr-2" />
             {loading
               ? "Enregistrement..."
@@ -311,65 +276,114 @@ export default function ProductForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Column (Left) - 2/3 width */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardHeader>
-              <CardTitle>Détails du produit</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProductFormFields
-                formData={formData}
-                setFormData={setFormData}
-                categories={categories}
-              />
-            </CardContent>
-          </Card>
+      <div className="space-y-4">
+        {/* Step 1: Details (Now includes Pricing & Stock) */}
+        <ProductFormStep
+          stepNumber={1}
+          title="Détails du produit"
+          description="Infos générales, Prix et Stock"
+          isOpen={currentStep === 1}
+          isCompleted={furthestStep > 1}
+          onToggle={() => toggleStep(1)}
+        >
+          <ProductFormFields
+            formData={formData}
+            setFormData={setFormData}
+            categories={categories}
+          />
+          <div className="flex justify-end mt-6">
+            <Button onClick={onNext} className="gap-2">
+              Suivant: Images <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </ProductFormStep>
 
-          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardHeader>
-              <CardTitle>Images du produit</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProductImageUploader
-                formData={formData}
-                setFormData={setFormData}
-                selectedImageIndex={selectedImageIndex}
-                setSelectedImageIndex={setSelectedImageIndex}
-                categories={categories}
-              />
-            </CardContent>
-          </Card>
+        {/* Step 2: Images */}
+        <ProductFormStep
+          stepNumber={2}
+          title="Images du produit"
+          description="Ajoutez des images et configurez les variantes visuelles"
+          isOpen={currentStep === 2}
+          isCompleted={furthestStep > 2}
+          onToggle={() => toggleStep(2)}
+        >
+          <ProductImageUploader
+            formData={formData}
+            setFormData={setFormData}
+            selectedImageIndex={selectedImageIndex}
+            setSelectedImageIndex={setSelectedImageIndex}
+            categories={categories}
+          />
+          <div className="flex justify-between mt-6">
+            <Button variant="ghost" onClick={() => setCurrentStep(1)}>
+              <ArrowLeft className="w-4 h-4 mr-2" /> Précédent
+            </Button>
+            <Button onClick={onNext} className="gap-2">
+              Suivant: Promotions <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </ProductFormStep>
 
-          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardHeader>
-              <CardTitle>Variantes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProductVariants formData={formData} setFormData={setFormData} />
-            </CardContent>
-          </Card>
-        </div>
+        {/* Step 3: Promotions */}
+        <ProductFormStep
+          stepNumber={3}
+          title="Marketing & Promotions"
+          description="Appliquez des règles et configurez le type de produit"
+          isOpen={currentStep === 3}
+          isCompleted={furthestStep > 3}
+          onToggle={() => toggleStep(3)}
+        >
+          <ProductPromotions formData={formData} setFormData={setFormData} />
+          <div className="flex justify-between mt-6">
+            <Button variant="ghost" onClick={() => setCurrentStep(2)}>
+              <ArrowLeft className="w-4 h-4 mr-2" /> Précédent
+            </Button>
+            <Button onClick={() => setCurrentStep(0)} variant="outline">
+              Terminer la configuration <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </ProductFormStep>
+      </div>
 
-        {/* Sidebar (Right) - 1/3 width */}
-        <div className="space-y-6">
-          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardHeader>
-              <CardTitle>Tarification</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProductPricing formData={formData} setFormData={setFormData} />
-            </CardContent>
-          </Card>
+      {/* Independent Variants Section */}
+      <div className="mt-8 pt-8 border-t">
+        <div className="bg-muted/30 rounded-xl border border-dashed border-primary/20 p-6 space-y-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+              <Box className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">
+                Variantes & Stocks
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Générez des variantes spécifiques (SKU, Prix, Stock) basées sur
+                vos sélections. C'est ici que vous ajustez le stock par
+                taille/couleur.
+              </p>
+            </div>
+          </div>
+
+          <ProductVariants formData={formData} setFormData={setFormData} />
+
+          <div className="flex justify-end pt-4 border-t border-dashed border-primary/20 mt-6">
+            <ElectricButton
+              onClick={() => handleSubmit()}
+              disabled={loading}
+              className="w-full sm:w-auto px-8 py-6 text-lg"
+            >
+              <Save className="h-5 w-5 mr-3" />
+              {product?.id ? "Mettre à jour le produit" : "Publier le produit"}
+            </ElectricButton>
+          </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
 
 export { ProductFormFields } from "./ProductFormFields";
-export { ProductPricing } from "./ProductPricing";
+export { ProductPromotions } from "./ProductPromotions";
 export { ProductVariants } from "./ProductVariants";
 export { ProductImageUploader } from "./ProductImageUploader";
 export { ProductOrganization } from "./ProductOrganization";

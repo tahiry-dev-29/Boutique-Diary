@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
         images: true,
         category: true,
         promotionRule: true,
+        variations: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
       oldPrice: initialOldPrice,
       isBestSeller,
       applyPromotions, // New flag
+      variations, // New variations array
     } = body;
 
     let priceToUse = parseFloat(price) || 0;
@@ -91,12 +93,6 @@ export async function POST(request: NextRequest) {
 
         // 3. Check New
         if (conditions?.isNew && !isNew) return false;
-
-        // If we reach here, all present conditions matched.
-        // We also need to ensure at least ONE condition was present to avoid matching "empty" rules to everything unexpectedly?
-        // Or assume empty rules apply to everything (Global sale)?
-        // For safety, let's require at least one match if we want to be strict, but usually empty conditions = all products.
-        // Given previous logic, I'll allow it if logic is sound.
 
         return true;
       });
@@ -212,10 +208,21 @@ export async function POST(request: NextRequest) {
             },
           ),
         },
+        variations: {
+          create: (variations || []).map((v: any) => ({
+            sku: v.sku,
+            price: parseFloat(v.price) || priceToUse,
+            stock: parseInt(v.stock) || 0,
+            color: v.color || null,
+            size: v.size || null,
+            isActive: v.isActive ?? true,
+          })),
+        },
       },
       include: {
         images: true,
         category: true,
+        variations: true,
       },
     });
 
