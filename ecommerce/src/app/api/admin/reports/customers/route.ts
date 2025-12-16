@@ -12,7 +12,7 @@ export async function GET() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // 1. Metrics
+    
     const totalCustomers = await prisma.user.count({
       where: { role: "CUSTOMER" },
     });
@@ -27,12 +27,12 @@ export async function GET() {
     const activeCustomers = await prisma.user.count({
       where: {
         role: "CUSTOMER",
-        isActive: true, // Simple definition
+        isActive: true, 
       },
     });
 
-    // 2. Top Customers (By Spend)
-    // Aggregating orders by customerId
+    
+    
     const topSpenders = await prisma.order.groupBy({
       by: ["customerId"],
       _sum: {
@@ -71,15 +71,15 @@ export async function GET() {
       }),
     );
 
-    // Filter out potential nulls if customer deleted
+    
     const validTopCustomers = topCustomers.filter(
       (c): c is NonNullable<typeof c> => c !== null,
     );
 
-    // 3. New Signups Chart Data (Last 30 days)
-    // We Group Users by createdAt
-    // Since Prisma groupBy on date is tricky for "Day" part without Raw query, we fetch recent users and process in JS for simplicity on small scale.
-    // For large scale, use raw query `date_trunc`.
+    
+    
+    
+    
     const recentUsers = await prisma.user.findMany({
       where: {
         role: "CUSTOMER",
@@ -89,7 +89,7 @@ export async function GET() {
     });
 
     const signupsByDate: Record<string, number> = {};
-    // Init last 30 days with 0
+    
     for (let i = 0; i < 30; i++) {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -111,7 +111,7 @@ export async function GET() {
         count,
       }))
       .sort((a, b) => {
-        // rough sort reverse of creation loop
+        
         const [dA, mA] = a.date.split("/").map(Number);
         const [dB, mB] = b.date.split("/").map(Number);
         return (

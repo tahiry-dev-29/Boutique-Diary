@@ -17,9 +17,9 @@ interface StockDistributionChartProps {
 }
 
 const COLORS = {
-  "In Stock": "#10b981", // Emerald 500
-  "Low Stock": "#f97316", // Orange 500
-  "Out of Stock": "#ef4444", // Red 500
+  "In Stock": "#10b981", 
+  "Low Stock": "#f97316", 
+  "Out of Stock": "#ef4444", 
 };
 
 export function StockDistributionChart({ data }: StockDistributionChartProps) {

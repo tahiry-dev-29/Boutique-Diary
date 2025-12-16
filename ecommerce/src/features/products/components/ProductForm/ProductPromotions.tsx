@@ -21,7 +21,7 @@ export function ProductPromotions({
   setFormData,
 }: ProductPromotionsProps) {
   const { rules, loading } = usePromotionRules();
-  // Only show rules that are active
+  
   const activeRules = rules.filter(r => r.isActive);
 
   const handleRuleChange = (ruleId: string) => {
@@ -29,7 +29,7 @@ export function ProductPromotions({
     setFormData(prev => ({
       ...prev,
       promotionRuleId: id,
-      isPromotion: true, // Auto-enable promotion flag if a rule is selected
+      isPromotion: true, 
     }));
   };
 
@@ -147,7 +147,7 @@ export function ProductPromotions({
                   </div>
                 </div>
 
-                {/* Selection Checkmark Indicator */}
+                {}
                 {formData.promotionRuleId === rule.id && (
                   <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-lg shadow-sm">
                     <div className="w-2 h-2 rounded-full bg-white ml-0.5 mt-0.5" />

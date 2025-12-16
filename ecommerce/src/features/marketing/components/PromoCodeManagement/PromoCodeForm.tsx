@@ -42,7 +42,7 @@ const formSchema = z.object({
     .refine(val => val > 0, "La valeur doit être supérieure à 0"),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  usageLimit: z.coerce.number().min(0).optional().nullable(), // 0 or null = unlimited? UI usually implies empty = unlimited
+  usageLimit: z.coerce.number().min(0).optional().nullable(), 
   minOrderAmount: z.coerce.number().min(0).optional().nullable(),
   isActive: z.boolean().default(true),
 });
@@ -117,7 +117,7 @@ export function PromoCodeForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Code */}
+          {}
           <FormField
             control={form.control}
             name="code"
@@ -152,7 +152,7 @@ export function PromoCodeForm({
             )}
           />
 
-          {/* Active Status */}
+          {}
           <FormField
             control={form.control}
             name="isActive"
@@ -174,7 +174,7 @@ export function PromoCodeForm({
             )}
           />
 
-          {/* Type */}
+          {}
           <FormField
             control={form.control}
             name="type"
@@ -204,7 +204,7 @@ export function PromoCodeForm({
             )}
           />
 
-          {/* Value */}
+          {}
           <FormField
             control={form.control}
             name="value"
@@ -229,7 +229,7 @@ export function PromoCodeForm({
             )}
           />
 
-          {/* Dates */}
+          {}
           <FormField
             control={form.control}
             name="startDate"

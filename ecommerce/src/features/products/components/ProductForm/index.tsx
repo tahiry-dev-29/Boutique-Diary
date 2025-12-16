@@ -241,7 +241,7 @@ export default function ProductForm({
       </div>
 
       <div className="space-y-4">
-        {/* Step 1: Details (Includes Global Pricing & Promotion Rule) */}
+        {}
         <ProductFormStep
           stepNumber={1}
           title="Détails & Tarification"
@@ -262,7 +262,7 @@ export default function ProductForm({
           </div>
         </ProductFormStep>
 
-        {/* Step 2: Images */}
+        {}
         <ProductFormStep
           stepNumber={2}
           title="Images du produit"
@@ -288,7 +288,7 @@ export default function ProductForm({
           </div>
         </ProductFormStep>
 
-        {/* Step 3: Variants */}
+        {}
         <ProductFormStep
           stepNumber={3}
           title="Générateur de Variantes"

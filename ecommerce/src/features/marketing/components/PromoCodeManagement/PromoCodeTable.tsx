@@ -143,7 +143,7 @@ export function PromoCodeTable({
                       {code.usageLimit === null ? "∞" : code.usageLimit}
                     </span>
                   </span>
-                  {/* Simple progress bar if limit exists */}
+                  {}
                   {code.usageLimit && (
                     <div className="w-16 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div

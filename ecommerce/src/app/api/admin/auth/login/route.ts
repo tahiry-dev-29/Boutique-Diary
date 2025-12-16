@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use Admin model for employee/admin login
+    
     const admin = await prisma.admin.findUnique({
       where: { email },
     });

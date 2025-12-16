@@ -62,9 +62,9 @@ export async function PUT(
       brand,
       images,
       variations,
-      // User inputs (or previous values)
+
       reference: initialReference,
-      // We ignore body.price/stock for global update, we recalculate
+
       isNew,
       isBestSeller,
       isPromotion,
@@ -72,28 +72,20 @@ export async function PUT(
       oldPrice: initialOldPrice,
     } = body;
 
-    // 1. Derive Global Attributes Calculation
     const validVariations = Array.isArray(variations) ? variations : [];
     const validImages = Array.isArray(images) ? images : [];
 
-    // Global Price (Min of variations or 0)
     let globalPrice = 0;
     if (validVariations.length > 0) {
       const prices = validVariations.map((v: any) => parseFloat(v.price) || 0);
       globalPrice = Math.min(...prices);
     }
 
-    // Global Stock (Sum of variations or 0)
     let globalStock = 0;
     if (validVariations.length > 0) {
-      // Ensure we treat stock as number
-      globalStock = validVariations.reduce(
-        (sum: number, v: any) => sum + (parseInt(v.stock) || 0),
-        0,
-      );
+      globalStock = parseInt(validVariations[0].stock) || 0;
     }
 
-    // Global Category (First image's category)
     let globalCategoryId: number | null = null;
     if (validImages.length > 0) {
       const firstCatImg = validImages.find((img: any) => img.categoryId);
@@ -102,7 +94,6 @@ export async function PUT(
       }
     }
 
-    // Global Colors & Sizes
     const globalColors = new Set<string>();
     const globalSizes = new Set<string>();
 
@@ -110,7 +101,7 @@ export async function PUT(
       if (v.color) globalColors.add(v.color);
       if (v.size) globalSizes.add(v.size);
     });
-    // Add visual colors/sizes from images
+
     validImages.forEach((img: any) => {
       if (img.color) globalColors.add(img.color);
       if (Array.isArray(img.sizes)) {
@@ -118,8 +109,6 @@ export async function PUT(
       }
     });
 
-    // 2. Prepare Update Data
-    // We fetch existing to preserve Reference if not changing
     const existingProduct = await prisma.product.findUnique({
       where: { id },
       select: { reference: true },
@@ -134,7 +123,6 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(initialReference !== undefined && { reference: initialReference }),
 
-        // Calculated fields overwrite existing
         price: globalPrice,
         stock: globalStock,
         colors: Array.from(globalColors),
@@ -153,14 +141,12 @@ export async function PUT(
           oldPrice: initialOldPrice ? parseFloat(initialOldPrice) : null,
         }),
 
-        // Update Category
         ...(globalCategoryId
           ? { category: { connect: { id: globalCategoryId } } }
           : body.categoryId
-            ? { category: { connect: { id: parseInt(body.categoryId) } } } // Fallback to explicitly sent categoryId
+            ? { category: { connect: { id: parseInt(body.categoryId) } } }
             : { category: { disconnect: true } }),
 
-        // Update Images (Delete All + Recreate Strategy)
         ...(images !== undefined && {
           images: {
             deleteMany: {},
@@ -179,7 +165,7 @@ export async function PUT(
                     : img.reference || autoReference,
                 color: imgColor ?? null,
                 sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-                // No price/stock on image
+
                 isNew: typeof img === "string" ? false : (img.isNew ?? false),
                 isBestSeller:
                   typeof img === "string" ? false : (img.isBestSeller ?? false),
@@ -202,7 +188,6 @@ export async function PUT(
           },
         }),
 
-        // Update Variations (Delete All + Recreate Strategy)
         ...(variations !== undefined && {
           variations: {
             deleteMany: {},

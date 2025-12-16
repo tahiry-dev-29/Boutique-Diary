@@ -46,7 +46,7 @@ export function ProductVariants({
     let generatedCount = 0;
 
     images.forEach((img, index) => {
-      // Skip if it's a string (shouldn't happen with new uploader, but for safety)
+      
       if (typeof img === "string") return;
 
       const productImg = img as ProductImage;
@@ -55,10 +55,10 @@ export function ProductVariants({
       const sizes =
         productImg.sizes && productImg.sizes.length > 0
           ? productImg.sizes
-          : [null]; // If no size, create one variant for the image itself
+          : [null]; 
 
       sizes.forEach(size => {
-        // Construct SKU: REF-SIZE (or just REF if no size)
+        
         const skuSuffix = size
           ? `-${size.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()}`
           : "";
@@ -136,12 +136,12 @@ export function ProductVariants({
 
     if (discountPercent > 0) {
       const currentPrice = Number(formData.variations?.[index].price || 0);
-      // Logic: If applying promo, we assume currentPrice becomes oldPrice?
-      // Or we assume user entered "Base Price" and we calculate "Discounted"?
-      // User entered Price in the table. Let's assume that is the BASE price.
-      // So we set oldPrice = currentPrice, and price = discounted.
-      // WAIT: If re-applying, we might discount the discount.
-      // Safer: Uses oldPrice if it exists as base, otherwise price.
+      
+      
+      
+      
+      
+      
 
       const basePrice = Number(
         formData.variations?.[index].oldPrice || currentPrice,
@@ -167,7 +167,7 @@ export function ProductVariants({
 
   return (
     <div className="space-y-6">
-      {/* Actions */}
+      {}
       <div className="flex items-center justify-between pt-4 border-t border-black/5 dark:border-white/5">
         <div className="text-sm text-muted-foreground">
           Cliquez sur générer pour créer le tableau des stocks basé sur vos
@@ -197,7 +197,7 @@ export function ProductVariants({
         </div>
       </div>
 
-      {/* Variants Table */}
+      {}
       {formData.variations && formData.variations.length > 0 ? (
         <div className="overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 shadow-lg shadow-black/5 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4">
           <Table>

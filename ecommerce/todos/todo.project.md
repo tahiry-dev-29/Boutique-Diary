@@ -118,4 +118,13 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ---
 
-- on peut publier ou sauvegarder seulement et mettre dans le corbeille les produits.
+### ♻️ Lifecycle & Soft Delete (Drafts & Trash)
+
+- [ ] **Backend:** Ajouter le type `ProductStatus` (`DRAFT`, `PUBLISHED`) et le champ `deletedAt` (Soft Delete) dans Prisma.
+- [ ] **Frontend:** UI de création produit : Boutons distincts "Sauvegarder (Brouillon)" et "Publier".
+- [ ] **Frontend:** Page `(dashboard)/products/archives/page.ts` (Accessible via sous-menu/tabs).
+  - [ ] Listing des produits non publiés (Drafts).
+  - [ ] Action pour publier directement depuis cette liste.
+- [ ] **Frontend:** Page `(dashboard)/trash/page.ts` (Corbeille Globale).
+  - [ ] Affichage centralisé des items supprimés (Produits, Catégories, etc.).
+  - [ ] Fonctionnalités de Restauration (Restore) et Suppression définitive (Hard Delete).

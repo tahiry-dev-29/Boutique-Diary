@@ -7,7 +7,7 @@ import { Tag } from "lucide-react";
 interface ProductFormFieldsProps {
   formData: Product;
   setFormData: React.Dispatch<React.SetStateAction<Product>>;
-  categories?: any[]; // Keep interface compatible if used elsewhere, though not used in simplified version
+  categories?: any[]; 
 }
 
 export function ProductFormFields({
@@ -20,7 +20,7 @@ export function ProductFormFields({
 
   return (
     <div className="space-y-6">
-      {/* Basic Info Group */}
+      {}
       <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 

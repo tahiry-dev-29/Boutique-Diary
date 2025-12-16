@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         },
       },
       include: {
-        category: true, // Include category data
+        category: true, 
       },
     });
 

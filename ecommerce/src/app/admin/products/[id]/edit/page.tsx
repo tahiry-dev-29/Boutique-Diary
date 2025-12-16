@@ -37,7 +37,7 @@ export default async function EditProductPage({
     notFound();
   }
 
-  // Transform Prisma result to Admin Product type
+  
   const serializedProduct: Product = {
     id: product.id,
     name: product.name,
@@ -53,7 +53,7 @@ export default async function EditProductPage({
     isPromotion: product.isPromotion,
     oldPrice: product.oldPrice,
     isBestSeller: product.isBestSeller,
-    // Map Prisma images to ProductImage type
+    
     images: product.images.map(img => ({
       url: img.url,
       color: img.color,

@@ -64,7 +64,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { DashboardStats } from "./DashboardStats"; // Added import
+import { DashboardStats } from "./DashboardStats"; 
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
@@ -254,11 +254,11 @@ export default function ProductList({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Stats Section - Passed dynamic products data */}
+      {}
       <DashboardStats products={products} />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {/* Search */}
+          {}
           <div className="relative min-w-[200px] max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -269,7 +269,7 @@ export default function ProductList({
             />
           </div>
 
-          {/* Status Filter */}
+          {}
           <div className="w-[150px]">
             <Select value={availability} onValueChange={setAvailability}>
               <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
@@ -286,7 +286,7 @@ export default function ProductList({
             </Select>
           </div>
 
-          {/* Category Filter */}
+          {}
           <div className="w-[160px]">
             <Select
               value={selectedCategory}
@@ -313,7 +313,7 @@ export default function ProductList({
             </Select>
           </div>
 
-          {/* Price Range */}
+          {}
           <div className="w-[170px]">
             <Popover>
               <PopoverTrigger asChild>

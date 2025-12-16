@@ -15,7 +15,7 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ products }: DashboardStatsProps) {
-  // Calculate real stats where possible
+  
   const totalProducts = products.length;
   const totalStock = products.reduce((acc, p) => acc + (p.stock || 0), 0);
   const totalValue = products.reduce(
@@ -82,7 +82,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
             key={index}
             className="relative overflow-hidden border-none shadow-sm bg-gray-100 dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50 py-6"
           >
-            {/* Background glowing effect */}
+            {}
             <div
               className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.06] dark:opacity-[0.10] blur-2xl rounded-bl-full -mr-5 -mt-5 transition-transform group-hover:scale-105`}
             />

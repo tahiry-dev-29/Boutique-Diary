@@ -1,4 +1,4 @@
-// src/components/admin/DataTableFacetedFilter.tsx
+
 "use client";
 
 import * as React from "react";

@@ -86,7 +86,7 @@ export function ProductImageUploader({
     const uploadPromises = validFiles.map(async file => {
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
-      // Use current form data for naming
+      
       uploadFormData.append("productName", formData.name || "product");
       uploadFormData.append("reference", formData.reference || "REF");
 
@@ -240,10 +240,10 @@ export function ProductImageUploader({
         }
 
         const currentImg = newImages[index] as ProductImage;
-        // Use existing reference or fallback to generated if missing
+        
         let autoReference = currentImg.reference || generateRandomReference();
 
-        // Update reference if manually changed
+        
         if (field === "reference") {
           autoReference = newValue as string;
         }
@@ -288,7 +288,7 @@ export function ProductImageUploader({
             </span>
           </div>
 
-          {/* URL Input & Upload Button */}
+          {}
           <div className="flex gap-3">
             <Input
               type="text"
@@ -324,7 +324,7 @@ export function ProductImageUploader({
             </label>
           </div>
 
-          {/* Main Image Preview */}
+          {}
           <div className="relative w-full h-[350px] bg-gray-50 dark:bg-gray-900/50 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
             {currentImage ? (
               <>
@@ -360,7 +360,7 @@ export function ProductImageUploader({
             )}
           </div>
 
-          {/* Thumbnails Grid */}
+          {}
           <div className="grid grid-cols-6 gap-2">
             {images.map((img, index) => {
               const uniqueKey =
@@ -389,7 +389,7 @@ export function ProductImageUploader({
               );
             })}
 
-            {/* Empty slots */}
+            {}
             {Array.from({ length: Math.max(0, 6 - images.length) }).map(
               (_, i) => (
                 <div
@@ -404,7 +404,7 @@ export function ProductImageUploader({
         </div>
       </div>
 
-      {/* Image Specific Settings */}
+      {}
       {currentImageAsProductImage && (
         <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -417,9 +417,9 @@ export function ProductImageUploader({
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Column 1: Organization & Identity */}
+            {}
             <div className="space-y-4">
-              {/* Reference */}
+              {}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -461,7 +461,7 @@ export function ProductImageUploader({
                 </div>
               </div>
 
-              {/* Category */}
+              {}
               <div className="space-y-2">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Catégorie
@@ -545,9 +545,9 @@ export function ProductImageUploader({
               </div>
             </div>
 
-            {/* Column 2: Variants (Colors/Sizes) */}
+            {}
             <div className="space-y-4">
-              {/* Promotion Rule */}
+              {}
               <div className="space-y-2">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Règle de Promotion
@@ -579,13 +579,13 @@ export function ProductImageUploader({
                 </Select>
               </div>
 
-              {/* Color */}
+              {}
               <div className="space-y-2">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Colori Principal
                 </Label>
                 <div className="flex flex-wrap gap-2">
-                  {/* We use ALL available colors here, not just 'formData.colors' because we define them HERE */}
+                  {}
                   <Select
                     value={currentImageAsProductImage.color || "none"}
                     onValueChange={value =>
@@ -617,7 +617,7 @@ export function ProductImageUploader({
                 </div>
               </div>
 
-              {/* Sizes */}
+              {}
               <div className="space-y-2">
                 <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Tailles Disponibles

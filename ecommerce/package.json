@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "strip-comments": "stripcomments -w src/**/*.ts src/**/*.tsx"
+    "strip-comments": "find src -type f \\( -name \"*.ts\" -o -name \"*.tsx\" \\) -print0 | xargs -0 stripcomments -w --confirm-overwrite"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -16,16 +16,16 @@ export async function GET() {
       totalOrders,
       categoryStats,
     ] = await Promise.all([
-      // Total products
+      
       prisma.product.count(),
-      // Calculate total stock value (price * stock)
+      
       prisma.product.aggregate({
         _sum: {
           price: true,
           stock: true,
         },
       }),
-      // Low stock products (less than 5)
+      
       prisma.product.count({
         where: {
           stock: {
@@ -33,9 +33,9 @@ export async function GET() {
           },
         },
       }),
-      // Mock for orders/revenue - Order model doesn't exist yet
+      
       Promise.resolve(0),
-      // Category distribution
+      
       prisma.product.groupBy({
         by: ["categoryId"],
         _count: {
@@ -44,7 +44,7 @@ export async function GET() {
       }),
     ]);
 
-    // Fetch category names for distribution
+    
     const categories = await prisma.category.findMany({
       where: {
         id: {
@@ -88,9 +88,9 @@ export async function GET() {
       {
         totalProducts,
         totalStockValue,
-        lowStockCount, // < 5
-        outOfStockCount, // === 0
-        totalOrders, // Placeholder
+        lowStockCount, 
+        outOfStockCount, 
+        totalOrders, 
         categoryDistribution,
       },
       { status: 200 },

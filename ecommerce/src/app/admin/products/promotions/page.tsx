@@ -109,12 +109,12 @@ export default function PromotionsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map(product => {
-            // Check for promoted variant (Image level promotion)
+            
             const promotedVariant = product.images?.find(
               (img: any) => img.isPromotion && typeof img !== "string",
             );
 
-            // Determine data source (Variant vs Main Product)
+            
             const finalPrice =
               promotedVariant && (promotedVariant as any).price
                 ? (promotedVariant as any).price
@@ -128,7 +128,7 @@ export default function PromotionsPage() {
                 ? (promotedVariant as any).reference
                 : product.reference;
 
-            // Image Source
+            
             let mainImage = "/placeholder.png";
             if (promotedVariant) {
               mainImage =
@@ -154,7 +154,7 @@ export default function PromotionsPage() {
                 className="block h-full"
               >
                 <Card className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md h-full flex flex-col p-0">
-                  {/* Image Header */}
+                  {}
                   <div className="relative aspect-[1.8/1] w-full overflow-hidden bg-gray-100 dark:bg-gray-800/50">
                     <Image
                       src={mainImage}
@@ -163,15 +163,15 @@ export default function PromotionsPage() {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
-                    {/* Overlay Gradient */}
+                    {}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
-                    {/* Discount Badge */}
+                    {}
                     <Badge className="absolute top-2 left-2 bg-rose-500 text-white border-0 px-2 py-0.5 text-[10px] font-bold shadow-sm">
                       -{discount}%
                     </Badge>
 
-                    {/* Rule Badge (Bottom Right of Image) */}
+                    {}
                     {product.promotionRule && (
                       <div className="absolute bottom-2 right-2">
                         <Badge
@@ -185,7 +185,7 @@ export default function PromotionsPage() {
                   </div>
 
                   <CardContent className="p-4 flex flex-col flex-1">
-                    {/* Meta Info */}
+                    {}
                     <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-2 font-medium uppercase tracking-wider">
                       <span>{finalReference}</span>
                       {product.brand && (
@@ -198,7 +198,7 @@ export default function PromotionsPage() {
                       )}
                     </div>
 
-                    {/* Title */}
+                    {}
                     <h3
                       className="font-bold text-sm md:text-base leading-tight text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 group-hover:text-primary transition-colors"
                       title={product.name}
@@ -206,7 +206,7 @@ export default function PromotionsPage() {
                       {product.name}
                     </h3>
 
-                    {/* Footer: Price & Stock */}
+                    {}
                     <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800/50 flex items-end justify-between">
                       <div className="flex flex-col">
                         {finalOldPrice && (
@@ -219,7 +219,7 @@ export default function PromotionsPage() {
                         </span>
                       </div>
 
-                      {/* Stock Indicator */}
+                      {}
                       <div className="flex items-center gap-1.5">
                         <div
                           className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-rose-500"}`}

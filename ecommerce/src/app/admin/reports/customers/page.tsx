@@ -71,11 +71,11 @@ export default function CustomerReportsPage() {
         description="Analysez votre base de clients et leur comportement d'achat."
       />
 
-      {/* KPI Section */}
+      {}
       <CustomerMetricsCards metrics={metrics} recentSignups={recentSignups} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Growth Chart */}
+        {}
         <Card className="lg:col-span-2 border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
             <CardTitle>Nouveaux Inscrits (30 derniers jours)</CardTitle>
@@ -88,7 +88,7 @@ export default function CustomerReportsPage() {
           </CardContent>
         </Card>
 
-        {/* Top Customers Table */}
+        {}
         <Card className="border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
             <CardTitle>Top 5 Meilleurs Clients</CardTitle>
