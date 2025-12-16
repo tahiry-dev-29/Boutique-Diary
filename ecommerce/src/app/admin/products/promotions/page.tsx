@@ -148,124 +148,92 @@ export default function PromotionsPage() {
                 ? Math.round(((activePrice - finalPrice) / activePrice) * 100)
                 : 0;
             return (
-              <Card
+              <Link
                 key={product.id}
-                className="overflow-hidden rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900 group"
+                href={`/admin/products/${product.id}`}
+                className="block h-full"
               >
-                <div className="relative aspect-[4/3] bg-gray-50 dark:bg-gray-800/50 p-6 flex items-center justify-center">
-                  <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
+                <Card className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md h-full flex flex-col p-0">
+                  {/* Image Header */}
+                  <div className="relative aspect-[1.8/1] w-full overflow-hidden bg-gray-100 dark:bg-gray-800/50">
                     <Image
                       src={mainImage}
                       alt={product.name}
                       fill
-                      className="object-contain" // Changed to contain to respect padding
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+
+                    {/* Overlay Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+
+                    {/* Discount Badge */}
+                    <Badge className="absolute top-2 left-2 bg-rose-500 text-white border-0 px-2 py-0.5 text-[10px] font-bold shadow-sm">
+                      -{discount}%
+                    </Badge>
+
+                    {/* Rule Badge (Bottom Right of Image) */}
+                    {product.promotionRule && (
+                      <div className="absolute bottom-2 right-2">
+                        <Badge
+                          variant="secondary"
+                          className="bg-white/90 dark:bg-black/80 backdrop-blur-sm text-[10px] px-2 py-0.5 h-auto font-medium shadow-sm border-0"
+                        >
+                          {product.promotionRule.name}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Discount Badge */}
-                  <Badge className="absolute top-4 left-4 bg-red-500 text-white border-0 px-2 py-1 text-xs font-bold rounded-full">
-                    -{discount}%
-                  </Badge>
+                  <CardContent className="p-4 flex flex-col flex-1">
+                    {/* Meta Info */}
+                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-2 font-medium uppercase tracking-wider">
+                      <span>{finalReference}</span>
+                      {product.brand && (
+                        <>
+                          <span className="text-gray-300 dark:text-gray-700">
+                            •
+                          </span>
+                          <span className="truncate">{product.brand}</span>
+                        </>
+                      )}
+                    </div>
 
-                  {/* Rule Badge */}
-                  {product.promotionRule && (
-                    <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 text-gray-800 dark:text-gray-200 border-0 text-[10px] px-2 py-1 shadow-sm rounded-full backdrop-blur-sm">
-                      {product.promotionRule.name}
-                    </Badge>
-                  )}
-                </div>
-
-                <CardContent className="p-6">
-                  {/* Title & Reference */}
-                  <div className="mb-3">
+                    {/* Title */}
                     <h3
-                      className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate"
+                      className="font-bold text-sm md:text-base leading-tight text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 group-hover:text-primary transition-colors"
                       title={product.name}
                     >
                       {product.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                      <span>{finalReference}</span>
-                      {product.brand && (
-                        <>
-                          <span>•</span>
-                          <span>{product.brand}</span>
-                        </>
-                      )}
-                      {product.category && (
-                        <>
-                          <span>•</span>
-                          <span>{product.category.name}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Rating (Placeholder based on design) */}
-                  <div className="flex items-center gap-1 mb-4">
-                    {[1, 2, 3, 4].map(star => (
-                      <div
-                        key={star}
-                        className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-4 h-4 text-yellow-500"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    ))}
-                    <span className="text-xs text-gray-500 font-medium ml-1">
-                      (4.5)
-                    </span>
-                  </div>
-
-                  {/* Stock Status */}
-                  <div className="mb-4">
-                    {product.stock > 0 ? (
-                      <span className="text-green-600 font-bold text-sm">
-                        En Stock ({product.stock})
-                      </span>
-                    ) : (
-                      <span className="text-red-500 font-bold text-sm">
-                        Épuisé
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Price & Action */}
-                  <div className="flex items-end justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {formatPrice(finalPrice)}
-                      </span>
-                      {finalOldPrice && (
-                        <span className="text-sm text-gray-400 line-through font-medium">
-                          {formatPrice(finalOldPrice)}
+                    {/* Footer: Price & Stock */}
+                    <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800/50 flex items-end justify-between">
+                      <div className="flex flex-col">
+                        {finalOldPrice && (
+                          <span className="text-[11px] text-gray-400 line-through">
+                            {formatPrice(finalOldPrice)}
+                          </span>
+                        )}
+                        <span className="text-lg font-bold text-gray-900 dark:text-white leading-none">
+                          {formatPrice(finalPrice)}
                         </span>
-                      )}
-                    </div>
+                      </div>
 
-                    <Link
-                      href={`/admin/products/${product.id}/edit?reference=${finalReference || ""}`}
-                    >
-                      <Button
-                        size="icon"
-                        className="h-12 w-12 rounded-full bg-[#84D52C] hover:bg-[#72be24] text-white shadow-lg shadow-green-200 dark:shadow-none transition-transform hover:scale-105"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                      {/* Stock Indicator */}
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-rose-500"}`}
+                        />
+                        <span className="text-[10px] font-medium text-gray-500">
+                          {product.stock > 0
+                            ? `${product.stock} en stock`
+                            : "Épuisé"}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>

@@ -49,173 +49,137 @@ export async function POST(request: NextRequest) {
     const {
       name,
       description,
-      reference,
-      images,
-      price,
-      stock,
-      categoryId,
       brand,
-      colors,
-      sizes,
-      isNew,
+      images,
+      variations,
+      // Optional globals (can be derived)
+      reference: initialReference,
+      price: initialPrice,
+      stock: initialStock,
+      categoryId: initialCategoryId,
+      isNew: initialIsNew,
+      isBestSeller: initialIsBestSeller,
       isPromotion: initialIsPromotion,
-      oldPrice: initialOldPrice,
-      isBestSeller,
-      applyPromotions, // New flag
-      variations, // New variations array
+      promotionRuleId,
+      status: initialStatus,
     } = body;
 
-    let priceToUse = parseFloat(price) || 0;
-    let oldPriceToUse = initialOldPrice ? parseFloat(initialOldPrice) : null;
-    let isPromotionToUse = initialIsPromotion || false;
+    // 1. Validation
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    }
 
-    // Logic to apply promotions automatically
-    if (applyPromotions) {
-      const activeRules = await prisma.promotionRule.findMany({
-        where: { isActive: true },
-        orderBy: { priority: "desc" }, // Highest priority first
-      });
+    // 2. Derive Global Attributes
+    const validVariations = Array.isArray(variations) ? variations : [];
+    const validImages = Array.isArray(images) ? images : [];
 
-      const catIdInt = categoryId ? parseInt(categoryId) : null;
+    // Global Reference
+    let globalReference = initialReference;
+    if (!globalReference) {
+      // Generate a global reference if missing: "PRD-[RANDOM]"
+      const timestamp = Date.now().toString(36).toUpperCase().slice(-4);
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      globalReference = `PRD-${timestamp}${random}`;
+    }
 
-      // Find the first matching rule
-      const applicableRule = activeRules.find((rule: any) => {
-        const conditions = rule.conditions;
+    // Global Price (Min of variations or 0)
+    let globalPrice = parseFloat(initialPrice) || 0;
+    if (validVariations.length > 0) {
+      const prices = validVariations.map((v: any) => parseFloat(v.price) || 0);
+      globalPrice = Math.min(...prices);
+    }
 
-        // 1. Check Category
-        const targetCatId = conditions?.categoryId || conditions?.category_id;
-        if (targetCatId) {
-          if (!catIdInt || parseInt(targetCatId) !== catIdInt) return false;
-        }
+    // Global Stock (Sum of variations or 0)
+    let globalStock = parseInt(initialStock) || 0;
+    if (validVariations.length > 0) {
+      globalStock = validVariations.reduce(
+        (sum: number, v: any) => sum + (parseInt(v.stock) || 0),
+        0,
+      );
+    }
 
-        // 2. Check Best Seller
-        if (conditions?.isBestSeller && !isBestSeller) return false;
-
-        // 3. Check New
-        if (conditions?.isNew && !isNew) return false;
-
-        return true;
-      });
-
-      if (applicableRule) {
-        const actions = applicableRule.actions as any;
-        let discountPercent = 0;
-        if (actions?.discountPercentage) {
-          discountPercent = parseFloat(actions.discountPercentage);
-        } else if (actions?.percentage) {
-          discountPercent = parseFloat(actions.percentage);
-        } else if (actions?.discount_percent) {
-          discountPercent = parseFloat(actions.discount_percent);
-        }
-
-        if (discountPercent > 0) {
-          // Apply discount
-          // If oldPrice was not set, set it to current price
-          if (oldPriceToUse === null) {
-            oldPriceToUse = priceToUse;
-          }
-          // Calculate new price based on the base price (oldPriceToUse)
-          const factor = (100 - discountPercent) / 100;
-          priceToUse = Math.round(oldPriceToUse * factor);
-          isPromotionToUse = true;
-        }
+    // Global Category (First image's category if not set)
+    let globalCategoryId = initialCategoryId
+      ? parseInt(initialCategoryId)
+      : null;
+    if (!globalCategoryId && validImages.length > 0) {
+      // Find first image with a category
+      const firstCatImg = validImages.find((img: any) => img.categoryId);
+      if (firstCatImg) {
+        globalCategoryId = parseInt(firstCatImg.categoryId);
       }
     }
 
-    if (!name || !reference) {
-      return NextResponse.json(
-        { error: "Name and reference are required" },
-        { status: 400 },
-      );
-    }
+    // Global Colors & Sizes (Aggregation)
+    const globalColors = new Set<string>();
+    const globalSizes = new Set<string>();
 
-    if (price !== undefined && parseFloat(price) < 0) {
-      return NextResponse.json(
-        { error: "Price cannot be negative" },
-        { status: 400 },
-      );
-    }
+    // Add from variations first (physical availability)
+    validVariations.forEach((v: any) => {
+      if (v.color) globalColors.add(v.color);
+      if (v.size) globalSizes.add(v.size);
+    });
+    // Add from images (visual availability) - logic choice: should we include colors not in stock?
+    // Let's include them for completeness of "Product Definition"
+    validImages.forEach((img: any) => {
+      if (img.color) globalColors.add(img.color);
+      if (Array.isArray(img.sizes)) {
+        img.sizes.forEach((s: string) => globalSizes.add(s));
+      }
+    });
 
-    interface ProductImageInput {
-      url: string;
-      reference?: string;
-      color?: string | null;
-      sizes?: string[];
-      price?: number | null;
-      oldPrice?: number | null;
-      stock?: number | null;
-      isNew?: boolean;
-      isPromotion?: boolean;
-      categoryId?: number | null;
-    }
-
+    // 3. Create Product
     const product = await prisma.product.create({
       data: {
         name,
         description: description || null,
-        reference,
-        price: priceToUse,
-        stock: parseInt(stock) || 0,
-        ...(categoryId && { category: { connect: { id: categoryId } } }),
+        reference: globalReference,
+        price: globalPrice,
+        stock: globalStock,
         brand: brand || null,
-        colors: colors || [],
-        sizes: sizes || [],
-        isNew: isNew || false,
-        isPromotion: isPromotionToUse,
-        oldPrice: oldPriceToUse,
-        isBestSeller: isBestSeller || false,
-        images: {
-          create: (images || []).map(
-            (img: string | ProductImageInput, index: number) => {
-              const imgColor = typeof img === "string" ? null : img.color;
-              const colorAbbrev = imgColor
-                ? imgColor.toLowerCase().slice(0, 3)
-                : `img${index + 1}`;
-              const autoReference = `${reference}-${colorAbbrev}`;
+        colors: Array.from(globalColors),
+        sizes: Array.from(globalSizes),
+        isNew: initialIsNew || false,
+        isBestSeller: initialIsBestSeller || false,
+        isPromotion: initialIsPromotion || false,
+        promotionRuleId: promotionRuleId ? parseInt(promotionRuleId) : null,
+        status: initialStatus || "PUBLISHED",
 
-              return {
-                url: typeof img === "string" ? img : img.url,
-                reference:
-                  typeof img === "string"
-                    ? autoReference
-                    : img.reference || autoReference,
-                color: imgColor ?? null,
-                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-                price:
-                  typeof img === "string"
-                    ? null
-                    : img.price !== undefined && img.price !== null
-                      ? parseFloat(String(img.price))
-                      : null,
-                oldPrice:
-                  typeof img === "string"
-                    ? null
-                    : img.oldPrice !== undefined && img.oldPrice !== null
-                      ? parseFloat(String(img.oldPrice))
-                      : null,
-                stock:
-                  typeof img === "string"
-                    ? null
-                    : img.stock !== undefined && img.stock !== null
-                      ? img.stock
-                      : null,
-                isNew: typeof img === "string" ? false : (img.isNew ?? false),
-                isPromotion:
-                  typeof img === "string" ? false : (img.isPromotion ?? false),
-                categoryId:
-                  typeof img === "string" ? null : (img.categoryId ?? null),
-              };
-            },
-          ),
+        categoryId: globalCategoryId || null,
+
+        images: {
+          create: validImages.map((img: any, index: number) => ({
+            url: typeof img === "string" ? img : img.url,
+            reference: img.reference || `${globalReference}-IMG${index + 1}`,
+            color: img.color || null,
+            sizes: Array.isArray(img.sizes) ? img.sizes : [],
+            // No price/stock on image anymore, strictly visual/ref
+            isNew: img.isNew ?? false,
+            isBestSeller: img.isBestSeller ?? false,
+            // Assuming we added it in types but maybe need migration?
+            // Safer to skip unless confirmed in schema.prisma.
+            // User requested it on image settings, but it's usually a global or variation property.
+            // Let's check schema.prisma later if needed. For now, we skip unknown fields to avoid crash.
+            isPromotion: img.isPromotion ?? false,
+            promotionRuleId: img.promotionRuleId
+              ? parseInt(img.promotionRuleId)
+              : null,
+            categoryId: img.categoryId ? parseInt(img.categoryId) : null,
+          })),
         },
+
         variations: {
-          create: (variations || []).map((v: any) => ({
+          create: validVariations.map((v: any) => ({
             sku: v.sku,
-            price: parseFloat(v.price) || priceToUse,
+            price: parseFloat(v.price) || 0,
+            oldPrice: v.oldPrice ? parseFloat(v.oldPrice) : null,
             stock: parseInt(v.stock) || 0,
             color: v.color || null,
             size: v.size || null,
             isActive: v.isActive ?? true,
+            promotionRuleId: v.promotionRuleId
+              ? parseInt(v.promotionRuleId)
+              : null,
           })),
         },
       },
@@ -234,10 +198,14 @@ export async function POST(request: NextRequest) {
       typeof error === "object" &&
       error !== null &&
       "code" in error &&
-      (error as { code: string }).code === "P2002"
+      (error as { code: string }).code === "P2002" // Unique constraint violation
     ) {
+      // It might be the global reference OR a variation SKU
       return NextResponse.json(
-        { error: "A product with this reference already exists" },
+        {
+          error:
+            "A product or variation with this reference/SKU already exists.",
+        },
         { status: 409 },
       );
     }

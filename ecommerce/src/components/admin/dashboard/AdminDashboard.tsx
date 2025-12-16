@@ -27,6 +27,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     totalProducts: 0,
     totalStockValue: 0,
     lowStockCount: 0,
+    outOfStockCount: 0,
     totalOrders: 0,
     categoryDistribution: [],
   });
@@ -78,10 +79,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-white/80 text-[11px] font-medium uppercase tracking-wider">
+            <p className="text-white/80 text-[10px] font-bold uppercase tracking-wider truncate max-w-[120px]">
               Valeur du Stock
             </p>
-            <h3 className="text-2xl lg:text-3xl font-bold mt-1">
+            <h3 className="text-xl sm:text-3xl font-bold mt-1 break-all">
               {loading ? "..." : formatCurrency(stats.totalStockValue)}
             </h3>
           </div>
@@ -105,7 +106,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             value={
               loading
                 ? "..."
-                : (stats.totalProducts - stats.lowStockCount).toString()
+                : (stats.totalProducts - stats.outOfStockCount).toString()
             }
             icon={CheckCircle}
             color="bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400"

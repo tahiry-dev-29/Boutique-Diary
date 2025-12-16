@@ -180,11 +180,7 @@ export default function ProductList({
     const matchesSize =
       selectedSize === "all" || product.sizes?.includes(selectedSize);
 
-    const totalStock =
-      product.images?.reduce((sum, img) => {
-        const imgStock = typeof img === "string" ? 0 : img.stock || 0;
-        return sum + imgStock;
-      }, 0) || 0;
+    const totalStock = product.stock || 0;
 
     const matchesAvailability =
       availability === "all" ||
@@ -463,12 +459,7 @@ export default function ProductList({
                 </TableRow>
               ) : (
                 currentProducts.map(product => {
-                  const totalStock =
-                    product.images?.reduce((sum, img) => {
-                      const imgStock =
-                        typeof img === "string" ? 0 : img.stock || 0;
-                      return sum + imgStock;
-                    }, 0) || 0;
+                  const totalStock = product.stock || 0;
                   const isSelected = selectedRows.includes(
                     product.id as number,
                   );

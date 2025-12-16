@@ -77,7 +77,7 @@ export const ProductFormStep: React.FC<ProductFormStepProps> = ({
 
       {isOpen && (
         <CardContent className="p-6 pt-0 animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="mt-4 pl-12">{children}</div>
+          <div className="mt-4 pl-6">{children}</div>
         </CardContent>
       )}
     </Card>

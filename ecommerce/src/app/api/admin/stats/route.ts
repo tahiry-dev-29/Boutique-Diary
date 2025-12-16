@@ -82,11 +82,14 @@ export async function GET() {
       return acc + p.price * p.stock;
     }, 0);
 
+    const outOfStockCount = allProducts.filter(p => p.stock === 0).length;
+
     return NextResponse.json(
       {
         totalProducts,
         totalStockValue,
-        lowStockCount,
+        lowStockCount, // < 5
+        outOfStockCount, // === 0
         totalOrders, // Placeholder
         categoryDistribution,
       },

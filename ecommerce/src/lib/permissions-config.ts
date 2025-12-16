@@ -23,7 +23,7 @@ export interface RoleConfig {
 export const DEFAULT_ROLES: RoleConfig[] = [
   {
     id: "superadmin",
-    name: "superadmin", // matches DB role string
+    name: "superadmin", 
     permissions: ALL_PERMISSIONS.map((p) => p.id),
   },
   {

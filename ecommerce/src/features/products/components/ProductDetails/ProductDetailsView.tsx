@@ -142,6 +142,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       <PageHeader
         title={product.name}
         description={`Réf: ${displayRef} • Publié le: ${new Date(product.createdAt).toLocaleDateString()}`}
+        className="mb-4"
       >
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => toast.info("Lien copié !")}>
@@ -162,7 +163,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       </PageHeader>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Gallery */}
         <div className="lg:col-span-1 space-y-4">
           <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm relative group">
@@ -206,7 +207,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
         </div>
 
         {/* Right Columns: Stats & Info */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
@@ -266,7 +267,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
               >
                 {/* Description */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Description</h3>
+                  <h3 className="text-base font-semibold mb-2">Description</h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
                     {product.description ||
                       "Aucune description disponible pour ce produit."}
@@ -330,7 +331,9 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
 
                 {/* Spec Table */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Spécifications</h3>
+                  <h3 className="text-base font-semibold mb-2">
+                    Spécifications
+                  </h3>
                   <div className="border rounded-lg overflow-hidden">
                     <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
                       <div className="p-4">
