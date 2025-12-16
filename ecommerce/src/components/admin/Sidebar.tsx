@@ -79,7 +79,7 @@ const navSections: NavSection[] = [
         label: "Gestion des Stocks",
         icon: Package,
         href: "/admin/products/stock",
-        permission: "products.edit", // Assuming stock edit needs edit permission
+        permission: "products.edit",
       },
     ],
   },
@@ -286,7 +286,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         }
       });
     });
-  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
@@ -296,7 +296,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
     }
   };
 
-  /* User Menu State */
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -352,7 +351,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           isExpanded ? "w-64" : "w-20"
         }`}
       >
-        {/* Brand */}
+        {}
         <div
           className={`flex items-center mb-8 px-4 ${isExpanded ? "justify-between" : "justify-center"}`}
         >
@@ -368,7 +367,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           </div>
         </div>
 
-        {/* Navigation */}
+        {}
         <nav className="flex-1 space-y-6 px-3 overflow-y-auto no-scrollbar">
           {filteredSections.map((section, index) => (
             <div key={index} className="space-y-1">
@@ -377,7 +376,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                   {section.title}
                 </h3>
               )}
-              {/* Divider for collapsed mode if needed, but spacing usually enough */}
+              {}
               {!isExpanded && section.title && index > 0 && (
                 <div className="h-px bg-gray-200 dark:bg-gray-800 my-2 mx-2" />
               )}
@@ -476,7 +475,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           ))}
         </nav>
 
-        {/* User Menu (Collapsible) */}
+        {}
         {isExpanded && (
           <div
             className={`px-3 space-y-1 overflow-hidden transition-all duration-300 ${
@@ -489,14 +488,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
               <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               <span className="ml-3 text-sm font-medium whitespace-nowrap">
                 Profil
-              </span>
-            </button>
-            <button
-              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transition-all group px-3 py-2`}
-            >
-              <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
-              <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">
-                Corbeille
               </span>
             </button>
 
@@ -527,7 +518,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           </div>
         )}
 
-        {/* Footer Bar */}
+        {}
         <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <button
@@ -559,26 +550,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 />
               )}
             </button>
-
-            {isExpanded && (
-              <button
-                onClick={() => setIsExpanded(false)}
-                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
-                title="Réduire la barre latérale"
-              >
-                <ChevronRight className="w-5 h-5 rotate-180" />
-              </button>
-            )}
           </div>
-
-          {!isExpanded && (
-            <button
-              onClick={() => setIsExpanded(true)}
-              className="w-full flex items-center justify-center p-2 mt-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          )}
         </div>
       </div>
     </>

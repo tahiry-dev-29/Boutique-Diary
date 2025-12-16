@@ -10,9 +10,9 @@ interface KpiCardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   icon?: React.ElementType;
-  chartData?: any[]; // Array of { value: number }
+  chartData?: any[]; 
   chartType?: "area" | "bar";
-  color?: string; // Hex color for the chart/accents
+  color?: string; 
 }
 
 export function KpiCard({
@@ -24,7 +24,7 @@ export function KpiCard({
   icon: Icon,
   chartData,
   chartType = "area",
-  color = "#8b5cf6", // Default purple
+  color = "#8b5cf6", 
 }: KpiCardProps) {
   const trendColor =
     trend === "up"
@@ -38,7 +38,7 @@ export function KpiCard({
 
   return (
     <Card className="border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow bg-gray-100 dark:bg-gray-900 overflow-hidden relative group">
-      {/* Ambient Glow */}
+      {}
       <div
         className="absolute top-0 right-0 w-32 h-32 opacity-10 blur-[50px] rounded-full pointer-events-none transition-opacity duration-500 group-hover:opacity-20 dark:opacity-20 dark:group-hover:opacity-30"
         style={{ backgroundColor: color }}
@@ -74,7 +74,7 @@ export function KpiCard({
             {subValue && <p className="text-xs text-gray-500">{subValue}</p>}
           </div>
 
-          {/* Mini Chart */}
+          {}
           {chartData && chartData.length > 0 && (
             <div className="h-12 w-24 sm:w-32">
               <ResponsiveContainer width="100%" height="100%">
@@ -99,7 +99,7 @@ export function KpiCard({
                       strokeWidth={2}
                       fillOpacity={1}
                       fill={`url(#gradient-${title})`}
-                      isAnimationActive={false} // Performance optimization
+                      isAnimationActive={false} 
                     />
                   </AreaChart>
                 ) : (

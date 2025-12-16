@@ -18,7 +18,7 @@ export default function AdminLayout({
     setIsSidebarExpanded(prev => !prev);
   };
 
-  // Login page should be standalone without sidebar/header
+  
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }

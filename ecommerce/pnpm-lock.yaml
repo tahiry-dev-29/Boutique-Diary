@@ -123,6 +123,9 @@ importers:
         specifier: ^4.1.13
         version: 4.1.13
     devDependencies:
+      '@prasadrajandran/strip-comments-cli':
+        specifier: 1.0.0-beta.1
+        version: 1.0.0-beta.1
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.17
@@ -758,6 +761,10 @@ packages:
   '@pkgr/core@0.2.9':
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@prasadrajandran/strip-comments-cli@1.0.0-beta.1':
+    resolution: {integrity: sha512-/p3UE1ODeFqr8nDAK2YLsb3fl/Iz0WGd79VO54vjFplQlOHQE4iKNj5hxHbKZYMLvNJmizuXD0hDL2p4XU1TuQ==}
+    hasBin: true
 
   '@prisma/adapter-pg@7.0.1':
     resolution: {integrity: sha512-01GpPPhLMoDMF4ipgfZz0L87fla/TV/PBQcmHy+9vV1ml6gUoqF8dUIRNI5Yf2YKpOwzQg9sn8C7dYD1Yio9Ug==}
@@ -3933,6 +3940,8 @@ snapshots:
   '@nolyfill/is-core-module@1.0.39': {}
 
   '@pkgr/core@0.2.9': {}
+
+  '@prasadrajandran/strip-comments-cli@1.0.0-beta.1': {}
 
   '@prisma/adapter-pg@7.0.1':
     dependencies:

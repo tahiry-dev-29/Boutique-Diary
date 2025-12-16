@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutList, LayoutGrid } from "lucide-react";
+import { LayoutList, LayoutGrid, Archive, Trash2 } from "lucide-react";
 
 export function ProductNav() {
   const pathname = usePathname();
@@ -20,6 +20,18 @@ export function ProductNav() {
       href: "/admin/products/promotions",
       icon: LayoutGrid,
       active: pathname === "/admin/products/promotions",
+    },
+    {
+      name: "Archives",
+      href: "/admin/products/archive",
+      icon: Archive,
+      active: pathname === "/admin/products/archive",
+    },
+    {
+      name: "Corbeille",
+      href: "/admin/products/trash",
+      icon: Trash2,
+      active: pathname === "/admin/products/trash",
     },
   ];
 

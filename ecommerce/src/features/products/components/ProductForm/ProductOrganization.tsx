@@ -30,7 +30,7 @@ export function ProductOrganization({
         <CardTitle>Organisation du produit</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Category Selection */}
+        {}
         <div className="space-y-2">
           <Label htmlFor="category">Catégorie Principale</Label>
           <Select

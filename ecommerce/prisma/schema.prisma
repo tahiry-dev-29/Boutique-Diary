@@ -52,6 +52,10 @@ model Product {
   price       Float
   stock       Int            @default(0)
 
+  // Lifecycle & Soft Delete
+  status    String    @default("DRAFT") // 'DRAFT' | 'PUBLISHED'
+  deletedAt DateTime?
+
   // Nouveaux champs pour filtrage avancé
   brand  String?  @db.VarChar(100)
   colors String[] @default([])
@@ -91,8 +95,13 @@ model ProductVariation {
   size  String?
 
   // Pricing & Stock
-  price Decimal @db.Decimal(10, 2)
-  stock Int     @default(0)
+  price    Decimal  @db.Decimal(10, 2)
+  oldPrice Decimal? @db.Decimal(10, 2)
+  stock    Int      @default(0)
+
+  // Promotion Linking
+  promotionRuleId Int?
+  promotionRule   PromotionRule? @relation(fields: [promotionRuleId], references: [id])
 
   // Status
   isActive Boolean @default(true)
@@ -106,21 +115,24 @@ model ProductVariation {
 }
 
 model ProductImage {
-  id             Int             @id @default(autoincrement())
-  url            String          @db.Text
-  reference      String?         @db.VarChar(100)
-  color          String?         @db.VarChar(50)
-  sizes          String[]        @default([])
-  price          Float?
-  oldPrice       Float?
-  stock          Int?
-  isNew          Boolean         @default(false)
-  isPromotion    Boolean         @default(false)
-  categoryId     Int?
-  category       Category?       @relation(fields: [categoryId], references: [id])
-  productId      Int
-  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  stockMovements StockMovement[] // Relation for history
+  id              Int             @id @default(autoincrement())
+  url             String          @db.Text
+  reference       String?         @db.VarChar(100)
+  color           String?         @db.VarChar(50)
+  sizes           String[]        @default([])
+  price           Float?
+  oldPrice        Float?
+  stock           Int?
+  isNew           Boolean         @default(false)
+  isBestSeller    Boolean         @default(false)
+  isPromotion     Boolean         @default(false)
+  promotionRuleId Int?
+  promotionRule   PromotionRule?  @relation(fields: [promotionRuleId], references: [id])
+  categoryId      Int?
+  category        Category?       @relation(fields: [categoryId], references: [id])
+  productId       Int
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockMovements  StockMovement[] // Relation for history
 }
 
 model Category {
@@ -272,9 +284,11 @@ model PromotionRule {
 
   products Product[]
 
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  productVariations ProductVariation[]
+  productImages     ProductImage[]
 
   @@index([isActive])
 }
