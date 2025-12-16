@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
       isBestSeller: initialIsBestSeller,
       isPromotion: initialIsPromotion,
       promotionRuleId,
-      status: initialStatus,
     } = body;
 
     // 1. Validation
@@ -143,7 +142,6 @@ export async function POST(request: NextRequest) {
         isBestSeller: initialIsBestSeller || false,
         isPromotion: initialIsPromotion || false,
         promotionRuleId: promotionRuleId ? parseInt(promotionRuleId) : null,
-        status: initialStatus || "PUBLISHED",
 
         categoryId: globalCategoryId || null,
 

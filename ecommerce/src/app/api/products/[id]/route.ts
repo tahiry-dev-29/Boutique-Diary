@@ -60,9 +60,6 @@ export async function PUT(
       name,
       description,
       brand,
-      stock, // Added stock
-      // Status update
-      status, // Added status
       images,
       variations,
       // User inputs (or previous values)
@@ -140,7 +137,6 @@ export async function PUT(
         // Calculated fields overwrite existing
         price: globalPrice,
         stock: globalStock,
-        status: status || undefined, // Added status
         colors: Array.from(globalColors),
         sizes: Array.from(globalSizes),
 

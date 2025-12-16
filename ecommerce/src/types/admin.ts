@@ -43,7 +43,6 @@ export interface Product {
   name: string;
   description?: string | null;
   reference: string;
-  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   images?: (string | ProductImage)[];
   price: number;
   stock: number;

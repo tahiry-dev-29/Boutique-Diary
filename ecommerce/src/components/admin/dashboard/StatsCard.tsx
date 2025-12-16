@@ -44,7 +44,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
         >
           <Icon className="w-8 h-8" />
         </div>
-        <div className="space-y-1 min-w-0 flex-1">
+        <div className="space-y-1 min-w-0 flex-1 text-left">
           <p className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wider truncate">
             {title}
           </p>

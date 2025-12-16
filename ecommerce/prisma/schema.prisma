@@ -31,12 +31,6 @@ enum Role {
   SUPERADMIN
 }
 
-enum ProductStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
@@ -54,7 +48,6 @@ model Product {
   name        String         @db.VarChar(255)
   description String?        @db.Text
   reference   String         @unique @db.VarChar(100)
-  status      ProductStatus  @default(PUBLISHED)
   images      ProductImage[]
   price       Float
   stock       Int            @default(0)
