@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Save, ArrowRight, ArrowLeft } from "lucide-react";
+import { Save, ArrowRight, ArrowLeft, Archive } from "lucide-react";
 import { Product, ProductImage } from "@/types/admin";
 import { Category } from "@/types/category";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ const initialFormData: Product = {
   isPromotion: false,
   oldPrice: null,
   isBestSeller: false,
+  status: "DRAFT",
 };
 
 export default function ProductForm({
@@ -154,7 +155,10 @@ export default function ProductForm({
 
   const { createProduct, updateProduct } = useProducts({ autoFetch: false });
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (
+    e?: React.FormEvent,
+    targetStatus?: "DRAFT" | "PUBLISHED",
+  ) => {
     if (e) e.preventDefault();
     setLoading(true);
 
@@ -167,11 +171,16 @@ export default function ProductForm({
         return;
       }
 
+      const submitData = {
+        ...formData,
+        ...(targetStatus && { status: targetStatus }),
+      };
+
       let result;
       if (product?.id) {
-        result = await updateProduct(product.id, formData);
+        result = await updateProduct(product.id, submitData);
       } else {
-        result = await createProduct(formData);
+        result = await createProduct(submitData);
       }
 
       if (result) {
@@ -229,13 +238,24 @@ export default function ProductForm({
           <Button type="button" variant="outline" onClick={handleCancel}>
             Annuler
           </Button>
-          <ElectricButton onClick={() => handleSubmit()} disabled={loading}>
+
+          {/* Draft Button */}
+          <ElectricButton
+            onClick={() => handleSubmit(undefined, "DRAFT")}
+            disabled={loading}
+            className="bg-gray-500 hover:bg-gray-600 text-white border-gray-600 shadow-[0_0_10px_rgba(100,116,139,0.3)] shadow-gray-500/50"
+          >
+            <Archive className="h-4 w-4 mr-2" />
+            Sauvegarder (Brouillon)
+          </ElectricButton>
+
+          {/* Publish Button */}
+          <ElectricButton
+            onClick={() => handleSubmit(undefined, "PUBLISHED")}
+            disabled={loading}
+          >
             <Save className="h-4 w-4 mr-2" />
-            {loading
-              ? "Enregistrement..."
-              : product?.id
-                ? "Mettre à jour"
-                : "Publier"}
+            {product?.id ? "Mettre à jour & Publier" : "Publier"}
           </ElectricButton>
         </div>
       </div>
@@ -302,7 +322,10 @@ export default function ProductForm({
             <Button variant="ghost" onClick={() => setCurrentStep(2)}>
               <ArrowLeft className="w-4 h-4 mr-2" /> Précédent
             </Button>
-            <Button onClick={() => handleSubmit()} variant="default">
+            <Button
+              onClick={() => handleSubmit(undefined, "PUBLISHED")}
+              variant="default"
+            >
               Terminer et Publier <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>

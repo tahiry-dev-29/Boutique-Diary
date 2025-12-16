@@ -79,7 +79,7 @@ const navSections: NavSection[] = [
         label: "Gestion des Stocks",
         icon: Package,
         href: "/admin/products/stock",
-        permission: "products.edit", 
+        permission: "products.edit",
       },
     ],
   },
@@ -286,7 +286,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         }
       });
     });
-  }, [pathname]); 
+  }, [pathname]);
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
@@ -296,7 +296,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
     }
   };
 
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = async () => {
@@ -490,14 +490,6 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 Profil
               </span>
             </button>
-            <button
-              className={`w-full flex items-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transition-all group px-3 py-2`}
-            >
-              <Trash className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500" />
-              <span className="ml-3 text-sm font-medium whitespace-nowrap group-hover:text-red-600">
-                Corbeille
-              </span>
-            </button>
 
             <button
               onClick={() => setShowLogoutConfirm(true)}
@@ -558,26 +550,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 />
               )}
             </button>
-
-            {isExpanded && (
-              <button
-                onClick={() => setIsExpanded(false)}
-                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
-                title="Réduire la barre latérale"
-              >
-                <ChevronRight className="w-5 h-5 rotate-180" />
-              </button>
-            )}
           </div>
-
-          {!isExpanded && (
-            <button
-              onClick={() => setIsExpanded(true)}
-              className="w-full flex items-center justify-center p-2 mt-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          )}
         </div>
       </div>
     </>

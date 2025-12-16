@@ -63,4 +63,6 @@ export interface Product {
   promotionRuleId?: number | null;
   promotionRule?: any;
   updatedAt?: string;
+  status?: "DRAFT" | "PUBLISHED";
+  deletedAt?: string | null;
 }

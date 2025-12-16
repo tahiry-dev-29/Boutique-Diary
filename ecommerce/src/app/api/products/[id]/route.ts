@@ -70,6 +70,8 @@ export async function PUT(
       isPromotion,
       promotionRuleId,
       oldPrice: initialOldPrice,
+      status,
+      deletedAt,
     } = body;
 
     const validVariations = Array.isArray(variations) ? variations : [];
@@ -123,10 +125,13 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(initialReference !== undefined && { reference: initialReference }),
 
-        price: globalPrice,
-        stock: globalStock,
-        colors: Array.from(globalColors),
-        sizes: Array.from(globalSizes),
+        // Only update derived fields if variations were provided
+        ...(variations !== undefined && {
+          price: globalPrice,
+          stock: globalStock,
+          colors: Array.from(globalColors),
+          sizes: Array.from(globalSizes),
+        }),
 
         ...(brand !== undefined && { brand }),
         ...(isNew !== undefined && { isNew }),
@@ -140,12 +145,17 @@ export async function PUT(
         ...(initialOldPrice !== undefined && {
           oldPrice: initialOldPrice ? parseFloat(initialOldPrice) : null,
         }),
+        ...(status !== undefined && { status }),
+        ...(deletedAt !== undefined && { deletedAt }),
 
-        ...(globalCategoryId
+        // Only update category if images were provided OR categoryId was explicitly passed
+        ...(images !== undefined && globalCategoryId
           ? { category: { connect: { id: globalCategoryId } } }
-          : body.categoryId
-            ? { category: { connect: { id: parseInt(body.categoryId) } } }
-            : { category: { disconnect: true } }),
+          : body.categoryId !== undefined
+            ? body.categoryId
+              ? { category: { connect: { id: parseInt(body.categoryId) } } }
+              : { category: { disconnect: true } }
+            : {}),
 
         ...(images !== undefined && {
           images: {
@@ -256,9 +266,21 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    await prisma.product.delete({
-      where: { id },
-    });
+    const { searchParams } = new URL(request.url);
+    const permanent = searchParams.get("permanent");
+
+    if (permanent === "true") {
+      await prisma.product.delete({
+        where: { id },
+      });
+      return NextResponse.json({ message: "Product permanently deleted" });
+    } else {
+      await prisma.product.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+      return NextResponse.json({ message: "Product moved to trash" });
+    }
 
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error: unknown) {

@@ -45,7 +45,9 @@ import {
   ChevronRight,
   MoreHorizontal,
   Settings2,
-  Plus,
+  RotateCcw,
+  Send,
+  Archive,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AVAILABLE_COLORS, AVAILABLE_SIZES, COLOR_MAP } from "@/lib/constants";
@@ -64,18 +66,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { DashboardStats } from "./DashboardStats"; 
+import { DashboardStats } from "./DashboardStats";
 
 interface ProductListProps {
   onEdit: (product: Product) => void;
   onView: (product: Product) => void;
   refreshTrigger: number;
+  status?: string;
+  deleted?: boolean;
 }
 
 export default function ProductList({
   onEdit,
   onView,
   refreshTrigger,
+  status,
+  deleted,
 }: ProductListProps) {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
@@ -104,6 +110,7 @@ export default function ProductList({
   const [visibleColumns, setVisibleColumns] = useState({
     product: true,
     category: true,
+    stock: true,
     status: true,
     price: true,
   });
@@ -113,11 +120,15 @@ export default function ProductList({
 
   useEffect(() => {
     fetchProducts();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, status, deleted]);
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("/api/products");
+      const params = new URLSearchParams();
+      if (status) params.append("status", status);
+      if (deleted) params.append("deleted", "true");
+
+      const response = await fetch(`/api/products?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
@@ -129,21 +140,89 @@ export default function ProductList({
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, permanent: boolean = false) => {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const url = permanent
+        ? `/api/products/${id}?permanent=true`
+        : `/api/products/${id}`;
+
+      const response = await fetch(url, {
         method: "DELETE",
       });
 
       if (response.ok) {
         setProducts(products.filter(p => p.id !== id));
-        toast.success("Produit supprimé avec succès");
+        toast.success(
+          permanent
+            ? "Produit supprimé définitivement"
+            : "Produit déplacé vers la corbeille",
+        );
       } else {
         toast.error("Erreur lors de la suppression");
       }
     } catch (error) {
       console.error("Error deleting product:", error);
       toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  const handleRestore = async (id: number) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deletedAt: null }),
+      });
+
+      if (response.ok) {
+        setProducts(products.filter(p => p.id !== id));
+        toast.success("Produit restauré avec succès");
+      } else {
+        toast.error("Erreur lors de la restauration");
+      }
+    } catch (error) {
+      console.error("Error restoring product:", error);
+      toast.error("Erreur lors de la restauration");
+    }
+  };
+
+  const handlePublish = async (id: number) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "PUBLISHED" }),
+      });
+
+      if (response.ok) {
+        setProducts(products.filter(p => p.id !== id));
+        toast.success("Produit publié avec succès");
+      } else {
+        toast.error("Erreur lors de la publication");
+      }
+    } catch (error) {
+      console.error("Error publishing product:", error);
+      toast.error("Erreur lors de la publication");
+    }
+  };
+
+  const handleArchive = async (id: number) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "DRAFT" }),
+      });
+
+      if (response.ok) {
+        setProducts(products.filter(p => p.id !== id));
+        toast.success("Produit archivé avec succès");
+      } else {
+        toast.error("Erreur lors de l'archivage");
+      }
+    } catch (error) {
+      console.error("Error archiving product:", error);
+      toast.error("Erreur lors de l'archivage");
     }
   };
 
@@ -387,6 +466,14 @@ export default function ProductList({
                 Catégorie
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
+                checked={visibleColumns.stock}
+                onCheckedChange={checked =>
+                  setVisibleColumns(prev => ({ ...prev, stock: checked }))
+                }
+              >
+                Stock
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
                 checked={visibleColumns.status}
                 onCheckedChange={checked =>
                   setVisibleColumns(prev => ({ ...prev, status: checked }))
@@ -433,6 +520,11 @@ export default function ProductList({
                 {visibleColumns.category && (
                   <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                     Catégorie
+                  </TableHead>
+                )}
+                {visibleColumns.stock && (
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                    Stock
                   </TableHead>
                 )}
                 {visibleColumns.status && (
@@ -544,7 +636,7 @@ export default function ProductList({
                             )}
                           </TableCell>
                         )}
-                        {visibleColumns.status && (
+                        {visibleColumns.stock && (
                           <TableCell>
                             {totalStock === 0 ? (
                               <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800">
@@ -560,6 +652,21 @@ export default function ProductList({
                               <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
                                 En stock
+                              </div>
+                            )}
+                          </TableCell>
+                        )}
+                        {visibleColumns.status && (
+                          <TableCell>
+                            {product.status === "PUBLISHED" ? (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>
+                                Publié
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-100 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800">
+                                <span className="w-1.5 h-1.5 rounded-full bg-gray-500 mr-1.5"></span>
+                                Brouillon
                               </div>
                             )}
                           </TableCell>
@@ -588,43 +695,120 @@ export default function ProductList({
                               <DropdownMenuItem onClick={() => onView(product)}>
                                 <Eye className="mr-2 h-4 w-4" /> Voir détails
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => onEdit(product)}>
-                                <Edit className="mr-2 h-4 w-4" /> Modifier
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 focus:text-red-600 focus:bg-red-50">
-                                    <Trash2 className="mr-2 h-4 w-4" />{" "}
-                                    Supprimer
-                                  </div>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Confirmer la suppression
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Êtes-vous sûr de vouloir supprimer &quot;
-                                      {product.name}&quot; ? Cette action est
-                                      irréversible.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                      Annuler
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
+
+                              {deleted ? (
+                                <>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleRestore(product.id as number)
+                                    }
+                                  >
+                                    <RotateCcw className="mr-2 h-4 w-4" />{" "}
+                                    Restaurer
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 focus:text-red-600 focus:bg-red-50">
+                                        <Trash2 className="mr-2 h-4 w-4" />{" "}
+                                        Supprimer définitivement
+                                      </div>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Suppression définitive
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Êtes-vous sûr de vouloir supprimer
+                                          définitivement &quot;
+                                          {product.name}&quot; ? Cette action
+                                          est irréversible.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Annuler
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            product.id &&
+                                            handleDelete(product.id, true)
+                                          }
+                                          className="bg-red-600 hover:bg-red-700"
+                                        >
+                                          Supprimer définitivement
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              ) : (
+                                <>
+                                  {(product.status === "DRAFT" ||
+                                    status === "DRAFT") && (
+                                    <DropdownMenuItem
                                       onClick={() =>
-                                        product.id && handleDelete(product.id)
+                                        handlePublish(product.id as number)
                                       }
-                                      className="bg-red-600 hover:bg-red-700"
                                     >
-                                      Supprimer
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                      <Send className="mr-2 h-4 w-4" /> Publier
+                                    </DropdownMenuItem>
+                                  )}
+                                  {(product.status === "PUBLISHED" ||
+                                    status === "PUBLISHED") && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleArchive(product.id as number)
+                                      }
+                                    >
+                                      <Archive className="mr-2 h-4 w-4" />{" "}
+                                      Archiver
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuItem
+                                    onClick={() => onEdit(product)}
+                                  >
+                                    <Edit className="mr-2 h-4 w-4" /> Modifier
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-red-600 focus:text-red-600 focus:bg-red-50">
+                                        <Trash2 className="mr-2 h-4 w-4" />{" "}
+                                        Corbeille
+                                      </div>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Confirmer la suppression
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Êtes-vous sûr de vouloir déplacer
+                                          &quot;
+                                          {product.name}&quot; vers la corbeille
+                                          ?
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Annuler
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            product.id &&
+                                            handleDelete(product.id, false)
+                                          }
+                                          className="bg-red-600 hover:bg-red-700"
+                                        >
+                                          Supprimer
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>

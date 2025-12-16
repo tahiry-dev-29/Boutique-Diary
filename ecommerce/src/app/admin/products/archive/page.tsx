@@ -4,12 +4,10 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import ProductList from "@/components/admin/ProductList";
 import { ProductNav } from "@/components/admin/ProductNav";
 import { Product } from "@/types/admin";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function ProductsPage() {
+export default function ArchivePage() {
   const router = useRouter();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -23,15 +21,10 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Produits" description="Gestion du catalogue produit">
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
-        >
-          <Plus size={18} />
-          Nouveau produit
-        </Link>
-      </PageHeader>
+      <PageHeader
+        title="Archives (Brouillons)"
+        description="Produits en attente de publication"
+      />
 
       <ProductNav />
 
@@ -39,7 +32,7 @@ export default function ProductsPage() {
         onEdit={handleEdit}
         onView={handleView}
         refreshTrigger={refreshTrigger}
-        status="PUBLISHED"
+        status="DRAFT"
       />
     </div>
   );
