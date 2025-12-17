@@ -1,182 +1,359 @@
 "use client";
 
 import Image from "next/image";
-import { Star } from "lucide-react";
-import { useState } from "react";
+import { Star, Check, AlertCircle, ShoppingCart } from "lucide-react";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { COLOR_MAP } from "@/lib/constants";
+import { useCartStore } from "@/lib/cart-store";
 
 interface ProductDetailProps {
-  product: any; // Ideally stricter type matching prisma return
+  product: any;
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
-  const [selectedColor, setSelectedColor] = useState("bg-black");
-  const [selectedSize, setSelectedSize] = useState("M");
-  const [selectedImage, setSelectedImage] = useState(
-    product?.images[0]?.url || null,
-  );
+  // State for selections
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
+
+  // Derived state from current selection (Image acts as Variant)
+  const images =
+    product?.images?.length > 0 ? product.images : [{ id: 0, url: null }];
+  const currentImage = images[selectedImageIndex];
+
+  // Specific data for the selected variant (image)
+  const displayPrice = currentImage?.price ?? product?.price;
+  const displayOldPrice = currentImage?.oldPrice ?? product?.oldPrice;
+  const displayStock = currentImage?.stock ?? product?.stock;
+  const currentRef = currentImage?.reference ?? product?.reference;
+
+  // Available options
+  // Colors are effectively different images. We can group images by color or just list unique colors from product.colors
+  // When a user clicks a color, we find the first image with that color.
+  const uniqueColors = product?.colors || [];
+
+  // Available sizes for the CURRENT variant selection.
+  // If specific image has sizes, use those. Otherwise fallback to product global sizes.
+  const availableSizes =
+    currentImage?.sizes && currentImage.sizes.length > 0
+      ? currentImage.sizes
+      : product?.sizes || [];
+
+  // Update selected size if it's no longer available when switching variants
+  useEffect(() => {
+    if (selectedSize && !availableSizes.includes(selectedSize)) {
+      setSelectedSize(null);
+    }
+  }, [selectedImageIndex, availableSizes, selectedSize]);
+
+  const handleColorSelect = (color: string) => {
+    // Find first image matching this color
+    const index = images.findIndex((img: any) => img.color === color);
+    if (index !== -1) {
+      setSelectedImageIndex(index);
+    }
+  };
+
+  const addItem = useCartStore(state => state.addItem);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    addItem({
+      productId: product.id,
+      name: product.name,
+      reference: currentRef || product.reference,
+      image: currentImage?.url || "",
+      price: displayPrice || 0,
+      quantity: quantity,
+      maxStock: displayStock,
+      color: currentImage?.color || undefined,
+      size: selectedSize || undefined,
+    });
+
+    // Reset quantity
+    setQuantity(1);
+  };
 
   if (!product) {
     return (
-      <div className="p-16 text-center text-red-500">Product not found</div>
+      <div className="p-16 text-center text-red-500">Produit non trouvé</div>
     );
   }
 
-  // Use real images if available, else placeholders
-  const images =
-    product.images.length > 0 ? product.images : [{ id: 0, url: null }];
-  const mainImage = selectedImage || images[0].url;
-
-  // Mock variations if empty for UI demo
-  const colors =
-    product.colors && product.colors.length > 0
-      ? product.colors
-      : ["bg-black", "bg-blue-700"];
-  const sizes =
-    product.sizes && product.sizes.length > 0
-      ? product.sizes
-      : ["S", "M", "L", "XL"];
+  // Percentage calc
+  const hasDiscount = displayOldPrice && displayOldPrice > displayPrice;
+  const discountPercent = hasDiscount
+    ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
+    : 0;
 
   return (
     <section className="py-8 md:py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_450px] gap-12 items-start">
-        {/* Gallery / Main Image */}
-        <div className="grid grid-cols-[80px_1fr] gap-4">
-          {/* Thumbnails */}
-          <div className="flex flex-col gap-4">
+        {/* Gallery Section */}
+        <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
+          {/* Thumbnails - Vertical on Desktop */}
+          <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible order-2 md:order-1">
             {images.map((img: any, i: number) => (
-              <div
-                key={i}
-                className={`aspect-square bg-gray-100 rounded-lg cursor-pointer hover:ring-2 hover:ring-black transition-all relative overflow-hidden ${mainImage === img.url ? "ring-2 ring-black" : ""}`}
-                onClick={() => setSelectedImage(img.url)}
+              <button
+                key={img.id || i}
+                onClick={() => setSelectedImageIndex(i)}
+                className={cn(
+                  "relative flex-shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-all",
+                  selectedImageIndex === i
+                    ? "border-black ring-1 ring-black/20"
+                    : "border-transparent hover:border-gray-300",
+                )}
               >
                 {img.url && (
                   <Image
                     src={img.url}
-                    alt="Thumbnail"
+                    alt={`${product.name} - View ${i + 1}`}
                     fill
                     className="object-cover"
                   />
                 )}
-              </div>
+              </button>
             ))}
           </div>
 
           {/* Main Image */}
-          <div className="bg-gray-50 rounded-3xl aspect-square relative flex items-center justify-center overflow-hidden">
-            {mainImage ? (
+          <div className="relative bg-gray-50 rounded-2xl aspect-[3/4] md:aspect-[4/5] max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[90%]">
+            {currentImage?.url ? (
               <Image
-                src={mainImage}
+                src={currentImage.url}
                 alt={product.name}
                 fill
-                className="object-cover"
+                priority
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
-              <div className="text-gray-400 font-bold text-xl">
-                [Main Product Image]
+              <div className="flex items-center justify-center h-full text-gray-400 font-bold text-xl">
+                [Image Principale]
               </div>
             )}
+
+            {/* Badges */}
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
+              {product.isNew && (
+                <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Nouveau
+                </span>
+              )}
+              {hasDiscount && (
+                <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  -{discountPercent}%
+                </span>
+              )}
+              {product.isBestSeller && (
+                <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Best Seller
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Product Info */}
+        {/* Product Info Section */}
         <div className="flex flex-col gap-6">
           <div>
-            <span className="text-sm text-gray-500 block mb-2">
-              {product.category?.name || "Uncategorized"}
-            </span>
-            <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-
-            <div className="flex items-center gap-4 mb-4">
-              {product.oldPrice && (
-                <span className="text-gray-400 line-through text-lg">
-                  ${product.oldPrice.toFixed(2)}
-                </span>
-              )}
-              <span className="text-4xl font-bold">
-                ${product.price.toFixed(2)}
+            <div className="flex justify-between items-start">
+              <span className="text-sm text-gray-500 font-medium mb-2 block uppercase tracking-wide">
+                {product.category?.name || "Boutique"}
               </span>
-              {product.isPromotion && (
-                <span className="bg-black text-white text-xs font-bold px-2 py-1 rounded">
-                  Sale
+              <span className="text-xs text-gray-400 font-mono">
+                Ref: {currentRef}
+              </span>
+            </div>
+
+            <h1 className="text-4xl font-bold mb-4 text-gray-900">
+              {product.name}
+            </h1>
+
+            {/* Price Block */}
+            <div className="flex items-end gap-3 mb-6">
+              <span className="text-4xl font-bold tracking-tight">
+                ${displayPrice?.toFixed(2)}
+              </span>
+              {hasDiscount && (
+                <span className="text-gray-400 line-through text-lg mb-1">
+                  ${displayOldPrice.toFixed(2)}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-2 mb-6">
-              <div className="flex text-black">
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-8">
+              <div className="flex text-amber-500">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 ${i < (product.rating || 4) ? "fill-black text-black" : "text-gray-300"}`}
+                    className={cn(
+                      "w-4 h-4 fill-current",
+                      i < Math.round(product.rating || 0)
+                        ? "text-amber-500"
+                        : "text-gray-200",
+                    )}
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-500">
-                ({product.rating || "4.5"}) {product.reviewCount || 0} Reviews
+              <span className="text-sm text-gray-500 font-medium">
+                {product.rating || 0} ({product.reviewCount || 0} avis)
               </span>
             </div>
 
-            <div className="mb-6">
-              <h3 className="font-bold mb-2">Descriptions</h3>
-              <p className="text-gray-500 text-sm leading-relaxed line-clamp-4">
-                {product.description ||
-                  "No description available for this product."}
+            {/* Divider */}
+            <div className="h-px bg-gray-100 my-2" />
+
+            {/* Description */}
+            <div className="mb-8">
+              <h3 className="font-bold text-gray-900 mb-2">Description</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {product.description || "Aucune description disponible."}
               </p>
-              <button className="text-black font-semibold underline text-sm mt-1">
-                more
-              </button>
             </div>
 
-            {/* Colors - Simulating color selection for now as DB stores strings */}
+            {/* Colors */}
             <div className="mb-6">
-              <h3 className="font-bold mb-3">Available Color</h3>
+              <div className="flex justify-between mb-3">
+                <h3 className="font-bold text-gray-900">
+                  Couleur:{" "}
+                  <span className="font-normal text-gray-500">
+                    {currentImage?.color || "Standard"}
+                  </span>
+                </h3>
+              </div>
               <div className="flex gap-3">
-                {colors.map((color: string) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-8 h-8 rounded-full bg-gray-200 border-2 border-transparent hover:scale-110 transition-transform ${selectedColor === color ? "ring-2 ring-offset-2 ring-black" : ""}`}
-                    title={color}
-                  >
-                    {/* If color starts with #, use style, else class if standard tailwind */}
-                  </button>
-                ))}
-                {/* Temporary Visual Mock for demo if no real colors */}
-                {colors.length === 0 && (
-                  <>
-                    <div className="w-8 h-8 rounded-full bg-black border-2 border-transparent cursor-pointer"></div>
-                    <div className="w-8 h-8 rounded-full bg-blue-700 border-2 border-transparent cursor-pointer"></div>
-                  </>
+                {uniqueColors.length > 0 ? (
+                  uniqueColors.map((color: string) => {
+                    const isSelected = currentImage?.color === color;
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => handleColorSelect(color)}
+                        className={cn(
+                          "w-10 h-10 rounded-full border-2 transition-all p-0.5 relative",
+                          isSelected
+                            ? "border-black ring-1 ring-black"
+                            : "border-gray-200 hover:border-gray-400",
+                        )}
+                        title={color}
+                      >
+                        <span
+                          className="block w-full h-full rounded-full border border-black/5 shadow-inner"
+                          style={{ background: COLOR_MAP[color] || color }} // Use map or fallback to raw
+                        />
+                        {isSelected && (
+                          <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
+                            <Check className="w-2.5 h-2.5" />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })
+                ) : (
+                  <span className="text-sm text-gray-400 italic">
+                    Aucune variante couleur
+                  </span>
                 )}
               </div>
             </div>
 
             {/* Sizes */}
             <div className="mb-8">
-              <h3 className="font-bold mb-3">Size</h3>
-              <div className="flex gap-3">
-                {sizes.map((size: string) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all font-medium
-                                 ${selectedSize === size ? "bg-black text-white border-black" : "border-gray-200 text-gray-600 hover:border-black"}
-                             `}
-                  >
-                    {size}
-                  </button>
-                ))}
+              <div className="flex justify-between mb-3">
+                <h3 className="font-bold text-gray-900">
+                  Taille:{" "}
+                  <span className="font-normal text-gray-500">
+                    {selectedSize || "Sélectionnez"}
+                  </span>
+                </h3>
+                <button className="text-xs text-black underline">
+                  Guide des tailles
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {availableSizes.length > 0 ? (
+                  availableSizes.map((size: string) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={cn(
+                        "h-12 min-w-[3rem] px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
+                        selectedSize === size
+                          ? "bg-black text-white border-black shadow-md"
+                          : "border-gray-200 text-gray-700 hover:border-black",
+                      )}
+                    >
+                      {size}
+                    </button>
+                  ))
+                ) : (
+                  <span className="text-sm text-gray-400 italic">
+                    Taille unique
+                  </span>
+                )}
               </div>
             </div>
 
+            {/* Stock Status */}
+            <div className="mb-6">
+              {displayStock > 0 ? (
+                <div className="flex items-center text-green-600 text-sm font-medium gap-2 p-3 bg-green-50 rounded-lg w-fit">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                  </span>
+                  En Stock ({displayStock} disponibles)
+                </div>
+              ) : (
+                <div className="flex items-center text-red-600 text-sm font-medium gap-2 p-3 bg-red-50 rounded-lg w-fit">
+                  <AlertCircle className="w-4 h-4" />
+                  Rupture de stock
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
             <div className="flex gap-4">
-              <button className="flex-1 py-4 rounded-full border border-gray-200 font-bold hover:bg-gray-50 transition-colors">
-                Add to Chart
-              </button>
-              <button className="flex-1 py-4 rounded-full bg-black text-white font-bold hover:bg-gray-800 transition-colors shadow-lg">
-                Checkout Now
+              <div className="flex border border-gray-200 rounded-full items-center">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 py-3 hover:bg-gray-50 rounded-l-full transition"
+                >
+                  -
+                </button>
+                <span className="w-8 text-center font-bold">{quantity}</span>
+                <button
+                  onClick={() =>
+                    setQuantity(Math.min(displayStock, quantity + 1))
+                  }
+                  className="px-4 py-3 hover:bg-gray-50 rounded-r-full transition"
+                >
+                  +
+                </button>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                disabled={displayStock <= 0}
+                className={cn(
+                  "flex-1 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl",
+                  displayStock > 0
+                    ? "bg-black text-white hover:bg-gray-800"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed",
+                )}
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {displayStock > 0 ? "Ajouter au panier" : "Indisponible"}
               </button>
             </div>
+
+            <p className="text-xs text-gray-400 mt-4 text-center">
+              Livraison gratuite pour les commandes de plus de $200. Retours
+              sous 30 jours.
+            </p>
           </div>
         </div>
       </div>

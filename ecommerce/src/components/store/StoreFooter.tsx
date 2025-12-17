@@ -12,7 +12,7 @@ export default function StoreFooter() {
           <div className="col-span-1 md:col-span-1">
             <h2 className="text-2xl font-bold mb-6">Meher</h2>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              We distribute our collections to seasoned stores.
+              Nous distribuons nos collections dans des boutiques sélectionnées.
             </p>
             <div className="text-gray-400 text-xs">
               <p>Technology Park</p>
@@ -25,7 +25,7 @@ export default function StoreFooter() {
           {/* Customer Services */}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
-              Customer Services
+              Service Client
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
@@ -35,27 +35,27 @@ export default function StoreFooter() {
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  My Orders
+                  Mes Commandes
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Store Return
+                  Retours
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Shipping and Return
+                  Livraison et Retours
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Terms and Conditions
+                  Conditions Générales
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Privacy Policy
+                  Politique de Confidentialité
                 </Link>
               </li>
             </ul>
@@ -64,37 +64,37 @@ export default function StoreFooter() {
           {/* Products */}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
-              Products
+              Produits
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Shoes
+                  Chaussures
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Clothing
+                  Vêtements
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Accessories
+                  Accessoires
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Jewellery
+                  Bijoux
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Men
+                  Hommes
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Women
+                  Femmes
                 </Link>
               </li>
             </ul>
@@ -103,32 +103,32 @@ export default function StoreFooter() {
           {/* Company Info */}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
-              Company Info
+              Infos Entreprise
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  About Us
+                  À Propos
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Our stores
+                  Nos Magasins
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Work with us
+                  Rejoignez-nous
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Our values
+                  Nos Valeurs
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Service Support
+                  Support
                 </Link>
               </li>
             </ul>
@@ -138,7 +138,7 @@ export default function StoreFooter() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-gray-500 text-xs">
-            Copyright © 2026 Meher. All rights reserved.
+            Copyright © 2026 Meher. Tous droits réservés.
           </p>
           <div className="flex items-center gap-6">
             <Link href="#" className="text-gray-500 hover:text-white">
@@ -153,13 +153,13 @@ export default function StoreFooter() {
           </div>
           <div className="flex gap-4 text-xs text-gray-500">
             <Link href="#" className="hover:text-white">
-              Privacy
+              Confidentialité
             </Link>
             <Link href="#" className="hover:text-white">
-              Security
+              Sécurité
             </Link>
             <Link href="#" className="hover:text-white">
-              Terms
+              Conditions
             </Link>
           </div>
         </div>

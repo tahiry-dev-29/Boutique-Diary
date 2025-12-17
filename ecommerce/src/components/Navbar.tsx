@@ -2,6 +2,6 @@
 
 import StoreNavbar from "./store/StoreNavbar";
 
-export default function Navbar() {
-  return <StoreNavbar />;
+export default function Navbar({ categories = [] }: { categories?: any[] }) {
+  return <StoreNavbar categories={categories} />;
 }

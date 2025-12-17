@@ -1,16 +1,17 @@
-import StoreNavbar from "@/components/store/StoreNavbar";
 import ProductDetail from "@/components/store/ProductDetail";
 import StoreProductGrid from "@/components/store/StoreProductGrid";
 import StoreFooter from "@/components/store/StoreFooter";
+import StoreBreadcrumb from "@/components/store/StoreBreadcrumb";
 import { getProductById, getRelatedProducts } from "@/lib/store-data";
 import { notFound } from "next/navigation";
 
 export default async function ProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const product = await getProductById(params.id);
+  const { id } = await params;
+  const product = await getProductById(id);
 
   if (!product) {
     notFound();
@@ -24,7 +25,9 @@ export default async function ProductPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <StoreNavbar />
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 pt-4">
+        <StoreBreadcrumb productName={product.name} />
+      </div>
       <ProductDetail product={product} />
 
       {/* "This item can be cool with this" Section */}

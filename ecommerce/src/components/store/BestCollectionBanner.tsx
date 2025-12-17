@@ -9,15 +9,16 @@ export default function BestCollectionBanner() {
         <div className="grid grid-cols-1 md:grid-cols-2 items-center">
           <div className="p-8 md:p-16">
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Best Leather Bag <br />
-              Collection <br />
-              For You
+              La Meilleure Collection <br />
+              de Sacs en Cuir <br />
+              Pour Vous
             </h2>
             <p className="text-gray-500 mb-8 max-w-sm">
-              For those who prefer a hands-free, stylish and functional option.
+              Pour ceux qui préfèrent une option mains libres, élégante et
+              fonctionnelle.
             </p>
             <button className="bg-transparent border border-gray-300 rounded-full px-8 py-3 text-sm font-semibold hover:bg-black hover:text-white transition-colors">
-              Shop Now
+              Acheter Maintenant
             </button>
           </div>
 
@@ -27,7 +28,7 @@ export default function BestCollectionBanner() {
 
             {/* Product Image Placeholder */}
             <div className="relative w-48 h-48 bg-orange-500 rotate-[-12deg] rounded-xl shadow-2xl flex items-center justify-center text-white font-bold">
-              [Bag Image]
+              [Image Sac]
             </div>
           </div>
         </div>

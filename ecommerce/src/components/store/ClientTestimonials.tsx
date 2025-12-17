@@ -7,28 +7,28 @@ export default function ClientTestimonials() {
   const testimonials = [
     {
       id: 1,
-      name: "Apaturit",
-      date: "02 February",
+      name: "Jean Dupont",
+      date: "02 Février",
       rating: 4,
-      title: "A Cut Above the Rest",
+      title: "Une expérience au top",
       review:
-        "I recently visited this barber, and I must say it was a classic barber experience... It's took the time to understand exactly what I wanted. He took the time to understand exactly what I wanted.",
+        "J'ai récemment visité ce barbier, et je dois dire que c'était une expérience classique... Il a pris le temps de comprendre exactement ce que je voulais.",
     },
     {
       id: 2,
-      name: "Jisona",
-      date: "06 February",
+      name: "Marie Martin",
+      date: "06 Février",
       rating: 4,
-      title: "Alhamdulillah",
+      title: "Super Produit",
       review:
-        "I've been using this blender daily for a month, and it blends smoothly without any issues. It's powerful enough to handle frozen fruits and tough veggies.",
+        "J'utilise ce produit quotidiennement depuis un mois, et il fonctionne parfaitement sans aucun problème. Il est assez puissant pour tout faire.",
     },
   ];
 
   return (
     <section className="py-16 px-4 md:px-6 mb-16">
       <div className="max-w-[1400px] mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-12">Our happy clients</h2>
+        <h2 className="text-3xl font-bold mb-12">Nos clients satisfaits</h2>
 
         <div className="flex items-center justify-center gap-6">
           <button className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center hover:bg-gray-50 shadow-sm text-gray-400 hover:text-black">

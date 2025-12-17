@@ -28,26 +28,38 @@ export default function ProductCard({
       <div
         className={`relative aspect-square overflow-hidden rounded-3xl mb-4 ${imageColor || "bg-gray-100"}`}
       >
-        {image ? (
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
-            Image
-          </div>
-        )}
+        <Link href={`/store/product/${id}`} className="block w-full h-full">
+          {image ? (
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
+              Image
+            </div>
+          )}
+        </Link>
 
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors opacity-0 group-hover:opacity-100 shadow-sm">
+        <button
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors opacity-0 group-hover:opacity-100 shadow-sm z-10"
+          onClick={e => {
+            e.preventDefault(); /* TODO: wishlist logic */
+          }}
+        >
           <Heart className="w-4 h-4" />
         </button>
 
-        {/* Add to Cart Button (Bottom Right) - as seen in "Cool with this" section */}
-        <button className="absolute bottom-3 right-3 p-2 rounded-full bg-white text-black hover:bg-black hover:text-white transition-colors opacity-0 group-hover:opacity-100 shadow-sm border border-gray-100">
+        {/* Add to Cart Button (Bottom Right) */}
+        <button
+          className="absolute bottom-3 right-3 p-2 rounded-full bg-white text-black hover:bg-black hover:text-white transition-colors opacity-0 group-hover:opacity-100 shadow-sm border border-gray-100 z-10"
+          onClick={e => {
+            e.preventDefault(); /* TODO: cart logic */
+          }}
+        >
           <ShoppingBag className="w-4 h-4" />
         </button>
       </div>

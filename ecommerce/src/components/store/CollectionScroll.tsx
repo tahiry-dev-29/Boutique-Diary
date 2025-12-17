@@ -36,21 +36,21 @@ export default function CollectionScroll({
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
             <div className="inline-block bg-gray-100 rounded-full px-4 py-1 text-xs font-medium mb-4">
-              See from product
+              Découvrir nos produits
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Top-Selling Product <br />
-              of the year Collection
+              Collection des produits <br />
+              les plus vendus de l'année
             </h2>
           </div>
 
           <div className="mt-6 md:mt-0 text-right">
             <p className="text-xs text-gray-500 max-w-xs ml-auto mb-4">
-              We distribute our collections to awesome stores. Find out more
-              about us and our favourite stores.
+              Nous distribuons nos collections dans des magasins incroyables.
+              Découvrez-en plus sur nous et nos boutiques préférées.
             </p>
             <button className="border border-gray-300 rounded-full px-6 py-2 text-xs font-bold hover:bg-black hover:text-white transition-colors">
-              Shop Now
+              Acheter maintenant
             </button>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function CollectionScroll({
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-black/20 font-bold text-xl">
-                    No Image
+                    Pas d'image
                   </div>
                 )}
 

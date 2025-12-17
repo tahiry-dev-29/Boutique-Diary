@@ -36,9 +36,10 @@ export default function StoreProductGrid({
   return (
     <section className="py-16 px-4 md:px-6 bg-white">
       <div className="max-w-[1400px] mx-auto">
-        <h2 className="text-3xl font-bold mb-2">Our All Products</h2>
+        <h2 className="text-3xl font-bold mb-2">Tous nos produits</h2>
         <p className="text-sm text-gray-500 mb-6">
-          These products can rotate weekly or seasons seasonally excitement.
+          Ces produits peuvent varier chaque semaine ou selon les saisons pour
+          toujours plus de nouveauté.
         </p>
 
         {/* Filters */}
