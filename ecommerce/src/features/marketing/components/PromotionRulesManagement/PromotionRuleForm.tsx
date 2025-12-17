@@ -275,7 +275,7 @@ export function PromotionRuleForm({
             <div className="space-y-2">
               <FormLabel>Par Catégorie</FormLabel>
               <select
-                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                className="w-full flex h-10 rounded-md border border-input dark:bg-gray-900/50 px-3 py-2 text-sm ring-offset-background"
                 value={selectedCategoryId}
                 onChange={e => {
                   setSelectedCategoryId(e.target.value);

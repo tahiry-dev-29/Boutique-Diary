@@ -19,19 +19,19 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
 
-  // Actions
+  
   addItem: (item: Omit<CartItem, "id">) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   setOpen: (open: boolean) => void;
 
-  // Computed
+  
   getItemCount: () => number;
   getSubtotal: () => number;
 }
 
-// Generate unique ID for cart items
+
 const generateId = (item: Omit<CartItem, "id">) =>
   `${item.productId}-${item.color || "default"}-${item.size || "default"}`;
 
@@ -46,19 +46,19 @@ export const useCartStore = create<CartState>()(
         const existingItem = get().items.find(i => i.id === id);
 
         if (existingItem) {
-          // Update quantity if item exists
+          
           set({
             items: get().items.map(i =>
               i.id === id ? { ...i, quantity: i.quantity + item.quantity } : i,
             ),
           });
         } else {
-          // Add new item
+          
           set({
             items: [...get().items, { ...item, id }],
           });
         }
-        // Open cart sheet when adding item
+        
         set({ isOpen: true });
       },
 
@@ -103,7 +103,7 @@ export const useCartStore = create<CartState>()(
   ),
 );
 
-// Format price helper
+
 export const formatPrice = (amount: number) => {
   return new Intl.NumberFormat("fr-MG", {
     style: "currency",

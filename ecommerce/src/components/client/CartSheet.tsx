@@ -28,7 +28,7 @@ const CartItemRow = ({
 }: CartItemRowProps) => {
   return (
     <div className="flex gap-3 py-4 border-b border-border last:border-0">
-      {/* Product image */}
+      {}
       <div className="relative w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
         {item.image ? (
           <Image
@@ -45,7 +45,7 @@ const CartItemRow = ({
         )}
       </div>
 
-      {/* Product info */}
+      {}
       <div className="flex-1 min-w-0">
         <h4 className="font-medium text-sm text-foreground truncate">
           {item.name}
@@ -63,7 +63,7 @@ const CartItemRow = ({
         </p>
       </div>
 
-      {/* Quantity controls */}
+      {}
       <div className="flex flex-col items-end justify-between">
         <button
           onClick={() => onRemove(item.id)}
@@ -149,7 +149,7 @@ const CartSheet = () => {
             </ScrollArea>
 
             <SheetFooter className="border-t border-border pt-4 flex-col gap-4">
-              {/* Subtotal */}
+              {}
               <div className="w-full space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Sous-total</span>
@@ -162,7 +162,7 @@ const CartSheet = () => {
                 </p>
               </div>
 
-              {/* Actions */}
+              {}
               <div className="w-full flex flex-col gap-2">
                 <Button
                   asChild

@@ -44,7 +44,7 @@ export function ProductNav() {
           className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
             tab.active
-              ? "bg-white dark:bg-gray-950 text-black dark:text-white shadow-sm"
+              ? "bg-white dark:dark:bg-gray-800 text-black dark:text-white shadow-sm"
               : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50",
           )}
         >

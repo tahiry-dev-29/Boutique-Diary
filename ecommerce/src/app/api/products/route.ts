@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const whereClause: any = {};
 
-    // Soft Delete Logic
+    
     if (deleted === "true") {
       whereClause.deletedAt = { not: null };
     } else {

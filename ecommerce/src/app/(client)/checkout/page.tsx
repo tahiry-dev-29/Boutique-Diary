@@ -21,7 +21,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCartStore, formatPrice } from "@/lib/cart-store";
 
-// Step configuration
+
 const steps = [
   { id: 1, name: "Informations", icon: User },
   { id: 2, name: "Adresse", icon: MapPin },
@@ -29,7 +29,7 @@ const steps = [
   { id: 4, name: "Paiement", icon: CreditCard },
 ];
 
-// Delivery options
+
 const deliveryOptions = [
   {
     id: "standard",
@@ -51,7 +51,7 @@ const deliveryOptions = [
   },
 ];
 
-// Payment methods
+
 const paymentMethods = [
   {
     id: "mvola",
@@ -93,7 +93,7 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  // Form states
+  
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     firstName: "",
     lastName: "",
@@ -118,7 +118,7 @@ export default function CheckoutPage() {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Complete order
+      
       setIsCompleted(true);
       clearCart();
     }
@@ -183,7 +183,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 py-8">
-      {/* Header */}
+      {}
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/cart"
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
         </h1>
       </div>
 
-      {/* Steps indicator */}
+      {}
       <div className="mb-8">
         <div className="flex items-center justify-between max-w-2xl mx-auto">
           {steps.map((step, index) => {
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
 
             return (
               <React.Fragment key={step.id}>
-                {/* Step circle */}
+                {}
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
@@ -232,7 +232,7 @@ export default function CheckoutPage() {
                   </span>
                 </div>
 
-                {/* Connector line */}
+                {}
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-0.5 mx-2 ${
@@ -247,11 +247,11 @@ export default function CheckoutPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Form section */}
+        {}
         <div className="lg:col-span-2">
           <Card>
             <CardContent className="p-6">
-              {/* Step 1: Customer Information */}
+              {}
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Step 2: Address */}
+              {}
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -396,7 +396,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Step 3: Delivery */}
+              {}
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -438,7 +438,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Step 4: Payment */}
+              {}
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -480,7 +480,7 @@ export default function CheckoutPage() {
                     ))}
                   </RadioGroup>
 
-                  {/* Payment info for MVola */}
+                  {}
                   {selectedPayment === "mvola" && (
                     <div className="p-4 bg-muted rounded-lg">
                       <p className="text-sm text-muted-foreground">
@@ -492,7 +492,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Navigation buttons */}
+              {}
               <div className="flex justify-between mt-8 pt-6 border-t border-border">
                 <Button
                   variant="outline"
@@ -520,7 +520,7 @@ export default function CheckoutPage() {
           </Card>
         </div>
 
-        {/* Order summary sidebar */}
+        {}
         <div className="lg:col-span-1">
           <Card className="sticky top-24">
             <CardContent className="p-6">
@@ -528,7 +528,7 @@ export default function CheckoutPage() {
                 Votre commande
               </h2>
 
-              {/* Cart items preview */}
+              {}
               <div className="space-y-3 max-h-60 overflow-y-auto mb-4">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
@@ -562,7 +562,7 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              {/* Totals */}
+              {}
               <div className="space-y-2 border-t border-border pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Sous-total</span>

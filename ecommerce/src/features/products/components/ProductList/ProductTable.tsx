@@ -55,7 +55,7 @@ export function ProductTable({
 
   if (products.length === 0) {
     return (
-      <div className="rounded-md border bg-background">
+      <div className="rounded-md border dark:bg-gray-900/50">
         <EmptyState
           variant="search"
           title="Aucun produit trouvé"
@@ -66,7 +66,7 @@ export function ProductTable({
   }
 
   return (
-    <div className="rounded-md border bg-background overflow-x-auto">
+    <div className="rounded-md border dark:bg-gray-900/50 overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -81,7 +81,7 @@ export function ProductTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
+          {products.map(product => (
             <React.Fragment key={product.id}>
               <TableRow
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -168,7 +168,7 @@ export function ProductTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onView(product);
                     }}
@@ -179,7 +179,7 @@ export function ProductTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onEdit(product);
                     }}
@@ -192,7 +192,7 @@ export function ProductTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={e => e.stopPropagation()}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -240,7 +240,7 @@ export function ProductTable({
                             return (
                               <div
                                 key={index}
-                                className="bg-background rounded-xl border overflow-hidden hover:shadow-md transition-shadow"
+                                className="dark:bg-gray-900/50 rounded-xl border overflow-hidden hover:shadow-md transition-shadow"
                               >
                                 <div className="aspect-square relative">
                                   <img

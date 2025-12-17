@@ -125,7 +125,7 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(initialReference !== undefined && { reference: initialReference }),
 
-        // Only update derived fields if variations were provided
+        
         ...(variations !== undefined && {
           price: globalPrice,
           stock: globalStock,
@@ -148,7 +148,7 @@ export async function PUT(
         ...(status !== undefined && { status }),
         ...(deletedAt !== undefined && { deletedAt }),
 
-        // Only update category if images were provided OR categoryId was explicitly passed
+        
         ...(images !== undefined && globalCategoryId
           ? { category: { connect: { id: globalCategoryId } } }
           : body.categoryId !== undefined

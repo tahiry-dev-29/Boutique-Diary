@@ -37,7 +37,7 @@ export default async function ProductPage({ params }: PageProps) {
     });
 
     product =
-      allProducts.find((p) => {
+      allProducts.find(p => {
         const pSlug = toSlug(p.name);
         return pSlug === slug;
       }) || null;
@@ -47,9 +47,5 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  return (
-    <div className="min-h-screen bg-[#f9f5f0] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-      <ProductDetailClient product={product} />
-    </div>
-  );
+  return <ProductDetailClient product={product} />;
 }

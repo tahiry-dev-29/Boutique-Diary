@@ -109,12 +109,10 @@ export default function PromotionsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map(product => {
-            
             const promotedVariant = product.images?.find(
               (img: any) => img.isPromotion && typeof img !== "string",
             );
 
-            
             const finalPrice =
               promotedVariant && (promotedVariant as any).price
                 ? (promotedVariant as any).price
@@ -128,7 +126,6 @@ export default function PromotionsPage() {
                 ? (promotedVariant as any).reference
                 : product.reference;
 
-            
             let mainImage = "/placeholder.png";
             if (promotedVariant) {
               mainImage =
@@ -176,7 +173,7 @@ export default function PromotionsPage() {
                       <div className="absolute bottom-2 right-2">
                         <Badge
                           variant="secondary"
-                          className="bg-white/90 dark:bg-black/80 backdrop-blur-sm text-[10px] px-2 py-0.5 h-auto font-medium shadow-sm border-0"
+                          className="bg-white/90 dark:bg-gray-800/80 backdrop-blur-sm text-[10px] px-2 py-0.5 h-auto font-medium shadow-sm border-0"
                         >
                           {product.promotionRule.name}
                         </Badge>

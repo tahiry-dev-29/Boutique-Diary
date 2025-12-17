@@ -25,16 +25,16 @@ const ClientNavbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background border-b border-border">
-        {/* Promo banner */}
+      <header className="sticky top-0 z-50 dark:bg-gray-900/50 border-b border-border">
+        {}
         <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium">
           🚚 Livraison gratuite à partir de 50€ d&apos;achat
         </div>
 
-        {/* Main nav */}
+        {}
         <nav className="max-w-[1400px] mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 gap-4">
-            {/* Logo */}
+            {}
             <Link href="/" className="flex-shrink-0">
               <div className="flex flex-col leading-none">
                 <span className="text-primary font-bold text-xl tracking-tight">
@@ -46,7 +46,7 @@ const ClientNavbar = () => {
               </div>
             </Link>
 
-            {/* Desktop nav links */}
+            {}
             <div className="hidden md:flex items-center gap-1">
               <Link
                 href="/shop"
@@ -68,13 +68,13 @@ const ClientNavbar = () => {
               </div>
             </div>
 
-            {/* Search bar */}
+            {}
             <div className="flex-1 max-w-md hidden lg:block">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Rechercher un produit..."
-                  className="w-full bg-muted border-none rounded-full py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:bg-background transition-all outline-none"
+                  className="w-full bg-muted border-none rounded-full py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:dark:bg-gray-900/50 transition-all outline-none"
                 />
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -83,14 +83,14 @@ const ClientNavbar = () => {
               </div>
             </div>
 
-            {/* Actions */}
+            {}
             <div className="flex items-center gap-1 md:gap-3">
-              {/* Mobile search */}
+              {}
               <button className="lg:hidden p-2 rounded-full hover:bg-accent transition-colors text-foreground">
                 <Search size={20} />
               </button>
 
-              {/* Account */}
+              {}
               <Link
                 href="/customer/auth"
                 className="p-2 rounded-full hover:bg-accent transition-colors text-foreground flex items-center gap-2"
@@ -101,7 +101,7 @@ const ClientNavbar = () => {
                 </span>
               </Link>
 
-              {/* Wishlist */}
+              {}
               <Link
                 href="/customer/wishlist"
                 className="p-2 rounded-full hover:bg-accent transition-colors text-foreground"
@@ -109,7 +109,7 @@ const ClientNavbar = () => {
                 <Heart size={20} />
               </Link>
 
-              {/* Cart button */}
+              {}
               <button
                 onClick={handleCartClick}
                 className="relative p-2 rounded-full hover:bg-accent transition-colors text-foreground"
@@ -123,7 +123,7 @@ const ClientNavbar = () => {
                 )}
               </button>
 
-              {/* Mobile menu */}
+              {}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 rounded-full hover:bg-accent transition-colors text-foreground"
@@ -133,7 +133,7 @@ const ClientNavbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu dropdown */}
+          {}
           {isMenuOpen && (
             <div className="md:hidden border-t border-border py-4 animate-slide-in">
               <div className="flex flex-col gap-2">
@@ -171,7 +171,7 @@ const ClientNavbar = () => {
         </nav>
       </header>
 
-      {/* Cart Sheet */}
+      {}
       <CartSheet />
     </>
   );

@@ -21,7 +21,7 @@ export function ProductPromotions({
   setFormData,
 }: ProductPromotionsProps) {
   const { rules, loading } = usePromotionRules();
-  
+
   const activeRules = rules.filter(r => r.isActive);
 
   const handleRuleChange = (ruleId: string) => {
@@ -29,7 +29,7 @@ export function ProductPromotions({
     setFormData(prev => ({
       ...prev,
       promotionRuleId: id,
-      isPromotion: true, 
+      isPromotion: true,
     }));
   };
 
@@ -101,7 +101,7 @@ export function ProductPromotions({
                   "cursor-pointer border-2 rounded-xl p-4 transition-all hover:bg-accent hover:border-primary/50 relative overflow-hidden group",
                   formData.promotionRuleId === rule.id
                     ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                    : "border-border bg-card",
+                    : "border-border dark:bg-gray-800",
                 )}
               >
                 <RadioGroupItem

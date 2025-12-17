@@ -24,7 +24,7 @@ const CartItemCard = ({
     <Card className="border border-border">
       <CardContent className="p-4">
         <div className="flex gap-4">
-          {/* Product image */}
+          {}
           <div className="relative w-24 h-24 md:w-32 md:h-32 bg-muted rounded-lg overflow-hidden flex-shrink-0">
             {item.image ? (
               <Image
@@ -41,7 +41,7 @@ const CartItemCard = ({
             )}
           </div>
 
-          {/* Product details */}
+          {}
           <div className="flex-1 flex flex-col justify-between min-w-0">
             <div>
               <h3 className="font-semibold text-foreground text-lg truncate">
@@ -67,7 +67,7 @@ const CartItemCard = ({
             </div>
 
             <div className="flex items-center justify-between mt-3">
-              {/* Quantity controls */}
+              {}
               <div className="flex items-center border border-border rounded-lg">
                 <button
                   onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
@@ -88,14 +88,14 @@ const CartItemCard = ({
                 </button>
               </div>
 
-              {/* Price */}
+              {}
               <p className="font-bold text-lg text-foreground">
                 {formatPrice(item.price * item.quantity)}
               </p>
             </div>
           </div>
 
-          {/* Remove button */}
+          {}
           <button
             onClick={() => onRemove(item.id)}
             className="p-2 text-muted-foreground hover:text-destructive transition-colors self-start"
@@ -114,7 +114,7 @@ export default function CartPage() {
     useCartStore();
 
   const subtotal = getSubtotal();
-  const shipping = subtotal > 50 * 4500 ? 0 : 15000; // Free shipping over 50€ (~225000 MGA)
+  const shipping = subtotal > 50 * 4500 ? 0 : 15000; 
   const total = subtotal + shipping;
 
   if (items.length === 0) {
@@ -144,7 +144,7 @@ export default function CartPage() {
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 py-8">
-      {/* Header */}
+      {}
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/shop"
@@ -161,7 +161,7 @@ export default function CartPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Cart items */}
+        {}
         <div className="lg:col-span-2 space-y-4">
           {items.map(item => (
             <CartItemCard
@@ -172,7 +172,7 @@ export default function CartPage() {
             />
           ))}
 
-          {/* Clear cart button */}
+          {}
           <div className="flex justify-end">
             <Button
               variant="ghost"
@@ -185,7 +185,7 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Order summary */}
+        {}
         <div className="lg:col-span-1">
           <Card className="sticky top-24">
             <CardContent className="p-6">
@@ -193,7 +193,7 @@ export default function CartPage() {
                 Résumé de la commande
               </h2>
 
-              {/* Promo code */}
+              {}
               <div className="mb-6">
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Code promo
@@ -204,7 +204,7 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* Totals */}
+              {}
               <div className="space-y-3 border-t border-border pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Sous-total</span>
@@ -235,12 +235,12 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* Checkout button */}
+              {}
               <Button asChild className="w-full mt-6" size="lg">
                 <Link href="/checkout">Passer la commande</Link>
               </Button>
 
-              {/* Continue shopping */}
+              {}
               <Button asChild variant="ghost" className="w-full mt-2">
                 <Link href="/shop">Continuer mes achats</Link>
               </Button>

@@ -67,9 +67,9 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
     },
   ];
 
-  // Simple sparkline SVG
+  
   const Sparkline = ({ color, trend }: { color: string; trend: number }) => {
-    // Generate random-ish but consistent sparkline based on trend
+    
     const points =
       trend > 0
         ? "0,20 10,18 20,15 30,17 40,12 50,14 60,8 70,10 80,5"
@@ -100,7 +100,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
             key={index}
             className="relative overflow-hidden border-none shadow-sm bg-gray-100 dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50 py-6"
           >
-            {/* Background gradient */}
+            {}
             <div
               className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.06] dark:opacity-[0.10] blur-2xl rounded-bl-full -mr-5 -mt-5 transition-transform group-hover:scale-105`}
             />

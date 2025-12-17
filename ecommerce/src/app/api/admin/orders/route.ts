@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    // Build where clause
+    
     const where: Record<string, unknown> = {};
 
     if (status && status !== "all") {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Get orders with pagination
+    
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
         where,
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       prisma.order.count({ where }),
     ]);
 
-    // Get counts for tabs
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       prisma.order.count({ where: { createdAt: { gte: today } } }),
     ]);
 
-    // Format orders for response
+    
     const formattedOrders = orders.map(order => ({
       id: order.id,
       reference: order.reference,
