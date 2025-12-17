@@ -99,7 +99,7 @@ export default function CategoryList({
       const matchesDateTo =
         !dateTo || (createdAt && createdAt <= new Date(dateTo + "T23:59:59"));
 
-      // Product count filter
+      
       const productCount = category._count?.products || 0;
       const matchesMinProducts =
         !minProducts || productCount >= parseInt(minProducts);
@@ -116,7 +116,7 @@ export default function CategoryList({
     });
   }, [categories, searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
 
-  // Reset page when filters change
+  
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
@@ -237,7 +237,7 @@ export default function CategoryList({
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm overflow-hidden">
-      {/* Header with Search and Filters */}
+      {}
       <div className="px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -249,7 +249,7 @@ export default function CategoryList({
           </span>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Search Input */}
+          {}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -268,7 +268,7 @@ export default function CategoryList({
             )}
           </div>
 
-          {/* Date Picker Popover */}
+          {}
           <Popover>
             <PopoverTrigger asChild>
               <button
@@ -326,7 +326,7 @@ export default function CategoryList({
             </PopoverContent>
           </Popover>
 
-          {/* Filter Popover */}
+          {}
           <Popover>
             <PopoverTrigger asChild>
               <button

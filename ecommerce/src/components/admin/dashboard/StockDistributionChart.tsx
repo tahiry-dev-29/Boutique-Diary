@@ -20,21 +20,21 @@ interface StockDistributionProps {
 const StockDistributionChart: React.FC<StockDistributionProps> = ({
   data = [],
 }) => {
-  // Use stock if available, otherwise fallback (though should be available)
+  
   const processedData = data
     .map(item => ({
       name: item.name,
       stock: item.stock || 0,
     }))
-    .sort((a, b) => b.stock - a.stock); // Sort desc
+    .sort((a, b) => b.stock - a.stock); 
 
   const COLORS = [
-    "#3b82f6", // blue
-    "#10b981", // emerald
-    "#8b5cf6", // violet
-    "#f59e0b", // amber
-    "#ec4899", // pink
-    "#06b6d4", // cyan
+    "#3b82f6", 
+    "#10b981", 
+    "#8b5cf6", 
+    "#f59e0b", 
+    "#ec4899", 
+    "#06b6d4", 
   ];
 
   return (

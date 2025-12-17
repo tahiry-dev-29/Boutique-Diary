@@ -44,15 +44,13 @@ export function ProductFilters({
   const categories = Array.from(
     new Set(
       products
-        .map((p) => p.category?.name)
+        .map(p => p.category?.name)
         .filter((c): c is string => Boolean(c)),
     ),
   ).sort();
 
   const brands = Array.from(
-    new Set(
-      products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
-    ),
+    new Set(products.map(p => p.brand).filter((b): b is string => Boolean(b))),
   ).sort();
 
   const updateFilter = <K extends keyof ProductFiltersState>(
@@ -82,7 +80,7 @@ export function ProductFilters({
 
   return (
     <div className="w-full md:w-64 shrink-0 space-y-6">
-      <div className="bg-background p-4 rounded-lg border shadow-sm space-y-6">
+      <div className="dark:bg-gray-900/50 p-4 rounded-lg border shadow-sm space-y-6">
         <h3 className="font-semibold flex items-center">
           <Filter className="w-4 h-4 mr-2" />
           Filtres
@@ -98,7 +96,7 @@ export function ProductFilters({
                 type="text"
                 placeholder="Nom ou référence..."
                 value={filters.searchTerm}
-                onChange={(e) => updateFilter("searchTerm", e.target.value)}
+                onChange={e => updateFilter("searchTerm", e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -109,14 +107,14 @@ export function ProductFilters({
             <Label>Catégorie</Label>
             <Select
               value={filters.selectedCategory}
-              onValueChange={(value) => updateFilter("selectedCategory", value)}
+              onValueChange={value => updateFilter("selectedCategory", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Toutes" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les catégories</SelectItem>
-                {categories.map((category) => (
+                {categories.map(category => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
@@ -133,13 +131,13 @@ export function ProductFilters({
                 type="number"
                 placeholder="Min"
                 value={filters.minPrice}
-                onChange={(e) => updateFilter("minPrice", e.target.value)}
+                onChange={e => updateFilter("minPrice", e.target.value)}
               />
               <Input
                 type="number"
                 placeholder="Max"
                 value={filters.maxPrice}
-                onChange={(e) => updateFilter("maxPrice", e.target.value)}
+                onChange={e => updateFilter("maxPrice", e.target.value)}
               />
             </div>
           </div>
@@ -149,14 +147,14 @@ export function ProductFilters({
             <Label>Marque</Label>
             <Select
               value={filters.selectedBrand}
-              onValueChange={(value) => updateFilter("selectedBrand", value)}
+              onValueChange={value => updateFilter("selectedBrand", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Toutes" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les marques</SelectItem>
-                {brands.map((brand) => (
+                {brands.map(brand => (
                   <SelectItem key={brand} value={brand}>
                     {brand}
                   </SelectItem>
@@ -170,14 +168,14 @@ export function ProductFilters({
             <Label>Couleur</Label>
             <Select
               value={filters.selectedColor}
-              onValueChange={(value) => updateFilter("selectedColor", value)}
+              onValueChange={value => updateFilter("selectedColor", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Toutes" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les couleurs</SelectItem>
-                {AVAILABLE_COLORS.map((color) => (
+                {AVAILABLE_COLORS.map(color => (
                   <SelectItem key={color} value={color}>
                     {color}
                   </SelectItem>
@@ -191,14 +189,14 @@ export function ProductFilters({
             <Label>Taille</Label>
             <Select
               value={filters.selectedSize}
-              onValueChange={(value) => updateFilter("selectedSize", value)}
+              onValueChange={value => updateFilter("selectedSize", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Toutes" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les tailles</SelectItem>
-                {AVAILABLE_SIZES.map((size) => (
+                {AVAILABLE_SIZES.map(size => (
                   <SelectItem key={size} value={size}>
                     {size}
                   </SelectItem>
@@ -212,7 +210,7 @@ export function ProductFilters({
             <Label>Disponibilité</Label>
             <Select
               value={filters.availability}
-              onValueChange={(value) => updateFilter("availability", value)}
+              onValueChange={value => updateFilter("availability", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Tous" />
@@ -259,7 +257,7 @@ export function filterProducts(
   products: Product[],
   filters: ProductFiltersState,
 ): Product[] {
-  return products.filter((product) => {
+  return products.filter(product => {
     const searchLower = filters.searchTerm.toLowerCase();
     const matchesSearch =
       product.name.toLowerCase().includes(searchLower) ||

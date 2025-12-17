@@ -9,7 +9,7 @@ export async function GET() {
   }
 
   try {
-    // 1. Fetch total sales (DELIVERED or COMPLETED orders)
+    
     const paidOrders = await prisma.order.findMany({
       where: {
         status: {
@@ -29,10 +29,10 @@ export async function GET() {
     const totalOrders = paidOrders.length;
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-    // 2. Fetch all orders count (including pending) for conversion rate context if needed
+    
     const allOrdersCount = await prisma.order.count();
 
-    // 3. Group by date for chart (Last 30 days)
+    
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -40,7 +40,7 @@ export async function GET() {
       order => new Date(order.createdAt) >= thirtyDaysAgo,
     );
 
-    // Group by day: "DD/MM"
+    
     const salesByDate: Record<string, { revenue: number; orders: number }> = {};
     recentOrders.forEach(order => {
       const date = new Date(order.createdAt);

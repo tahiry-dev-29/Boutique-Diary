@@ -79,7 +79,7 @@ export default function EditEmployeePage() {
     }
   };
 
-  // ... handleChange and handleSubmit omitted for brevity as they don't change ...
+  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -146,17 +146,17 @@ export default function EditEmployeePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <PageHeader
         title="Modifier un employé"
         description="Modifier les informations et les accès"
         backHref="/admin/employees"
       />
 
-      {/* Form */}
+      {}
       <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Status Toggle */}
+          {}
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
             <div>
               <h3 className="font-medium text-gray-900 dark:text-white">
@@ -180,9 +180,9 @@ export default function EditEmployeePage() {
             </label>
           </div>
 
-          {/* Grid layout */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Name */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Nom complet *
@@ -203,7 +203,7 @@ export default function EditEmployeePage() {
               </div>
             </div>
 
-            {/* Email */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Email *
@@ -224,7 +224,7 @@ export default function EditEmployeePage() {
               </div>
             </div>
 
-            {/* Role */}
+            {}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Rôle *
@@ -259,7 +259,7 @@ export default function EditEmployeePage() {
               </p>
             </div>
 
-            {/* Password */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Nouveau mot de passe
@@ -287,7 +287,7 @@ export default function EditEmployeePage() {
               </div>
             </div>
 
-            {/* Confirm password */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Confirmer le mot de passe
@@ -309,7 +309,7 @@ export default function EditEmployeePage() {
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Link
               href="/admin/employees"

@@ -1,7 +1,7 @@
 export interface CustomerMetric {
   totalCustomers: number;
-  newCustomers: number; // Last 30 days
-  activeCustomers: number; // Ordered in last 30 days - Simplified: User.isActive
+  newCustomers: number; 
+  activeCustomers: number; 
 }
 
 export interface TopCustomer {

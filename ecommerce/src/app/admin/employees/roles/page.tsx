@@ -117,11 +117,11 @@ export default function RolesPage() {
       const response = await fetch("/api/settings?key=admin_roles");
       if (response.ok) {
         const data = await response.json();
-        // If roles exist in DB, parse/use them
+        
         if (data && data.value) {
           try {
             const parsedRoles = JSON.parse(data.value);
-            // Ensure superadmin is never editable and has all permissions
+            
             const securedRoles = parsedRoles.map((r: Role) =>
               r.id === "superadmin"
                 ? {
@@ -162,7 +162,7 @@ export default function RolesPage() {
     } catch (error) {
       console.error("Error saving roles:", error);
       toast.error("Erreur lors de la sauvegarde");
-      // Revert changes on error?
+      
     } finally {
       setSaving(false);
     }
@@ -189,7 +189,7 @@ export default function RolesPage() {
     setEditingRole(null);
     setEditedPermissions([]);
 
-    // Persist to DB
+    
     await saveRolesConfig(updatedRoles);
   };
 
@@ -211,14 +211,14 @@ export default function RolesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <PageHeader
         title="Gestion des rôles"
         description="Configurez les permissions pour chaque rôle"
         backHref="/admin/employees"
       />
 
-      {/* Roles grid */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {roles.map(role => {
           const isEditing = editingRole === role.id;
@@ -235,7 +235,7 @@ export default function RolesPage() {
                   : "border-gray-200 dark:border-gray-700"
               }`}
             >
-              {/* Role header */}
+              {}
               <div className="p-4 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span
@@ -284,14 +284,14 @@ export default function RolesPage() {
                 )}
               </div>
 
-              {/* Description */}
+              {}
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {role.description}
                 </p>
               </div>
 
-              {/* Permissions */}
+              {}
               <div className="p-4 space-y-2 max-h-[300px] overflow-y-auto">
                 {allPermissions.map(perm => {
                   const hasPermission = currentPermissions.includes(perm.id);
@@ -330,7 +330,7 @@ export default function RolesPage() {
                 })}
               </div>
 
-              {/* Stats */}
+              {}
               <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   {currentPermissions.length} / {allPermissions.length}{" "}
@@ -342,7 +342,7 @@ export default function RolesPage() {
         })}
       </div>
 
-      {/* Info box */}
+      {}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
         <div className="flex items-start gap-3">
           <Shield

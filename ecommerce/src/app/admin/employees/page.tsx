@@ -63,7 +63,7 @@ export default function EmployeesPage() {
   const isOnline = (lastSeen?: string) => {
     if (!lastSeen) return false;
     const diff = new Date().getTime() - new Date(lastSeen).getTime();
-    return diff < 5 * 60 * 1000; // 5 minutes threshold
+    return diff < 5 * 60 * 1000; 
   };
 
   const filteredEmployees = employees.filter(emp => {
@@ -115,9 +115,9 @@ export default function EmployeesPage() {
         </Link>
       </PageHeader>
 
-      {/* Filters */}
+      {}
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* Search */}
+        {}
         <div className="relative flex-1">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
@@ -132,7 +132,7 @@ export default function EmployeesPage() {
           />
         </div>
 
-        {/* Role filter */}
+        {}
         <select
           value={selectedRole}
           onChange={e => setSelectedRole(e.target.value)}
@@ -144,7 +144,7 @@ export default function EmployeesPage() {
         </select>
       </div>
 
-      {/* Employees table */}
+      {}
       <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -261,7 +261,7 @@ export default function EmployeesPage() {
         )}
       </div>
 
-      {/* Quick links */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/admin/employees/roles"

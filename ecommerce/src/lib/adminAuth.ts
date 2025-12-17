@@ -24,7 +24,7 @@ export async function verifyAdminToken(): Promise<AdminPayload | null> {
 
     const { payload } = await jwtVerify(token, JWT_SECRET);
 
-    // Ensure payload has adminId (handle legacy tokens)
+    
     if (!payload.adminId) {
       return null;
     }

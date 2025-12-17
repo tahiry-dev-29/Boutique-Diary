@@ -39,6 +39,7 @@ export default function ProductsPage() {
         onEdit={handleEdit}
         onView={handleView}
         refreshTrigger={refreshTrigger}
+        status="PUBLISHED"
       />
     </div>
   );

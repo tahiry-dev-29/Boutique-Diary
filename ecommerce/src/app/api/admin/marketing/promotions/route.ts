@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { checkApiPermission } from "@/lib/backend-permissions";
 import { z } from "zod";
 
-// Helper to validate JSON schema if needed, for now allowing any object
+
 const jsonSchema = z.any();
 
 const promotionRuleSchema = z.object({
   name: z.string().min(3).max(255),
   priority: z.number().int().default(0),
-  conditions: jsonSchema, // Flexible JSON
-  actions: jsonSchema, // Flexible JSON
+  conditions: jsonSchema, 
+  actions: jsonSchema, 
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
@@ -23,7 +23,7 @@ export async function GET() {
   try {
     const rules = await prisma.promotionRule.findMany({
       orderBy: [
-        { priority: "desc" }, // High priority first
+        { priority: "desc" }, 
         { createdAt: "desc" },
       ],
     });

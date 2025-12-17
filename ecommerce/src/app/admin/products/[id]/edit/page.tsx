@@ -28,6 +28,8 @@ export default async function EditProductPage({
         },
       },
       category: true,
+      variations: true,
+      promotionRule: true,
     },
   });
 
@@ -35,14 +37,13 @@ export default async function EditProductPage({
     notFound();
   }
 
-  // Transform Prisma result to Admin Product type
-
+  
   const serializedProduct: Product = {
     id: product.id,
     name: product.name,
     description: product.description,
     reference: product.reference,
-    price: product.price, // Float in schema, number in type
+    price: product.price,
     stock: product.stock,
     categoryId: product.categoryId,
     brand: product.brand,
@@ -52,21 +53,32 @@ export default async function EditProductPage({
     isPromotion: product.isPromotion,
     oldPrice: product.oldPrice,
     isBestSeller: product.isBestSeller,
-    // Map Prisma images to ProductImage type
+    
     images: product.images.map(img => ({
       url: img.url,
       color: img.color,
       sizes: img.sizes,
       price: img.price ?? null,
-      oldPrice: img.oldPrice ?? null,
-      stock: img.stock ?? 0,
       reference: img.reference || "",
       isNew: img.isNew,
       isPromotion: img.isPromotion,
+      promotionRuleId: (img as any).promotionRuleId,
       categoryId: img.categoryId,
+      isBestSeller: (img as any).isBestSeller,
     })),
-    createdAt: product.createdAt.toISOString(),
-    updatedAt: product.updatedAt.toISOString(),
+    // Map variations
+    variations: product.variations.map(v => ({
+      id: v.id,
+      sku: v.sku,
+      price: Number(v.price),
+      oldPrice: v.oldPrice ? Number(v.oldPrice) : null,
+      stock: v.stock,
+      color: v.color || undefined,
+      size: v.size || undefined,
+      isActive: v.isActive,
+      promotionRuleId: v.promotionRuleId,
+    })),
+    promotionRuleId: product.promotionRuleId,
   };
 
   // Fetch categories for the form
@@ -76,9 +88,7 @@ export default async function EditProductPage({
 
   return (
     <div className="space-y-6">
-      <ProductFormWrapper product={serializedProduct} categories={categories} />
+      <ProductForm product={serializedProduct} categories={categories} />
     </div>
   );
 }
-
-import ProductFormWrapper from "./ProductFormWrapper";

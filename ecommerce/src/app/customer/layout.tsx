@@ -11,8 +11,8 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top bar */}
+    <div className="min-h-screen dark:bg-gray-900/50">
+      {}
       <header className="dark:border-gray-700/50 border-b border-border px-4 py-3">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -30,7 +30,7 @@ export default function CustomerLayout({
         </div>
       </header>
 
-      {/* Main content */}
+      {}
       <div className="flex">
         <CustomerSidebar />
         <main className="flex-1 p-6 md:p-8">{children}</main>

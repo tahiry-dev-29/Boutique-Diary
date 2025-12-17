@@ -12,10 +12,10 @@ export function CustomerMetricsCards({
   metrics,
   recentSignups = [],
 }: CustomerMetricsCardsProps) {
-  // Use recentSignups for New Customers chart
+  
   const newCustomersChartData = recentSignups.map(d => ({ value: d.count }));
 
-  // No history for Total/Active customers yet
+  
   const customersChartData: any[] = [];
   const activeChartData: any[] = [];
 

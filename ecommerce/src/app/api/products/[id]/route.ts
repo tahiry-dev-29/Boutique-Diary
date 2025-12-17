@@ -19,6 +19,9 @@ export async function GET(
       where: { id },
       include: {
         images: true,
+        variations: true,
+        category: true,
+        promotionRule: true,
       },
     });
 
@@ -56,127 +59,167 @@ export async function PUT(
     const {
       name,
       description,
-      reference,
-      images,
-      price,
-      stock,
-      categoryId,
       brand,
-      colors,
-      sizes,
-      isNew,
-      isPromotion,
+      images,
+      variations,
 
-      oldPrice,
+      reference: initialReference,
+
+      isNew,
       isBestSeller,
+      isPromotion,
+      promotionRuleId,
+      oldPrice: initialOldPrice,
+      status,
+      deletedAt,
     } = body;
 
-    interface ProductImage {
-      url: string;
-      reference?: string;
-      color?: string | null;
-      sizes?: string[];
-      price?: number | null;
-      oldPrice?: number | null;
-      stock?: number | null;
-      isNew?: boolean;
-      isPromotion?: boolean;
-      categoryId?: number | null;
+    const validVariations = Array.isArray(variations) ? variations : [];
+    const validImages = Array.isArray(images) ? images : [];
+
+    let globalPrice = 0;
+    if (validVariations.length > 0) {
+      const prices = validVariations.map((v: any) => parseFloat(v.price) || 0);
+      globalPrice = Math.min(...prices);
     }
 
-    if (price !== undefined && parseFloat(price) < 0) {
-      return NextResponse.json(
-        { error: "Price cannot be negative" },
-        { status: 400 },
-      );
+    let globalStock = 0;
+    if (validVariations.length > 0) {
+      globalStock = parseInt(validVariations[0].stock) || 0;
     }
-    if (stock !== undefined && parseInt(stock) < 0) {
-      return NextResponse.json(
-        { error: "Stock cannot be negative" },
-        { status: 400 },
-      );
+
+    let globalCategoryId: number | null = null;
+    if (validImages.length > 0) {
+      const firstCatImg = validImages.find((img: any) => img.categoryId);
+      if (firstCatImg) {
+        globalCategoryId = parseInt(firstCatImg.categoryId);
+      }
     }
+
+    const globalColors = new Set<string>();
+    const globalSizes = new Set<string>();
+
+    validVariations.forEach((v: any) => {
+      if (v.color) globalColors.add(v.color);
+      if (v.size) globalSizes.add(v.size);
+    });
+
+    validImages.forEach((img: any) => {
+      if (img.color) globalColors.add(img.color);
+      if (Array.isArray(img.sizes)) {
+        img.sizes.forEach((s: string) => globalSizes.add(s));
+      }
+    });
 
     const existingProduct = await prisma.product.findUnique({
       where: { id },
       select: { reference: true },
     });
+    const productRef =
+      initialReference || existingProduct?.reference || "PRD-UNKNOWN";
 
     const product = await prisma.product.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
-        ...(reference !== undefined && { reference }),
-        ...(price !== undefined && { price: parseFloat(price) }),
-        ...(stock !== undefined && { stock: parseInt(stock) }),
-        ...(categoryId !== undefined && {
-          category: categoryId
-            ? { connect: { id: categoryId } }
+        ...(initialReference !== undefined && { reference: initialReference }),
+
+        
+        ...(variations !== undefined && {
+          price: globalPrice,
+          stock: globalStock,
+          colors: Array.from(globalColors),
+          sizes: Array.from(globalSizes),
+        }),
+
+        ...(brand !== undefined && { brand }),
+        ...(isNew !== undefined && { isNew }),
+        ...(isBestSeller !== undefined && { isBestSeller }),
+        ...(isPromotion !== undefined && { isPromotion }),
+        ...(promotionRuleId !== undefined && {
+          promotionRule: promotionRuleId
+            ? { connect: { id: parseInt(String(promotionRuleId)) } }
             : { disconnect: true },
         }),
-        ...(brand !== undefined && { brand }),
-        ...(colors !== undefined && { colors }),
-        ...(sizes !== undefined && { sizes }),
-        ...(isNew !== undefined && { isNew }),
-        ...(isPromotion !== undefined && { isPromotion }),
-        ...(oldPrice !== undefined && {
-          oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+        ...(initialOldPrice !== undefined && {
+          oldPrice: initialOldPrice ? parseFloat(initialOldPrice) : null,
         }),
-        ...(isBestSeller !== undefined && { isBestSeller }),
+        ...(status !== undefined && { status }),
+        ...(deletedAt !== undefined && { deletedAt }),
+
+        
+        ...(images !== undefined && globalCategoryId
+          ? { category: { connect: { id: globalCategoryId } } }
+          : body.categoryId !== undefined
+            ? body.categoryId
+              ? { category: { connect: { id: parseInt(body.categoryId) } } }
+              : { category: { disconnect: true } }
+            : {}),
+
         ...(images !== undefined && {
           images: {
             deleteMany: {},
+            create: (images || []).map((img: string | any, index: number) => {
+              const imgColor = typeof img === "string" ? null : img.color;
+              const colorAbbrev = imgColor
+                ? imgColor.toLowerCase().slice(0, 3)
+                : `img${index + 1}`;
+              const autoReference = `${productRef}-${colorAbbrev}`;
 
-            create: (images || []).map(
-              (img: string | ProductImage, index: number) => {
-                const imgColor = typeof img === "string" ? null : img.color;
+              return {
+                url: typeof img === "string" ? img : img.url,
+                reference:
+                  typeof img === "string"
+                    ? autoReference
+                    : img.reference || autoReference,
+                color: imgColor ?? null,
+                sizes: typeof img === "string" ? [] : (img.sizes ?? []),
 
-                const productRef =
-                  reference || existingProduct?.reference || "";
-                const colorAbbrev = imgColor
-                  ? imgColor.toLowerCase().slice(0, 3)
-                  : `img${index + 1}`;
-                const autoReference = `${productRef}-${colorAbbrev}`;
+                isNew: typeof img === "string" ? false : (img.isNew ?? false),
+                isBestSeller:
+                  typeof img === "string" ? false : (img.isBestSeller ?? false),
+                isPromotion:
+                  typeof img === "string" ? false : (img.isPromotion ?? false),
+                promotionRuleId:
+                  typeof img === "string"
+                    ? null
+                    : img.promotionRuleId
+                      ? parseInt(String(img.promotionRuleId))
+                      : null,
+                categoryId:
+                  typeof img === "string"
+                    ? null
+                    : img.categoryId
+                      ? parseInt(img.categoryId)
+                      : null,
+              };
+            }),
+          },
+        }),
 
-                return {
-                  url: typeof img === "string" ? img : img.url,
-                  reference:
-                    typeof img === "string"
-                      ? autoReference
-                      : img.reference || autoReference,
-                  color: imgColor ?? null,
-                  sizes: typeof img === "string" ? [] : (img.sizes ?? []),
-                  price:
-                    typeof img === "string"
-                      ? null
-                      : img.price !== undefined && img.price !== null
-                        ? parseFloat(String(img.price))
-                        : null,
-                  oldPrice:
-                    typeof img === "string"
-                      ? null
-                      : img.oldPrice !== undefined && img.oldPrice !== null
-                        ? parseFloat(String(img.oldPrice))
-                        : null,
-                  stock:
-                    typeof img === "string"
-                      ? null
-                      : img.stock !== undefined &&
-                          img.stock !== null
-                        ? img.stock
-                        : null,
-                  isNew: typeof img === "string" ? false : img.isNew ?? false,
-                  isPromotion: typeof img === "string" ? false : img.isPromotion ?? false,
-                  categoryId: typeof img === "string" ? null : img.categoryId ?? null,
-                };
-              },
-            ),
+        ...(variations !== undefined && {
+          variations: {
+            deleteMany: {},
+            create: (variations || []).map((v: any) => ({
+              sku: v.sku,
+              price: parseFloat(v.price) || 0,
+              oldPrice: v.oldPrice ? parseFloat(v.oldPrice) : null,
+              stock: parseInt(v.stock) || 0,
+              color: v.color || null,
+              size: v.size || null,
+              isActive: v.isActive ?? true,
+              promotionRuleId: v.promotionRuleId
+                ? parseInt(v.promotionRuleId)
+                : null,
+            })),
           },
         }),
       },
       include: {
         images: true,
+        variations: true,
+        category: true,
       },
     });
 
@@ -223,9 +266,21 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    await prisma.product.delete({
-      where: { id },
-    });
+    const { searchParams } = new URL(request.url);
+    const permanent = searchParams.get("permanent");
+
+    if (permanent === "true") {
+      await prisma.product.delete({
+        where: { id },
+      });
+      return NextResponse.json({ message: "Product permanently deleted" });
+    } else {
+      await prisma.product.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+      return NextResponse.json({ message: "Product moved to trash" });
+    }
 
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error: unknown) {

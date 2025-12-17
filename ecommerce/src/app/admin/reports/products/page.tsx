@@ -43,13 +43,13 @@ export default function ProductsReportsPage() {
   const totalProducts = data?.totalProducts || 0;
   const totalValue = data?.totalValue || 0;
 
-  // Calculate percentage out of stock
+  
   const outOfStockCount =
     stockDistribution.find(d => d.status === "Out of Stock")?.count || 0;
   const outOfStockPercent =
     totalProducts > 0 ? Math.round((outOfStockCount / totalProducts) * 100) : 0;
 
-  // No sparkline data available from API yet for products history
+  
   const productsChartData: any[] = [];
   const valueChartData: any[] = [];
   const stockChartData: any[] = [];
@@ -61,7 +61,7 @@ export default function ProductsReportsPage() {
         description="Analysez les performances des produits et l'état des stocks."
       />
 
-      {/* Top Metrics */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <KpiCard
           title="Total Produits"
@@ -97,7 +97,7 @@ export default function ProductsReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Stock Chart */}
+        {}
         <Card className="border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
             <CardTitle>Distribution du Stock</CardTitle>
@@ -110,7 +110,7 @@ export default function ProductsReportsPage() {
           </CardContent>
         </Card>
 
-        {/* Top Selling Table */}
+        {}
         <Card className="border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
             <CardTitle>Top 5 Meilleures Ventes</CardTitle>

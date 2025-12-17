@@ -18,13 +18,12 @@ export default function AdminLayout({
     setIsSidebarExpanded(prev => !prev);
   };
 
-  // Login page should be standalone without sidebar/header
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex min-h-screen bg-gray-50 dark:dark:bg-gray-800">
       <Sidebar
         isExpanded={isSidebarExpanded}
         setIsExpanded={setIsSidebarExpanded}

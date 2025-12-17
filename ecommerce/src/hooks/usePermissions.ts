@@ -6,7 +6,7 @@ import { RoleConfig, DEFAULT_ROLES } from "@/lib/permissions-config";
 interface UserProfile {
   id: number;
   username: string;
-  email: string; // "name" in admin payload, but mapped
+  email: string; 
   role: string;
 }
 
@@ -21,7 +21,7 @@ export function usePermissions() {
 
   const fetchPermissions = async () => {
     try {
-      // 1. Get current user info to know their role
+      
       const authRes = await fetch("/api/admin/auth/me");
       if (!authRes.ok) {
         setLoading(false);
@@ -30,7 +30,7 @@ export function usePermissions() {
       const user = await authRes.json();
       setUserRole(user.role);
 
-      // Superadmin check
+      
       if (user.role === "superadmin" || user.role === "SUPERADMIN") {
         const superAdminPerms = DEFAULT_ROLES.find(r => r.id === "superadmin")?.permissions;
         setPermissions(superAdminPerms || []);
@@ -38,7 +38,7 @@ export function usePermissions() {
         return;
       }
 
-      // 2. Get dynamic roles config
+      
       const settingsRes = await fetch("/api/settings?key=admin_roles");
       let rolePermissions: string[] = [];
       
@@ -57,7 +57,7 @@ export function usePermissions() {
         }
       }
 
-      // 3. Fallback to defaults if not found in DB
+      
       if (rolePermissions.length === 0) {
         const defaultRole = DEFAULT_ROLES.find(r => r.name.toLowerCase() === user.role.toLowerCase());
         if (defaultRole) {

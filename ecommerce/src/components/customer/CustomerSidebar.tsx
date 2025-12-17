@@ -46,7 +46,7 @@ export default function CustomerSidebar() {
 
   return (
     <aside className="w-64 dark:border-gray-700/50 border-r border-border h-full min-h-screen p-4">
-      {/* User info */}
+      {}
       <div className="mb-6 p-4 bg-muted rounded-xl">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg">
@@ -59,7 +59,7 @@ export default function CustomerSidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
+      {}
       <nav className="space-y-1">
         {navItems.map(item => {
           const isActive = pathname === item.href;
@@ -86,7 +86,7 @@ export default function CustomerSidebar() {
         })}
       </nav>
 
-      {/* Logout */}
+      {}
       <div className="mt-8 pt-6 border-t border-border">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors text-sm font-medium">
           <LogOut size={18} />
