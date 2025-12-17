@@ -184,6 +184,8 @@ async function main() {
     await prisma.product.deleteMany();
     await prisma.promoCode.deleteMany();
     await prisma.promotionRule.deleteMany();
+    await prisma.paymentTransaction.deleteMany();
+    await prisma.paymentMethod.deleteMany();
     await prisma.category.deleteMany();
     await prisma.user.deleteMany(); // Delete ALL users
     console.log("✅ Database cleaned.\n");
@@ -540,16 +542,85 @@ async function main() {
         reference: `${createdAt.getFullYear()}${(createdAt.getMonth() + 1).toString().padStart(2, "0")}${createdAt.getDate().toString().padStart(2, "0")}-${(1000 + i).toString()}`,
         total: parseFloat(total.toFixed(2)),
         status,
-        customerId: customer.id,
+        customer: { connect: { id: customer.id } },
         createdAt,
         updatedAt: createdAt,
         items: {
           create: orderItemsData,
         },
+        transactions: {
+          create:
+            Math.random() > 0.2
+              ? [
+                  {
+                    amount: parseFloat(total.toFixed(2)),
+                    currency: "MGA",
+                    provider: random(["mvola", "stripe", "cash"]),
+                    reference:
+                      Math.random() > 0.5
+                        ? `TXN-${Math.floor(Math.random() * 1000000)}`
+                        : null,
+                    status:
+                      status === "PENDING"
+                        ? "PENDING"
+                        : status === "CANCELLED"
+                          ? "FAILED"
+                          : "SUCCESS",
+                  },
+                ]
+              : [],
+        },
       },
     });
   }
-  console.log("✅ Created 150 orders with items.\n");
+  console.log("✅ Created 150 orders with items and transactions.\n");
+
+  // Create Payment Methods
+  console.log("💳 Creating payment methods...");
+  const paymentMethods = [
+    {
+      code: "mvola",
+      name: "MVola",
+      description: "Paiement mobile via Telma MVola",
+      isActive: true,
+      logoUrl: "/icons/mvola.png",
+      config: {
+        merchantName: "Boutique Diary",
+        merchantNumber: "0340000000",
+      },
+    },
+    {
+      code: "orange_money",
+      name: "Orange Money",
+      description: "Paiement mobile via Orange Money",
+      isActive: false,
+      logoUrl: "/icons/orange_money.png",
+    },
+    {
+      code: "stripe",
+      name: "Carte Bancaire (Stripe)",
+      description: "Paiement sécurisé par carte bancaire",
+      isActive: true,
+      isDefault: true,
+      logoUrl: "/icons/stripe.png",
+    },
+    {
+      code: "cash",
+      name: "Paiement à la livraison",
+      description: "Payer en espèces à la réception",
+      isActive: true,
+      logoUrl: "/icons/cash.png",
+    },
+  ];
+
+  for (const method of paymentMethods) {
+    await prisma.paymentMethod.upsert({
+      where: { code: method.code },
+      update: {},
+      create: method,
+    });
+  }
+  console.log(`✅ Created ${paymentMethods.length} payment methods.\n`);
 
   // Create default admin in ADMIN table
   const existingAdmin = await prisma.admin.findUnique({

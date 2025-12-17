@@ -56,7 +56,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setCommandPaletteOpen((open) => !open);
+        setCommandPaletteOpen(open => !open);
       }
     };
 
@@ -74,25 +74,25 @@ export function Header({ onToggleSidebar }: HeaderProps) {
 
   return (
     <>
-      <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 sticky top-0 z-40">
+      <div className="border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-gray-900/40 backdrop-blur-xl sticky top-0 z-40 transition-colors duration-300">
         <div className="flex h-14 items-center px-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className="h-9 w-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            className="h-9 w-9 text-gray-400 hover:text-white hover:bg-white/5"
           >
             <PanelLeft className="h-5 w-5" />
           </Button>
-          <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-4" />
+          <div className="w-px h-6 bg-white/10 mx-4" />
           <Button
-            variant="outline"
-            className="w-full max-w-md justify-start text-sm text-muted-foreground"
+            variant="ghost"
+            className="w-full max-w-md justify-start text-sm text-gray-400 hover:bg-white/5 border border-white/10 hover:border-white/20 hover:text-white"
             onClick={() => setCommandPaletteOpen(true)}
           >
             <Search className="mr-2 h-4 w-4" />
-            Search...
-            <kbd className="pointer-events-none ml-auto h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
+            Rechercher...
+            <kbd className="pointer-events-none ml-auto h-5 select-none items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium opacity-100 text-gray-400">
               <span className="text-xs">⌘</span>K
             </kbd>
           </Button>
@@ -100,7 +100,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 relative"
+              className="h-9 w-9 text-gray-400 hover:text-white hover:bg-white/5 relative"
             >
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
@@ -109,7 +109,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               variant="ghost"
               size="icon"
               onClick={toggleColorMode}
-              className="h-9 w-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              className="h-9 w-9 text-gray-400 hover:text-white hover:bg-white/5"
             >
               {colorMode === "dark" ? (
                 <Moon className="h-5 w-5" />
@@ -122,7 +122,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  className="h-9 w-9 text-gray-400 hover:text-white hover:bg-white/5"
                 >
                   <Settings className="h-5 w-5" />
                 </Button>
@@ -132,7 +132,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
               </PopoverContent>
             </Popover>
             {loading ? (
-              <Skeleton className="h-8 w-8 rounded-full ml-2" />
+              <Skeleton className="h-8 w-8 rounded-full ml-2 bg-white/10" />
             ) : user ? (
               <div className="ml-2">
                 <UserNav user={user} />
@@ -141,7 +141,10 @@ export function Header({ onToggleSidebar }: HeaderProps) {
           </div>
         </div>
       </div>
-      <CommandPalette open={commandPaletteOpen} setOpen={setCommandPaletteOpen} />
+      <CommandPalette
+        open={commandPaletteOpen}
+        setOpen={setCommandPaletteOpen}
+      />
     </>
   );
 }

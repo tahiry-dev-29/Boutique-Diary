@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { generateInvoice } from "@/utils/invoice-generator";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 interface OrdersResponse {
   orders: Array<{
@@ -64,11 +65,9 @@ export default function OrdersPage() {
   });
   const [loading, setLoading] = useState(true);
 
-  
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<
     Order | OrderDetails | null
@@ -80,7 +79,6 @@ export default function OrdersPage() {
       const res = await fetch("/api/admin/orders?limit=200");
       const data: OrdersResponse = await res.json();
 
-      
       const formattedOrders: Order[] = data.orders.map(order => ({
         id: order.id,
         reference: order.reference,
@@ -96,7 +94,6 @@ export default function OrdersPage() {
       setOrders(formattedOrders);
       setCounts(data.counts);
 
-      
       setStats({
         totalOrdersToday: data.counts.today,
         completedOrders: data.counts.completed,
@@ -128,7 +125,6 @@ export default function OrdersPage() {
   }, [fetchOrders]);
 
   const handleViewDetails = (order: Order) => {
-    
     const panelStatus =
       order.status === "COMPLETED" ? "DELIVERED" : order.status;
 
@@ -139,7 +135,7 @@ export default function OrdersPage() {
       status: panelStatus as OrderDetails["status"],
       total: order.total,
       createdAt: order.createdAt,
-      items: [], 
+      items: [],
     };
     setSelectedOrder(orderDetails);
     setIsModalOpen(true);
@@ -154,7 +150,6 @@ export default function OrdersPage() {
     try {
       let orderToPrint = order as OrderDetails;
 
-      
       if (!orderToPrint.items) {
         toast.message(`Préparation de la facture #${order.reference}...`);
         const res = await fetch(`/api/admin/orders/${order.id}`);
@@ -187,13 +182,11 @@ export default function OrdersPage() {
     }
   };
 
-  
   const handleRequestCancel = (order: Order | OrderDetails) => {
     setOrderToCancel(order);
     setCancelDialogOpen(true);
   };
 
-  
   const handleConfirmCancel = async () => {
     if (!orderToCancel) return;
 
@@ -218,7 +211,7 @@ export default function OrdersPage() {
       handleCloseModal();
       setCancelDialogOpen(false);
       setOrderToCancel(null);
-      
+
       fetchOrders();
     } catch (error) {
       console.error("Failed to cancel order:", error);

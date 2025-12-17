@@ -347,7 +347,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
       </Modal>
 
       <div
-        className={`bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
+        className={`bg-white dark:bg-gray-900/40 backdrop-blur-xl border-r border-gray-200 dark:border-white/10 flex flex-col py-6 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
           isExpanded ? "w-64" : "w-20"
         }`}
       >
@@ -376,9 +376,9 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                   {section.title}
                 </h3>
               )}
-              {}
+              {/* Divider */}
               {!isExpanded && section.title && index > 0 && (
-                <div className="h-px bg-gray-200 dark:bg-gray-800 my-2 mx-2" />
+                <div className="h-px bg-gray-200 dark:bg-white/10 my-2 mx-2" />
               )}
 
               {section.items.map(item => {
@@ -518,8 +518,8 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           </div>
         )}
 
-        {}
-        <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-gray-800">
+        {/* USER PROFILE */}
+        <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-white/10">
           <div className="flex items-center justify-between">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
