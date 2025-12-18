@@ -8,7 +8,9 @@ export default function ClientLayout({
   return (
     <div className="min-h-screen flex flex-col dark:bg-gray-900/50">
       <ClientNavbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 animate-in fade-in duration-700 fill-mode-both">
+        {children}
+      </main>
 
       {}
       <footer className="dark:border-gray-700/50 border-t border-border py-8 px-4 mt-auto">

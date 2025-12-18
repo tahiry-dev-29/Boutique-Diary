@@ -119,6 +119,16 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
           );
         })}
       </div>
+
+      <div className="mt-12 flex justify-center">
+        <Link
+          href="/promotions"
+          className="group flex items-center gap-2 bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition-all hover:gap-4 shadow-lg hover:shadow-black/20"
+        >
+          Voir plus d'offres
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
     </section>
   );
 }

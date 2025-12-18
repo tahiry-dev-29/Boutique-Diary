@@ -255,6 +255,7 @@ export async function getStoreStats() {
         select: {
           id: true,
           username: true,
+          photo: true,
         },
         take: 4,
         orderBy: {

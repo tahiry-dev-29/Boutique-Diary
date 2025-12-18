@@ -1,37 +1,41 @@
-import StoreProductGrid from "@/components/store/StoreProductGrid";
+import StoreProductBanner from "@/components/store/StoreProductBanner";
+import StoreProductList from "@/components/store/StoreProductList";
 import StoreFooter from "@/components/store/StoreFooter";
-import { getProducts } from "@/lib/store-data";
+import { getProducts, getStoreStats, getCategories } from "@/lib/store-data";
 
 export default async function PromotionsPage() {
-  const products = await getProducts({ isPromotion: true });
+  const [products, stats, categories] = await Promise.all([
+    getProducts({ isPromotion: true }),
+    getStoreStats(),
+    getCategories(),
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="pt-8 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
-        <header className="mb-12 border-b border-gray-100 pb-12">
-          <div className="flex flex-col gap-4">
-            <span className="text-sm font-semibold uppercase tracking-widest text-rose-500 animate-in fade-in slide-in-from-left-4 duration-700">
-              Offres Spéciales
-            </span>
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl animate-in fade-in slide-in-from-left-4 duration-700 delay-100 fill-mode-both">
-              Nos Promotions
-            </h1>
-            <p className="max-w-3xl text-lg leading-relaxed text-gray-600 animate-in fade-in slide-in-from-left-4 duration-700 delay-200 fill-mode-both">
-              Profitez de tarifs exceptionnels sur une sélection d'articles. Des
-              offres limitées à ne pas manquer.
-            </p>
-          </div>
-        </header>
+      <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
+        <StoreProductBanner
+          title="Nos Promotions"
+          subtitle="Profitez de tarifs exceptionnels sur une sélection d'articles. Des offres limitées à ne pas manquer pour renouveler votre style."
+          badge="Offres Spéciales"
+          customerCount={stats.customerCount}
+          recentCustomers={stats.recentCustomers}
+          variant="rose"
+          enableTypewriter={true}
+        />
 
-        {products.length === 0 ? (
-          <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-[32px]">
-            <p className="text-gray-400 font-medium italic">
-              Aucune promotion en cours pour le moment.
+        <div className="mb-12 border-b border-gray-100 pb-12">
+          <div className="flex flex-col gap-4">
+            <h2 className="text-3xl font-black tracking-tight text-rose-600 border-l-4 border-rose-600 pl-4">
+              Ventes Privées & Promos
+            </h2>
+            <p className="max-w-3xl text-sm font-medium text-gray-500">
+              Découvrez des pièces uniques à prix réduits. Qualité premium, prix
+              accessibles.
             </p>
           </div>
-        ) : (
-          <StoreProductGrid products={products} />
-        )}
+        </div>
+
+        <StoreProductList initialProducts={products} categories={categories} />
       </div>
       <StoreFooter />
     </div>

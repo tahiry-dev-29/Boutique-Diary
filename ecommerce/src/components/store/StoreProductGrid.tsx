@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import ProductCard from "./ProductCard";
 
 interface Product {
@@ -90,6 +92,16 @@ export default function StoreProductGrid({
             ))}
           </div>
         )}
+
+        <div className="mt-16 flex justify-center">
+          <Link
+            href="/produits"
+            className="group flex items-center gap-2 bg-[#1a1a2e] text-white px-10 py-4 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:bg-black transition-all hover:scale-105 shadow-xl hover:shadow-[#1a1a2e]/20"
+          >
+            Voir toute la collection
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );

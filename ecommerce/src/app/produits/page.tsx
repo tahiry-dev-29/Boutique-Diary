@@ -1,15 +1,26 @@
 import StoreProductBanner from "@/components/store/StoreProductBanner";
-import StoreProductGrid from "@/components/store/StoreProductGrid";
+import StoreProductList from "@/components/store/StoreProductList";
 import StoreFooter from "@/components/store/StoreFooter";
-import { getProducts } from "@/lib/store-data";
+import { getProducts, getStoreStats, getCategories } from "@/lib/store-data";
 
 export default async function ProduitsPage() {
-  const products = await getProducts();
+  const [products, stats, categories] = await Promise.all([
+    getProducts(),
+    getStoreStats(),
+    getCategories(),
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
-        <StoreProductBanner />
+        <StoreProductBanner
+          title="Tous nos Produits"
+          subtitle="Parcourez l'intégralité de notre collection. Des pièces uniques conçus avec passion pour sublimer votre quotidien."
+          badge="Catalogue Complet"
+          customerCount={stats.customerCount}
+          recentCustomers={stats.recentCustomers}
+          variant="indigo"
+        />
 
         <div className="mb-12 border-b border-gray-100 pb-12">
           <div className="flex flex-col gap-4">
@@ -23,7 +34,7 @@ export default async function ProduitsPage() {
           </div>
         </div>
 
-        <StoreProductGrid products={products} />
+        <StoreProductList initialProducts={products} categories={categories} />
       </div>
       <StoreFooter />
     </div>

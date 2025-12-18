@@ -189,7 +189,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
-  const LIMIT = 3;
+  const LIMIT = 4;
   const displayedReviews = showAll ? reviews : reviews.slice(0, LIMIT);
 
   useEffect(() => {
@@ -304,7 +304,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
         className={cn(
           "px-1",
           showAll
-            ? "max-h-[600px] overflow-y-auto pr-4 custom-scrollbar"
+            ? "max-h-[400px] overflow-y-auto pr-4 custom-scrollbar bg-gray-50/10 dark:bg-white/[0.01] rounded-[32px] p-6 shadow-inner border border-gray-100/50 dark:border-gray-800/50"
             : "max-h-none",
         )}
       >
@@ -338,7 +338,6 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
                 replyingTo={replyingTo}
                 setReplyingTo={setReplyingTo}
                 replyContent={replyContent}
-                setReplyContent={setReplyContent}
                 setReplyContent={setReplyContent}
                 isSubmittingReply={isSubmittingReply}
                 index={index}

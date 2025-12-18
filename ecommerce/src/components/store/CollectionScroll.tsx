@@ -49,9 +49,12 @@ export default function CollectionScroll({
               Nous distribuons nos collections dans des magasins incroyables.
               Découvrez-en plus sur nous et nos boutiques préférées.
             </p>
-            <button className="border border-gray-300 rounded-full px-6 py-2 text-xs font-bold hover:bg-black hover:text-white transition-colors">
-              Acheter maintenant
-            </button>
+            <Link
+              href="/top-vente"
+              className="border border-gray-300 rounded-full px-6 py-2 text-xs font-bold hover:bg-black hover:text-white transition-colors inline-block"
+            >
+              Voir plus
+            </Link>
           </div>
         </div>
 
