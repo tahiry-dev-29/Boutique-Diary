@@ -148,7 +148,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
               {product.isBestSeller && (
                 <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Best Seller
+                  Top Vente
                 </span>
               )}
             </div>

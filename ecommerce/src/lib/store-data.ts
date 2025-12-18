@@ -146,10 +146,16 @@ export async function getCategories() {
 }
 
 export async function getProducts(
-  options: { categoryId?: number; limit?: number } = {},
+  options: {
+    categoryId?: number;
+    limit?: number;
+    isPromotion?: boolean;
+    isNew?: boolean;
+    isBestSeller?: boolean;
+  } = {},
 ) {
   try {
-    const { categoryId, limit } = options;
+    const { categoryId, limit, isPromotion, isNew, isBestSeller } = options;
     const where: any = {
       status: "PUBLISHED",
       deletedAt: null,
@@ -157,6 +163,18 @@ export async function getProducts(
 
     if (categoryId) {
       where.categoryId = categoryId;
+    }
+
+    if (isPromotion !== undefined) {
+      where.isPromotion = isPromotion;
+    }
+
+    if (isNew !== undefined) {
+      where.isNew = isNew;
+    }
+
+    if (isBestSeller !== undefined) {
+      where.isBestSeller = isBestSeller;
     }
 
     const products = await prisma.product.findMany({
@@ -218,5 +236,42 @@ export async function getCategoryProductsMap(
   } catch (error) {
     console.error("Error fetching category map:", error);
     return {};
+  }
+}
+export async function getStoreStats() {
+  try {
+    const [customerCount, recentCustomers] = await Promise.all([
+      prisma.user.count({
+        where: {
+          role: "CUSTOMER",
+          isActive: true,
+        },
+      }),
+      prisma.user.findMany({
+        where: {
+          role: "CUSTOMER",
+          isActive: true,
+        },
+        select: {
+          id: true,
+          username: true,
+        },
+        take: 4,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+    ]);
+
+    return {
+      customerCount,
+      recentCustomers,
+    };
+  } catch (error) {
+    console.error("Error fetching store stats:", error);
+    return {
+      customerCount: 0,
+      recentCustomers: [],
+    };
   }
 }

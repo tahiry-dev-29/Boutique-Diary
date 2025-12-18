@@ -126,30 +126,56 @@ export default function SearchCommand({
                   <div
                     key={product.id}
                     onClick={() => handleSelect(`/store/product/${product.id}`)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100 hover:text-black cursor-pointer transition-colors group"
+                    className="flex items-center gap-4 px-3 py-3 rounded-xl text-sm text-gray-700 hover:bg-gray-50 hover:text-black cursor-pointer transition-all group group/item"
                   >
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                      {product.images[0]?.url ? (
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-100 flex-shrink-0">
+                      {product.images?.[0]?.url ? (
                         <Image
                           src={product.images[0].url}
                           alt={product.name}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover/item:scale-110 transition-transform duration-500"
                         />
                       ) : (
                         <Package className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400" />
                       )}
+
+                      {/* Mini Status Badge */}
+                      <div className="absolute top-1 left-1 flex flex-col gap-0.5">
+                        {product.isNew && (
+                          <div className="w-2 h-2 rounded-full bg-black border border-white" />
+                        )}
+                        {product.isPromotion && (
+                          <div className="w-2 h-2 rounded-full bg-rose-500 border border-white" />
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-gray-900">
-                        {product.name}
-                      </span>
-                      <span className="text-xs text-gray-500">
+
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-900 truncate tracking-tight">
+                          {product.name}
+                        </span>
+                        {product.isNew && (
+                          <span className="text-[8px] font-black uppercase bg-black text-white px-1 rounded-[2px] leading-none py-0.5">
+                            New
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
                         {product.category?.name}
                       </span>
                     </div>
-                    <div className="ml-auto font-medium text-gray-900 group-hover:text-black">
-                      {formatPrice(product.price)}
+
+                    <div className="ml-auto flex flex-col items-end">
+                      <div className="font-bold text-gray-900 group-hover/item:text-black">
+                        {formatPrice(product.price)}
+                      </div>
+                      {product.isPromotion && product.oldPrice && (
+                        <div className="text-[10px] text-gray-400 line-through">
+                          {formatPrice(product.oldPrice)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -1,13 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Search, MapPin, ShoppingBag, Menu, User, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import anime from "animejs";
-import CartSidebar from "./CartSidebar";
 import SearchCommand from "@/components/store/SearchCommand";
-import { useCartStore } from "@/lib/cart-store";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,9 +8,26 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/utils";
+import anime from "animejs";
+import {
+  Menu,
+  Package2,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Tag,
+  Trophy,
+  User,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import BrandLogo from "./BrandLogo";
+import CartSidebar from "./CartSidebar";
 
 export default function StoreNavbar({
   categories = [],
@@ -48,171 +58,248 @@ export default function StoreNavbar({
     });
   }, []);
 
-  // Example categories for dropdown
+  // Updated collections with icons
   const collections = [
-    { title: "Nouveautés", href: "/shop" },
-    { title: "Meilleures Ventes", href: "/shop?sort=best-selling" },
-    { title: "Écologique", href: "/shop?category=eco" },
-    { title: "Accessoires", href: "/shop?category=accessories" },
+    {
+      title: "Nouveautés",
+      href: "/nouveautes",
+      icon: Sparkles,
+      color: "text-blue-500",
+    },
+    {
+      title: "Top Vente",
+      href: "/top-vente",
+      icon: Trophy,
+      color: "text-amber-500",
+    },
+    {
+      title: "Toute la Boutique",
+      href: "/produits",
+      icon: Package2,
+      color: "text-gray-900",
+    },
+    {
+      title: "Promotions",
+      href: "/promotions",
+      icon: Tag,
+      color: "text-rose-500",
+    },
   ];
+
+  const categoriesList = [
+    { name: "Hommes", href: "/shop?category=men" },
+    { name: "Femmes", href: "/shop?category=women" },
+    { name: "Enfants", href: "/shop?category=kids" },
+    { name: "Accessoires", href: "/shop?category=accessories" },
+  ];
+
+  const pillTriggerStyle = cn(
+    "group inline-flex h-9 w-max items-center justify-center !rounded-full bg-transparent px-4 py-2 text-sm font-bold transition-all hover:bg-gray-100 outline-none",
+    "text-gray-600 hover:text-black tracking-tight",
+  );
 
   return (
     <>
-      <nav className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 supports-[backdrop-filter]:bg-white/60">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+      <nav className="bg-white/20 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
-            className="nav-logo opacity-0 text-2xl font-bold tracking-tight flex items-center gap-2"
+            className="nav-logo opacity-0 flex items-center justify-center transition-transform hover:scale-105"
           >
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-mono text-xl">
-              M
-            </div>
-            Meher
+            <BrandLogo className="w-28 md:w-36" variant="light" />
           </Link>
 
-          {/* Desktop Navigation (Shadcn Navigation Menu) */}
-          <div className="hidden md:block nav-menu opacity-0">
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/" className={navigationMenuTriggerStyle()}>
-                      Accueil
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+          {/* Center Navigation - Unified Pill UX */}
+          <div className="hidden md:block nav-menu opacity-0 absolute left-1/2 -translate-x-1/2">
+            <div className="rounded-full bg-gray-100/50 border border-gray-200/50 p-1 flex items-center gap-1 shadow-sm">
+              <NavigationMenu>
+                <NavigationMenuList className="gap-0">
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className="!rounded-full transition-none"
+                    >
+                      <Link
+                        href="/"
+                        className={cn(
+                          pillTriggerStyle,
+                          isActive("/") && "bg-white text-black shadow-sm",
+                        )}
+                      >
+                        Accueil
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>Boutique</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                      <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                            href="/"
-                          >
-                            <div className="mb-2 mt-4 text-lg font-medium">
-                              Collection Vedette
-                            </div>
-                            <p className="text-sm leading-tight text-muted-foreground">
-                              Découvrez nos produits en cuir écologiques.
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      {categories.length > 0
-                        ? categories.map((cat: any) => (
-                            <li key={cat.id}>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger
+                      className={cn(
+                        pillTriggerStyle,
+                        pathname.startsWith("/shop") &&
+                          "bg-white text-black shadow-sm",
+                      )}
+                    >
+                      Boutique
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-6 p-8 md:w-[600px] lg:w-[750px] lg:grid-cols-[280px_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <Link
+                              className="flex h-full w-full select-none flex-col justify-end rounded-[32px] bg-gray-50 p-8 no-underline outline-none focus:shadow-md border border-gray-100 transition-all hover:bg-gray-100 animate-in fade-in zoom-in-95 duration-500"
+                              href="/produits"
+                            >
+                              <div className="mb-4 text-2xl font-black tracking-tighter uppercase leading-tight text-gray-900">
+                                Catalogue <br /> Complet
+                              </div>
+                              <p className="text-sm leading-relaxed text-gray-500 font-medium">
+                                Explorez l'intégralité de nos collections
+                                écologiques et durables.
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          {collections.map(item => (
+                            <li key={item.title}>
                               <NavigationMenuLink asChild>
                                 <Link
-                                  href={`/shop?category=${cat.id}`}
+                                  href={item.href}
                                   className={cn(
-                                    "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                                    "text-sm font-medium",
+                                    "group/item block select-none space-y-2 rounded-[24px] p-4 leading-none no-underline outline-none transition-all duration-300 hover:bg-gray-50 border border-transparent hover:border-gray-100",
                                   )}
                                 >
-                                  <div className="text-sm font-medium leading-none">
-                                    {cat.name}
-                                  </div>
-                                </Link>
-                              </NavigationMenuLink>
-                            </li>
-                          ))
-                        : collections.map(component => (
-                            <li key={component.title}>
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href={component.href}
-                                  className={cn(
-                                    "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                                    "text-sm font-medium",
+                                  {item.icon && (
+                                    <div
+                                      className={cn(
+                                        "p-2 w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center mb-1 group-hover/item:scale-110 transition-transform duration-300",
+                                        item.color,
+                                      )}
+                                    >
+                                      <item.icon className="w-5 h-5" />
+                                    </div>
                                   )}
-                                >
-                                  <div className="text-sm font-medium leading-none">
-                                    {component.title}
+                                  <div className="text-[15px] font-bold leading-none text-gray-900">
+                                    {item.title}
                                   </div>
                                 </Link>
                               </NavigationMenuLink>
                             </li>
                           ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                        </div>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href="/shop?sort=promo"
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      Promotions
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                        <div className="col-span-1 lg:col-start-2 pt-4 mt-2 border-t border-gray-100">
+                          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                            {categoriesList.map(item => (
+                              <li key={item.name} className="list-none">
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href={item.href}
+                                    className="text-sm font-semibold text-gray-500 hover:text-black transition-colors px-2 py-1 rounded-lg hover:bg-gray-50"
+                                  >
+                                    {item.name}
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            ))}
+                          </div>
+                        </div>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href="/store/about"
-                      className={navigationMenuTriggerStyle()}
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className="!rounded-full transition-none"
                     >
-                      À Propos
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                      <Link
+                        href="/promotions"
+                        className={cn(
+                          pillTriggerStyle,
+                          isActive("/promotions") &&
+                            "bg-white text-black shadow-sm",
+                        )}
+                      >
+                        Promotions
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href="/store/blog"
-                      className={navigationMenuTriggerStyle()}
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className="!rounded-full transition-none"
                     >
-                      Blog
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+                      <Link
+                        href="/produits"
+                        className={cn(
+                          pillTriggerStyle,
+                          isActive("/produits") &&
+                            "bg-white text-black shadow-sm",
+                        )}
+                      >
+                        Produits
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className="!rounded-full transition-none"
+                    >
+                      <Link
+                        href="/store/blog"
+                        className={cn(
+                          pillTriggerStyle,
+                          isActive("/store/blog") &&
+                            "bg-white text-black shadow-sm",
+                        )}
+                      >
+                        Blog
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
           </div>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center gap-4 nav-actions opacity-0">
+          <div className="hidden md:flex items-center gap-3 nav-actions opacity-0">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-500 px-4 py-2 rounded-full transition-colors group"
+              className="flex items-center gap-2 bg-gray-50 border border-gray-100 hover:bg-white text-gray-400 px-4 py-2 rounded-full transition-all group shadow-sm hover:border-gray-200 cursor-pointer"
             >
-              <Search className="w-4 h-4 group-hover:text-black" />
-              <span className="text-sm">Rechercher...</span>
-              <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                <span className="text-xs">⌘</span>K
-              </kbd>
+              <Search className="w-4 h-4 group-hover:text-black transition-colors" />
+              <span className="text-xs font-bold tracking-tight group-hover:text-black">
+                Rechercher...
+              </span>
             </button>
-
-            <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
             <Link
               href="/login"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors group"
+              className="p-2.5 hover:bg-gray-100 rounded-full transition-colors group"
               title="Compte"
             >
-              <User className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors" />
+              <User className="w-5 h-5 text-gray-500 group-hover:text-black transition-colors" />
             </Link>
 
             <button
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+              className="p-2.5 bg-black text-white hover:scale-105 active:scale-95 rounded-full transition-all relative shadow-lg shadow-black/10 flex items-center justify-center group"
               onClick={() => setOpen(true)}
             >
-              <ShoppingBag className="w-5 h-5 text-gray-700 hover:text-black transition-colors" />
+              <ShoppingBag className="w-5 h-5" />
               {itemCount > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 text-[10px] flex items-center justify-center bg-black text-white rounded-full">
+                <span className="absolute -top-1 -right-1 w-5 h-5 text-[10px] font-bold flex items-center justify-center bg-white text-black border border-gray-100 rounded-full shadow-md">
                   {itemCount}
                 </span>
               )}
             </button>
           </div>
-
           {/* Mobile Menu Toggle */}
           <button
             className="md:hidden p-2"
@@ -228,51 +315,89 @@ export default function StoreNavbar({
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-10">
-            <Link href="/" className="font-medium hover:text-gray-600">
-              Accueil
-            </Link>
-            <Link href="/shop" className="font-medium hover:text-gray-600">
-              Boutique
-            </Link>
-            <Link
-              href="/shop?sort=promo"
-              className="font-medium hover:text-gray-600"
-            >
-              Promotions
-            </Link>
-            <Link
-              href="/store/about"
-              className="font-medium hover:text-gray-600"
-            >
-              À Propos
-            </Link>
-            {/* Added Search Trigger for Mobile */}
-            <button
-              className="flex items-center gap-2 font-medium text-left"
-              onClick={() => {
-                setIsSearchOpen(true);
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              <Search className="w-5 h-5" />
-              Rechercher
-            </button>
+          <div className="md:hidden absolute top-24 left-0 w-full bg-white border-b border-gray-100 p-8 flex flex-col gap-6 shadow-2xl animate-in slide-in-from-top-10 rounded-b-[40px] z-50">
+            <div className="flex flex-col gap-4">
+              <Link
+                href="/"
+                className="text-lg font-black tracking-tight text-gray-900 px-4 py-2 hover:bg-gray-50 rounded-2xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Accueil
+              </Link>
+              <Link
+                href="/produits"
+                className="text-lg font-black tracking-tight text-gray-900 px-4 py-2 hover:bg-gray-50 rounded-2xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Boutique
+              </Link>
+              <div className="grid grid-cols-2 gap-2 pl-4">
+                {collections.map(item => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black p-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon className={cn("w-4 h-4", item.color)} />
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/blog"
+                className="text-lg font-black tracking-tight text-gray-900 px-4 py-2 hover:bg-gray-50 rounded-2xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+            </div>
+
             <div className="h-px bg-gray-100 my-2"></div>
-            <button
-              className="flex items-center gap-2 font-medium"
-              onClick={() => setOpen(true)}
-            >
-              <ShoppingBag className="w-5 h-5" />
-              Panier ({itemCount})
-            </button>
-            <Link
-              href="/login"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors group"
-              title="Account"
-            >
-              <User className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors" />
-            </Link>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                className="flex flex-col items-center justify-center gap-2 p-4 bg-gray-50 rounded-3xl hover:bg-gray-100 transition-all"
+                onClick={() => {
+                  setIsSearchOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                <Search className="w-5 h-5 text-gray-900" />
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                  Rechercher
+                </span>
+              </button>
+
+              <button
+                className="flex flex-col items-center justify-center gap-2 p-4 bg-gray-50 rounded-3xl hover:bg-gray-100 transition-all relative"
+                onClick={() => {
+                  setOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                <div className="relative">
+                  <ShoppingBag className="w-5 h-5 text-gray-900" />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-black text-white rounded-full">
+                      {itemCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                  Panier
+                </span>
+              </button>
+
+              <Link
+                href="/login"
+                className="col-span-2 flex items-center justify-center gap-2 p-4 bg-black text-white rounded-3xl hover:bg-gray-900 transition-all shadow-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User className="w-5 h-5" />
+                <span className="text-sm font-bold">Mon Compte</span>
+              </Link>
+            </div>
           </div>
         )}
       </nav>

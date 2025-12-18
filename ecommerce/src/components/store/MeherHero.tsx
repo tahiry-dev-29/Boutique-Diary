@@ -5,8 +5,27 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import anime from "animejs";
 
-export default function MeherHero() {
+export default function MeherHero({
+  customerCount = 0,
+  recentCustomers = [],
+}: {
+  customerCount?: number;
+  recentCustomers?: any[];
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const displayCount = customerCount;
+  const displayAvatars =
+    recentCustomers.length > 0
+      ? recentCustomers.map(c => ({
+          url: `https://i.pravatar.cc/150?u=${c.id}`,
+          name: c.username,
+        }))
+      : [
+          { url: "https://i.pravatar.cc/150?u=1", name: "Client" },
+          { url: "https://i.pravatar.cc/150?u=2", name: "Client" },
+          { url: "https://i.pravatar.cc/150?u=3", name: "Client" },
+        ];
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -41,22 +60,31 @@ export default function MeherHero() {
         {/* Review Floating Badge (Top Right of text area) */}
         <div className="hero-badge hidden md:flex absolute right-0 top-0 flex-col items-end opacity-0">
           <div className="flex -space-x-3 mb-2">
-            {[1, 2, 3].map(i => (
+            {displayAvatars.map((client, i) => (
               <div
                 key={i}
-                className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative"
+                className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative shadow-sm"
               >
-                {/* Placeholder for avatars */}
-                <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400"></div>
+                <Image
+                  src={client.url}
+                  alt={client.name}
+                  width={40}
+                  height={40}
+                  className="object-cover"
+                />
               </div>
             ))}
-            <div className="w-10 h-10 rounded-full border-2 border-white bg-white flex items-center justify-center text-xs font-bold text-gray-600 shadow-sm">
+            <div className="w-10 h-10 rounded-full border-2 border-white bg-white flex items-center justify-center text-xs font-bold text-gray-400 shadow-sm leading-none">
               +
             </div>
           </div>
           <div className="text-right">
-            <span className="block font-bold text-sm">500+</span>
-            <span className="text-xs text-gray-500">Clients Satisfaits</span>
+            <span className="block font-bold text-sm leading-none">
+              {displayCount}+
+            </span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">
+              Clients Satisfaits
+            </span>
           </div>
         </div>
 

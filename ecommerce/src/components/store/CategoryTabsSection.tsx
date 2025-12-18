@@ -8,12 +8,20 @@ import { ArrowUpRight } from "lucide-react";
 import anime from "animejs";
 import { useEffect, useRef } from "react";
 
+import ProductCard from "./ProductCard";
+
 interface Product {
   id: number;
   name: string;
   price: number;
+  oldPrice?: number | null;
   images: { url: string }[];
   category?: { name: string };
+  isNew?: boolean;
+  isPromotion?: boolean;
+  isBestSeller?: boolean;
+  rating?: number | null;
+  reviewCount?: number;
 }
 
 interface CategoryTabsSectionProps {
@@ -37,7 +45,7 @@ export default function CategoryTabsSection({
   useEffect(() => {
     if (containerRef.current) {
       anime({
-        targets: containerRef.current.querySelectorAll(".product-item"),
+        targets: containerRef.current.querySelectorAll(".product-item-wrapper"),
         opacity: [0, 1],
         translateY: [20, 0],
         delay: anime.stagger(50),
@@ -49,27 +57,32 @@ export default function CategoryTabsSection({
 
   if (categories.length === 0) return null;
 
+  const bgColors = ["bg-[#f3f4f6]", "bg-[#f9fafb]"];
+
   return (
     <section className="py-20 px-4 md:px-6 bg-white">
       <div className="max-w-[1400px] mx-auto">
         {/* Encabezado */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-gray-900">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight text-gray-900 uppercase">
             {title}
           </h2>
-          <p className="text-gray-500 max-w-lg mx-auto text-lg">{subtitle}</p>
+          <div className="w-20 h-1.5 bg-black mx-auto mb-6"></div>
+          <p className="text-gray-500 max-w-xl mx-auto text-lg leading-relaxed">
+            {subtitle}
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveTab(cat)}
-              className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-300 ${
+              className={`px-10 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-500 ${
                 activeTab === cat
-                  ? "bg-black text-white shadow-lg scale-105"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  ? "bg-black text-white shadow-2xl shadow-black/20 scale-105"
+                  : "bg-gray-100 text-gray-400 hover:bg-gray-200"
               }`}
             >
               {cat}
@@ -80,55 +93,29 @@ export default function CategoryTabsSection({
         {/* Products Grid */}
         <div
           ref={containerRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12"
         >
           {displayProducts.length > 0 ? (
-            displayProducts.map(product => (
-              <div key={product.id} className="product-item opacity-0 group">
-                <Link
-                  href={`/store/product/${product.id}`}
-                  className="block relative aspect-[4/5] rounded-[32px] overflow-hidden bg-gray-50 mb-4 cursor-pointer"
-                >
-                  {product.images[0] ? (
-                    <Image
-                      src={product.images[0].url}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-300 font-bold">
-                      No Image
-                    </div>
-                  )}
-
-                  {/* Overlay/Action */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
-
-                  <div className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
-                    <ArrowUpRight className="w-5 h-5 text-black" />
-                  </div>
-                </Link>
-
-                <div className="px-2">
-                  <h3 className="font-bold text-lg text-gray-900 leading-tight mb-1 group-hover:text-gray-600 transition-colors">
-                    <Link href={`/store/product/${product.id}`}>
-                      {product.name}
-                    </Link>
-                  </h3>
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-gray-500">
-                      {product.category?.name || activeTab}
-                    </p>
-                    <span className="font-bold text-gray-900">
-                      {formatPrice(product.price)}
-                    </span>
-                  </div>
-                </div>
+            displayProducts.map((product, index) => (
+              <div key={product.id} className="product-item-wrapper opacity-0">
+                <ProductCard
+                  id={product.id.toString()}
+                  title={product.name}
+                  price={product.price}
+                  oldPrice={product.oldPrice}
+                  category={product.category?.name || activeTab}
+                  image={product.images[0]?.url}
+                  isNew={product.isNew}
+                  isPromotion={product.isPromotion}
+                  isBestSeller={product.isBestSeller}
+                  rating={product.rating}
+                  reviewCount={product.reviewCount}
+                  imageColor={bgColors[index % bgColors.length]}
+                />
               </div>
             ))
           ) : (
-            <div className="col-span-full text-center py-20 text-gray-400">
+            <div className="col-span-full text-center py-20 text-gray-400 font-medium italic">
               Aucun produit trouvé dans {activeTab}.
             </div>
           )}

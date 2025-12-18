@@ -12,6 +12,7 @@ import {
   getTopSellingProducts,
   getPromotionalProducts,
   getCategoryProductsMap,
+  getStoreStats,
 } from "@/lib/store-data";
 import CategoryTabsSection from "@/components/store/CategoryTabsSection";
 
@@ -25,14 +26,21 @@ export default async function Home() {
     "Accessories",
     "Jewellery",
   ]);
+  const { customerCount, recentCustomers } = await getStoreStats();
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
-      <MeherHero />
+      <MeherHero
+        customerCount={customerCount}
+        recentCustomers={recentCustomers}
+      />
       <PromoSection products={promotionalProducts} />
       <CategoryTabsSection productsMap={categoryProducts} />
       <CollectionScroll products={topSellingProducts} />
-      <FeaturesSection />
+      <FeaturesSection
+        customerCount={customerCount}
+        recentCustomers={recentCustomers}
+      />
       <ServiceHighlights />
       <BestCollectionBanner />
       <StoreProductGrid products={featuredProducts} />

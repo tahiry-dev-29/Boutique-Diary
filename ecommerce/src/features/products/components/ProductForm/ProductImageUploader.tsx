@@ -86,7 +86,7 @@ export function ProductImageUploader({
     const uploadPromises = validFiles.map(async file => {
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
-      
+
       uploadFormData.append("productName", formData.name || "product");
       uploadFormData.append("reference", formData.reference || "REF");
 
@@ -240,10 +240,9 @@ export function ProductImageUploader({
         }
 
         const currentImg = newImages[index] as ProductImage;
-        
+
         let autoReference = currentImg.reference || generateRandomReference();
 
-        
         if (field === "reference") {
           autoReference = newValue as string;
         }
@@ -531,7 +530,7 @@ export function ProductImageUploader({
                       }
                       className="h-3.5 w-3.5"
                     />
-                    <span>Best Seller</span>
+                    <span>Top Vente</span>
                   </label>
                   <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs opacity-60">
                     <Checkbox

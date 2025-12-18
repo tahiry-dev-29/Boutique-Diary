@@ -5,9 +5,32 @@ import { useState, useRef, useEffect } from "react";
 import anime from "animejs";
 import Image from "next/image";
 
-export default function FeaturesSection() {
+export default function FeaturesSection({
+  customerCount = 0,
+  recentCustomers = [],
+}: {
+  customerCount?: number;
+  recentCustomers?: any[];
+}) {
   const [openIndex, setOpenIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Use real count from DB
+  const displayCount = customerCount;
+
+  // Use real customer data for avatars if available, fallback to mock
+  const displayAvatars =
+    recentCustomers.length > 0
+      ? recentCustomers.map(c => ({
+          url: `https://i.pravatar.cc/150?u=${c.id}`,
+          name: c.username,
+        }))
+      : [
+          { url: "https://i.pravatar.cc/150?u=1", name: "Client" },
+          { url: "https://i.pravatar.cc/150?u=2", name: "Client" },
+          { url: "https://i.pravatar.cc/150?u=3", name: "Client" },
+          { url: "https://i.pravatar.cc/150?u=4", name: "Client" },
+        ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -90,12 +113,43 @@ export default function FeaturesSection() {
           <h2 className="text-4xl font-bold mb-4 tracking-tight text-gray-900">
             Pourquoi Nous Choisir
           </h2>
-          <p className="text-base text-gray-500 mb-10 leading-relaxed max-w-lg">
+          <p className="text-base text-gray-500 mb-8 leading-relaxed max-w-lg">
             Nous sommes fiers d'offrir des produits qui répondent aux normes de
             qualité les plus élevées. Chaque article est soigneusement
             sélectionné, testé et conçu pour assurer durabilité et satisfaction
             client.
           </p>
+
+          {/* Satisfied Clients Badge */}
+          <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl ring-1 ring-gray-100 mb-10 w-fit">
+            <div className="flex -space-x-3">
+              {displayAvatars.map((client, i) => (
+                <div
+                  key={i}
+                  className="w-12 h-12 rounded-full border-4 border-white overflow-hidden bg-gray-200 shadow-sm transition-transform hover:scale-110"
+                >
+                  <Image
+                    src={client.url}
+                    alt={client.name}
+                    width={48}
+                    height={48}
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+              <div className="w-12 h-12 rounded-full border-4 border-white bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-600 shadow-sm">
+                +
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-2xl font-black text-gray-900 leading-none tracking-tight">
+                {displayCount}+
+              </span>
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Clients Satisfaits
+              </span>
+            </div>
+          </div>
 
           <div className="space-y-6">
             {features.map((feature, index) => (
