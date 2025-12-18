@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/cart-store";
@@ -95,18 +95,13 @@ export default function ProductCard({
         </div>
 
         {/* Add to Cart Quick Action */}
-        <button
-          className="absolute bottom-4 inset-x-4 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest rounded-xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 shadow-xl overflow-hidden active:scale-95"
-          onClick={e => {
-            e.preventDefault();
-            // TODO: Cart logic
-          }}
+        <Link
+          href={`/store/product/${id}`}
+          className="absolute bottom-4 inset-x-4 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-widest rounded-xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 shadow-xl overflow-hidden active:scale-95 flex items-center justify-center gap-2"
         >
-          <div className="flex items-center justify-center gap-2">
-            <ShoppingBag className="w-4 h-4" />
-            <span>Ajouter au panier</span>
-          </div>
-        </button>
+          <Eye className="w-4 h-4" />
+          <span>Voir en détail</span>
+        </Link>
       </div>
 
       {/* Info Section */}
