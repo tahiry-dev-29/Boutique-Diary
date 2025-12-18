@@ -209,10 +209,147 @@ export default function PaymentMethodsPage() {
                   {method.isDefault ? <Check className="w-4 h-4 mr-2" /> : null}
                   {method.isDefault ? "Par défaut" : "Définir par défaut"}
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Configurer
-                </Button>
+                <Dialog
+                  open={configuringMethod?.id === method.id}
+                  onOpenChange={open => !open && setConfiguringMethod(null)}
+                >
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setConfiguringMethod(method)}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Configurer
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Configuration {method.name}</DialogTitle>
+                      <DialogDescription>
+                        Paramétrez vos identifiants API pour{" "}
+                        {method.name.toLowerCase()}.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                      {method.code === "mvola" && (
+                        <>
+                          <div className="grid gap-2">
+                            <Label htmlFor="merchantId">ID Marchand</Label>
+                            <Input
+                              id="merchantId"
+                              defaultValue={method.config?.merchantId || ""}
+                              placeholder="ex: 123456"
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="apiKey">
+                              Clé API (Consumer Key)
+                            </Label>
+                            <Input
+                              id="apiKey"
+                              type="password"
+                              defaultValue={method.config?.apiKey || ""}
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {method.code === "stripe" && (
+                        <>
+                          <div className="grid gap-2">
+                            <Label htmlFor="publicKey">Clé Publique</Label>
+                            <Input
+                              id="publicKey"
+                              defaultValue={method.config?.publicKey || ""}
+                              placeholder="pk_test_..."
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="secretKey">Clé Secrète</Label>
+                            <Input
+                              id="secretKey"
+                              type="password"
+                              defaultValue={method.config?.secretKey || ""}
+                              placeholder="sk_test_..."
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {(method.code === "orange_money" ||
+                        method.code === "cash") && (
+                        <p className="text-sm text-muted-foreground italic">
+                          Aucune configuration supplémentaire requise pour ce
+                          mode.
+                        </p>
+                      )}
+                    </div>
+
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setConfiguringMethod(null)}
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        onClick={async () => {
+                          const config: any = {};
+                          if (method.code === "mvola") {
+                            config.merchantId = (
+                              document.getElementById(
+                                "merchantId",
+                              ) as HTMLInputElement
+                            ).value;
+                            config.apiKey = (
+                              document.getElementById(
+                                "apiKey",
+                              ) as HTMLInputElement
+                            ).value;
+                          } else if (method.code === "stripe") {
+                            config.publicKey = (
+                              document.getElementById(
+                                "publicKey",
+                              ) as HTMLInputElement
+                            ).value;
+                            config.secretKey = (
+                              document.getElementById(
+                                "secretKey",
+                              ) as HTMLInputElement
+                            ).value;
+                          }
+
+                          try {
+                            const res = await fetch(
+                              "/api/admin/payments/methods",
+                              {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  id: method.id,
+                                  config,
+                                }),
+                              },
+                            );
+
+                            if (!res.ok) throw new Error("Update failed");
+                            toast.success("Configuration mise à jour");
+                            setConfiguringMethod(null);
+                            fetchMethods();
+                          } catch (error) {
+                            toast.error(
+                              "Erreur lors de la sauvegarde de la configuration",
+                            );
+                          }
+                        }}
+                      >
+                        Enregistrer
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </CardFooter>
             </Card>
           ))}

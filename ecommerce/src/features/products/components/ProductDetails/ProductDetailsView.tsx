@@ -11,6 +11,7 @@ import { DollarSign, Edit, Package, Share2, Star, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { ReviewListAdmin } from "./ReviewListAdmin";
 
 interface ProductImage {
   id: number;
@@ -57,7 +58,6 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null);
 
-  
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -83,16 +83,13 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     }
   }, [product.images, autoSelectedRef]);
 
-  
   const currentImage = product.images[selectedImageIndex];
 
-  
   const displayPrice = currentImage?.price ?? product.price;
   const displayOldPrice = currentImage?.oldPrice ?? product.oldPrice;
   const displayStock = currentImage?.stock ?? product.stock;
   const displayRef = currentImage?.reference ?? product.reference;
 
-  
   const stats = [
     {
       label: "Prix Actuel",
@@ -116,7 +113,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       color: "text-amber-500",
       bg: "bg-amber-50",
     },
-      ];
+  ];
 
   const handleEdit = () => {
     router.push(`/admin/products/${product.id}/edit`);
@@ -235,8 +232,8 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
           {}
           <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <Tabs defaultValue="details" className="w-full">
-              <div className="px-6 pt-6 border-b border-gray-100 dark:border-gray-700">
-                <TabsList className="bg-transparent p-0 gap-6">
+              <div className="border-b border-gray-100 dark:border-gray-700 flex justify-between p-4">
+                <TabsList className="bg-transparent p-0 gap-6 w-full flex items-center justify-center">
                   <TabsTrigger
                     value="details"
                     className="rounded-2xl px-2 pb-2 font-semibold text-gray-500 dark:text-gray-400 data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
@@ -366,19 +363,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
               </TabsContent>
 
               <TabsContent value="reviews" className="p-6">
-                <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
-                  <div className="bg-gray-100 p-4 rounded-full">
-                    <Star className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                    Aucun avis pour le moment
-                  </h3>
-                  <p className="text-gray-500 max-w-sm">
-                    Les avis clients s&apos;afficheront ici une fois que vos
-                    clients commenceront à noter ce produit.
-                  </p>
-                  <Button variant="outline">Simuler un avis</Button>
-                </div>
+                <ReviewListAdmin productId={product.id} />
               </TabsContent>
             </Tabs>
           </div>

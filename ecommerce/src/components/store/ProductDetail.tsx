@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { COLOR_MAP } from "@/lib/constants";
 import { useCartStore } from "@/lib/cart-store";
+import anime from "animejs";
 
 interface ProductDetailProps {
   product: any;
@@ -46,6 +47,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       setSelectedSize(null);
     }
   }, [selectedImageIndex, availableSizes, selectedSize]);
+
+  // Entrance Animations
+  useEffect(() => {
+    anime({
+      targets: ".product-image-container",
+      scale: [0.95, 1],
+      opacity: [0, 1],
+      easing: "easeOutExpo",
+      duration: 1200,
+    });
+
+    anime({
+      targets: ".product-info-stagger > *",
+      translateY: [20, 0],
+      opacity: [0, 1],
+      delay: anime.stagger(100, { start: 200 }),
+      easing: "easeOutQuad",
+      duration: 800,
+    });
+  }, []);
 
   const handleColorSelect = (color: string) => {
     // Find first image matching this color
@@ -119,7 +140,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {/* Main Image */}
-          <div className="relative bg-gray-50 rounded-2xl aspect-[3/4] md:aspect-[4/5] max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[90%]">
+          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-[3/4] md:aspect-[4/5] max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
                 src={currentImage.url}
@@ -156,7 +177,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </div>
 
         {/* Product Info Section */}
-        <div className="flex flex-col gap-6">
+        <div className="product-info-stagger flex flex-col gap-8">
           <div>
             <div className="flex justify-between items-start">
               <span className="text-sm text-gray-500 font-medium mb-2 block uppercase tracking-wide">
@@ -167,7 +188,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
             </div>
 
-            <h1 className="text-4xl font-bold mb-4 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-black mb-4 text-gray-900 tracking-tighter leading-tight">
               {product.name}
             </h1>
 
@@ -316,20 +337,22 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4">
-              <div className="flex border border-gray-200 rounded-full items-center">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex border border-gray-100 bg-gray-50/50 backdrop-blur-sm rounded-2xl items-center p-1">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-3 hover:bg-gray-50 rounded-l-full transition"
+                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl"
                 >
                   -
                 </button>
-                <span className="w-8 text-center font-bold">{quantity}</span>
+                <span className="w-10 text-center font-black text-lg">
+                  {quantity}
+                </span>
                 <button
                   onClick={() =>
                     setQuantity(Math.min(displayStock, quantity + 1))
                   }
-                  className="px-4 py-3 hover:bg-gray-50 rounded-r-full transition"
+                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl"
                 >
                   +
                 </button>
@@ -339,13 +362,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 onClick={handleAddToCart}
                 disabled={displayStock <= 0}
                 className={cn(
-                  "flex-1 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl",
+                  "flex-1 py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl active:scale-[0.98]",
                   displayStock > 0
-                    ? "bg-black text-white hover:bg-gray-800"
+                    ? "bg-black text-white hover:bg-gray-800 shadow-black/10"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed",
                 )}
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingCart className="w-6 h-6" />
                 {displayStock > 0 ? "Ajouter au panier" : "Indisponible"}
               </button>
             </div>

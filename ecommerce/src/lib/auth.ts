@@ -5,18 +5,16 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "jwt-secret-ecommerce",
 );
 
-const ROLE_HIERARCHY = ["CUSTOMER", "EMPLOYEE", "ADMIN", "SUPERADMIN"] as const;
-export type Role = (typeof ROLE_HIERARCHY)[number];
+import {
+  SESSION_COOKIE,
+  ADMIN_SESSION_COOKIE,
+  Role,
+  UserPayload,
+  ROLE_HIERARCHY,
+} from "./auth-constants";
 
-export const SESSION_COOKIE = "session";
-export const ADMIN_SESSION_COOKIE = "admin_session";
-
-export interface UserPayload {
-  userId: number;
-  username: string;
-  email: string;
-  role: Role;
-}
+export { SESSION_COOKIE, ADMIN_SESSION_COOKIE, ROLE_HIERARCHY };
+export type { Role, UserPayload };
 
 export async function verifyToken(
   cookieName: string = SESSION_COOKIE,

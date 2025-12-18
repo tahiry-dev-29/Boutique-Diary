@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/contexts/theme-context";
+import GlobalReviewModal from "./store/GlobalReviewForm";
 
 export default function MainLayout({
   children,
@@ -19,6 +20,7 @@ export default function MainLayout({
     <ThemeProvider>
       {!isAdminPage && <Navbar categories={categories} />}
       {children}
+      {!isAdminPage && <GlobalReviewModal />}
       <Toaster />
     </ThemeProvider>
   );

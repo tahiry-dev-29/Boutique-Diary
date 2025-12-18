@@ -275,3 +275,40 @@ export async function getStoreStats() {
     };
   }
 }
+
+export async function getTestimonials(limit = 6) {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: {
+        isVerified: true,
+        rating: { gte: 4 },
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+    });
+
+    return reviews.map(review => ({
+      id: review.id,
+      name: review.user.username,
+      date: new Date(review.createdAt).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+      }),
+      rating: Math.floor(review.rating),
+      title: review.rating >= 4.5 ? "Excellent produit" : "Très satisfait",
+      review: review.comment,
+    }));
+  } catch (error) {
+    console.error("Error fetching testimonials:", error);
+    return [];
+  }
+}

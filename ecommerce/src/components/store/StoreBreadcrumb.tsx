@@ -49,7 +49,12 @@ export default function StoreBreadcrumb({
           return null;
 
         const isLast = index === paths.length - 1;
-        const href = `/${paths.slice(0, index + 1).join("/")}`;
+        let href = `/${paths.slice(0, index + 1).join("/")}`;
+
+        // Fix: Redirect "product" breadcrumb to the actual products listing page
+        if (path === "product") {
+          href = "/produits";
+        }
 
         let label = pathNames[path] || path;
 

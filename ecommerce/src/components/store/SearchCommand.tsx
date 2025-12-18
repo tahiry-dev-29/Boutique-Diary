@@ -29,12 +29,12 @@ export default function SearchCommand({
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        onOpenChange(open => !open);
+        onOpenChange(!open);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [onOpenChange]);
+  }, [onOpenChange, open]);
 
   useEffect(() => {
     if (query.length < 2) {

@@ -13,6 +13,7 @@ import {
   getPromotionalProducts,
   getCategoryProductsMap,
   getStoreStats,
+  getTestimonials,
 } from "@/lib/store-data";
 import CategoryTabsSection from "@/components/store/CategoryTabsSection";
 
@@ -27,6 +28,7 @@ export default async function Home() {
     "Jewellery",
   ]);
   const { customerCount, recentCustomers } = await getStoreStats();
+  const testimonials = await getTestimonials(6);
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
@@ -44,7 +46,7 @@ export default async function Home() {
       <ServiceHighlights />
       <BestCollectionBanner />
       <StoreProductGrid products={featuredProducts} />
-      <ClientTestimonials />
+      <ClientTestimonials testimonials={testimonials} />
       <StoreFooter />
     </div>
   );

@@ -3,27 +3,23 @@
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-export default function ClientTestimonials() {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Jean Dupont",
-      date: "02 Février",
-      rating: 4,
-      title: "Une expérience au top",
-      review:
-        "J'ai récemment visité ce barbier, et je dois dire que c'était une expérience classique... Il a pris le temps de comprendre exactement ce que je voulais.",
-    },
-    {
-      id: 2,
-      name: "Marie Martin",
-      date: "06 Février",
-      rating: 4,
-      title: "Super Produit",
-      review:
-        "J'utilise ce produit quotidiennement depuis un mois, et il fonctionne parfaitement sans aucun problème. Il est assez puissant pour tout faire.",
-    },
-  ];
+interface Testimonial {
+  id: number | string;
+  name: string;
+  date: string;
+  rating: number;
+  title: string;
+  review: string;
+}
+
+interface ClientTestimonialsProps {
+  testimonials: Testimonial[];
+}
+
+export default function ClientTestimonials({
+  testimonials,
+}: ClientTestimonialsProps) {
+  if (!testimonials || testimonials.length === 0) return null;
 
   return (
     <section className="py-16 px-4 md:px-6 mb-16">

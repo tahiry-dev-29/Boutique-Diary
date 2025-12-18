@@ -28,6 +28,17 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import BrandLogo from "./BrandLogo";
 import CartSidebar from "./CartSidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, Settings as SettingsIcon, UserCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function StoreNavbar({
   categories = [],
@@ -36,6 +47,34 @@ export default function StoreNavbar({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      const data = await res.json();
+      if (data.user) {
+        setUser(data.user);
+      }
+    } catch (err) {
+      console.error("Auth check failed", err);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setUser(null);
+      toast.success("Déconnexion réussie");
+      window.location.reload();
+    } catch (err) {
+      toast.error("Erreur lors de la déconnexion");
+    }
+  };
 
   // Cart Store
   const isCartOpen = useCartStore(state => state.isOpen);
@@ -278,13 +317,80 @@ export default function StoreNavbar({
               <Search className="w-5 h-5 text-gray-500 group-hover:text-black transition-colors" />
             </button>
 
-            <Link
-              href="/login"
-              className="p-2.5 hover:bg-gray-100 rounded-full transition-colors group"
-              title="Compte"
-            >
-              <User className="w-5 h-5 text-gray-500 group-hover:text-black transition-colors" />
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-full transition-all border border-transparent hover:border-gray-200">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={user.photo} alt={user.username} />
+                      <AvatarFallback className="bg-black text-white text-[10px]">
+                        {user.username.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-2xl p-2 mr-4 mt-2 shadow-2xl border-gray-100 animate-in fade-in zoom-in-95 duration-200">
+                  <DropdownMenuLabel className="px-4 py-3">
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-sm font-black text-gray-900 leading-none">
+                        {user.username}
+                      </p>
+                      <p className="text-[11px] font-medium text-gray-500 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-100 mx-2" />
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
+                  >
+                    <Link
+                      href="/customer/profile"
+                      className="flex items-center gap-3"
+                    >
+                      <UserCircle className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                      <span className="text-sm font-bold text-gray-700">
+                        Mon Profil
+                      </span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {user.role !== "CUSTOMER" && (
+                    <DropdownMenuItem
+                      asChild
+                      className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
+                    >
+                      <Link href="/admin" className="flex items-center gap-3">
+                        <SettingsIcon className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                        <span className="text-sm font-bold text-gray-700">
+                          Tableau de bord
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator className="bg-gray-100 mx-2" />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="rounded-xl px-4 py-2.5 focus:bg-rose-50 cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <LogOut className="w-4 h-4 text-rose-500" />
+                      <span className="text-sm font-bold text-rose-500">
+                        Déconnexion
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                href="/login"
+                className="p-2.5 hover:bg-gray-100 rounded-full transition-colors group"
+                title="Connexion"
+              >
+                <User className="w-5 h-5 text-gray-500 group-hover:text-black transition-colors" />
+              </Link>
+            )}
 
             <button
               className="p-2.5 bg-black text-white hover:scale-105 active:scale-95 rounded-full transition-all relative shadow-lg shadow-black/10 flex items-center justify-center group"

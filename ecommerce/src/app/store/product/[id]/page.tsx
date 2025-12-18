@@ -2,6 +2,7 @@ import ProductDetail from "@/components/store/ProductDetail";
 import StoreProductGrid from "@/components/store/StoreProductGrid";
 import StoreFooter from "@/components/store/StoreFooter";
 import StoreBreadcrumb from "@/components/store/StoreBreadcrumb";
+import ProductReviews from "@/components/store/ProductReviews";
 import { getProductById, getRelatedProducts } from "@/lib/store-data";
 import { notFound } from "next/navigation";
 
@@ -29,6 +30,12 @@ export default async function ProductPage({
         <StoreBreadcrumb productName={product.name} />
       </div>
       <ProductDetail product={product} />
+
+      <ProductReviews
+        productId={product.id}
+        initialRating={product.rating || 0}
+        initialReviewCount={product.reviewCount || 0}
+      />
 
       {/* "This item can be cool with this" Section */}
       <div className="bg-gray-50 pt-8 pb-0">

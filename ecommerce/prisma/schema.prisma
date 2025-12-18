@@ -32,16 +32,20 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
+  id        Int              @id @default(autoincrement())
+  username  String           @unique
+  email     String           @unique
   password  String
-  role      Role     @default(CUSTOMER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role             @default(CUSTOMER)
+  isActive  Boolean          @default(true)
+  photo     String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   orders    Order[]
   carts     Cart[]
+  reviews   Review[]
+  replies   ReviewReply[]
+  reactions ReviewReaction[]
 }
 
 model Product {
@@ -84,6 +88,7 @@ model Product {
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
   orderItems     OrderItem[]
+  reviews        Review[]
 }
 
 // Cart Models
@@ -201,15 +206,17 @@ model Banner {
 }
 
 model Admin {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(100)
-  email     String    @unique
-  password  String
-  role      String    @default("admin") // "admin" | "superadmin"
-  isActive  Boolean   @default(true)
-  lastSeen  DateTime? // Track online status
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              Int              @id @default(autoincrement())
+  name            String           @db.VarChar(100)
+  email           String           @unique
+  password        String
+  role            String           @default("admin") // "admin" | "superadmin"
+  isActive        Boolean          @default(true)
+  lastSeen        DateTime? // Track online status
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  reviewReplies   ReviewReply[]
+  reviewReactions ReviewReaction[]
 }
 
 // New model for Stock Audit/History
@@ -365,4 +372,55 @@ model PromotionRule {
   productImages     ProductImage[]
 
   @@index([isActive])
+}
+
+model Review {
+  id         Int     @id @default(autoincrement())
+  rating     Float
+  comment    String  @db.Text
+  isVerified Boolean @default(false)
+  tags       Json? // e.g. ["Great quality", "Easy setup"]
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  replies   ReviewReply[]
+  reactions ReviewReaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model ReviewReply {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  reviewId  Int
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  adminId   Int?
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reviewId])
+}
+
+model ReviewReaction {
+  id       Int    @id @default(autoincrement())
+  type     String // 'LIKE', 'LOVE', 'LAUGH', etc.
+  reviewId Int
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId   Int?
+  user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  adminId  Int?
+  admin    Admin? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@unique([reviewId, userId, adminId, type])
 }
