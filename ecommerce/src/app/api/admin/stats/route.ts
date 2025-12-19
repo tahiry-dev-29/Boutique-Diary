@@ -11,21 +11,19 @@ export async function GET() {
 
     const [
       totalProducts,
-      stockValueResult,
+      stockValueStats,
       lowStockCount,
       totalOrders,
       categoryStats,
+      totalReviews,
     ] = await Promise.all([
-      // Total products
       prisma.product.count(),
-      // Calculate total stock value (price * stock)
       prisma.product.aggregate({
         _sum: {
           price: true,
           stock: true,
         },
       }),
-      // Low stock products (less than 5)
       prisma.product.count({
         where: {
           stock: {
@@ -33,18 +31,16 @@ export async function GET() {
           },
         },
       }),
-      // Mock for orders/revenue - Order model doesn't exist yet
-      Promise.resolve(0),
-      // Category distribution
+      prisma.order.count(),
       prisma.product.groupBy({
         by: ["categoryId"],
         _count: {
           id: true,
         },
       }),
+      prisma.review.count(),
     ]);
 
-    // Fetch category names for distribution
     const categories = await prisma.category.findMany({
       where: {
         id: {
@@ -79,16 +75,22 @@ export async function GET() {
     });
 
     const totalStockValue = allProducts.reduce((acc, p) => {
-      return acc + p.price * p.stock;
+      return acc + (p.price || 0) * (p.stock || 0);
     }, 0);
+
+    const outOfStockCount = allProducts.filter(
+      p => !p.stock || p.stock === 0,
+    ).length;
 
     return NextResponse.json(
       {
         totalProducts,
         totalStockValue,
         lowStockCount,
-        totalOrders, // Placeholder
+        outOfStockCount,
+        totalOrders,
         categoryDistribution,
+        totalReviews,
       },
       { status: 200 },
     );

@@ -52,7 +52,7 @@ export default function SalesReportsPage() {
     chartData: [],
   };
 
-  // Transform daily sales for sparkline (API returns { date, amount, orders, aov })
+  
   const revenueChartData = (rawChartData || []).map(d => ({ value: d.amount }));
   const ordersChartData = (rawChartData || []).map(d => ({ value: d.orders }));
   const aovChartData = (rawChartData || []).map(d => ({ value: d.aov }));
@@ -64,7 +64,7 @@ export default function SalesReportsPage() {
         description="Analysez les performances financières et les tendances de vente."
       />
 
-      {/* KPI Section */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KpiCard
           title="Revenu Total"
@@ -78,7 +78,7 @@ export default function SalesReportsPage() {
           trendValue="+12.5%"
           subValue="vs. mois dernier"
           chartData={revenueChartData}
-          color="#10b981" // Emerald
+          color="#10b981" 
         />
         <KpiCard
           title="Commandes"
@@ -88,7 +88,7 @@ export default function SalesReportsPage() {
           trendValue="+5.2%"
           chartData={ordersChartData}
           chartType="bar"
-          color="#3b82f6" // Blue
+          color="#3b82f6" 
         />
         <KpiCard
           title="Panier Moyen"
@@ -101,7 +101,7 @@ export default function SalesReportsPage() {
           trend="down"
           trendValue="-2.1%"
           chartData={aovChartData}
-          color="#f59e0b" // Amber
+          color="#f59e0b" 
         />
         <KpiCard
           title="Taux de Conversion"
@@ -109,12 +109,12 @@ export default function SalesReportsPage() {
           icon={TrendingUp}
           trend="neutral"
           subValue="Visiteurs vs Commandes"
-          chartData={revenueChartData} // Reusing for consistency
-          color="#8b5cf6" // Purple
+          chartData={revenueChartData} 
+          color="#8b5cf6" 
         />
       </div>
 
-      {/* Charts Section */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
@@ -125,7 +125,7 @@ export default function SalesReportsPage() {
           </CardContent>
         </Card>
 
-        {/* Placeholder for Breakdown or Top Products list - Phase 2 */}
+        {}
         <Card className="border border-gray-100 dark:border-gray-800 shadow-sm bg-gray-100 dark:bg-gray-900">
           <CardHeader>
             <CardTitle>Détails</CardTitle>

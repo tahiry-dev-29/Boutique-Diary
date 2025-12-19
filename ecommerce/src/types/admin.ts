@@ -4,7 +4,7 @@ export interface AdminUser {
   id: number;
   username: string;
   email: string;
-  role: "ADMIN" | "SUPER_ADMIN"; // Adjust roles as needed based on your auth system
+  role: "ADMIN" | "SUPER_ADMIN";
 }
 
 export interface ProductImage {
@@ -18,6 +18,8 @@ export interface ProductImage {
   stock?: number | null;
   isNew?: boolean;
   isPromotion?: boolean;
+  isBestSeller?: boolean;
+  promotionRuleId?: number | null;
   categoryId?: number | null;
 }
 
@@ -28,8 +30,10 @@ export interface ProductVariation {
   color?: string | null;
   size?: string | null;
   price: number | string;
+  oldPrice?: number | string | null;
   stock: number;
   isActive?: boolean;
+  promotionRuleId?: number | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -51,12 +55,14 @@ export interface Product {
   isPromotion?: boolean;
   oldPrice?: number | null;
   isBestSeller?: boolean;
-  applyPromotions?: boolean; // Form-only field
+  applyPromotions?: boolean;
   rating?: number | null;
   reviewCount?: number;
   variations?: ProductVariation[];
   createdAt?: string;
   promotionRuleId?: number | null;
-  promotionRule?: any; // Avoiding circular dependency with full type for now
+  promotionRule?: any;
   updatedAt?: string;
+  status?: "DRAFT" | "PUBLISHED";
+  deletedAt?: string | null;
 }

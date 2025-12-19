@@ -1,4 +1,4 @@
-// src/components/admin/ClientDataTable.tsx
+
 "use client";
 
 import * as React from "react";
@@ -83,7 +83,7 @@ export function ClientDataTable<TData, TValue>({
             />
           )}
         </div>
-        {/* Add any other toolbar items like a "Add Customer" button here */}
+        {}
       </div>
       <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
         <Table>

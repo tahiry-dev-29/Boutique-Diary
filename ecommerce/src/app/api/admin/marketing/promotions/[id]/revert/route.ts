@@ -16,10 +16,10 @@ export async function POST(
       return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
-    // 1. Fetch the rule to know which category (optional, or we just revert all products that *would* match?)
-    // Actually, "Revert" implies undoing the specific rule.
-    // But since we don't store "AppliedRuleId" on product, we can only revert based on the same criteria (Category).
-    // Or we revert ALL products in that category that are in promotion.
+    
+    
+    
+    
 
     const rule = await prisma.promotionRule.findUnique({
       where: { id },
@@ -46,7 +46,7 @@ export async function POST(
     if (conditions?.isNew) whereClause.isNew = true;
 
     if (Object.keys(whereClause).length <= 2) {
-      // checks + 2 base props
+      
       return NextResponse.json(
         {
           error:
@@ -56,7 +56,7 @@ export async function POST(
       );
     }
 
-    // 2. Find matching products that have isPromotion = true
+    
     const products = await prisma.product.findMany({
       where: whereClause,
     });

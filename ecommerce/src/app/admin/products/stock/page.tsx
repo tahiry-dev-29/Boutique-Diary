@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { InventoryAuditModal } from "@/components/admin/InventoryAuditModal";
 
-// Manual debounce if hook missing
+
 function useDebounceValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function StockPage() {
       if (!response.ok) throw new Error("Failed to fetch stock");
 
       const result = await response.json();
-      // Handle both old array format (fallback) and new object format
+      
       if (Array.isArray(result)) {
         setProducts(result);
       } else {
@@ -168,11 +168,11 @@ export default function StockPage() {
         }),
       );
 
-      const { [uniqueId]: _, ...rest } = modifiedStocks; // eslint-disable-line @typescript-eslint/no-unused-vars
+      const { [uniqueId]: _, ...rest } = modifiedStocks; 
       setModifiedStocks(rest);
       toast.success("Stock mis à jour");
 
-      // Refresh stats quietly after update
+      
       fetchStock();
     } catch (error) {
       console.error("Error updating stock:", error);
@@ -229,11 +229,11 @@ export default function StockPage() {
       toast.success("Inventaire ajusté avec succès");
       const uniqueId = imageId ? `i-${imageId}` : `p-${productId}`;
       if (modifiedStocks[uniqueId] !== undefined) {
-        const { [uniqueId]: _, ...rest } = modifiedStocks; // eslint-disable-line @typescript-eslint/no-unused-vars
+        const { [uniqueId]: _, ...rest } = modifiedStocks; 
         setModifiedStocks(rest);
       }
 
-      fetchStock(); // Refresh stats
+      fetchStock(); 
     } catch (e) {
       console.error(e);
       toast.error("Erreur lors de l'audit");
@@ -304,7 +304,7 @@ export default function StockPage() {
     },
   );
 
-  // No client-side filtering needed as API handles it via search param
+  
 
   return (
     <div className="flex h-full flex-1 flex-col space-y-6">
@@ -313,7 +313,7 @@ export default function StockPage() {
         description="Suivez et mettez à jour l'inventaire de vos produits"
       />
 
-      {/* KPI Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
           <CardContent className="p-6 flex items-center gap-4">
@@ -374,7 +374,7 @@ export default function StockPage() {
         </Card>
       </div>
 
-      {/* Main Content */}
+      {}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div className="relative max-w-md w-full">
@@ -388,7 +388,7 @@ export default function StockPage() {
               value={searchQuery}
               onChange={e => {
                 setSearchQuery(e.target.value);
-                setPage(1); // Reset page on search
+                setPage(1); 
               }}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
               autoFocus
@@ -570,7 +570,7 @@ export default function StockPage() {
             </table>
           </div>
 
-          {/* Pagination Footer */}
+          {}
           <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <div className="text-sm text-gray-500 dark:text-gray-400">
               Affichage de page {page} sur {meta.totalPages} ({meta.total}{" "}

@@ -134,7 +134,7 @@ export function InventoryAuditModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-2xl sm:rounded-2xl border-gray-200 dark:border-gray-700">
         <div className="flex flex-col lg:flex-row h-[700px]">
-          {/* LEFT: ACTION PANEL (60%) */}
+          {}
           <div className="flex-[3] p-8 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 relative bg-gray-100 dark:bg-gray-800">
             <DialogHeader className="mb-8">
               <DialogTitle className="text-xl font-medium tracking-tight text-gray-900 dark:text-white flex items-center gap-3">
@@ -146,7 +146,7 @@ export function InventoryAuditModal({
             </DialogHeader>
 
             <div className="space-y-8 flex-1 overflow-y-auto pr-2">
-              {/* 1. Main Input Section */}
+              {}
               <div className="grid grid-cols-2 gap-6 items-end">
                 <div className="space-y-3">
                   <Label className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold">
@@ -188,7 +188,7 @@ export function InventoryAuditModal({
                 </div>
               </div>
 
-              {/* 2. Reasons Grid (Bento) */}
+              {}
               <div className="space-y-3">
                 <Label className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold">
                   Raison
@@ -244,7 +244,7 @@ export function InventoryAuditModal({
                 </div>
               </div>
 
-              {/* 3. Note */}
+              {}
               <div className="space-y-3">
                 <Label className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold">
                   Note
@@ -258,7 +258,7 @@ export function InventoryAuditModal({
               </div>
             </div>
 
-            {/* Footer */}
+            {}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Système: {item.stock} → Nouveau: {currentVal}
@@ -282,9 +282,9 @@ export function InventoryAuditModal({
             </div>
           </div>
 
-          {/* RIGHT: CONTEXT PANEL (40%) */}
+          {}
           <div className="flex-[2] bg-gray-50 dark:bg-gray-900/50 p-8 flex flex-col border-l border-gray-200 dark:border-gray-700 relative overflow-hidden">
-            {/* Product Card */}
+            {}
             <div className="relative mb-8 p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex gap-4">
                 <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 shrink-0">
@@ -318,7 +318,7 @@ export function InventoryAuditModal({
               </div>
             </div>
 
-            {/* History Timeline */}
+            {}
             <div className="flex-1 flex flex-col min-h-0">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-6 flex items-center gap-2">
                 <HistoryIcon className="w-3 h-3" />
@@ -326,7 +326,7 @@ export function InventoryAuditModal({
               </h4>
 
               <div className="flex-1 overflow-y-auto pr-2 relative">
-                {/* Timeline Line */}
+                {}
                 <div className="absolute left-[19px] top-2 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
 
                 {loadingHistory ? (
@@ -341,7 +341,7 @@ export function InventoryAuditModal({
                   <div className="space-y-6">
                     {history.map((h, i) => (
                       <div key={i} className="relative flex gap-4 group">
-                        {/* Dot */}
+                        {}
                         <div className="mt-1.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300 dark:bg-gray-600 group-hover:bg-primary group-hover:scale-125 transition-all z-10 mx-3.5 shrink-0 shadow-sm" />
 
                         <div className="flex-1 pb-1">

@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-// Map URL segments to readable labels
+
 const segmentLabels: Record<string, string> = {
   admin: "Admin",
   dashboard: "Tableau de bord",
@@ -41,9 +41,9 @@ export const Breadcrumbs = () => {
         {segments.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join("/")}`;
           const isLast = index === segments.length - 1;
-          const label = segmentLabels[segment] || segment; // Fallback to segment ID if not mapped
+          const label = segmentLabels[segment] || segment; 
 
-          // Capitalize if fallback
+          
           const displayLabel = segmentLabels[segment]
             ? label
             : label.charAt(0).toUpperCase() + label.slice(1);

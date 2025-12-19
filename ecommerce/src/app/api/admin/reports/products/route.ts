@@ -9,16 +9,16 @@ export async function GET() {
   }
 
   try {
-    // 1. Top Selling Products (Aggregation on OrderItem)
-    // Prisma check: GroupBy is supported.
+    
+    
     const topSelling = await prisma.orderItem.groupBy({
       by: ["productId"],
       _sum: {
         quantity: true,
-        price: true, // This is price per item * quantity usually stored as line total? No, OrderItem usually store unit price.
-        // Wait, schema says: quantity It, price Float. Assuming price is unit price at time of order.
-        // Total revenue per item = sum(quantity * price). Prisma groupBy doesn't support complex calculations directly in aggregated field.
-        // We'll simplisticly sum quantity first, then fetch product details.
+        price: true, 
+        
+        
+        
       },
       orderBy: {
         _sum: {
@@ -28,7 +28,7 @@ export async function GET() {
       take: 5,
     });
 
-    // Fetch product details for top selling
+    
     const topProducts = await Promise.all(
       topSelling.map(async item => {
         const product = await prisma.product.findUnique({
@@ -36,11 +36,11 @@ export async function GET() {
           select: { id: true, name: true, reference: true, stock: true },
         });
 
-        // Approximate revenue (not perfect if price changed, but OrderItem should ideally have lineTotal if we want accuracy.
-        // For now we calculate roughly or if we need precision we'd need to fetch all orderItems and sum in JS)
-        // Let's do a slightly better approach: Fetch OrderItems with their prices.
+        
+        
+        
 
-        // Alternative:
+        
         const orderItems = await prisma.orderItem.findMany({
           where: { productId: item.productId },
           select: { price: true, quantity: true },
@@ -61,7 +61,7 @@ export async function GET() {
       }),
     );
 
-    // 2. Stock Distribution
+    
     const products = await prisma.product.findMany({
       select: { stock: true, price: true },
     });

@@ -3,8 +3,18 @@
 import React from "react";
 import { ShoppingBag, Heart, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function CustomerDashboard() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setUser(data.user);
+      });
+  }, []);
   const stats = [
     {
       label: "Commandes",
@@ -29,15 +39,17 @@ export default function CustomerDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
+      {}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Bonjour, John 👋</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          Bonjour, {user?.username || "..."} 👋
+        </h1>
         <p className="text-muted-foreground mt-1">
           Bienvenue dans votre espace client
         </p>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map(stat => (
           <Link
@@ -62,7 +74,7 @@ export default function CustomerDashboard() {
         ))}
       </div>
 
-      {/* Recent orders */}
+      {}
       <div className="dark:border-gray-700/50 border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -106,7 +118,7 @@ export default function CustomerDashboard() {
         </div>
       </div>
 
-      {/* Quick actions */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/shop"

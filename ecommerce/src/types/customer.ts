@@ -1,4 +1,4 @@
-// src/types/customer.ts
+
 
 export type Role = "Admin" | "User" | "SuperAdmin";
 
@@ -8,15 +8,15 @@ export interface Customer {
   email: string;
   role: Role;
   createdAt: string;
-  avatar?: string; // Optional avatar URL
+  avatar?: string; 
 }
 
-// You can also define roles with more structure if needed
+
 export const roles = [
   {
     value: "User",
     label: "User",
-    icon: "/icons/user.svg", // Example icon path
+    icon: "/icons/user.svg", 
   },
   {
     value: "Admin",

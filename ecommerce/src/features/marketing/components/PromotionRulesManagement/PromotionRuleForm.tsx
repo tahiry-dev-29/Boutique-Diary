@@ -271,11 +271,11 @@ export function PromotionRuleForm({
           </h3>
 
           <div className="space-y-6">
-            {/* 1. Category Targeting */}
+            {}
             <div className="space-y-2">
               <FormLabel>Par Catégorie</FormLabel>
               <select
-                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                className="w-full flex h-10 rounded-md border border-input dark:bg-gray-900/50 px-3 py-2 text-sm ring-offset-background"
                 value={selectedCategoryId}
                 onChange={e => {
                   setSelectedCategoryId(e.target.value);
@@ -296,7 +296,7 @@ export function PromotionRuleForm({
 
             <Separator className="my-2" />
 
-            {/* 2. Specific Product Targeting */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="space-y-2 flex flex-col">
@@ -400,7 +400,7 @@ export function PromotionRuleForm({
 
             <Separator className="my-2" />
 
-            {/* 3. Attributes */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-900">
                 <FormLabel className="text-sm">Seulement "Nouveauté"</FormLabel>
@@ -441,7 +441,7 @@ export function PromotionRuleForm({
           </div>
         </div>
 
-        {/* Hidden fields to store JSON for form submission */}
+        {}
         <input type="hidden" {...form.register("conditions")} />
         <input type="hidden" {...form.register("actions")} />
 

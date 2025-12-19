@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutList, LayoutGrid } from "lucide-react";
+import { LayoutList, LayoutGrid, Archive, Trash2 } from "lucide-react";
 
 export function ProductNav() {
   const pathname = usePathname();
@@ -21,6 +21,18 @@ export function ProductNav() {
       icon: LayoutGrid,
       active: pathname === "/admin/products/promotions",
     },
+    {
+      name: "Archives",
+      href: "/admin/products/archive",
+      icon: Archive,
+      active: pathname === "/admin/products/archive",
+    },
+    {
+      name: "Corbeille",
+      href: "/admin/products/trash",
+      icon: Trash2,
+      active: pathname === "/admin/products/trash",
+    },
   ];
 
   return (
@@ -32,7 +44,7 @@ export function ProductNav() {
           className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
             tab.active
-              ? "bg-white dark:bg-gray-950 text-black dark:text-white shadow-sm"
+              ? "bg-white dark:dark:bg-gray-800 text-black dark:text-white shadow-sm"
               : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50",
           )}
         >

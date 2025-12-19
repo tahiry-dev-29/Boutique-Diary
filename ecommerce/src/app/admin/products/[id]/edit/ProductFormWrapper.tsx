@@ -11,7 +11,7 @@ export default function ProductFormWrapper({ product, categories }: { product: P
 
   const handleSuccess = () => {
     router.push("/admin/products");
-    router.refresh(); // Refresh server data
+    router.refresh(); 
   };
 
   const handleCancel = () => {

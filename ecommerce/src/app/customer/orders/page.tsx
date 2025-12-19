@@ -78,14 +78,14 @@ export default function CustomerOrders() {
         </button>
       </div>
 
-      {/* Orders list */}
+      {}
       <div className="space-y-4">
         {orders.map(order => (
           <div
             key={order.id}
             className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden"
           >
-            {/* Order header */}
+            {}
             <div className="flex items-center justify-between p-4 bg-muted/50">
               <div className="flex items-center gap-4">
                 {getStatusIcon(order.status)}
@@ -101,7 +101,7 @@ export default function CustomerOrders() {
               </span>
             </div>
 
-            {/* Order items */}
+            {}
             <div className="p-4 space-y-3">
               {order.items.map((item, i) => (
                 <div key={i} className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export default function CustomerOrders() {
               ))}
             </div>
 
-            {/* Order footer */}
+            {}
             <div className="flex items-center justify-between p-4 border-t border-border bg-muted/30">
               <span className="text-sm text-muted-foreground">Total</span>
               <span className="text-lg font-bold text-foreground">

@@ -6,11 +6,13 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900/50">
       <ClientNavbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 animate-in fade-in duration-700 fill-mode-both">
+        {children}
+      </main>
 
-      {/* Footer */}
+      {}
       <footer className="dark:border-gray-700/50 border-t border-border py-8 px-4 mt-auto">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
           <div>

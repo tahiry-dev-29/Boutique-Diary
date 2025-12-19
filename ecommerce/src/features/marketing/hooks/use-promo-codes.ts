@@ -17,7 +17,7 @@ export function usePromoCodes() {
       setPromoCodes(data);
     } catch (err) {
       setError("Impossible de charger les codes promo");
-      // toast.error("Erreur de chargement des codes promo"); // Optional: prevent toast spam on mount
+      
     } finally {
       setLoading(false);
     }

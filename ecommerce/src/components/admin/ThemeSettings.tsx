@@ -39,7 +39,7 @@ export function ThemeSettings() {
 
   return (
     <div className="p-4 space-y-5">
-      {/* Theme Preset */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Theme preset:</label>
         <Select value={preset} onValueChange={(v) => setPreset(v as ThemePreset)}>
@@ -70,7 +70,7 @@ export function ThemeSettings() {
         </Select>
       </div>
 
-      {/* Scale */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Scale:</label>
         <div className="flex gap-2">
@@ -88,7 +88,7 @@ export function ThemeSettings() {
         </div>
       </div>
 
-      {/* Radius */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Radius:</label>
         <div className="flex gap-2">
@@ -106,7 +106,7 @@ export function ThemeSettings() {
         </div>
       </div>
 
-      {/* Color Mode */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Color mode:</label>
         <div className="flex gap-2">
@@ -124,7 +124,7 @@ export function ThemeSettings() {
         </div>
       </div>
 
-      {/* Content Layout */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Content layout:</label>
         <div className="flex gap-2">
@@ -142,7 +142,7 @@ export function ThemeSettings() {
         </div>
       </div>
 
-      {/* Sidebar Mode */}
+      {}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-600">Sidebar mode:</label>
         <div className="flex gap-2">
@@ -160,7 +160,7 @@ export function ThemeSettings() {
         </div>
       </div>
 
-      {/* Reset Button */}
+      {}
       <Button
         variant="destructive"
         size="sm"

@@ -32,15 +32,22 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
+  id        Int              @id @default(autoincrement())
+  username  String           @unique
+  email     String           @unique
   password  String
-  role      Role     @default(CUSTOMER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role             @default(CUSTOMER)
+  isActive  Boolean          @default(true)
+  photo     String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   orders    Order[]
+  carts     Cart[]
+  reviews   Review[]
+  replies   ReviewReply[]
+  reactions ReviewReaction[]
+  wishlist  WishlistItem[]
+  addresses Address[]
 }
 
 model Product {
@@ -51,6 +58,10 @@ model Product {
   images      ProductImage[]
   price       Float
   stock       Int            @default(0)
+
+  // Lifecycle & Soft Delete
+  status    String    @default("DRAFT") // 'DRAFT' | 'PUBLISHED'
+  deletedAt DateTime?
 
   // Nouveaux champs pour filtrage avancé
   brand  String?  @db.VarChar(100)
@@ -75,9 +86,39 @@ model Product {
 
   variations     ProductVariation[]
   stockMovements StockMovement[] // Relation for history
+  cartItems      CartItem[]
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
   orderItems     OrderItem[]
+  reviews        Review[]
+  wishlistedBy   WishlistItem[]
+}
+
+// Cart Models
+model Cart {
+  id        String     @id @default(cuid())
+  sessionId String?    @unique
+  userId    Int?
+  user      User?      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+  color     String?
+  size      String?
+  price     Float
+  createdAt DateTime @default(now())
+
+  @@index([cartId])
+  @@index([productId])
 }
 
 model ProductVariation {
@@ -91,8 +132,13 @@ model ProductVariation {
   size  String?
 
   // Pricing & Stock
-  price Decimal @db.Decimal(10, 2)
-  stock Int     @default(0)
+  price    Decimal  @db.Decimal(10, 2)
+  oldPrice Decimal? @db.Decimal(10, 2)
+  stock    Int      @default(0)
+
+  // Promotion Linking
+  promotionRuleId Int?
+  promotionRule   PromotionRule? @relation(fields: [promotionRuleId], references: [id])
 
   // Status
   isActive Boolean @default(true)
@@ -106,21 +152,24 @@ model ProductVariation {
 }
 
 model ProductImage {
-  id             Int             @id @default(autoincrement())
-  url            String          @db.Text
-  reference      String?         @db.VarChar(100)
-  color          String?         @db.VarChar(50)
-  sizes          String[]        @default([])
-  price          Float?
-  oldPrice       Float?
-  stock          Int?
-  isNew          Boolean         @default(false)
-  isPromotion    Boolean         @default(false)
-  categoryId     Int?
-  category       Category?       @relation(fields: [categoryId], references: [id])
-  productId      Int
-  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  stockMovements StockMovement[] // Relation for history
+  id              Int             @id @default(autoincrement())
+  url             String          @db.Text
+  reference       String?         @db.VarChar(100)
+  color           String?         @db.VarChar(50)
+  sizes           String[]        @default([])
+  price           Float?
+  oldPrice        Float?
+  stock           Int?
+  isNew           Boolean         @default(false)
+  isBestSeller    Boolean         @default(false)
+  isPromotion     Boolean         @default(false)
+  promotionRuleId Int?
+  promotionRule   PromotionRule?  @relation(fields: [promotionRuleId], references: [id])
+  categoryId      Int?
+  category        Category?       @relation(fields: [categoryId], references: [id])
+  productId       Int
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockMovements  StockMovement[] // Relation for history
 }
 
 model Category {
@@ -160,15 +209,17 @@ model Banner {
 }
 
 model Admin {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(100)
-  email     String    @unique
-  password  String
-  role      String    @default("admin") // "admin" | "superadmin"
-  isActive  Boolean   @default(true)
-  lastSeen  DateTime? // Track online status
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              Int              @id @default(autoincrement())
+  name            String           @db.VarChar(100)
+  email           String           @unique
+  password        String
+  role            String           @default("admin") // "admin" | "superadmin"
+  isActive        Boolean          @default(true)
+  lastSeen        DateTime? // Track online status
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  reviewReplies   ReviewReply[]
+  reviewReactions ReviewReaction[]
 }
 
 // New model for Stock Audit/History
@@ -208,6 +259,9 @@ model Order {
 
   items OrderItem[]
 
+  // Payment Relation
+  transactions PaymentTransaction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -225,6 +279,48 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+// Payment Module
+
+model PaymentMethod {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique // 'mvola', 'orange_money', 'stripe', 'cash'
+  name        String
+  description String?
+  logoUrl     String?
+  isActive    Boolean @default(false)
+  isDefault   Boolean @default(false)
+
+  // Configuration (API keys, secrets, merchant IDs) stored securely
+  config Json? // e.g. { "merchantData": "...", "apiKey": "..." }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentTransaction {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  amount   Float
+  currency String @default("MGA")
+
+  provider  String // 'mvola', 'orange_money', 'manual'
+  reference String? // External transaction ID (e.g. MVola TransID)
+
+  status String // 'PENDING', 'SUCCESS', 'FAILED', 'CANCELLED', 'REFUNDED'
+
+  metadata Json? // Store full provider response/details
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([reference])
+  @@index([status])
 }
 
 // Marketing Module
@@ -272,9 +368,88 @@ model PromotionRule {
 
   products Product[]
 
-  isActive  Boolean  @default(true)
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  productVariations ProductVariation[]
+  productImages     ProductImage[]
+
+  @@index([isActive])
+}
+
+model Review {
+  id         Int     @id @default(autoincrement())
+  rating     Float
+  comment    String  @db.Text
+  isVerified Boolean @default(false)
+  tags       Json? // e.g. ["Great quality", "Easy setup"]
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  replies   ReviewReply[]
+  reactions ReviewReaction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([isActive])
+  @@index([productId])
+  @@index([userId])
+}
+
+model ReviewReply {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  reviewId  Int
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  adminId   Int?
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reviewId])
+}
+
+model ReviewReaction {
+  id       Int    @id @default(autoincrement())
+  type     String // 'LIKE', 'LOVE', 'LAUGH', etc.
+  reviewId Int
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId   Int?
+  user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  adminId  Int?
+  admin    Admin? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@unique([reviewId, userId, adminId, type])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String? // e.g., "Home", "Office"
+  street      String
+  city        String
+  postalCode  String
+  country     String   @default("Madagascar")
+  phoneNumber String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

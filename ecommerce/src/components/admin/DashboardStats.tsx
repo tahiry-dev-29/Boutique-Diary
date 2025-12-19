@@ -15,7 +15,7 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ products }: DashboardStatsProps) {
-  // Calculate real stats where possible
+  
   const totalProducts = products.length;
   const totalStock = products.reduce((acc, p) => acc + (p.stock || 0), 0);
   const totalValue = products.reduce(
@@ -23,14 +23,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
     0,
   );
 
-  const inStockCount = products.filter(p => {
-    const stock =
-      p.images?.reduce(
-        (acc, img) => acc + (typeof img === "string" ? 0 : img.stock || 0),
-        0,
-      ) || 0;
-    return stock > 0;
-  }).length;
+  const inStockCount = products.filter(p => (p.stock || 0) > 0).length;
   const outOfStockCount = totalProducts - inStockCount;
 
   const stats = [
@@ -87,25 +80,25 @@ export function DashboardStats({ products }: DashboardStatsProps) {
         return (
           <Card
             key={index}
-            className="relative overflow-hidden border-none shadow-sm bg-gray-100 dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50"
+            className="relative overflow-hidden border-none shadow-sm bg-gray-100 dark:bg-gray-800 hover:translate-y-[-1px] transition-all duration-300 group border border-gray-100 dark:border-gray-700/50 py-6"
           >
-            {/* Background glowing effect */}
+            {}
             <div
               className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.06] dark:opacity-[0.10] blur-2xl rounded-bl-full -mr-5 -mt-5 transition-transform group-hover:scale-105`}
             />
 
-            <CardContent className="p-5 relative z-10">
+            <CardContent className="relative z-10">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col justify-between h-full space-y-2">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate max-w-[120px]">
                       {stat.label}
                     </p>
-                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight break-all">
                       {stat.value}
                     </h3>
                   </div>
-                  <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+                  <div className="text-[12px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
                     {stat.subValue}
                   </div>
                 </div>

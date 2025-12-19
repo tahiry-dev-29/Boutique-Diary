@@ -5,7 +5,7 @@ import { checkApiPermission } from "@/lib/backend-permissions";
 
 export const dynamic = "force-dynamic";
 
-// GET - List all employees (Admin model)
+
 export async function GET() {
   try {
     const employees = await prisma.admin.findMany({
@@ -34,7 +34,7 @@ export async function GET() {
   }
 }
 
-// POST - Create new employee (Admin model)
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -47,11 +47,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check permission
+    
     const permissionError = await checkApiPermission("employees.edit");
     if (permissionError) return permissionError;
 
-    // Check if email already exists
+    
     const existingAdmin = await prisma.admin.findUnique({
       where: { email },
     });
@@ -63,10 +63,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create employee
+    
     const employee = await prisma.admin.create({
       data: {
         name,

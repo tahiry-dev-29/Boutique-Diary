@@ -1,27 +1,41 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/contexts/theme-context";
+import MainLayout from "@/components/MainLayout";
+import { getCategories } from "@/lib/store-data";
+import { Metadata } from "next";
+import { Playfair_Display, Montserrat } from "next/font/google";
 
-export default function RootLayout({
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "Boutique Diary",
+  description: "Votre destination shopping préférée",
+};
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isAdminPage = pathname?.startsWith("/admin");
+  const categories = await getCategories();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased bg-background text-foreground">
-        <ThemeProvider>
-          {!isAdminPage && <Navbar />}
-          {children}
-          <Toaster />
-        </ThemeProvider>
+    <html
+      lang="fr"
+      className={`${playfair.variable} ${montserrat.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased dark:bg-gray-900/50 text-foreground">
+        <MainLayout categories={categories}>{children}</MainLayout>
       </body>
     </html>
   );

@@ -3,10 +3,12 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
+import { SESSION_COOKIE } from "@/lib/auth-constants";
+
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "jwt-secret-ecommerce",
 );
-const COOKIE_NAME = "session";
+const COOKIE_NAME = SESSION_COOKIE;
 
 export async function POST(request: Request) {
   try {
@@ -47,6 +49,7 @@ export async function POST(request: Request) {
       userId: user.id,
       username: user.username,
       email: user.email,
+      role: user.role,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
