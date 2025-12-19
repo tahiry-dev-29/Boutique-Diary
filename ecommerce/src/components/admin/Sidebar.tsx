@@ -376,7 +376,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                   {section.title}
                 </h3>
               )}
-              {/* Divider */}
+              {}
               {!isExpanded && section.title && index > 0 && (
                 <div className="h-px bg-gray-200 dark:bg-white/10 my-2 mx-2" />
               )}
@@ -518,7 +518,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           </div>
         )}
 
-        {/* USER PROFILE */}
+        {}
         <div className="mt-auto pt-4 px-3 border-t border-gray-200 dark:border-white/10">
           <div className="flex items-center justify-between">
             <button

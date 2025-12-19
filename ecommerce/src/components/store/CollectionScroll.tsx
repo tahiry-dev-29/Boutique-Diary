@@ -19,10 +19,10 @@ interface CollectionScrollProps {
 export default function CollectionScroll({
   products = [],
 }: CollectionScrollProps) {
-  // Fallback if no products passed
+  
   const displayProducts = products.length > 0 ? products : [];
 
-  // Helper to get random pastel color for background if no image
+  
   const bgColors = [
     "bg-[#e5fcf4]",
     "bg-[#6ec1e4]",
@@ -58,9 +58,9 @@ export default function CollectionScroll({
           </div>
         </div>
 
-        {/* Scrollable Container */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end relative">
-          {/* Navigation Arrows */}
+          {}
           <div className="absolute -top-20 right-0 hidden md:flex gap-2">
             <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50">
               <ArrowLeft className="w-4 h-4" />

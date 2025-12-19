@@ -18,7 +18,7 @@ export async function POST(
       );
     }
 
-    // Check if it's an admin first
+    
     const adminPayoad = await verifyAdminToken();
     if (adminPayoad) {
       const reply = await prisma.reviewReply.create({
@@ -38,7 +38,7 @@ export async function POST(
       return NextResponse.json(reply);
     }
 
-    // If not admin, check if it's a user
+    
     const userPayload = await verifyToken();
     if (userPayload) {
       const reply = await prisma.reviewReply.create({

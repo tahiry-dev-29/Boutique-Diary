@@ -13,7 +13,7 @@ interface ReviewListAdminProps {
   productId: number;
 }
 
-// Sub-component for individual review items to keep the main list clean and support independent animations
+
 const ReviewItemBase = ({
   review,
   handleDelete,

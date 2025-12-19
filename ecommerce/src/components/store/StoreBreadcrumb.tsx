@@ -12,10 +12,10 @@ export default function StoreBreadcrumb({
 }) {
   const pathname = usePathname();
 
-  // Split path and filter empty strings
+  
   const paths = pathname.split("/").filter(path => path);
 
-  // Map common paths to readable names
+  
   const pathNames: Record<string, string> = {
     store: "Boutique",
     product: "Produit",
@@ -40,7 +40,7 @@ export default function StoreBreadcrumb({
       </Link>
 
       {paths.map((path, index) => {
-        // Skip "store" if it's just a prefix for product/about but keep it if it is the shop page
+        
         if (
           path === "store" &&
           paths[index + 1] &&
@@ -51,19 +51,19 @@ export default function StoreBreadcrumb({
         const isLast = index === paths.length - 1;
         let href = `/${paths.slice(0, index + 1).join("/")}`;
 
-        // Fix: Redirect "product" breadcrumb to the actual products listing page
+        
         if (path === "product") {
           href = "/produits";
         }
 
         let label = pathNames[path] || path;
 
-        // If it's the last item and we have a specific product name, use that
+        
         if (isLast && productName) {
           label = productName;
         }
 
-        // Capitalize if not mapped
+        
         if (!pathNames[path] && !productName) {
           label = label.charAt(0).toUpperCase() + label.slice(1);
         }

@@ -61,13 +61,13 @@ export default function SearchCommand({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4">
-      {/* Backdrop */}
+      {}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
         onClick={() => onOpenChange(false)}
       />
 
-      {/* Modal Content */}
+      {}
       <div className="relative w-full max-w-[640px] shadow-2xl rounded-xl overflow-hidden bg-white ring-1 ring-black/5 flex flex-col animate-in fade-in zoom-in-95 duration-200">
         <div className="flex flex-col w-full h-full">
           <div className="flex items-center border-b px-4 py-3">
@@ -140,7 +140,7 @@ export default function SearchCommand({
                         <Package className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400" />
                       )}
 
-                      {/* Mini Status Badge */}
+                      {}
                       <div className="absolute top-1 left-1 flex flex-col gap-0.5">
                         {product.isNew && (
                           <div className="w-2 h-2 rounded-full bg-black border border-white" />

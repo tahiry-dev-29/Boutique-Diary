@@ -26,7 +26,7 @@ export default function AdminLayout({
   const { colorMode, preset, scale, radius, contentLayout, sidebarMode } =
     useTheme();
 
-  // Map theme values to CSS variables for this container
+  
   const themeStyle = {
     "--theme-primary": THEME_PRESETS[preset].primary,
     "--theme-accent": THEME_PRESETS[preset].accent,
@@ -57,7 +57,7 @@ export default function AdminLayout({
       data-content-layout={contentLayout}
       data-sidebar-mode={sidebarMode}
     >
-      {/* Background Pattern */}
+      {}
       <div
         className="absolute inset-0 opacity-30 pointer-events-none"
         style={{

@@ -78,7 +78,7 @@ export default function PaymentMethodsPage() {
     checked: boolean,
   ) => {
     try {
-      // Optimistic update
+      
       setMethods(prev =>
         prev.map(m => (m.id === method.id ? { ...m, isActive: checked } : m)),
       );
@@ -94,7 +94,7 @@ export default function PaymentMethodsPage() {
     } catch (error) {
       console.error(error);
       toast.error("Erreur lors de la mise à jour");
-      fetchMethods(); // Revert
+      fetchMethods(); 
     }
   };
 
@@ -112,7 +112,7 @@ export default function PaymentMethodsPage() {
           id: method.id,
           isDefault: true,
           isActive: true,
-        }), // Default implies active
+        }), 
       });
 
       if (!res.ok) throw new Error("Failed to set default");
@@ -163,7 +163,7 @@ export default function PaymentMethodsPage() {
                   <div className="p-3 bg-background rounded-full border shadow-sm">
                     {method.logoUrl ? (
                       <div className="w-8 h-8 relative">
-                        {/* Use generic icon for now as paths might be placeholders */}
+                        {}
                         {getIcon(method.code)}
                       </div>
                     ) : (

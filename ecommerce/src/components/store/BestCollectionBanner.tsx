@@ -23,10 +23,10 @@ export default function BestCollectionBanner() {
           </div>
 
           <div className="relative h-[300px] md:h-[400px] bg-[#eef6fc] flex items-center justify-center rounded-[40px] m-4 md:m-0 md:rounded-l-none md:rounded-r-[40px]">
-            {/* Blue Circle Decoration */}
+            {}
             <div className="absolute w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
 
-            {/* Product Image Placeholder */}
+            {}
             <div className="relative w-48 h-48 bg-orange-500 rotate-[-12deg] rounded-xl shadow-2xl flex items-center justify-center text-white font-bold">
               [Image Sac]
             </div>

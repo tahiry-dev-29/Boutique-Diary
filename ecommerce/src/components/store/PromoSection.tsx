@@ -52,7 +52,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
     <section ref={sectionRef} className="py-8 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayProducts.map((product, index) => {
-          // Basic logic to pick a color/rotation based on index
+          
           const bgColor = bgColors[index % bgColors.length];
           const rotation = rotations[index % rotations.length];
           const imageUrl = product.images?.[0]?.url;

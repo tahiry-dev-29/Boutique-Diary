@@ -14,14 +14,14 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
-  // State for selections
+  
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
 
-  // Check initial wishlist status
+  
   useEffect(() => {
     if (product?.id) {
       checkWishlistStatus();
@@ -76,37 +76,37 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     }
   };
 
-  // Derived state from current selection (Image acts as Variant)
+  
   const images =
     product?.images?.length > 0 ? product.images : [{ id: 0, url: null }];
   const currentImage = images[selectedImageIndex];
 
-  // Specific data for the selected variant (image)
+  
   const displayPrice = currentImage?.price ?? product?.price;
   const displayOldPrice = currentImage?.oldPrice ?? product?.oldPrice;
   const displayStock = currentImage?.stock ?? product?.stock;
   const currentRef = currentImage?.reference ?? product?.reference;
 
-  // Available options
-  // Colors are effectively different images. We can group images by color or just list unique colors from product.colors
-  // When a user clicks a color, we find the first image with that color.
+  
+  
+  
   const uniqueColors = product?.colors || [];
 
-  // Available sizes for the CURRENT variant selection.
-  // If specific image has sizes, use those. Otherwise fallback to product global sizes.
+  
+  
   const availableSizes =
     currentImage?.sizes && currentImage.sizes.length > 0
       ? currentImage.sizes
       : product?.sizes || [];
 
-  // Update selected size if it's no longer available when switching variants
+  
   useEffect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
       setSelectedSize(null);
     }
   }, [selectedImageIndex, availableSizes, selectedSize]);
 
-  // Entrance Animations
+  
   useEffect(() => {
     anime({
       targets: ".product-image-container",
@@ -127,7 +127,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, []);
 
   const handleColorSelect = (color: string) => {
-    // Find first image matching this color
+    
     const index = images.findIndex((img: any) => img.color === color);
     if (index !== -1) {
       setSelectedImageIndex(index);
@@ -161,7 +161,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     );
   }
 
-  // Percentage calc
+  
   const hasDiscount = displayOldPrice && displayOldPrice > displayPrice;
   const discountPercent = hasDiscount
     ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
@@ -170,9 +170,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   return (
     <section className="py-8 md:py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_450px] gap-12 items-start">
-        {/* Gallery Section */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
-          {/* Thumbnails - Vertical on Desktop */}
+          {}
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible order-2 md:order-1">
             {images.map((img: any, i: number) => (
               <button
@@ -197,7 +197,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             ))}
           </div>
 
-          {/* Main Image */}
+          {}
           <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-[3/4] md:aspect-[4/5] max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
@@ -213,7 +213,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </div>
             )}
 
-            {/* Badges */}
+            {}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.isNew && (
                 <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -234,7 +234,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
         </div>
 
-        {/* Product Info Section */}
+        {}
         <div className="product-info-stagger flex flex-col gap-8">
           <div>
             <div className="flex justify-between items-start">
@@ -250,7 +250,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.name}
             </h1>
 
-            {/* Price Block */}
+            {}
             <div className="flex items-end gap-3 mb-6">
               <span className="text-4xl font-bold tracking-tight">
                 ${displayPrice?.toFixed(2)}
@@ -262,7 +262,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
             </div>
 
-            {/* Rating */}
+            {}
             <div className="flex items-center gap-2 mb-8">
               <div className="flex text-amber-500">
                 {[...Array(5)].map((_, i) => (
@@ -282,10 +282,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
             </div>
 
-            {/* Divider */}
+            {}
             <div className="h-px bg-gray-100 my-2" />
 
-            {/* Description */}
+            {}
             <div className="mb-8">
               <h3 className="font-bold text-gray-900 mb-2">Description</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
@@ -293,7 +293,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </p>
             </div>
 
-            {/* Colors */}
+            {}
             <div className="mb-6">
               <div className="flex justify-between mb-3">
                 <h3 className="font-bold text-gray-900">
@@ -321,7 +321,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       >
                         <span
                           className="block w-full h-full rounded-full border border-black/5 shadow-inner"
-                          style={{ background: COLOR_MAP[color] || color }} // Use map or fallback to raw
+                          style={{ background: COLOR_MAP[color] || color }} 
                         />
                         {isSelected && (
                           <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
@@ -339,7 +339,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </div>
             </div>
 
-            {/* Sizes */}
+            {}
             <div className="mb-8">
               <div className="flex justify-between mb-3">
                 <h3 className="font-bold text-gray-900">
@@ -376,7 +376,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </div>
             </div>
 
-            {/* Stock Status */}
+            {}
             <div className="mb-6">
               {displayStock > 0 ? (
                 <div className="flex items-center text-green-600 text-sm font-medium gap-2 p-3 bg-green-50 rounded-lg w-fit">
@@ -394,7 +394,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
             </div>
 
-            {/* Actions */}
+            {}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex border border-gray-100 bg-gray-50/50 backdrop-blur-sm rounded-2xl items-center p-1">
                 <button

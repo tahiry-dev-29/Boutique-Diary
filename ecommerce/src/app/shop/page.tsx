@@ -17,7 +17,7 @@ export default async function ShopPage({
   const categories = await getCategories();
   const stats = await getStoreStats();
 
-  // Find current category name if selected
+  
   const currentCategory = categoryId
     ? categories.find(c => c.id === categoryId)
     : null;

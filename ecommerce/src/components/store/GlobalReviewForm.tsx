@@ -172,7 +172,7 @@ export default function GlobalReviewModal() {
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-[32px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-white">
-        {/* Premium Header Background */}
+        {}
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-white -z-10" />
 
         <div className="p-5">
@@ -190,7 +190,7 @@ export default function GlobalReviewModal() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Product Selection Step */}
+              {}
               <FormField
                 control={form.control}
                 name="productId"
@@ -300,7 +300,7 @@ export default function GlobalReviewModal() {
                 )}
               />
 
-              {/* Rating Step */}
+              {}
               <FormField
                 control={form.control}
                 name="rating"
@@ -327,7 +327,7 @@ export default function GlobalReviewModal() {
                 )}
               />
 
-              {/* Comment Step */}
+              {}
               <FormField
                 control={form.control}
                 name="comment"

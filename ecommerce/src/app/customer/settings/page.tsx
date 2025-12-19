@@ -19,7 +19,7 @@ export default function SettingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -75,7 +75,7 @@ export default function SettingsPage() {
 
       if (res.ok) {
         toast.success("Profil mis à jour avec succès");
-        // Refetch user to get updated data
+        
         fetchUser();
         setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
       } else {
@@ -111,7 +111,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
-        {/* Profile Sidebar */}
+        {}
         <div className="space-y-6">
           <div className="bg-card border border-border rounded-[32px] p-8 text-center flex flex-col items-center gap-4">
             <div className="relative group">
@@ -139,10 +139,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Settings Form */}
+        {}
         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Personal Info */}
+            {}
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
                 <User size={20} className="text-primary" />
@@ -188,7 +188,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Password Management */}
+            {}
             <div className="space-y-4 pt-4">
               <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
                 <Lock size={20} className="text-primary" />

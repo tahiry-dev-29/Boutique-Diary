@@ -30,7 +30,7 @@ export default function MeherHero({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Animate text elements
+    
     anime({
       targets: containerRef.current.querySelectorAll(".hero-animate"),
       translateY: [20, 0],
@@ -40,7 +40,7 @@ export default function MeherHero({
       duration: 800,
     });
 
-    // Animate badge
+    
     anime({
       targets: containerRef.current.querySelector(".hero-badge"),
       translateX: [20, 0],
@@ -57,7 +57,7 @@ export default function MeherHero({
       className="pt-12 pb-16 px-4 md:px-6 bg-white overflow-hidden"
     >
       <div className="max-w-[1400px] mx-auto text-center md:text-left relative">
-        {/* Review Floating Badge (Top Right of text area) */}
+        {}
         <div className="hero-badge hidden md:flex absolute right-0 top-0 flex-col items-end opacity-0">
           <div className="flex -space-x-3 mb-2">
             {displayAvatars.map((client, i) => (

@@ -15,10 +15,10 @@ export default function FeaturesSection({
   const [openIndex, setOpenIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Use real count from DB
+  
   const displayCount = customerCount;
 
-  // Use real customer data for avatars if available, fallback to mock
+  
   const displayAvatars =
     recentCustomers.length > 0
       ? recentCustomers.map(c => ({
@@ -37,7 +37,7 @@ export default function FeaturesSection({
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            // Animate Image (from left)
+            
             anime({
               targets: entry.target.querySelector(".feature-image"),
               translateX: [-50, 0],
@@ -46,7 +46,7 @@ export default function FeaturesSection({
               duration: 1000,
             });
 
-            // Animate Content (from right)
+            
             anime({
               targets: entry.target.querySelector(".feature-content"),
               translateX: [50, 0],
@@ -98,7 +98,7 @@ export default function FeaturesSection({
       className="py-16 px-4 md:px-6 bg-white my-8 rounded-[40px] max-w-[1400px] mx-auto overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Left Image */}
+        {}
         <div className="feature-image opacity-0 relative h-[500px] w-full rounded-[32px] overflow-hidden shadow-2xl">
           <Image
             src="/images/why-us-gradient.png"
@@ -108,7 +108,7 @@ export default function FeaturesSection({
           />
         </div>
 
-        {/* Right Content */}
+        {}
         <div className="feature-content opacity-0">
           <h2 className="text-4xl font-bold mb-4 tracking-tight text-gray-900">
             Pourquoi Nous Choisir
@@ -120,7 +120,7 @@ export default function FeaturesSection({
             client.
           </p>
 
-          {/* Satisfied Clients Badge */}
+          {}
           <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl ring-1 ring-gray-100 mb-10 w-fit">
             <div className="flex -space-x-3">
               {displayAvatars.map((client, i) => (

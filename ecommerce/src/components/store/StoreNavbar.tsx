@@ -82,7 +82,7 @@ export default function StoreNavbar({
     }
   };
 
-  // Cart Store
+  
   const isCartOpen = useCartStore(state => state.isOpen);
   const setOpen = useCartStore(state => state.setOpen);
   const itemCount = useCartStore(state => state.getItemCount());
@@ -91,7 +91,7 @@ export default function StoreNavbar({
 
   const isActive = (path: string) => pathname === path;
 
-  // Animation Effect
+  
   useEffect(() => {
     anime({
       targets: [".nav-logo", ".nav-menu", ".nav-actions"],
@@ -103,7 +103,7 @@ export default function StoreNavbar({
     });
   }, []);
 
-  // Updated collections with icons
+  
   const collections = [
     {
       title: "Nouveautés",
@@ -147,7 +147,7 @@ export default function StoreNavbar({
     <>
       <nav className="bg-white/20 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
-          {/* Logo */}
+          {}
           <Link
             href="/"
             className="nav-logo opacity-0 flex items-center justify-center transition-transform hover:scale-105"
@@ -155,7 +155,7 @@ export default function StoreNavbar({
             <BrandLogo className="w-28 md:w-36" variant="light" />
           </Link>
 
-          {/* Center Navigation - Unified Pill UX */}
+          {}
           <div className="hidden md:block nav-menu opacity-0 absolute left-1/2 -translate-x-1/2">
             <div className="rounded-full bg-gray-100/50 border border-gray-200/50 p-1 flex items-center gap-1 shadow-sm">
               <NavigationMenu>
@@ -313,7 +313,7 @@ export default function StoreNavbar({
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           <div className="hidden md:flex items-center gap-3 nav-actions opacity-0">
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -438,7 +438,7 @@ export default function StoreNavbar({
               )}
             </button>
           </div>
-          {/* Mobile Menu Toggle */}
+          {}
           <button
             className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -451,7 +451,7 @@ export default function StoreNavbar({
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-24 left-0 w-full bg-white border-b border-gray-100 p-8 flex flex-col gap-6 shadow-2xl animate-in slide-in-from-top-10 rounded-b-[40px] z-50">
             <div className="flex flex-col gap-4">
@@ -540,10 +540,10 @@ export default function StoreNavbar({
         )}
       </nav>
 
-      {/* Cart Sidebar */}
+      {}
       <CartSidebar isOpen={isCartOpen} onClose={() => setOpen(false)} />
 
-      {/* Search Command Palette */}
+      {}
       <SearchCommand open={isSearchOpen} onOpenChange={setIsSearchOpen} />
     </>
   );

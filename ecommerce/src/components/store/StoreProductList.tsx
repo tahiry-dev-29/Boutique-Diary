@@ -53,7 +53,7 @@ export default function StoreProductList({
         selectedCategoryId={selectedCategoryId}
         onCategoryChange={id => {
           setSelectedCategoryId(id);
-          setVisibleCount(20); // Reset pagination on filter change
+          setVisibleCount(20); 
         }}
       />
 

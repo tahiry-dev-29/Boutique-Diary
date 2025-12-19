@@ -62,7 +62,7 @@ export default function CategoryTabsSection({
   return (
     <section className="py-20 px-4 md:px-6 bg-white">
       <div className="max-w-[1400px] mx-auto">
-        {/* Encabezado */}
+        {}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight text-gray-900 uppercase">
             {title}
@@ -73,7 +73,7 @@ export default function CategoryTabsSection({
           </p>
         </div>
 
-        {/* Tabs */}
+        {}
         <div className="flex flex-wrap justify-center gap-3 mb-16">
           {categories.map(cat => (
             <button
@@ -90,7 +90,7 @@ export default function CategoryTabsSection({
           ))}
         </div>
 
-        {/* Products Grid */}
+        {}
         <div
           ref={containerRef}
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12"

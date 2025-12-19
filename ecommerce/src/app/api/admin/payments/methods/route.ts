@@ -21,9 +21,9 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id, isActive, config, isDefault } = body;
 
-    // specific handling: if setting default, unset others?
-    // For simplicity, we assume frontend handles exclusivity if needed or we do it here.
-    // If isDefault is true, set all others to false.
+    
+    
+    
     if (isDefault) {
       await prisma.paymentMethod.updateMany({
         where: { id: { not: id } },

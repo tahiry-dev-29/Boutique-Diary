@@ -40,7 +40,7 @@ export default function StoreTypewriter({
 
   return (
     <span className={cn("relative inline-block", className)}>
-      {/* Hidden text to reserve space and prevent layout shifts */}
+      {}
       <span
         className="invisible opacity-0 select-none pointer-events-none"
         aria-hidden="true"
@@ -49,7 +49,7 @@ export default function StoreTypewriter({
         <span className="inline-block w-0.5 h-[1em] ml-1 bg-current align-middle" />
       </span>
 
-      {/* Actual displayed typewriter text */}
+      {}
       <span className="absolute left-0 top-0 w-full h-full">
         {displayedText}
         {displayedText.length < text.length && (

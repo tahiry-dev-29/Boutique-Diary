@@ -7,25 +7,18 @@ export default function StoreHero() {
   return (
     <section className="bg-[#f8f9fa] py-8 md:py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_400px] lg:grid-cols-[1fr_450px] gap-8 items-start">
-        {/* Product Image Showcase */}
+        {}
         <div className="bg-transparent rounded-3xl p-4 md:p-8 flex items-center justify-center relative min-h-[400px] md:min-h-[600px]">
-          {/* Use a placeholder for now, ideally this would be real data. 
-              The user provided an image of a black fleece jacket.
-          */}
+          {}
           <div className="relative w-full h-full min-h-[400px]">
-            {/* 
-                In a real scenario, we'd use a real image. 
-                For now, I'll create a stylized placeholder or simple text 
-                if no image is available, but the prompt implies I can generate images or use placeholders.
-                I'll stick to a clean layout.
-            */}
+            {}
             <div className="absolute inset-0 bg-gray-200 rounded-3xl animate-pulse flex items-center justify-center text-gray-400">
               [Boa Fleece Jacket Image]
             </div>
           </div>
         </div>
 
-        {/* Product Details (Sticky/Fixed style content on the right) */}
+        {}
         <div className="flex flex-col gap-6 pt-4">
           <div>
             <span className="text-sm text-gray-500 mb-2 block">

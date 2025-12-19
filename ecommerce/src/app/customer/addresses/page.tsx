@@ -22,7 +22,7 @@ export default function AddressesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     label: "",
     street: "",
@@ -144,7 +144,7 @@ export default function AddressesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
-        {/* Adresses List */}
+        {}
         <div className="space-y-4">
           {addresses.length > 0 ? (
             addresses.map(address => (
@@ -225,7 +225,7 @@ export default function AddressesPage() {
           )}
         </div>
 
-        {/* Form to Add/Edit */}
+        {}
         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm h-fit sticky top-24">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">

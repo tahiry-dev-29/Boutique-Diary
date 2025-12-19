@@ -31,10 +31,10 @@ export default function StoreProductGrid({
 }: StoreProductGridProps) {
   const categories = ["Shoes", "Clothing", "Accessories", "Jewellery"];
 
-  // Use passed products or empty
+  
   const displayProducts = products;
 
-  // Helper to get random pastel color since we might not have it in DB mainly
+  
   const colors = [
     "bg-[#f3f4f6]",
     "bg-[#f9fafb]",
@@ -57,7 +57,7 @@ export default function StoreProductGrid({
               </p>
             </div>
 
-            {/* Filters */}
+            {}
             <div className="flex flex-wrap gap-2">
               {categories.map(cat => (
                 <button

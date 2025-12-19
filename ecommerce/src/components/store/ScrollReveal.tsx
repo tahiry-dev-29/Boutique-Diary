@@ -64,7 +64,7 @@ export default function ScrollReveal({
               duration,
               easing: "easeOutExpo",
               complete: () => {
-                // Final safety: ensure everything is visible
+                
                 if (selector) {
                   const items = element.querySelectorAll(selector);
                   items.forEach((item: any) => (item.style.opacity = "1"));
@@ -108,7 +108,7 @@ export default function ScrollReveal({
 
     observer.observe(element);
 
-    // Absolute failsafe: after 3 seconds, everything MUST be visible
+    
     const failsafe = setTimeout(() => {
       if (element.style.opacity !== "1") {
         element.style.opacity = "1";

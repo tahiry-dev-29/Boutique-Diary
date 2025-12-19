@@ -37,7 +37,7 @@ export default function ServiceHighlights() {
   return (
     <section ref={sectionRef} className="py-8 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Item 1 */}
+        {}
         <div className="service-card opacity-0 bg-[#faf7f2] p-6 rounded-3xl h-[200px] flex flex-col justify-between hover:shadow-md transition-shadow">
           <div>
             <h3 className="font-bold text-lg mb-2">
@@ -54,7 +54,7 @@ export default function ServiceHighlights() {
           </button>
         </div>
 
-        {/* Item 2 */}
+        {}
         <div className="service-card opacity-0 bg-[#f4f7fa] p-6 rounded-3xl h-[200px] flex flex-col justify-between hover:shadow-md transition-shadow">
           <div>
             <h3 className="font-bold text-lg mb-2">
@@ -72,7 +72,7 @@ export default function ServiceHighlights() {
           </button>
         </div>
 
-        {/* Item 3 */}
+        {}
         <div className="service-card opacity-0 bg-[#f2fcf4] p-6 rounded-3xl h-[200px] flex flex-col justify-between hover:shadow-md transition-shadow">
           <div>
             <h3 className="font-bold text-lg mb-2">Paiements Sécurisés</h3>
@@ -86,14 +86,14 @@ export default function ServiceHighlights() {
           </button>
         </div>
 
-        {/* Item 4 - Image Banner */}
+        {}
         <div className="service-card opacity-0 bg-[#6ec1e4] p-6 rounded-3xl h-[200px] relative overflow-hidden flex items-center hover:shadow-md transition-shadow">
           <h3 className="relative z-10 text-white font-bold text-xl">
             Vêtements
             <br />
             d'Été
           </h3>
-          {/* Decorative Elements */}
+          {}
           <div className="absolute right-[-20px] bottom-[-20px] w-32 h-32 bg-orange-500 rounded-full blur-xl opacity-80"></div>
           <div className="absolute top-10 right-4 text-orange-500 font-black text-4xl rotate-12 z-10">
             20%

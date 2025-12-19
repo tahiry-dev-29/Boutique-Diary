@@ -22,13 +22,13 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const subtotal = getSubtotal();
-  const delivery = 0; // Free
-  const taxes = subtotal * 0.2; // Example 20% tax
+  const delivery = 0; 
+  const taxes = subtotal * 0.2; 
   const total = subtotal + delivery + taxes;
 
   useEffect(() => {
     if (isOpen) {
-      // Animate In
+      
       if (overlayRef.current) {
         overlayRef.current.style.display = "block";
         anime({
@@ -49,7 +49,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
         });
       }
     } else {
-      // Animate Out
+      
       if (overlayRef.current) {
         anime({
           targets: overlayRef.current,
@@ -76,7 +76,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
   return (
     <>
-      {/* Overlay */}
+      {}
       <div
         ref={overlayRef}
         className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[60]"
@@ -84,13 +84,13 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
         onClick={onClose}
       />
 
-      {/* Sidebar Panel - Floating Design */}
+      {}
       <div
         ref={sidebarRef}
         className="fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] md:w-[480px] bg-white z-[70] shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] flex flex-col"
         style={{ transform: "translateX(110%)" }}
       >
-        {/* Header */}
+        {}
         <div className="p-8 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Mon Panier</h2>
@@ -106,7 +106,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           </button>
         </div>
 
-        {/* Cart Items (Scrollable) */}
+        {}
         <div className="flex-1 overflow-y-auto px-8 py-2 custom-scrollbar">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-4 text-gray-500">
@@ -131,7 +131,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   key={item.id}
                   className="group relative flex gap-5 p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all duration-300"
                 >
-                  {/* Product Image */}
+                  {}
                   <div className="w-20 h-24 bg-white rounded-xl flex-shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
                     {item.image ? (
                       <Image
@@ -147,7 +147,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     )}
                   </div>
 
-                  {/* Details */}
+                  {}
                   <div className="flex-1 flex flex-col justify-between py-1">
                     <div>
                       <div className="flex justify-between items-start">
@@ -174,7 +174,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     </div>
 
                     <div className="flex justify-between items-center mt-3">
-                      {/* Quantity Controls */}
+                      {}
                       <div className="flex items-center gap-3">
                         <div className="flex items-center bg-white border border-gray-200 rounded-full px-1 py-1 shadow-sm">
                           <button
@@ -204,7 +204,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         </span>
                       </div>
 
-                      {/* Remove */}
+                      {}
                       <button
                         onClick={() => removeItem(item.id)}
                         className="text-gray-300 hover:text-red-500 transition-colors p-2"
@@ -220,7 +220,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           )}
         </div>
 
-        {/* Footer (Summary & Checkout) */}
+        {}
         {items.length > 0 && (
           <div className="p-8 bg-gray-50/50 backdrop-blur-sm border-t rounded-b-[32px] border-gray-100">
             <div className="space-y-2 text-sm mb-6">

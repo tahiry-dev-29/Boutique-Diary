@@ -41,7 +41,7 @@ export async function getPromotionalProducts(limit = 3) {
       },
     });
 
-    // Fallback if no promotions
+    
     if (products.length < limit) {
       const fallback = await prisma.product.findMany({
         where: {
@@ -51,7 +51,7 @@ export async function getPromotionalProducts(limit = 3) {
         },
         include: { images: true, category: true },
         take: limit - products.length,
-        orderBy: { createdAt: "asc" }, // Oldest or random-ish
+        orderBy: { createdAt: "asc" }, 
       });
       return [...products, ...fallback];
     }
@@ -64,7 +64,7 @@ export async function getPromotionalProducts(limit = 3) {
 
 export async function getTopSellingProducts(limit = 4) {
   try {
-    // Ideally filter by isBestSeller, but for now just take some
+    
     const products = await prisma.product.findMany({
       where: {
         status: "PUBLISHED",
@@ -77,7 +77,7 @@ export async function getTopSellingProducts(limit = 4) {
       },
       take: limit,
       orderBy: {
-        price: "desc", // Just a different sorting for variety
+        price: "desc", 
       },
     });
     return products;
@@ -183,7 +183,7 @@ export async function getProducts(
         images: true,
         category: true,
       },
-      take: limit, // undefined means return all
+      take: limit, 
       orderBy: {
         createdAt: "desc",
       },
@@ -202,7 +202,7 @@ export async function getCategoryProductsMap(
   try {
     const results: Record<string, any[]> = {};
 
-    // Using Promise.all to fetch in parallel
+    
     await Promise.all(
       categoryNames.map(async name => {
         const category = await prisma.category.findFirst({

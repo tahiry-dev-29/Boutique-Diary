@@ -10,7 +10,7 @@ export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Hero Text Animation
+    
     anime({
       targets: ".about-hero-text",
       translateY: [30, 0],
@@ -48,10 +48,10 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white" ref={containerRef}>
-      {/* Hero Section */}
+      {}
       <section className="relative pt-20 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          {/* Abstract Background */}
+          {}
           <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-50 rounded-full blur-3xl opacity-60"></div>
           <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl opacity-60"></div>
         </div>
@@ -71,11 +71,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {}
       <section className="py-20 px-6 bg-gray-50 anim-section">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="anim-item opacity-0 relative aspect-square md:aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl">
-            {/* Placeholder for 'Mission' image */}
+            {}
             <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-400 relative">
               <div className="absolute inset-0 flex items-center justify-center text-gray-500 font-bold opacity-30 text-4xl">
                 MISSION
@@ -129,7 +129,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats / Numbers */}
+      {}
       <section className="py-20 px-6 anim-section">
         <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
@@ -153,7 +153,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Vision / Quote */}
+      {}
       <section className="py-24 px-6 bg-black text-white text-center anim-section">
         <div className="max-w-[800px] mx-auto anim-item opacity-0">
           <div className="text-6xl text-gray-700 font-serif mb-6">“</div>

@@ -255,7 +255,7 @@ export default function PaymentTransactionsPage() {
             </Table>
           </div>
 
-          {/* Pagination Controls could go here */}
+          {}
         </CardContent>
       </Card>
     </div>

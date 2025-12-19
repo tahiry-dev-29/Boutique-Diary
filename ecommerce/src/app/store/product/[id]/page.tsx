@@ -37,7 +37,7 @@ export default async function ProductPage({
         initialReviewCount={product.reviewCount || 0}
       />
 
-      {/* "This item can be cool with this" Section */}
+      {}
       <div className="bg-gray-50 pt-8 pb-0">
         <StoreProductGrid products={relatedProducts} />
       </div>

@@ -8,7 +8,7 @@ export default function StoreFooter() {
     <footer className="bg-[#1a1a2e] text-white py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Brand Column */}
+          {}
           <div className="col-span-1 md:col-span-1">
             <h2 className="text-2xl font-bold mb-6">Meher</h2>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -22,7 +22,7 @@ export default function StoreFooter() {
             </div>
           </div>
 
-          {/* Customer Services */}
+          {}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
               Service Client
@@ -61,7 +61,7 @@ export default function StoreFooter() {
             </ul>
           </div>
 
-          {/* Products */}
+          {}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
               Produits
@@ -100,7 +100,7 @@ export default function StoreFooter() {
             </ul>
           </div>
 
-          {/* Company Info */}
+          {}
           <div>
             <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
               Infos Entreprise
@@ -135,7 +135,7 @@ export default function StoreFooter() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-gray-500 text-xs">
             Copyright © 2026 Meher. Tous droits réservés.

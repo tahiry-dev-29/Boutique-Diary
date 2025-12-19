@@ -85,14 +85,14 @@ export default function ProductReviews({
     }
   }
 
-  // Calculate distribution
+  
   const distribution = reviews.reduce((acc: any, review: any) => {
     const r = Math.round(review.rating);
     acc[r] = (acc[r] || 0) + 1;
     return acc;
   }, {});
 
-  // Sort reviews based on active filter
+  
   const sortedReviews = useMemo(() => {
     const sorted = [...reviews];
     switch (activeFilter) {
@@ -114,7 +114,7 @@ export default function ProductReviews({
   return (
     <section className="bg-white py-16 px-4 md:px-6 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-24">
-        {/* Left Column: Summary & CTA */}
+        {}
         <div className="flex flex-col gap-12 sticky top-24 self-start">
           <ReviewSummary
             rating={initialRating}
@@ -141,7 +141,7 @@ export default function ProductReviews({
           </div>
         </div>
 
-        {/* Right Column: List */}
+        {}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold text-gray-900">
