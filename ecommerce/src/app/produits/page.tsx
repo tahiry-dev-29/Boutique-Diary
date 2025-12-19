@@ -1,6 +1,7 @@
 import StoreProductBanner from "@/components/store/StoreProductBanner";
 import StoreProductList from "@/components/store/StoreProductList";
 import StoreFooter from "@/components/store/StoreFooter";
+import ScrollReveal from "@/components/store/ScrollReveal";
 import { getProducts, getStoreStats, getCategories } from "@/lib/store-data";
 
 export default async function ProduitsPage() {
@@ -19,7 +20,8 @@ export default async function ProduitsPage() {
           badge="Catalogue Complet"
           customerCount={stats.customerCount}
           recentCustomers={stats.recentCustomers}
-          variant="indigo"
+          variant="rose"
+          enableTypewriter={true}
         />
 
         <div className="mb-12 border-b border-gray-100 pb-12">
@@ -34,7 +36,16 @@ export default async function ProduitsPage() {
           </div>
         </div>
 
-        <StoreProductList initialProducts={products} categories={categories} />
+        <ScrollReveal
+          animation="fade-up"
+          stagger={50}
+          selector=".product-card-reveal"
+        >
+          <StoreProductList
+            initialProducts={products}
+            categories={categories}
+          />
+        </ScrollReveal>
       </div>
       <StoreFooter />
     </div>

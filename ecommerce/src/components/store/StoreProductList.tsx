@@ -59,7 +59,11 @@ export default function StoreProductList({
 
       {visibleProducts.length > 0 ? (
         <>
-          <StoreProductGrid products={visibleProducts} />
+          <StoreProductGrid
+            products={visibleProducts}
+            showTitle={false}
+            showFooter={false}
+          />
 
           {hasMore && (
             <div className="flex justify-center pt-12 pb-8">
@@ -70,7 +74,7 @@ export default function StoreProductList({
               >
                 <Plus className="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" />
                 <span className="font-black uppercase tracking-widest text-xs">
-                  Voir plus d'articles
+                  Charger plus
                 </span>
               </Button>
             </div>

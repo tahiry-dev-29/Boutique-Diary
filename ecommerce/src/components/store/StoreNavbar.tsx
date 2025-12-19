@@ -37,7 +37,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, Settings as SettingsIcon, UserCircle } from "lucide-react";
+import {
+  LogOut,
+  Settings as SettingsIcon,
+  UserCircle,
+  Heart,
+  MapPin,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export default function StoreNavbar({
@@ -345,13 +351,38 @@ export default function StoreNavbar({
                     asChild
                     className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
                   >
-                    <Link
-                      href="/customer/profile"
-                      className="flex items-center gap-3"
-                    >
+                    <Link href="/customer" className="flex items-center gap-3">
                       <UserCircle className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
                       <span className="text-sm font-bold text-gray-700">
                         Mon Profil
+                      </span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
+                  >
+                    <Link
+                      href="/customer/wishlist"
+                      className="flex items-center gap-3"
+                    >
+                      <Heart className="w-4 h-4 text-gray-400 group-hover:text-rose-500 transition-colors" />
+                      <span className="text-sm font-bold text-gray-700">
+                        Mes Favoris
+                      </span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
+                  >
+                    <Link
+                      href="/customer/addresses"
+                      className="flex items-center gap-3"
+                    >
+                      <MapPin className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                      <span className="text-sm font-bold text-gray-700">
+                        Mes Adresses
                       </span>
                     </Link>
                   </DropdownMenuItem>
@@ -393,13 +424,16 @@ export default function StoreNavbar({
             )}
 
             <button
-              className="p-2.5 bg-black text-white hover:scale-105 active:scale-95 rounded-full transition-all relative shadow-lg shadow-black/10 flex items-center justify-center group"
               onClick={() => setOpen(true)}
+              className="relative p-2.5 bg-zinc-900 hover:bg-black text-white rounded-full transition-all duration-300 hover:scale-110 active:scale-95 shadow-xl shadow-zinc-200/50 flex items-center justify-center cursor-pointer group"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 text-[10px] font-bold flex items-center justify-center bg-white text-black border border-gray-100 rounded-full shadow-md">
-                  {itemCount}
+                <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-5 w-5 bg-rose-500 text-[10px] font-bold text-white items-center justify-center border-2 border-white">
+                    {itemCount}
+                  </span>
                 </span>
               )}
             </button>

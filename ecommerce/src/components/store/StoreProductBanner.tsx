@@ -14,7 +14,7 @@ interface StoreProductBannerProps {
   badge: string;
   customerCount: number;
   recentCustomers?: Customer[];
-  variant?: "indigo" | "rose" | "amber";
+  variant?: "indigo" | "rose" | "amber" | "cyan" | "emerald";
   enableTypewriter?: boolean;
 }
 
@@ -42,6 +42,16 @@ export default function StoreProductBanner({
       bg: "bg-amber-950",
       blobs: ["bg-amber-600", "bg-yellow-600", "bg-orange-500"],
       textGradient: "from-amber-100 via-yellow-100 to-orange-100",
+    },
+    cyan: {
+      bg: "bg-cyan-950",
+      blobs: ["bg-cyan-600", "bg-sky-600", "bg-indigo-500"],
+      textGradient: "from-cyan-100 via-sky-100 to-indigo-100",
+    },
+    emerald: {
+      bg: "bg-emerald-950",
+      blobs: ["bg-emerald-600", "bg-teal-600", "bg-lime-500"],
+      textGradient: "from-emerald-100 via-teal-100 to-lime-100",
     },
   };
 
@@ -151,28 +161,27 @@ export default function StoreProductBanner({
                         className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl transition-transform group-hover/stats:-translate-y-1"
                         style={{ zIndex: 10 - i }}
                       >
-                        {customer.photo ? (
-                          <img
-                            src={customer.photo}
-                            alt={customer.username}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                            <Users className="w-5 h-5 text-gray-500" />
-                          </div>
-                        )}
+                        <img
+                          src={
+                            customer.photo ||
+                            `https://i.pravatar.cc/150?u=${customer.id}`
+                          }
+                          alt={customer.username}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ))
                   : [1, 2, 3, 4].map(i => (
                       <div
                         key={i}
-                        className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center shadow-xl transition-transform group-hover/stats:-translate-y-1"
+                        className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl transition-transform group-hover/stats:-translate-y-1"
                         style={{ zIndex: 10 - i }}
                       >
-                        <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                          <Users className="w-5 h-5 text-gray-500" />
-                        </div>
+                        <img
+                          src={`https://i.pravatar.cc/150?u=${i + 100}`}
+                          alt="Client"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ))}
               </div>
@@ -184,14 +193,6 @@ export default function StoreProductBanner({
                   <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em]">
                     Certifiés satisfaits
                   </span>
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Sparkles
-                        key={i}
-                        className="w-2.5 h-2.5 text-amber-500 fill-amber-500"
-                      />
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>

@@ -3,8 +3,18 @@
 import React from "react";
 import { ShoppingBag, Heart, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function CustomerDashboard() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setUser(data.user);
+      });
+  }, []);
   const stats = [
     {
       label: "Commandes",
@@ -31,7 +41,9 @@ export default function CustomerDashboard() {
     <div className="space-y-8">
       {}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Bonjour, John 👋</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          Bonjour, {user?.username || "..."} 👋
+        </h1>
         <p className="text-muted-foreground mt-1">
           Bienvenue dans votre espace client
         </p>

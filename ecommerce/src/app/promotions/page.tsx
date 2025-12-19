@@ -1,6 +1,7 @@
 import StoreProductBanner from "@/components/store/StoreProductBanner";
 import StoreProductList from "@/components/store/StoreProductList";
 import StoreFooter from "@/components/store/StoreFooter";
+import ScrollReveal from "@/components/store/ScrollReveal";
 import { getProducts, getStoreStats, getCategories } from "@/lib/store-data";
 
 export default async function PromotionsPage() {
@@ -19,7 +20,7 @@ export default async function PromotionsPage() {
           badge="Offres Spéciales"
           customerCount={stats.customerCount}
           recentCustomers={stats.recentCustomers}
-          variant="rose"
+          variant="emerald"
           enableTypewriter={true}
         />
 
@@ -35,7 +36,16 @@ export default async function PromotionsPage() {
           </div>
         </div>
 
-        <StoreProductList initialProducts={products} categories={categories} />
+        <ScrollReveal
+          animation="fade-up"
+          stagger={50}
+          selector=".product-card-reveal"
+        >
+          <StoreProductList
+            initialProducts={products}
+            categories={categories}
+          />
+        </ScrollReveal>
       </div>
       <StoreFooter />
     </div>

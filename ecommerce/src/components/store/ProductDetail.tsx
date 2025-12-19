@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Check, AlertCircle, ShoppingCart } from "lucide-react";
+import { Star, Check, AlertCircle, ShoppingCart, Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { COLOR_MAP } from "@/lib/constants";
 import { useCartStore } from "@/lib/cart-store";
 import anime from "animejs";
+import { toast } from "sonner";
 
 interface ProductDetailProps {
   product: any;
@@ -17,6 +18,63 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+
+  // Check initial wishlist status
+  useEffect(() => {
+    if (product?.id) {
+      checkWishlistStatus();
+    }
+  }, [product?.id]);
+
+  const checkWishlistStatus = async () => {
+    try {
+      const res = await fetch("/api/customer/wishlist");
+      if (res.ok) {
+        const wishlist = await res.json();
+        const isInWishlist = wishlist.some(
+          (item: any) => item.productId === product.id,
+        );
+        setIsWishlisted(isInWishlist);
+      }
+    } catch (err) {
+      console.error("Error checking wishlist", err);
+    }
+  };
+
+  const toggleWishlist = async () => {
+    setIsWishlistLoading(true);
+    try {
+      const res = await fetch("/api/customer/wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setIsWishlisted(data.added);
+        toast.success(
+          data.added ? "Ajouté aux favoris" : "Retiré des favoris",
+          {
+            icon: data.added ? "❤️" : "💔",
+          },
+        );
+      } else if (res.status === 401) {
+        toast.error("Veuillez vous connecter pour ajouter des favoris", {
+          action: {
+            label: "Se connecter",
+            onClick: () => (window.location.href = "/login"),
+          },
+        });
+      }
+    } catch (err) {
+      toast.error("Erreur de connexion");
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
 
   // Derived state from current selection (Image acts as Variant)
   const images =
@@ -370,6 +428,21 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               >
                 <ShoppingCart className="w-6 h-6" />
                 {displayStock > 0 ? "Ajouter au panier" : "Indisponible"}
+              </button>
+
+              <button
+                onClick={toggleWishlist}
+                disabled={isWishlistLoading}
+                className={cn(
+                  "w-16 h-16 rounded-2xl flex items-center justify-center transition-all border active:scale-90 shadow-xl",
+                  isWishlisted
+                    ? "bg-rose-500 text-white border-rose-500"
+                    : "bg-white text-gray-700 border-gray-100 hover:border-rose-200 hover:text-rose-500",
+                )}
+              >
+                <Heart
+                  className={cn("w-6 h-6", isWishlisted && "fill-current")}
+                />
               </button>
             </div>
 

@@ -46,6 +46,8 @@ model User {
   reviews   Review[]
   replies   ReviewReply[]
   reactions ReviewReaction[]
+  wishlist  WishlistItem[]
+  addresses Address[]
 }
 
 model Product {
@@ -89,6 +91,7 @@ model Product {
   updatedAt      DateTime           @updatedAt
   orderItems     OrderItem[]
   reviews        Review[]
+  wishlistedBy   WishlistItem[]
 }
 
 // Cart Models
@@ -423,4 +426,30 @@ model ReviewReaction {
   admin    Admin? @relation(fields: [adminId], references: [id], onDelete: SetNull)
 
   @@unique([reviewId, userId, adminId, type])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String? // e.g., "Home", "Office"
+  street      String
+  city        String
+  postalCode  String
+  country     String   @default("Madagascar")
+  phoneNumber String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

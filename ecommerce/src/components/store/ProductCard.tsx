@@ -5,6 +5,8 @@ import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/cart-store";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   id: string;
@@ -19,6 +21,7 @@ interface ProductCardProps {
   rating?: number | null;
   reviewCount?: number;
   imageColor?: string;
+  initialIsWishlisted?: boolean;
 }
 
 export default function ProductCard({
@@ -34,7 +37,48 @@ export default function ProductCard({
   rating,
   reviewCount,
   imageColor,
+  initialIsWishlisted = false,
 }: ProductCardProps) {
+  const [isWishlisted, setIsWishlisted] = useState(initialIsWishlisted);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+
+  const toggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsWishlistLoading(true);
+    try {
+      const res = await fetch("/api/customer/wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: id }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setIsWishlisted(data.added);
+        toast.success(
+          data.added ? "Ajouté aux favoris" : "Retiré des favoris",
+          {
+            icon: data.added ? "❤️" : "💔",
+          },
+        );
+      } else if (res.status === 401) {
+        toast.error("Veuillez vous connecter pour ajouter des favoris", {
+          action: {
+            label: "Se connecter",
+            onClick: () => (window.location.href = "/login"),
+          },
+        });
+      } else {
+        toast.error("Une erreur est survenue");
+      }
+    } catch (err) {
+      toast.error("Erreur de connexion");
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
   // Calculate discount percentage if both prices are available
   const discountPercentage =
     isPromotion && oldPrice && oldPrice > price
@@ -42,7 +86,7 @@ export default function ProductCard({
       : null;
 
   return (
-    <div className="group relative flex flex-col h-full">
+    <div className="group relative flex flex-col h-full product-card-reveal">
       {/* Image Container */}
       <div
         className={cn(
@@ -84,13 +128,21 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* Action Buttons Overlay */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 z-10">
           <button
-            className="p-2.5 rounded-full bg-white/95 backdrop-blur-sm text-gray-700 hover:text-rose-500 transition-colors shadow-lg border border-black/5"
-            aria-label="Ajouter aux favoris"
+            onClick={toggleWishlist}
+            disabled={isWishlistLoading}
+            className={cn(
+              "p-2.5 rounded-full backdrop-blur-sm transition-all shadow-lg border active:scale-90 disabled:opacity-50",
+              isWishlisted
+                ? "bg-rose-500 text-white border-rose-500 scale-110"
+                : "bg-white/95 text-gray-700 hover:text-rose-500 border-black/5",
+            )}
+            aria-label={
+              isWishlisted ? "Retirer des favoris" : "Ajouter aux favoris"
+            }
           >
-            <Heart className="w-4 h-4" />
+            <Heart className={cn("w-4 h-4", isWishlisted && "fill-current")} />
           </button>
         </div>
 

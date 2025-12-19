@@ -20,10 +20,14 @@ interface Product {
 
 interface StoreProductGridProps {
   products?: Product[];
+  showTitle?: boolean;
+  showFooter?: boolean;
 }
 
 export default function StoreProductGrid({
   products = [],
+  showTitle = true,
+  showFooter = true,
 }: StoreProductGridProps) {
   const categories = ["Shoes", "Clothing", "Accessories", "Jewellery"];
 
@@ -41,29 +45,31 @@ export default function StoreProductGrid({
   return (
     <section className="py-12 md:py-20 px-4 md:px-6 bg-white">
       <div className="max-w-[1400px] mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-3">
-              Découvrez nos articles
-            </h2>
-            <p className="text-sm md:text-base text-gray-500 max-w-xl">
-              Une sélection exclusive renouvelée chaque semaine avec le meilleur
-              du design et de la durabilité.
-            </p>
-          </div>
+        {showTitle && (
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-3">
+                Découvrez nos articles
+              </h2>
+              <p className="text-sm md:text-base text-gray-500 max-w-xl">
+                Une sélection exclusive renouvelée chaque semaine avec le
+                meilleur du design et de la durabilité.
+              </p>
+            </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className="px-5 py-2 rounded-full border border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-400 hover:border-black hover:text-black transition-all duration-300"
-              >
-                {cat}
-              </button>
-            ))}
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  className="px-5 py-2 rounded-full border border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-400 hover:border-black hover:text-black transition-all duration-300"
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {displayProducts.length === 0 ? (
           <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-[32px]">
@@ -93,15 +99,17 @@ export default function StoreProductGrid({
           </div>
         )}
 
-        <div className="mt-16 flex justify-center">
-          <Link
-            href="/produits"
-            className="group flex items-center gap-2 bg-[#1a1a2e] text-white px-10 py-4 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:bg-black transition-all hover:scale-105 shadow-xl hover:shadow-[#1a1a2e]/20"
-          >
-            Voir toute la collection
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+        {showFooter && (
+          <div className="mt-16 flex justify-center">
+            <Link
+              href="/produits"
+              className="group flex items-center gap-2 bg-[#1a1a2e] text-white px-10 py-4 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:bg-black transition-all hover:scale-105 shadow-xl hover:shadow-[#1a1a2e]/20"
+            >
+              Voir toute la collection
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

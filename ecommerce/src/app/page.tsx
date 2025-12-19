@@ -7,6 +7,7 @@ import BestCollectionBanner from "@/components/store/BestCollectionBanner";
 import StoreProductGrid from "@/components/store/StoreProductGrid";
 import ClientTestimonials from "@/components/store/ClientTestimonials";
 import StoreFooter from "@/components/store/StoreFooter";
+import ScrollReveal from "@/components/store/ScrollReveal";
 import {
   getFeaturedProducts,
   getTopSellingProducts,
@@ -36,17 +37,44 @@ export default async function Home() {
         customerCount={customerCount}
         recentCustomers={recentCustomers}
       />
-      <PromoSection products={promotionalProducts} />
-      <CategoryTabsSection productsMap={categoryProducts} />
-      <CollectionScroll products={topSellingProducts} />
-      <FeaturesSection
-        customerCount={customerCount}
-        recentCustomers={recentCustomers}
-      />
-      <ServiceHighlights />
-      <BestCollectionBanner />
-      <StoreProductGrid products={featuredProducts} />
+
+      <ScrollReveal animation="fade-up" delay={200}>
+        <PromoSection products={promotionalProducts} />
+      </ScrollReveal>
+
+      <ScrollReveal animation="fade-up" threshold={0.1}>
+        <CategoryTabsSection productsMap={categoryProducts} />
+      </ScrollReveal>
+
+      <ScrollReveal animation="fade-left">
+        <CollectionScroll products={topSellingProducts} />
+      </ScrollReveal>
+
+      <ScrollReveal animation="fade-up">
+        <FeaturesSection
+          customerCount={customerCount}
+          recentCustomers={recentCustomers}
+        />
+      </ScrollReveal>
+
+      <ScrollReveal animation="scale-up" delay={100}>
+        <ServiceHighlights />
+      </ScrollReveal>
+
+      <ScrollReveal animation="fade-up">
+        <BestCollectionBanner />
+      </ScrollReveal>
+
+      <ScrollReveal
+        animation="fade-up"
+        stagger={100}
+        selector=".product-card-reveal"
+      >
+        <StoreProductGrid products={featuredProducts} />
+      </ScrollReveal>
+
       <ClientTestimonials testimonials={testimonials} />
+
       <StoreFooter />
     </div>
   );

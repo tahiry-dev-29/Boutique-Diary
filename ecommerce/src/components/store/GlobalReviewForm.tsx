@@ -171,7 +171,7 @@ export default function GlobalReviewModal() {
           </span>
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[28px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-white">
+      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-[32px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-white">
         {/* Premium Header Background */}
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-white -z-10" />
 
@@ -213,7 +213,7 @@ export default function GlobalReviewModal() {
                           />
                         </div>
 
-                        <div className="max-h-[140px] overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
+                        <div className="max-h-[160px] overflow-y-auto pr-2 custom-scrollbar space-y-1.5">
                           {filteredProducts.length === 0 ? (
                             <div className="py-6 text-center text-gray-400 text-xs italic">
                               Aucun produit trouvé
