@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-
 export const THEME_PRESETS = {
   default: {
     name: "Default",
@@ -97,7 +96,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeState>(DEFAULT_THEME);
   const [mounted, setMounted] = useState(false);
 
-  
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -111,57 +109,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  
+  // Persist theme to localStorage purely
   useEffect(() => {
     if (!mounted) return;
-
     localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
-
-    const root = document.documentElement;
-
-    
-    root.classList.toggle("dark", theme.colorMode === "dark");
-
-    
-    root.setAttribute("data-theme", theme.preset);
-    root.setAttribute("data-scale", theme.scale);
-    root.setAttribute("data-radius", theme.radius);
-    root.setAttribute("data-content-layout", theme.contentLayout);
-    root.setAttribute("data-sidebar-mode", theme.sidebarMode);
-
-    
-    const presetConfig = THEME_PRESETS[theme.preset];
-    root.style.setProperty("--theme-primary", presetConfig.primary);
-    root.style.setProperty("--theme-accent", presetConfig.accent);
-    root.style.setProperty("--theme-indicator", presetConfig.indicator);
-
-    
-    const scaleValues = { default: "1", xs: "0.875", lg: "1.125" };
-    root.style.setProperty("--scale-factor", scaleValues[theme.scale]);
-
-    
-    const radiusValues = {
-      default: "0.625rem",
-      sm: "0.375rem",
-      md: "0.5rem",
-      lg: "0.75rem",
-      xl: "1rem",
-    };
-    root.style.setProperty("--radius", radiusValues[theme.radius]);
   }, [theme, mounted]);
 
   const contextValue: ThemeContextType = {
     ...theme,
-    setPreset: (preset) => setTheme((t) => ({ ...t, preset })),
-    setColorMode: (colorMode) => setTheme((t) => ({ ...t, colorMode })),
-    setScale: (scale) => setTheme((t) => ({ ...t, scale })),
-    setRadius: (radius) => setTheme((t) => ({ ...t, radius })),
-    setContentLayout: (contentLayout) => setTheme((t) => ({ ...t, contentLayout })),
-    setSidebarMode: (sidebarMode) => setTheme((t) => ({ ...t, sidebarMode })),
+    setPreset: preset => setTheme(t => ({ ...t, preset })),
+    setColorMode: colorMode => setTheme(t => ({ ...t, colorMode })),
+    setScale: scale => setTheme(t => ({ ...t, scale })),
+    setRadius: radius => setTheme(t => ({ ...t, radius })),
+    setContentLayout: contentLayout => setTheme(t => ({ ...t, contentLayout })),
+    setSidebarMode: sidebarMode => setTheme(t => ({ ...t, sidebarMode })),
     resetTheme: () => setTheme(DEFAULT_THEME),
   };
 
-  
   if (!mounted) {
     return null;
   }

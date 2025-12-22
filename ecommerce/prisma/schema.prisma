@@ -249,6 +249,9 @@ model Order {
 
   items OrderItem[]
 
+  // Payment Relation
+  transactions PaymentTransaction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -266,6 +269,48 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+// Payment Module
+
+model PaymentMethod {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique // 'mvola', 'orange_money', 'stripe', 'cash'
+  name        String
+  description String?
+  logoUrl     String?
+  isActive    Boolean @default(false)
+  isDefault   Boolean @default(false)
+
+  // Configuration (API keys, secrets, merchant IDs) stored securely
+  config Json? // e.g. { "merchantData": "...", "apiKey": "..." }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentTransaction {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  amount   Float
+  currency String @default("MGA")
+
+  provider  String // 'mvola', 'orange_money', 'manual'
+  reference String? // External transaction ID (e.g. MVola TransID)
+
+  status String // 'PENDING', 'SUCCESS', 'FAILED', 'CANCELLED', 'REFUNDED'
+
+  metadata Json? // Store full provider response/details
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([reference])
+  @@index([status])
 }
 
 // Marketing Module
