@@ -1,4 +1,4 @@
-// src/app/api/admin/auth/me/route.ts
+
 import { NextResponse } from "next/server";
 import { verifyAdminToken } from "@/lib/adminAuth";
 import { prisma } from "@/lib/prisma";
@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Update lastSeen (non-blocking)
+    
     prisma.admin
       .update({
         where: { id: user.adminId },

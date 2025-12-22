@@ -90,13 +90,13 @@ export default function CustomerPage() {
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 30; // 30 days as new
+    return diffDays <= 30; 
   };
 
-  // Stats calculation
+  
   const totalCustomers = customers.length;
   const newCustomers = customers.filter(c => isNew(c.createdAt)).length;
-  // Mock active calculation or just use total for now as "Total Registered"
+  
   const activeRate =
     totalCustomers > 0 ? Math.round((newCustomers / totalCustomers) * 100) : 0;
 
@@ -115,7 +115,7 @@ export default function CustomerPage() {
         description="Gérez votre base de clients et consultez leurs informations"
       />
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
@@ -166,9 +166,9 @@ export default function CustomerPage() {
         </Card>
       </div>
 
-      {/* Main Content */}
+      {}
       <div className="space-y-4">
-        {/* Search */}
+        {}
         <div className="relative max-w-md">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
@@ -183,7 +183,7 @@ export default function CustomerPage() {
           />
         </div>
 
-        {/* Customers table */}
+        {}
         <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -296,7 +296,7 @@ export default function CustomerPage() {
         )}
       </div>
 
-      {/* Customer Details Sheet */}
+      {}
       <Sheet
         open={!!selectedCustomer}
         onOpenChange={open => !open && setSelectedCustomer(null)}

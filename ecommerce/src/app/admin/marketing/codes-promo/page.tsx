@@ -105,7 +105,7 @@ export default function PromoCodesPage() {
             initialData={selectedCode}
             onSubmit={handleSubmit}
             onCancel={closeModal}
-            isLoading={loading} // Reusing loading state, ideally specific submitting state
+            isLoading={loading} 
           />
         </DialogContent>
       </Dialog>

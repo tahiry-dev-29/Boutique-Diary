@@ -57,7 +57,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [autoSelectedRef, setAutoSelectedRef] = useState<string | null>(null);
 
-  // Auto-select image based on URL reference parameter
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -83,16 +83,16 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     }
   }, [product.images, autoSelectedRef]);
 
-  // Derive current image object
+  
   const currentImage = product.images[selectedImageIndex];
 
-  // Logic to determine display values (Image-specific OR Product-level fallback)
+  
   const displayPrice = currentImage?.price ?? product.price;
   const displayOldPrice = currentImage?.oldPrice ?? product.oldPrice;
   const displayStock = currentImage?.stock ?? product.stock;
   const displayRef = currentImage?.reference ?? product.reference;
 
-  // Calculate stats (Mocking explicit generic stats not in DB)
+  
   const stats = [
     {
       label: "Prix Actuel",
@@ -116,16 +116,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       color: "text-amber-500",
       bg: "bg-amber-50",
     },
-    /*
-    {
-        label: "Ventes Totales",
-        value: "0", 
-        icon: TrendingUp,
-        color: "text-purple-600",
-        bg: "bg-purple-50"
-    } 
-    */
-  ];
+      ];
 
   const handleEdit = () => {
     router.push(`/admin/products/${product.id}/edit`);
@@ -138,10 +129,11 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Page Header */}
+      {}
       <PageHeader
         title={product.name}
         description={`Réf: ${displayRef} • Publié le: ${new Date(product.createdAt).toLocaleDateString()}`}
+        className="mb-4"
       >
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => toast.info("Lien copié !")}>
@@ -161,9 +153,9 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
         </div>
       </PageHeader>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Gallery */}
+      {}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {}
         <div className="lg:col-span-1 space-y-4">
           <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm relative group">
             <img
@@ -171,7 +163,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            {/* Badges Overlay */}
+            {}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {product.isNew && <Badge className="bg-blue-600">Nouveau</Badge>}
               {product.isPromotion && (
@@ -183,7 +175,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             </div>
           </div>
 
-          {/* Thumbnail Grid */}
+          {}
           <div className="grid grid-cols-5 gap-2">
             {product.images.map((img, idx) => (
               <div
@@ -206,8 +198,8 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
         </div>
 
         {/* Right Columns: Stats & Info */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Stats Cards */}
+        <div className="lg:col-span-2 space-y-6">
+          {}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <Card
@@ -240,7 +232,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
             ))}
           </div>
 
-          {/* Tabbed Content */}
+          {}
           <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <Tabs defaultValue="details" className="w-full">
               <div className="px-6 pt-6 border-b border-gray-100 dark:border-gray-700">
@@ -264,16 +256,16 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                 value="details"
                 className="p-6 space-y-8 animate-in slide-in-from-bottom-2 duration-300"
               >
-                {/* Description */}
+                {}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Description</h3>
+                  <h3 className="text-base font-semibold mb-2">Description</h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
                     {product.description ||
                       "Aucune description disponible pour ce produit."}
                   </p>
                 </div>
 
-                {/* Variants Selection visualization */}
+                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-sm font-semibold mb-3">
@@ -328,9 +320,11 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                   </div>
                 </div>
 
-                {/* Spec Table */}
+                {}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Spécifications</h3>
+                  <h3 className="text-base font-semibold mb-2">
+                    Spécifications
+                  </h3>
                   <div className="border rounded-lg overflow-hidden">
                     <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
                       <div className="p-4">
@@ -356,7 +350,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                         <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
                           -- Gr
                         </p>{" "}
-                        {/* Mocked for now */}
+                        {}
                       </div>
                       <div className="p-4">
                         <p className="text-xs text-gray-500 uppercase font-semibold">

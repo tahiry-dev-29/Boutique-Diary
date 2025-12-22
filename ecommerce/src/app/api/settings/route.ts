@@ -37,12 +37,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Special permission for roles
+    
     if (key === "admin_roles") {
       const permError = await checkApiPermission("employees.edit");
       if (permError) return permError;
     } else {
-      // General settings permission
+      
       const permError = await checkApiPermission("settings.edit");
       if (permError) return permError;
     }
@@ -75,12 +75,12 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Special permission for roles
+    
     if (key === "admin_roles") {
       const permError = await checkApiPermission("employees.edit");
       if (permError) return permError;
     } else {
-      // General settings permission
+      
       const permError = await checkApiPermission("settings.edit");
       if (permError) return permError;
     }

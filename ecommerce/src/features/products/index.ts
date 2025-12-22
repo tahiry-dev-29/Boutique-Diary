@@ -1,7 +1,6 @@
 export { default as ProductForm } from "./components/ProductForm";
 export {
   ProductFormFields,
-  ProductPricing,
   ProductVariants,
   ProductImageUploader,
 } from "./components/ProductForm";
@@ -17,5 +16,3 @@ export type { ProductFiltersState } from "./components/ProductList";
 export type { ProductListProps } from "./components/ProductList";
 
 export { useProducts } from "./hooks/useProducts";
-
-export type { Product, ProductImage, ProductVariation } from "@/types/admin";

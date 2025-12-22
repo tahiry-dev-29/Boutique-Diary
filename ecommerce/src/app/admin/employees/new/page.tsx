@@ -105,19 +105,19 @@ export default function NewEmployeePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <PageHeader
         title="Ajouter un employé"
         description="Créer un nouveau compte employé"
         backHref="/admin/employees"
       />
 
-      {/* Form */}
+      {}
       <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Grid layout */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Name */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nom complet *
@@ -139,7 +139,7 @@ export default function NewEmployeePage() {
               </div>
             </div>
 
-            {/* Email */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email *
@@ -161,7 +161,7 @@ export default function NewEmployeePage() {
               </div>
             </div>
 
-            {/* Password */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Mot de passe *
@@ -190,7 +190,7 @@ export default function NewEmployeePage() {
               </div>
             </div>
 
-            {/* Confirm password */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Confirmer le mot de passe *
@@ -212,7 +212,7 @@ export default function NewEmployeePage() {
               </div>
             </div>
 
-            {/* Role */}
+            {}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Rôle *
@@ -243,7 +243,7 @@ export default function NewEmployeePage() {
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Link
               href="/admin/employees"

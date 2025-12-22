@@ -4,13 +4,13 @@ import { verifyAdminToken } from "./adminAuth";
 import { NextResponse } from "next/server";
 
 export async function getRolePermissions(roleName: string): Promise<string[]> {
-  // 1. Superadmin always has all permissions (hardcoded safety)
+  
   if (roleName === "superadmin" || roleName === "SUPERADMIN") {
     return DEFAULT_ROLES.find((r) => r.id === "superadmin")?.permissions || [];
   }
 
   try {
-    // 2. Try fetching from DB settings
+    
     const setting = await prisma.siteSettings.findUnique({
       where: { key: "admin_roles" },
     });
@@ -28,7 +28,7 @@ export async function getRolePermissions(roleName: string): Promise<string[]> {
     console.warn("Failed to load roles from DB, falling back to defaults", error);
   }
 
-  // 3. Fallback to defaults
+  
   const defaultRole = DEFAULT_ROLES.find(
     (r) => r.name.toLowerCase() === roleName.toLowerCase()
   );
@@ -64,5 +64,5 @@ export async function checkApiPermission(
     );
   }
 
-  return null; // Null means access granted
+  return null; 
 }

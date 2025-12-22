@@ -87,16 +87,16 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 🛍️ Product Catalog UI
 
-- [ ] Composant `ProductList` (Server Component avec `fetch` et cache tags).
-- [ ] Composant `ProductFilter` (URL Search Params pour filtrage SSR).
-- [ ] Composant `ProductCard` (Client Component pour interactivité rapide).
-- [ ] Page `products/[slug]/page.ts`.
-  - [ ] `generateMetadata` pour le SEO dynamique.
-  - [ ] Fetching des données produit (Parallèle avec Suspense).
-  - [ ] Composant `ProductGallery` (Optimisation `next/image`).
-  - [ ] Composant `ProductAttributes` (Selecteur Taille/Couleur - Update URL params).
-  - [ ] Hook `usePrice` (Calcul réactif côté client si changement de variante).
-  - [ ] Bouton "Ajouter au panier" (useTransition pour pending state).
+- [x] Composant `ProductList` (Server Component avec `fetch` et cache tags).
+- [x] Composant `ProductFilter` (URL Search Params pour filtrage SSR).
+- [x] Composant `ProductCard` (Client Component pour interactivité rapide).
+- [x] Page `products/[slug]/page.ts`.
+  - [x] `generateMetadata` pour le SEO dynamique.
+  - [x] Fetching des données produit (Parallèle avec Suspense).
+  - [x] Composant `ProductGallery` (Optimisation `next/image`).
+  - [x] Composant `ProductAttributes` (Selecteur Taille/Couleur - Update URL params).
+  - [x] Hook `usePrice` (Calcul réactif côté client si changement de variante).
+  - [x] Bouton "Ajouter au panier" (useTransition pour pending state).
 
 ### 🛒 Checkout Experience
 
@@ -106,7 +106,7 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
   - [ ] Step 1: Informations (Server Action validation).
   - [ ] Step 2: Adresses (Selection visuelle).
   - [ ] Step 3: Livraison (Calcul frais de port temps réel).
-  - [ ] Step 4: Paiement (Intégration Stripe/Paypal Elements).
+  - [ ] Step 4: Paiement (Intégration MVola/Stripe/Paypal Elements).
 
 ### 🎨 UI Kit (Design System - React/Tailwind/shadcn/ui use dark mode theme)
 
@@ -118,4 +118,13 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ---
 
-- on peut publier ou sauvegarder seulement et mettre dans le corbeille les produits.
+### ♻️ Lifecycle & Soft Delete (Drafts & Trash)
+
+- [x] **Backend:** Ajouter le type `ProductStatus` (`DRAFT`, `PUBLISHED`) et le champ `deletedAt` (Soft Delete) dans Prisma.
+- [x] **Frontend:** UI de création produit : Boutons distincts "Sauvegarder (Brouillon)" et "Publier".
+- [x] **Frontend:** Page `(dashboard)/products/archives/page.ts` (Accessible via sous-menu/tabs).
+  - [x] Listing des produits non publiés (Drafts).
+  - [x] Action pour publier directement depuis cette liste.
+- [x] **Frontend:** Page `(dashboard)/trash/page.ts` (Corbeille Globale).
+  - [x] Affichage centralisé des items supprimés (Produits, Catégories, etc.).
+  - [x] Fonctionnalités de Restauration (Restore) et Suppression définitive (Hard Delete).

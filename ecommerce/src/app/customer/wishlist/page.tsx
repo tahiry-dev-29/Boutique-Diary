@@ -69,7 +69,7 @@ export default function CustomerWishlist() {
               key={item.id}
               className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden group"
             >
-              {/* Image */}
+              {}
               <div className="relative aspect-square bg-muted">
                 <Image
                   src={item.image}
@@ -84,13 +84,13 @@ export default function CustomerWishlist() {
                     </span>
                   </div>
                 )}
-                {/* Remove button */}
+                {}
                 <button className="absolute top-3 right-3 p-2 dark:border-gray-700/50 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground">
                   <Trash2 size={16} />
                 </button>
               </div>
 
-              {/* Info */}
+              {}
               <div className="p-4">
                 <h3 className="font-medium text-foreground line-clamp-2 mb-2">
                   {item.name}
@@ -106,7 +106,7 @@ export default function CustomerWishlist() {
                   )}
                 </div>
 
-                {/* Add to cart */}
+                {}
                 <button
                   disabled={!item.inStock}
                   className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium transition-colors ${

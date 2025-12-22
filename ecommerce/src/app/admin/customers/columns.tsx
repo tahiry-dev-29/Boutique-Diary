@@ -1,4 +1,4 @@
-// src/app/admin/customers/columns.tsx
+
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
@@ -16,14 +16,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Customer, Role } from "@/types/customer";
 import { Badge } from "@/components/ui/badge";
 
-// This is a placeholder for a hook that would return the current logged-in user
+
 const useCurrentUser = (): { role: Role } => {
-  // In a real app, this would fetch the user's session data
-  // For now, we'll simulate a SuperAdmin for development purposes
+  
+  
   return { role: "SuperAdmin" };
 };
 
-// This would be a reusable component for column headers with sorting
+
 const DataTableColumnHeader = ({ column, title }: { column: any; title: string }) => {
   return (
     <Button
@@ -107,7 +107,7 @@ export const columns: ColumnDef<Customer>[] = [
         (currentUserRole === "SuperAdmin" && (customer.role === "Admin" || customer.role === "User")) ||
         (currentUserRole === "Admin" && customer.role === "User");
 
-      const canEdit = canDelete; // Assuming edit has same permissions as delete
+      const canEdit = canDelete; 
 
       return (
         <DropdownMenu>

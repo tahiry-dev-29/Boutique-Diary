@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductDetailsView } from "@/features/products/components/ProductDetails/ProductDetailsView";
 
-// const prisma = new PrismaClient(); // Removed local instantiation
+
 
 async function getProduct(id: string) {
   const product = await prisma.product.findUnique({
@@ -33,7 +33,7 @@ export default async function ProductDetailsPage({
     notFound();
   }
 
-  // Serialize dates and decimals for client component
+  
   const serializedProduct = {
     ...product,
     price: Number(product.price),

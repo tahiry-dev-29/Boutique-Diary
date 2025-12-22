@@ -53,7 +53,7 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
             <Pie
               data={processedData}
               cx="50%"
-              cy="50%"
+              cy="45%"
               innerRadius={70}
               outerRadius={90}
               paddingAngle={0}
@@ -79,13 +79,13 @@ const ProductDistributionChart: React.FC<ProductDistributionProps> = ({
               verticalAlign="bottom"
               height={36}
               iconType="circle"
-              wrapperStyle={{ bottom: 0, fontSize: "12px" }}
+              wrapperStyle={{ bottom: 0, fontSize: "13px", fontWeight: 500 }}
             />
           </PieChart>
         </ResponsiveContainer>
         {}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mb-4">
-          <span className="text-3xl font-bold text-gray-800 dark:text-white block">
+        <div className="absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mb-4">
+          <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white block">
             {total}
           </span>
         </div>
