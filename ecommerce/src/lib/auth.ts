@@ -23,7 +23,12 @@ export async function verifyToken(
     const cookieStore = await cookies();
     const token = cookieStore.get(cookieName)?.value;
 
+    console.log(
+      `[verifyToken] Verifying ${cookieName}. Token exists: ${!!token}`,
+    );
+
     if (!token) {
+      console.log(`[verifyToken] No token found for ${cookieName}`);
       return null;
     }
 

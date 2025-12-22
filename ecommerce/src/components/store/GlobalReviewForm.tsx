@@ -82,7 +82,11 @@ export default function GlobalReviewModal() {
       const response = await fetch("/api/auth/me");
       if (response.ok) {
         const data = await response.json();
-        setUser(data);
+        if (data.user) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
@@ -151,6 +155,8 @@ export default function GlobalReviewModal() {
     if (r === 2) return "Moyen... 😐";
     return "Déçu. 😞";
   }, [form.watch("rating")]);
+
+  if (!user) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

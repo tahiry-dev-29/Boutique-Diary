@@ -72,17 +72,20 @@ export default function StoreNavbar({
   };
 
   const handleLogout = async () => {
+    // Redirect to Auth0 logout which will also handle clearing local session if configured correctly
+    // or we can clear local session first.
     try {
+      // Clear local session first
       await fetch("/api/auth/logout", { method: "POST" });
-      setUser(null);
-      toast.success("Déconnexion réussie");
-      window.location.reload();
+      // Then redirect to Auth0 logout
+      window.location.href = "/api/auth/social/logout";
     } catch (err) {
       toast.error("Erreur lors de la déconnexion");
+      // Fallback redirect
+      window.location.href = "/api/auth/social/logout";
     }
   };
 
-  
   const isCartOpen = useCartStore(state => state.isOpen);
   const setOpen = useCartStore(state => state.setOpen);
   const itemCount = useCartStore(state => state.getItemCount());
@@ -91,7 +94,6 @@ export default function StoreNavbar({
 
   const isActive = (path: string) => pathname === path;
 
-  
   useEffect(() => {
     anime({
       targets: [".nav-logo", ".nav-menu", ".nav-actions"],
@@ -103,7 +105,6 @@ export default function StoreNavbar({
     });
   }, []);
 
-  
   const collections = [
     {
       title: "Nouveautés",
