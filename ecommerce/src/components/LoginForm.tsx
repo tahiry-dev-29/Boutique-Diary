@@ -28,7 +28,7 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        router.push("/");
+        window.location.href = "/customer";
       } else {
         setError(data.message || "Échec de la connexion");
       }

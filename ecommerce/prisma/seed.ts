@@ -175,6 +175,7 @@ async function main() {
   try {
     console.log("🧹 Cleaning database...");
     await prisma.stockMovement.deleteMany();
+    await prisma.review.deleteMany();
     await prisma.cartItem.deleteMany();
     await prisma.cart.deleteMany();
     await prisma.orderItem.deleteMany();
@@ -643,6 +644,59 @@ async function main() {
     console.log("👤 Admin already exists.\n");
   }
 
+  // Create Reviews
+  console.log("💬 Creating reviews...");
+  const REVIEW_COMMENTS = [
+    "Super produit, je recommande !",
+    "La qualité est au rendez-vous.",
+    "Un peu cher mais ça vaut le coup.",
+    "Livraison rapide et soignée.",
+    "Taille un peu petit, prenez une taille au dessus.",
+    "Couleur conforme à la photo.",
+    "Très confortable, je l'adore !",
+    "Parfait pour le quotidien.",
+    "Design très moderne.",
+    "Excellent rapport qualité/prix.",
+  ];
+
+  let reviewCount = 0;
+  for (const product of products) {
+    const numReviews = Math.floor(Math.random() * 5) + 1; // 1 to 5 reviews per product
+
+    for (let j = 0; j < numReviews; j++) {
+      const customer = random(customers);
+      await prisma.review.create({
+        data: {
+          rating: parseFloat((3 + Math.random() * 2).toFixed(1)), // 3.0 to 5.0
+          comment: random(REVIEW_COMMENTS),
+          isVerified: Math.random() > 0.3,
+          productId: product.id,
+          userId: customer.id,
+        },
+      });
+      reviewCount++;
+    }
+
+    // Update product average rating and count
+    const productReviews = await prisma.review.findMany({
+      where: { productId: product.id },
+    });
+    const avgRating =
+      productReviews.reduce((acc, r) => acc + r.rating, 0) /
+      productReviews.length;
+
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        rating: parseFloat(avgRating.toFixed(1)),
+        reviewCount: productReviews.length,
+      },
+    });
+  }
+  console.log(
+    `✅ Created ${reviewCount} reviews for ${products.length} products.\n`,
+  );
+
   console.log("🎉 Seeding finished successfully!");
   console.log("\n📋 Summary:");
   console.log(`   - Categories: ${categories.length}`);
@@ -652,6 +706,7 @@ async function main() {
   console.log(`   - Stock Movements: ${stockMovementCount}`);
   console.log(`   - Promotions: ${promotions.length}`);
   console.log(`   - Promo Codes: 4`);
+  console.log(`   - Reviews: ${reviewCount}`);
 }
 
 main()

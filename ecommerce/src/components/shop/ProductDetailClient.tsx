@@ -172,6 +172,7 @@ export default function ProductDetailClient({
       image: getImageUrl(selectedImage),
       price: currentPrice,
       quantity: quantity,
+      maxStock: currentStock,
       color: selectedColor || undefined,
       size: selectedSize || undefined,
     });

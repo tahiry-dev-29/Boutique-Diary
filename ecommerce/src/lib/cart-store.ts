@@ -11,6 +11,7 @@ export interface CartItem {
   image: string;
   price: number;
   quantity: number;
+  maxStock: number;
   color?: string;
   size?: string;
 }
@@ -19,18 +20,15 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
 
-  
   addItem: (item: Omit<CartItem, "id">) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   setOpen: (open: boolean) => void;
 
-  
   getItemCount: () => number;
   getSubtotal: () => number;
 }
-
 
 const generateId = (item: Omit<CartItem, "id">) =>
   `${item.productId}-${item.color || "default"}-${item.size || "default"}`;
@@ -46,19 +44,25 @@ export const useCartStore = create<CartState>()(
         const existingItem = get().items.find(i => i.id === id);
 
         if (existingItem) {
-          
           set({
             items: get().items.map(i =>
-              i.id === id ? { ...i, quantity: i.quantity + item.quantity } : i,
+              i.id === id
+                ? {
+                    ...i,
+                    quantity: Math.min(
+                      i.quantity + item.quantity,
+                      item.maxStock,
+                    ),
+                  }
+                : i,
             ),
           });
         } else {
-          
           set({
             items: [...get().items, { ...item, id }],
           });
         }
-        
+
         set({ isOpen: true });
       },
 
@@ -74,7 +78,11 @@ export const useCartStore = create<CartState>()(
           return;
         }
         set({
-          items: get().items.map(i => (i.id === id ? { ...i, quantity } : i)),
+          items: get().items.map(i =>
+            i.id === id
+              ? { ...i, quantity: Math.min(quantity, i.maxStock) }
+              : i,
+          ),
         });
       },
 
@@ -102,7 +110,6 @@ export const useCartStore = create<CartState>()(
     },
   ),
 );
-
 
 export const formatPrice = (amount: number) => {
   return new Intl.NumberFormat("fr-MG", {
