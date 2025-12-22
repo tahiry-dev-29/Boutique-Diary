@@ -6,7 +6,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900/50">
       <ClientNavbar />
       <main className="flex-1">{children}</main>
 

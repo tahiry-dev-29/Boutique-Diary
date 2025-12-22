@@ -78,7 +78,7 @@ export default function CustomerWishlist() {
                   className="object-cover"
                 />
                 {!item.inStock && (
-                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                  <div className="absolute inset-0 dark:bg-gray-900/50/80 flex items-center justify-center">
                     <span className="text-sm font-medium text-muted-foreground">
                       Rupture de stock
                     </span>

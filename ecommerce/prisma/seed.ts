@@ -38,6 +38,54 @@ const CATEGORIES = [
   },
 ];
 
+// Real product images from Unsplash (fashion/clothing)
+const PRODUCT_IMAGES = {
+  "T-Shirt": [
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&h=600&fit=crop",
+  ],
+  Jean: [
+    "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=600&fit=crop",
+  ],
+  Veste: [
+    "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1548883354-94bcfe321cbb?w=600&h=600&fit=crop",
+  ],
+  Robe: [
+    "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&h=600&fit=crop",
+  ],
+  Pantalon: [
+    "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=600&fit=crop",
+  ],
+  Short: [
+    "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop",
+  ],
+  Pull: [
+    "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=600&fit=crop",
+  ],
+  Chemise: [
+    "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&h=600&fit=crop",
+  ],
+  Sweat: [
+    "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&h=600&fit=crop",
+  ],
+  Manteau: [
+    "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=600&h=600&fit=crop",
+  ],
+};
+
 const BRANDS = [
   "Nike",
   "Adidas",
@@ -50,6 +98,7 @@ const BRANDS = [
   "Ralph Lauren",
   "Calvin Klein",
 ];
+
 const COLORS = [
   "Rouge",
   "Bleu",
@@ -62,7 +111,9 @@ const COLORS = [
   "Beige",
   "Marron",
 ];
+
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44"];
+
 const PRODUCT_TYPES = [
   "T-Shirt",
   "Jean",
@@ -75,6 +126,7 @@ const PRODUCT_TYPES = [
   "Sweat",
   "Manteau",
 ];
+
 const STYLES = [
   "Classic",
   "Modern",
@@ -86,7 +138,30 @@ const STYLES = [
   "Streetwear",
 ];
 
-// Helper to get random item from array
+// Customer names for realistic data (excluding "Jean Dupont" which is the default client)
+const CUSTOMER_NAMES = [
+  "Marie Martin",
+  "Pierre Bernard",
+  "Sophie Dubois",
+  "Lucas Thomas",
+  "Emma Robert",
+  "Hugo Richard",
+  "Léa Petit",
+  "Gabriel Durand",
+  "Chloé Leroy",
+  "Louis Moreau",
+  "Manon Simon",
+  "Nathan Laurent",
+  "Camille Lefebvre",
+  "Jules Michel",
+  "Zoé Garcia",
+  "Théo David",
+  "Charlotte Bertrand",
+  "Mathis Roux",
+  "Inès Vincent",
+];
+
+// Helper functions
 const random = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const randomSubset = <T>(arr: T[], min = 1, max = 3): T[] => {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
@@ -94,88 +169,218 @@ const randomSubset = <T>(arr: T[], min = 1, max = 3): T[] => {
 };
 
 async function main() {
-  console.log("Start seeding...");
+  console.log("🚀 Starting seeding...\n");
 
   // Clean DB
   try {
+    console.log("🧹 Cleaning database...");
+    await prisma.stockMovement.deleteMany();
+    await prisma.cartItem.deleteMany();
+    await prisma.cart.deleteMany();
     await prisma.orderItem.deleteMany();
     await prisma.order.deleteMany();
     await prisma.productImage.deleteMany();
+    await prisma.productVariation.deleteMany();
     await prisma.product.deleteMany();
+    await prisma.promoCode.deleteMany();
+    await prisma.promotionRule.deleteMany();
     await prisma.category.deleteMany();
-    await prisma.user.deleteMany({ where: { role: "CUSTOMER" } }); // Keep admins safe if possible, or just clean all users
-    console.log("Database cleaned.");
+    await prisma.user.deleteMany(); // Delete ALL users
+    console.log("✅ Database cleaned.\n");
   } catch (error) {
-    console.warn("Error cleaning database (might be empty):", error);
+    console.warn("⚠️ Error cleaning database:", error);
   }
 
   // Create Categories
+  console.log("📁 Creating categories...");
   const categories = [];
   for (const cat of CATEGORIES) {
     const created = await prisma.category.create({ data: cat });
     categories.push(created);
   }
-  console.log(`Created ${categories.length} categories.`);
+  console.log(`✅ Created ${categories.length} categories.\n`);
 
-  // Create Products
+  // Create Promotion Rules
+  console.log("🏷️ Creating promotion rules...");
+  const promotions = [];
+
+  const summerSale = await prisma.promotionRule.create({
+    data: {
+      name: "Soldes d'été -20%",
+      priority: 1,
+      conditions: { type: "cart_total_gt", value: 50 },
+      actions: { type: "discount_percentage", value: 20 },
+      startDate: new Date("2025-06-01"),
+      endDate: new Date("2025-08-31"),
+      isActive: true,
+    },
+  });
+  promotions.push(summerSale);
+
+  const flashSale = await prisma.promotionRule.create({
+    data: {
+      name: "Flash Sale -30%",
+      priority: 2,
+      conditions: { type: "product_category", value: "sport" },
+      actions: { type: "discount_percentage", value: 30 },
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      isActive: true,
+    },
+  });
+  promotions.push(flashSale);
+
+  const newCustomer = await prisma.promotionRule.create({
+    data: {
+      name: "Nouveau client -15%",
+      priority: 0,
+      conditions: { type: "first_order", value: true },
+      actions: { type: "discount_percentage", value: 15 },
+      isActive: true,
+    },
+  });
+  promotions.push(newCustomer);
+  console.log(`✅ Created ${promotions.length} promotion rules.\n`);
+
+  // Create Promo Codes
+  console.log("🎫 Creating promo codes...");
+  await prisma.promoCode.createMany({
+    data: [
+      {
+        code: "WELCOME10",
+        type: "PERCENTAGE",
+        value: 10,
+        usageLimit: 100,
+        usageCount: 23,
+        minOrderAmount: 30,
+        isActive: true,
+      },
+      {
+        code: "SUMMER25",
+        type: "PERCENTAGE",
+        value: 25,
+        startDate: new Date("2025-06-01"),
+        endDate: new Date("2025-08-31"),
+        usageLimit: 500,
+        usageCount: 142,
+        isActive: true,
+      },
+      {
+        code: "FREESHIP",
+        type: "FIXED_AMOUNT",
+        value: 15000, // Free shipping value in MGA
+        usageLimit: 200,
+        usageCount: 67,
+        minOrderAmount: 100000,
+        isActive: true,
+      },
+      {
+        code: "VIP50",
+        type: "PERCENTAGE",
+        value: 50,
+        usageLimit: 10,
+        usageCount: 8,
+        minOrderAmount: 200000,
+        isActive: true,
+      },
+    ],
+  });
+  console.log("✅ Created 4 promo codes.\n");
+
+  // Create Products with real images
+  console.log("📦 Creating products...");
   const products = [];
   for (let i = 0; i < 50; i++) {
     const category = random(categories);
     const brand = random(BRANDS);
     const productColors = randomSubset(COLORS, 2, 4);
     const productSizes = randomSubset(SIZES, 3, 5);
-    const isNew = Math.random() > 0.8;
+    const isNew = Math.random() > 0.75;
     const isPromotion = Math.random() > 0.8;
-    const isBestSeller = Math.random() > 0.9;
+    const isBestSeller = Math.random() > 0.85;
     const type = random(PRODUCT_TYPES);
     const style = random(STYLES);
 
     const name = `${brand} ${type} ${style}`;
-    const price = parseFloat((Math.random() * 150 + 20).toFixed(2));
+    const basePrice = parseFloat((Math.random() * 150000 + 20000).toFixed(0)); // Price in MGA
+    const oldPrice = isPromotion
+      ? parseFloat((basePrice * (1 + Math.random() * 0.3)).toFixed(0))
+      : null;
 
-    // Generate images with attributes
-    const imagesData = [];
-    // Main image
-    imagesData.push({
-      url: `https://placehold.co/600x600/EEE/31343C?text=${encodeURIComponent(name)}`,
-      color: null,
-      sizes: [],
-    });
+    // Get real images for product type
+    const typeImages =
+      PRODUCT_IMAGES[type as keyof typeof PRODUCT_IMAGES] ||
+      PRODUCT_IMAGES["T-Shirt"];
+    const mainImageUrl = random(typeImages);
 
-    // Color variations
-    for (const color of productColors) {
-      let bg = "EEE";
-      if (color === "Rouge") bg = "FF0000";
-      if (color === "Bleu") bg = "0000FF";
-      if (color === "Vert") bg = "00FF00";
-      if (color === "Noir") bg = "000000";
-      if (color === "Jaune") bg = "FFFF00";
+    const imagesData: Array<{
+      url: string;
+      reference: string;
+      color: string | null;
+      sizes: string[];
+      price: number;
+      oldPrice: number | null;
+      stock: number;
+      isNew: boolean;
+      isBestSeller: boolean;
+      isPromotion: boolean;
+      categoryId: number;
+      promotionRuleId: number | null;
+    }> = [
+      {
+        url: mainImageUrl,
+        reference: `${brand.substring(0, 2).toUpperCase()}${i.toString().padStart(4, "0")}`,
+        color: null,
+        sizes: productSizes,
+        price: basePrice,
+        oldPrice,
+        stock: Math.floor(Math.random() * 50) + 5,
+        isNew,
+        isBestSeller,
+        isPromotion,
+        categoryId: category.id,
+        promotionRuleId: isPromotion ? random(promotions).id : null,
+      },
+    ];
 
-      const textColor = ["Noir", "Bleu", "Rouge"].includes(color)
-        ? "FFFFFF"
-        : "000000";
-
+    // Color variations with different images
+    for (const color of productColors.slice(0, 2)) {
+      const colorImage = random(typeImages);
       imagesData.push({
-        url: `https://placehold.co/600x600/${bg}/${textColor}?text=${encodeURIComponent(color)}`,
-        color: color,
-        sizes: [],
+        url: colorImage,
+        reference: `${brand.substring(0, 2).toUpperCase()}${i.toString().padStart(4, "0")}-${color.substring(0, 2).toUpperCase()}`,
+        color,
+        sizes: productSizes,
+        price: basePrice + Math.floor(Math.random() * 5000),
+        oldPrice: isPromotion ? oldPrice : null,
+        stock: Math.floor(Math.random() * 30) + 3,
+        isNew: false,
+        isBestSeller: false,
+        isPromotion,
+        categoryId: category.id,
+        promotionRuleId: null,
       });
     }
 
     const product = await prisma.product.create({
       data: {
         name,
-        description: `Découvrez notre ${name} de la collection ${category.name}. Un incontournable de la marque ${brand}. Conçu pour allier style et confort, ce modèle ${style.toLowerCase()} saura vous séduire.`,
-        reference: `REF-${Math.floor(Math.random() * 100000)}`,
-        price,
-        stock: Math.floor(Math.random() * 100),
+        description: `Découvrez notre ${name} de la collection ${category.name}. Un incontournable de la marque ${brand}. Conçu pour allier style et confort, ce modèle ${style.toLowerCase()} saura vous séduire. Matière premium, coupe moderne.`,
+        reference: `REF-${brand.substring(0, 2).toUpperCase()}${i.toString().padStart(5, "0")}`,
+        price: basePrice,
+        stock: Math.floor(Math.random() * 100) + 10,
+        status: Math.random() > 0.1 ? "PUBLISHED" : "DRAFT",
         categoryId: category.id,
         brand,
         colors: productColors,
         sizes: productSizes,
         isNew,
         isPromotion,
+        oldPrice,
         isBestSeller,
+        rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
+        reviewCount: Math.floor(Math.random() * 150),
+        promotionRuleId: isPromotion ? random(promotions).id : null,
         images: {
           create: imagesData,
         },
@@ -183,9 +388,56 @@ async function main() {
     });
     products.push(product);
   }
-  console.log(`Created ${products.length} products.`);
+  console.log(`✅ Created ${products.length} products with real images.\n`);
+
+  // Create Stock Movements
+  console.log("📊 Creating stock movements...");
+  let stockMovementCount = 0;
+  for (const product of products.slice(0, 30)) {
+    const numMovements = Math.floor(Math.random() * 5) + 2;
+
+    for (let j = 0; j < numMovements; j++) {
+      const isIncoming = Math.random() > 0.3;
+      const quantity = Math.floor(Math.random() * 20) + 1;
+      const previousStock = Math.floor(Math.random() * 50) + 10;
+      const newStock = isIncoming
+        ? previousStock + quantity
+        : Math.max(0, previousStock - quantity);
+
+      const createdAt = new Date();
+      createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 30));
+
+      await prisma.stockMovement.create({
+        data: {
+          productId: product.id,
+          type: isIncoming
+            ? "RECEIVED"
+            : random(["ORDER", "ADJUSTMENT", "RETURN"]),
+          quantity: isIncoming ? quantity : -quantity,
+          previousStock,
+          newStock,
+          reason: isIncoming
+            ? random([
+                "Réapprovisionnement",
+                "Retour fournisseur",
+                "Nouveau stock",
+              ])
+            : random(["Vente", "Retour client", "Inventaire", "Défectueux"]),
+          note:
+            Math.random() > 0.7
+              ? `Mouvement de stock #${stockMovementCount + 1}`
+              : null,
+          createdBy: "admin@boutique.com",
+          createdAt,
+        },
+      });
+      stockMovementCount++;
+    }
+  }
+  console.log(`✅ Created ${stockMovementCount} stock movements.\n`);
 
   // Create Customers
+  console.log("👥 Creating customers...");
   const customers = [];
   const customerPassword = await bcrypt.hash("client123", 10);
 
@@ -201,15 +453,22 @@ async function main() {
   });
   customers.push(defaultClient);
 
-  // Random customers
-  for (let i = 0; i < 20; i++) {
+  // Random customers with real names
+  for (let i = 0; i < CUSTOMER_NAMES.length; i++) {
+    const name = CUSTOMER_NAMES[i];
+    const emailName = name
+      .toLowerCase()
+      .replace(" ", ".")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
     const createdAt = new Date();
-    createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 60)); // Registered within last 60 days
+    createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 90));
 
     const customer = await prisma.user.create({
       data: {
-        username: `Client ${i + 1}`,
-        email: `client${i + 1}@test.com`,
+        username: name,
+        email: `${emailName}@example.com`,
         password: customerPassword,
         role: "CUSTOMER",
         isActive: true,
@@ -218,9 +477,10 @@ async function main() {
     });
     customers.push(customer);
   }
-  console.log(`Created ${customers.length} customers.`);
+  console.log(`✅ Created ${customers.length} customers.\n`);
 
-  // Create Orders (History)
+  // Create Orders
+  console.log("🛒 Creating orders...");
   const ORDER_STATUSES = [
     "PENDING",
     "PROCESSING",
@@ -230,14 +490,17 @@ async function main() {
     "CANCELLED",
   ];
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 150; i++) {
     const customer = random(customers);
-    const isRecent = Math.random() > 0.3; // 70% chance of being recent (last 30 days)
-    const daysAgo = isRecent
-      ? Math.floor(Math.random() * 30)
-      : Math.floor(Math.random() * 60);
+    const isToday = Math.random() > 0.7;
+    const daysAgo = isToday ? 0 : Math.floor(Math.random() * 60) + 1;
+
     const createdAt = new Date();
     createdAt.setDate(createdAt.getDate() - daysAgo);
+    createdAt.setHours(
+      Math.floor(Math.random() * 24),
+      Math.floor(Math.random() * 60),
+    );
 
     // Random items
     const numItems = Math.floor(Math.random() * 4) + 1;
@@ -257,31 +520,38 @@ async function main() {
       });
     }
 
-    // Determine status based on age - older orders likely delivered
+    // Determine status based on age
     let status = "PENDING";
-    if (daysAgo > 10) status = random(["DELIVERED", "COMPLETED", "SHIPPED"]);
-    else status = random(ORDER_STATUSES);
+    if (isToday) {
+      status = random(["PENDING", "PROCESSING"]);
+    } else if (daysAgo > 14) {
+      status = random(["DELIVERED", "COMPLETED"]);
+    } else if (daysAgo > 7) {
+      status = random(["SHIPPED", "DELIVERED", "COMPLETED"]);
+    } else {
+      status = random(ORDER_STATUSES.filter(s => s !== "CANCELLED"));
+    }
 
-    // Some cancellations
+    // Some cancellations (10%)
     if (Math.random() > 0.9) status = "CANCELLED";
 
     await prisma.order.create({
       data: {
-        reference: `ORD-${createdAt.getFullYear()}${(createdAt.getMonth() + 1).toString().padStart(2, "0")}-${1000 + i}`,
+        reference: `${createdAt.getFullYear()}${(createdAt.getMonth() + 1).toString().padStart(2, "0")}${createdAt.getDate().toString().padStart(2, "0")}-${(1000 + i).toString()}`,
         total: parseFloat(total.toFixed(2)),
         status,
         customerId: customer.id,
         createdAt,
-        updatedAt: createdAt, // simplified
+        updatedAt: createdAt,
         items: {
           create: orderItemsData,
         },
       },
     });
   }
-  console.log("Created ~100 orders with history.");
+  console.log("✅ Created 150 orders with items.\n");
 
-  // Create default admin user in ADMIN table (for back-office)
+  // Create default admin in ADMIN table
   const existingAdmin = await prisma.admin.findUnique({
     where: { email: "admin@boutique.com" },
   });
@@ -297,19 +567,25 @@ async function main() {
         isActive: true,
       },
     });
-    console.log(
-      "Created default back-office admin: admin@boutique.com / admin123",
-    );
+    console.log("👤 Created admin: admin@boutique.com / admin123\n");
   } else {
-    console.log("Back-office Admin already exists, skipping...");
+    console.log("👤 Admin already exists.\n");
   }
 
-  console.log("Seeding finished.");
+  console.log("🎉 Seeding finished successfully!");
+  console.log("\n📋 Summary:");
+  console.log(`   - Categories: ${categories.length}`);
+  console.log(`   - Products: ${products.length}`);
+  console.log(`   - Customers: ${customers.length}`);
+  console.log(`   - Orders: 150`);
+  console.log(`   - Stock Movements: ${stockMovementCount}`);
+  console.log(`   - Promotions: ${promotions.length}`);
+  console.log(`   - Promo Codes: 4`);
 }
 
 main()
   .catch(e => {
-    console.error(e);
+    console.error("❌ Seeding failed:", e);
     process.exit(1);
   })
   .finally(async () => {

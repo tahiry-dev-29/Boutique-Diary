@@ -57,7 +57,7 @@ export function ProductPagination({
   };
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-background border-t rounded-b-md">
+    <div className="flex items-center justify-between px-4 py-3 dark:bg-gray-900/50 border-t rounded-b-md">
       <div className="text-sm text-muted-foreground">
         Affichage de <span className="font-medium">{startIndex + 1}</span> à{" "}
         <span className="font-medium">{endIndex}</span> sur{" "}

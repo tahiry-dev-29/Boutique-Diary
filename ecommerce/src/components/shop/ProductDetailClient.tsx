@@ -1,9 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { formatPrice } from "@/lib/formatPrice";
-import { Minus, Plus, Star } from "lucide-react";
+import { useCartStore } from "@/lib/cart-store";
+import {
+  Minus,
+  Plus,
+  Star,
+  Heart,
+  Share2,
+  ShoppingCart,
+  Zap,
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+  Check,
+} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductImage {
   url: string;
@@ -29,7 +45,9 @@ interface Product {
   oldPrice?: number | null;
   isBestSeller: boolean;
   rating?: number | null;
-  reviewCount?: number;
+  reviewCount?: number | null;
+  brand?: string | null;
+  category?: { name: string } | null;
 }
 
 interface ProductDetailClientProps {
@@ -55,6 +73,10 @@ const getColorCode = (colorName: string): string => {
     Beige: "#f5f5dc",
     Or: "#ffd700",
     Argent: "#c0c0c0",
+    Silver: "#c0c0c0",
+    "Space Gray": "#4a4a4a",
+    Midnight: "#1a1a2e",
+    Starlight: "#f5f5dc",
   };
   return map[colorName] || colorName;
 };
@@ -62,6 +84,9 @@ const getColorCode = (colorName: string): string => {
 export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
+  const router = useRouter();
+  const { addItem } = useCartStore();
+
   const [selectedImage, setSelectedImage] = useState(
     product.images[0]?.url || "/placeholder.png",
   );
@@ -76,6 +101,7 @@ export default function ProductDetailClient({
   const [selectedSize, setSelectedSize] = useState(initialSize);
 
   const [quantity, setQuantity] = useState(1);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const selectedImageIndex = product.images.findIndex(
     img => img.url === selectedImage,
@@ -123,255 +149,431 @@ export default function ProductDetailClient({
     setQuantity(prev => Math.max(1, Math.min(prev + delta, currentStock)));
   };
 
+  // Calculate discount and totals
+  const discountPercent =
+    currentOldPrice && currentOldPrice > currentPrice
+      ? Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)
+      : 0;
+  const discountAmount =
+    currentOldPrice && currentOldPrice > currentPrice
+      ? (currentOldPrice - currentPrice) * quantity
+      : 0;
+  const subtotal = currentPrice * quantity;
+  const deliveryFee = 15000; // Fixed delivery fee in MGA
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    setIsAddingToCart(true);
+
+    addItem({
+      productId: product.id,
+      name: product.name,
+      reference: product.reference,
+      image: getImageUrl(selectedImage),
+      price: currentPrice,
+      quantity: quantity,
+      color: selectedColor || undefined,
+      size: selectedSize || undefined,
+    });
+
+    setTimeout(() => setIsAddingToCart(false), 500);
+  };
+
+  // Handle buy now
+  const handleBuyNow = () => {
+    handleAddToCart();
+    router.push("/checkout");
+  };
+
   return (
-    <div className="bg-gray-100 rounded-xl shadow-lg p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div className="dark:bg-gray-900/50 min-h-screen">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
         {}
-        {}
-        <div className="flex flex-col-reverse md:flex-row gap-6">
-          {}
-          {product.images.length > 1 && (
-            <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:max-h-[500px] w-full md:w-24 flex-shrink-0 scrollbar-hide py-2 md:py-0">
-              {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    selectImageAndSyncStock(img.url);
-                    if (img.color) {
-                      setSelectedColor(img.color);
-                    }
-                  }}
-                  className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedImage === img.url
-                      ? "border-rose-500 opacity-100 ring-2 ring-rose-500 ring-offset-1"
-                      : "border-gray-200 opacity-60 hover:opacity-100 hover:border-gray-300"
-                  }`}
-                >
-                  <Image
-                    src={getImageUrl(img.url)}
-                    alt={`${product.name} view ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+          <a href="/" className="hover:text-foreground">
+            Accueil
+          </a>
+          <span>/</span>
+          {product.category && (
+            <>
+              <a
+                href={`/shop?category=${product.category.name}`}
+                className="hover:text-foreground"
+              >
+                {product.category.name}
+              </a>
+              <span>/</span>
+            </>
           )}
+          <span className="text-foreground truncate max-w-[200px]">
+            {product.name}
+          </span>
+        </nav>
 
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {}
-          <div className="relative aspect-square flex-1 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-            <Image
-              src={getImageUrl(selectedImage)}
-              alt={product.name}
-              fill
-              className="object-contain p-4"
-              priority
-            />
-          </div>
-        </div>
-
-        {}
-        <div className="space-y-8">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-medium text-gray-500 tracking-wider uppercase">
-                {product.reference}
-              </span>
-              {product.isBestSeller && (
-                <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">
-                  TOP
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
-              {product.name}
-            </h1>
-
-            <p className="text-gray-600 leading-relaxed">
-              {product.description ||
-                "No description available for this product."}
-            </p>
-
-            {}
-            {product.rating && product.rating > 0 && (
-              <div className="flex items-center gap-4 mt-4">
-                <div className="flex text-rose-400">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <Star
-                      key={star}
-                      size={16}
-                      fill="currentColor"
-                      className={
-                        star <= (product.rating || 0)
-                          ? "text-rose-400"
-                          : "text-gray-300"
-                      }
-                    />
+          <div className="lg:col-span-5">
+            <div className="flex gap-4">
+              {}
+              {product.images.length > 1 && (
+                <div className="flex flex-col gap-3 w-20">
+                  {product.images.slice(0, 5).map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        selectImageAndSyncStock(img.url);
+                        if (img.color) setSelectedColor(img.color);
+                      }}
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === img.url
+                          ? "border-primary ring-2 ring-primary/20"
+                          : "border-border hover:border-muted-foreground"
+                      }`}
+                    >
+                      <Image
+                        src={getImageUrl(img.url)}
+                        alt={`${product.name} view ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
                   ))}
                 </div>
-                {product.reviewCount && product.reviewCount > 0 && (
-                  <span className="text-sm text-gray-500">
-                    Aimé par {product.reviewCount} utilisateurs
-                  </span>
+              )}
+
+              {}
+              <div className="relative flex-1 aspect-square rounded-2xl overflow-hidden bg-muted border border-border">
+                <Image
+                  src={getImageUrl(selectedImage)}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-4"
+                  priority
+                />
+                {product.isPromotion && discountPercent > 0 && (
+                  <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground">
+                    -{discountPercent}% OFF
+                  </Badge>
+                )}
+                {product.isNew && (
+                  <Badge className="absolute top-4 right-4 bg-emerald-500 text-white">
+                    NEW
+                  </Badge>
                 )}
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="h-px bg-gray-100" />
-
           {}
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              {currentOldPrice && currentOldPrice > currentPrice && (
-                <span className="text-sm text-rose-500 line-through mb-1">
-                  {formatPrice(currentOldPrice)}
+          <div className="lg:col-span-4 space-y-6">
+            {}
+            <div>
+              {product.brand && (
+                <span className="text-sm font-medium text-primary mb-1 block">
+                  {product.brand}
                 </span>
               )}
-              <span
-                className={`text-3xl font-bold ${
-                  product.isPromotion ? "text-rose-600" : "text-gray-900"
-                }`}
-              >
+              <h1 className="text-2xl font-bold text-foreground mb-2">
+                {product.name}
+              </h1>
+
+              {}
+              {product.rating && product.rating > 0 && (
+                <div className="flex items-center gap-3">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star
+                        key={star}
+                        size={16}
+                        fill={
+                          star <= product.rating! ? "#f59e0b" : "transparent"
+                        }
+                        className={
+                          star <= product.rating!
+                            ? "text-amber-500"
+                            : "text-muted"
+                        }
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {product.rating} Ratings
+                  </span>
+                  {product.reviewCount && (
+                    <>
+                      <span className="text-muted-foreground">•</span>
+                      <span className="text-sm text-muted-foreground">
+                        {product.reviewCount}+ Vendu
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {}
+            {product.colors.length > 0 && (
+              <div>
+                <span className="text-sm font-medium text-foreground mb-3 block">
+                  Choisir Couleur
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map(color => {
+                    const colorCode = getColorCode(color);
+                    const isSelected = selectedColor === color;
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          setSelectedColor(color);
+                          const imageWithColor = product.images.find(
+                            img => img.color === color,
+                          );
+                          if (imageWithColor) {
+                            selectImageAndSyncStock(imageWithColor.url);
+                          }
+                        }}
+                        className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border hover:border-muted-foreground"
+                        }`}
+                      >
+                        <span
+                          className="inline-block w-3 h-3 rounded-full mr-2"
+                          style={{ backgroundColor: colorCode }}
+                        />
+                        {color}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {}
+            {product.sizes.length > 0 && (
+              <div>
+                <span className="text-sm font-medium text-foreground mb-3 block">
+                  Choisir Taille
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map(size => {
+                    const isAvailable = currentImage?.sizes?.length
+                      ? currentImage.sizes.includes(size)
+                      : true;
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        disabled={!isAvailable}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
+                          selectedSize === size
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : isAvailable
+                              ? "border-border hover:border-muted-foreground"
+                              : "border-border bg-muted text-muted-foreground cursor-not-allowed"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {}
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-bold text-foreground">
                 {formatPrice(currentPrice)}
               </span>
-              {currentOldPrice && currentOldPrice > currentPrice && (
-                <span className="bg-rose-100 text-rose-600 text-sm font-bold px-3 py-1 rounded-full border border-rose-200 self-start mt-1">
-                  -
-                  {Math.round(
-                    ((currentOldPrice - currentPrice) / currentOldPrice) * 100,
-                  )}
-                  %
-                </span>
-              )}
+              <span className="text-sm text-muted-foreground">ou 99€/mois</span>
             </div>
-          </div>
 
-          {product.colors.length > 0 && (
-            <div className="space-y-3">
-              <span className="text-sm font-medium text-gray-500 block mb-2">
-                Couleur:{" "}
-                <span className="text-gray-900 font-bold">{selectedColor}</span>
-              </span>
-              <div className="flex flex-wrap gap-3">
-                {product.colors.map(color => {
-                  const colorCode = getColorCode(color);
-
-                  return (
-                    <button
-                      key={color}
-                      onClick={() => {
-                        setSelectedColor(color);
-
-                        const imageWithColor = product.images.find(
-                          img => img.color === color,
-                        );
-                        if (imageWithColor) {
-                          selectImageAndSyncStock(imageWithColor.url);
-                        }
-                      }}
-                      title={color}
-                      className={`w-10 h-10 rounded-lg transition-all focus:outline-none ${
-                        selectedColor === color
-                          ? "ring-2 ring-rose-500 ring-offset-2 scale-110 shadow-sm" // Active State: Ring with offset
-                          : "hover:scale-105 border border-gray-200" // Inactive: subtle border
-                      }`}
-                      style={{ backgroundColor: colorCode }}
-                    >
-                      <span className="sr-only">{color}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {}
-          {product.sizes.length > 0 && (
-            <div className="space-y-3">
-              <span className="text-sm font-medium text-gray-500">
-                Taille:{" "}
-                <span className="text-gray-900 font-bold">{selectedSize}</span>
-              </span>
-              <div className="flex flex-wrap gap-3">
-                {product.sizes.map(size => {
-                  let isAvailable = true;
-
-                  if (
-                    currentImage &&
-                    currentImage.sizes &&
-                    currentImage.sizes.length > 0
-                  ) {
-                    isAvailable = currentImage.sizes.includes(size);
-                  }
-
-                  return (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      disabled={!isAvailable}
-                      className={`px-4 py-2 rounded text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 ${
-                        selectedSize === size
-                          ? "bg-rose-500 text-white shadow-md transform scale-105"
-                          : isAvailable
-                            ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            : "bg-gray-100 text-gray-300 cursor-not-allowed opacity-50"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {}
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
             {}
-            <div className="flex items-center border border-gray-200 rounded-lg p-1 w-max">
-              <button
-                onClick={() => handleQuantityChange(-1)}
-                className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-rose-600 transition-colors"
-                disabled={quantity <= 1}
-              >
-                <Minus size={16} />
-              </button>
-              <span className="w-12 text-center font-bold text-gray-900">
-                {quantity}
-              </span>
-              <button
-                onClick={() => handleQuantityChange(1)}
-                className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-rose-600 transition-colors"
-                disabled={quantity >= currentStock}
-              >
-                <Plus size={16} />
-              </button>
-            </div>
-
-            <div className="flex items-center text-sm text-gray-500 self-center">
-              Stock:{" "}
-              <span className="font-bold text-gray-900 ml-1">
-                {currentStock}
-              </span>
-            </div>
+            <Tabs defaultValue="about" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="about">A propos</TabsTrigger>
+                <TabsTrigger value="reviews">Avis</TabsTrigger>
+              </TabsList>
+              <TabsContent value="about" className="mt-4 space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Marque:</span>
+                    <span className="ml-2 font-medium text-foreground">
+                      {product.brand || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Couleur:</span>
+                    <span className="ml-2 font-medium text-foreground">
+                      {selectedColor || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Catégorie:</span>
+                    <span className="ml-2 font-medium text-foreground">
+                      {product.category?.name || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Référence:</span>
+                    <span className="ml-2 font-medium text-foreground">
+                      {product.reference}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-foreground block mb-2">
+                    Description:
+                  </span>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {product.description || "Aucune description disponible."}
+                  </p>
+                </div>
+              </TabsContent>
+              <TabsContent value="reviews" className="mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Aucun avis pour le moment.
+                </p>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {}
-          <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-4">
-              <button className="py-4 rounded-lg font-bold text-gray-700 border-2 border-gray-200 hover:border-gray-900 hover:text-gray-900 transition-all uppercase tracking-wider text-sm">
-                Ajouter au panier
-              </button>
-              <button className="py-4 rounded-lg font-bold text-white bg-rose-500 hover:bg-rose-600 shadow-lg shadow-rose-200 transition-all uppercase tracking-wider text-sm">
-                Acheter maintenant
-              </button>
+          <div className="lg:col-span-3">
+            <div className="sticky top-24 dark:bg-gray-800 border border-border rounded-2xl p-6 space-y-6">
+              {}
+              {product.isPromotion && discountPercent > 0 && (
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
+                  <span className="text-sm font-bold text-primary">
+                    {discountPercent}% OFF
+                  </span>
+                  <span className="text-xs text-muted-foreground ml-2">
+                    Offre limitée
+                  </span>
+                </div>
+              )}
+
+              <h3 className="text-lg font-semibold text-foreground">
+                Détails de commande
+              </h3>
+
+              {}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Quantité</span>
+                <div className="flex items-center border border-border rounded-lg">
+                  <button
+                    onClick={() => handleQuantityChange(-1)}
+                    disabled={quantity <= 1}
+                    className="w-10 h-10 flex items-center justify-center hover:bg-accent disabled:opacity-50"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="w-12 text-center font-medium">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => handleQuantityChange(1)}
+                    disabled={quantity >= currentStock}
+                    className="w-10 h-10 flex items-center justify-center hover:bg-accent disabled:opacity-50"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {}
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Couleur</span>
+                  <span className="font-medium">{selectedColor || "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Taille</span>
+                  <span className="font-medium">{selectedSize || "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Prix</span>
+                  <span className="font-medium">
+                    {formatPrice(currentOldPrice || currentPrice)}
+                  </span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-600">
+                    <span>Remise ({discountPercent}%)</span>
+                    <span className="font-medium">
+                      -{formatPrice(discountAmount)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Truck size={14} /> Livraison
+                  </span>
+                  <span className="font-medium">
+                    {formatPrice(deliveryFee)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-px bg-border" />
+
+              {}
+              <div className="flex justify-between items-center">
+                <span className="text-foreground font-semibold">
+                  Sous-total
+                </span>
+                <span className="text-xl font-bold text-foreground">
+                  {formatPrice(subtotal)}
+                </span>
+              </div>
+
+              {}
+              <div className="space-y-3">
+                <button
+                  onClick={handleBuyNow}
+                  className="w-full py-4 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Zap size={18} />
+                  Acheter maintenant
+                </button>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isAddingToCart}
+                  className="w-full py-4 rounded-xl font-bold text-foreground border-2 border-border hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                >
+                  {isAddingToCart ? (
+                    <>
+                      <Check size={18} className="text-emerald-500" />
+                      Ajouté!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart size={18} />
+                      Ajouter au panier
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs text-muted-foreground pt-4 border-t border-border">
+                <div className="flex flex-col items-center gap-1">
+                  <Truck size={16} />
+                  <span>Livraison rapide</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <RotateCcw size={16} />
+                  <span>Retour 7j</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <ShieldCheck size={16} />
+                  <span>Garantie 1 an</span>
+                </div>
+              </div>
             </div>
-            <p className="text-center text-xs text-gray-400 mt-2">
-              Livraison gratuite pour les commandes de plus de 50€ • Retour sous
-              30 jours
-            </p>
           </div>
         </div>
       </div>

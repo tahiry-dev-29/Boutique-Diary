@@ -239,7 +239,7 @@ export default function ProductForm({
             Annuler
           </Button>
 
-          {/* Draft Button */}
+          {}
           <ElectricButton
             onClick={() => handleSubmit(undefined, "DRAFT")}
             disabled={loading}
@@ -249,7 +249,7 @@ export default function ProductForm({
             Sauvegarder (Brouillon)
           </ElectricButton>
 
-          {/* Publish Button */}
+          {}
           <ElectricButton
             onClick={() => handleSubmit(undefined, "PUBLISHED")}
             disabled={loading}

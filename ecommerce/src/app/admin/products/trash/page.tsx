@@ -12,9 +12,9 @@ export default function TrashPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleEdit = (product: Product) => {
-    // Usually trash items are not editable until restored, but we pass it anyway
-    // Or we could prevent editing in the list if deleted.
-    // The list hides the edit button for deleted items anyway.
+    
+    
+    
     router.push(`/admin/products/${product.id}/edit`);
   };
 
