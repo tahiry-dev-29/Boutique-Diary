@@ -14,6 +14,7 @@ export async function GET() {
         username: true,
         email: true,
         createdAt: true,
+        photo: true,
         orders: {
           select: {
             total: true,
@@ -29,6 +30,7 @@ export async function GET() {
       id: customer.id,
       username: customer.username,
       email: customer.email,
+      photo: customer.photo,
       createdAt: customer.createdAt,
       ordersCount: customer.orders.length,
       totalSpent: customer.orders.reduce(

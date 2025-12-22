@@ -161,7 +161,6 @@ export function OrderList({
         return false;
       }
 
-      
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
@@ -174,13 +173,11 @@ export function OrderList({
     });
   }, [orders, activeTab, searchQuery]);
 
-  
   const totalPages = Math.ceil(filteredOrders.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
 
-  
   const handleTabChange = (tab: TabValue) => {
     setActiveTab(tab);
     setCurrentPage(1);
@@ -203,12 +200,10 @@ export function OrderList({
     );
   };
 
-  
   const goToPage = (page: number) => {
     setCurrentPage(Math.min(Math.max(1, page), totalPages));
   };
 
-  
   const tabs: { value: TabValue; label: string; count: number }[] = [
     { value: "all", label: "Total", count: counts.total },
     { value: "completed", label: "Completed", count: counts.completed },
@@ -232,7 +227,7 @@ export function OrderList({
 
       <CardContent className="space-y-4">
         {}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex justify-between flex-col gap-4 sm:flex-row sm:items-center justify-between">
           {}
           <div className="flex items-center gap-1 p-1 bg-muted rounded-xl">
             {tabs.map(tab => (

@@ -14,6 +14,11 @@ import {
   ClipboardList,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -23,7 +28,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { InventoryAuditModal } from "@/components/admin/InventoryAuditModal";
-
 
 function useDebounceValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -65,6 +69,11 @@ interface AuditItem {
   image: string;
 }
 
+type SortConfig = {
+  key: keyof AuditItem | "status" | null;
+  direction: "asc" | "desc";
+};
+
 export default function StockPage() {
   const [products, setProducts] = useState<StockProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,6 +87,12 @@ export default function StockPage() {
     totalValue: 0,
     lowStock: 0,
     outStock: 0,
+  });
+
+  // Sorting State
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: null,
+    direction: "asc",
   });
 
   const [updating, setUpdating] = useState<number | null>(null);
@@ -103,7 +118,7 @@ export default function StockPage() {
       if (!response.ok) throw new Error("Failed to fetch stock");
 
       const result = await response.json();
-      
+
       if (Array.isArray(result)) {
         setProducts(result);
       } else {
@@ -168,11 +183,10 @@ export default function StockPage() {
         }),
       );
 
-      const { [uniqueId]: _, ...rest } = modifiedStocks; 
+      const { [uniqueId]: _, ...rest } = modifiedStocks;
       setModifiedStocks(rest);
       toast.success("Stock mis à jour");
 
-      
       fetchStock();
     } catch (error) {
       console.error("Error updating stock:", error);
@@ -229,11 +243,11 @@ export default function StockPage() {
       toast.success("Inventaire ajusté avec succès");
       const uniqueId = imageId ? `i-${imageId}` : `p-${productId}`;
       if (modifiedStocks[uniqueId] !== undefined) {
-        const { [uniqueId]: _, ...rest } = modifiedStocks; 
+        const { [uniqueId]: _, ...rest } = modifiedStocks;
         setModifiedStocks(rest);
       }
 
-      fetchStock(); 
+      fetchStock();
     } catch (e) {
       console.error(e);
       toast.error("Erreur lors de l'audit");
@@ -262,49 +276,86 @@ export default function StockPage() {
     };
   };
 
-  const flattenItems: (AuditItem & {
-    type: string;
-    price: number;
-    category?: string;
-  })[] = products.flatMap(
-    (p): (AuditItem & { type: string; price: number; category?: string })[] => {
-      if (p.images && p.images.length > 0) {
-        const stockImages = p.images.filter(img => img.stock !== null);
-        if (stockImages.length > 0) {
-          return stockImages.map(img => ({
-            type: "variation",
-            uniqueId: `i-${img.id}`,
-            productId: p.id,
-            imageId: img.id,
-            name: p.name,
-            reference: img.reference || p.reference,
-            variant: img.color || "Standard",
-            stock: img.stock || 0,
-            price: p.price,
-            image: img.url,
-            category: p.category?.name,
-          }));
+  const flattenItems = React.useMemo(() => {
+    return products.flatMap(
+      (
+        p,
+      ): (AuditItem & { type: string; price: number; category?: string })[] => {
+        if (p.images && p.images.length > 0) {
+          const stockImages = p.images.filter(img => img.stock !== null);
+          if (stockImages.length > 0) {
+            return stockImages.map(img => ({
+              type: "variation",
+              uniqueId: `i-${img.id}`,
+              productId: p.id,
+              imageId: img.id,
+              name: p.name,
+              reference: img.reference || p.reference,
+              variant: img.color || "Standard",
+              stock: img.stock || 0,
+              price: p.price,
+              image: img.url,
+              category: p.category?.name,
+            }));
+          }
         }
-      }
-      return [
-        {
-          type: "product",
-          uniqueId: `p-${p.id}`,
-          productId: p.id,
-          imageId: null,
-          name: p.name,
-          reference: p.reference,
-          variant: "-",
-          stock: p.stock,
-          price: p.price,
-          image: p.images?.[0]?.url || "/placeholder.png",
-          category: p.category?.name,
-        },
-      ];
-    },
-  );
+        return [
+          {
+            type: "product",
+            uniqueId: `p-${p.id}`,
+            productId: p.id,
+            imageId: null,
+            name: p.name,
+            reference: p.reference,
+            variant: "-",
+            stock: p.stock,
+            price: p.price,
+            image: p.images?.[0]?.url || "/placeholder.png",
+            category: p.category?.name,
+          },
+        ];
+      },
+    );
+  }, [products]);
 
-  
+  // Sorting Logic
+  const handleSort = (key: keyof AuditItem | "status") => {
+    setSortConfig(current => ({
+      key,
+      direction:
+        current.key === key && current.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const sortedItems = React.useMemo(() => {
+    if (!sortConfig.key) return flattenItems;
+
+    return [...flattenItems].sort((a, b) => {
+      let valA, valB;
+
+      if (sortConfig.key === "status") {
+        valA = a.stock;
+        valB = b.stock;
+      } else {
+        valA = a[sortConfig.key as keyof AuditItem];
+        valB = b[sortConfig.key as keyof AuditItem];
+      }
+
+      if (typeof valA === "string" && typeof valB === "string") {
+        return sortConfig.direction === "asc"
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA);
+      }
+
+      if (valA! < valB!) return sortConfig.direction === "asc" ? -1 : 1;
+      if (valA! > valB!) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [flattenItems, sortConfig]);
+
+  const goToPage = (newPage: number) => {
+    setPage(Math.min(Math.max(1, newPage), meta.totalPages));
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col space-y-6">
@@ -388,7 +439,7 @@ export default function StockPage() {
               value={searchQuery}
               onChange={e => {
                 setSearchQuery(e.target.value);
-                setPage(1); 
+                setPage(1);
               }}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
               autoFocus
@@ -408,20 +459,88 @@ export default function StockPage() {
             <table className="w-full text-left">
               <thead className="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
-                  <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
-                    Produit
+                  <th
+                    className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => handleSort("name")}
+                  >
+                    <div className="flex items-center gap-2">
+                      Produit
+                      {sortConfig.key === "name" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ArrowUp size={14} />
+                        ) : (
+                          <ArrowDown size={14} />
+                        )
+                      ) : (
+                        <ArrowUpDown
+                          size={14}
+                          className="text-muted-foreground opacity-50"
+                        />
+                      )}
+                    </div>
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
-                    Référence
+                  <th
+                    className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => handleSort("reference")}
+                  >
+                    <div className="flex items-center gap-2">
+                      Référence
+                      {sortConfig.key === "reference" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ArrowUp size={14} />
+                        ) : (
+                          <ArrowDown size={14} />
+                        )
+                      ) : (
+                        <ArrowUpDown
+                          size={14}
+                          className="text-muted-foreground opacity-50"
+                        />
+                      )}
+                    </div>
                   </th>
                   <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
                     Variation
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
-                    État
+                  <th
+                    className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => handleSort("status")}
+                  >
+                    <div className="flex items-center gap-2">
+                      État
+                      {sortConfig.key === "status" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ArrowUp size={14} />
+                        ) : (
+                          <ArrowDown size={14} />
+                        )
+                      ) : (
+                        <ArrowUpDown
+                          size={14}
+                          className="text-muted-foreground opacity-50"
+                        />
+                      )}
+                    </div>
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white w-40">
-                    Stock
+                  <th
+                    className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white w-40 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => handleSort("stock")}
+                  >
+                    <div className="flex items-center gap-2">
+                      Stock
+                      {sortConfig.key === "stock" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ArrowUp size={14} />
+                        ) : (
+                          <ArrowDown size={14} />
+                        )
+                      ) : (
+                        <ArrowUpDown
+                          size={14}
+                          className="text-muted-foreground opacity-50"
+                        />
+                      )}
+                    </div>
                   </th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">
                     Actions
@@ -429,7 +548,7 @@ export default function StockPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {flattenItems.length === 0 && !loading && (
+                {sortedItems.length === 0 && !loading && (
                   <tr>
                     <td
                       colSpan={6}
@@ -440,7 +559,7 @@ export default function StockPage() {
                     </td>
                   </tr>
                 )}
-                {flattenItems.map(item => {
+                {sortedItems.map(item => {
                   const status = getStockStatus(item.stock);
                   const StatusIcon = status.icon;
                   const isModified =
@@ -571,27 +690,80 @@ export default function StockPage() {
           </div>
 
           {}
-          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              Affichage de page {page} sur {meta.totalPages} ({meta.total}{" "}
-              produits)
+              Affichage de page <span className="font-medium">{page}</span> sur{" "}
+              <span className="font-medium">{meta.totalPages}</span> (
+              {meta.total} produits)
             </div>
-            <div className="flex items-center gap-2">
+
+            <div className="flex items-center gap-1">
               <Button
                 variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => goToPage(1)}
+                disabled={page === 1}
               >
-                <ChevronLeft className="w-4 h-4 mr-1" /> Précédent
+                <ChevronsLeft className="w-4 h-4" />
               </Button>
               <Button
                 variant="outline"
-                size="sm"
-                disabled={page >= meta.totalPages}
-                onClick={() => setPage(p => p + 1)}
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
               >
-                Suivant <ChevronRight className="w-4 h-4 ml-1" />
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+
+              <div className="flex items-center gap-1 mx-2">
+                {Array.from(
+                  { length: Math.min(5, meta.totalPages) },
+                  (_, i) => {
+                    let pageNum: number;
+                    if (meta.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (page <= 3) {
+                      pageNum = i + 1;
+                    } else if (page >= meta.totalPages - 2) {
+                      pageNum = meta.totalPages - 4 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={page === pageNum ? "default" : "ghost"}
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => goToPage(pageNum)}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  },
+                )}
+              </div>
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => goToPage(page + 1)}
+                disabled={page === meta.totalPages}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => goToPage(meta.totalPages)}
+                disabled={page === meta.totalPages}
+              >
+                <ChevronsRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
