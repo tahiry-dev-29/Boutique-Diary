@@ -16,34 +16,39 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
 const navItems = [
-  { id: "account", label: "Mon compte", icon: User, href: "/customer" },
+  {
+    id: "account",
+    label: "Mon compte",
+    icon: User,
+    href: "/dashboard/customer",
+  },
   {
     id: "orders",
     label: "Mes commandes",
     icon: ShoppingBag,
-    href: "/customer/orders",
+    href: "/dashboard/customer/orders",
   },
   {
     id: "wishlist",
     label: "Mes favoris",
     icon: Heart,
-    href: "/customer/wishlist",
+    href: "/dashboard/customer/wishlist",
   },
   {
     id: "addresses",
     label: "Mes adresses",
     icon: MapPin,
-    href: "/customer/addresses",
+    href: "/dashboard/customer/addresses",
   },
   {
     id: "settings",
     label: "Paramètres",
     icon: Settings,
-    href: "/customer/settings",
+    href: "/dashboard/customer/settings",
   },
 ];
 
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 
 interface CustomerSidebarProps {
   isOpen?: boolean;
@@ -134,7 +139,7 @@ export default function CustomerSidebar({
               <Link
                 key={item.id}
                 href={item.href}
-                onClick={onClose} 
+                onClick={onClose}
                 className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all group ${
                   isActive
                     ? "bg-primary text-primary-foreground"

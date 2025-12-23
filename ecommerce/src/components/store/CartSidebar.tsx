@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartStore, formatPrice } from "@/lib/cart-store";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
-import anime from "animejs";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -18,85 +16,36 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const removeItem = useCartStore(state => state.removeItem);
   const updateQuantity = useCartStore(state => state.updateQuantity);
   const getSubtotal = useCartStore(state => state.getSubtotal);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   const subtotal = getSubtotal();
-  const delivery = 0; 
-  const taxes = subtotal * 0.2; 
+  const delivery = 0;
+  const taxes = subtotal * 0.2;
   const total = subtotal + delivery + taxes;
-
-  useEffect(() => {
-    if (isOpen) {
-      
-      if (overlayRef.current) {
-        overlayRef.current.style.display = "block";
-        anime({
-          targets: overlayRef.current,
-          opacity: [0, 1],
-          duration: 300,
-          easing: "linear",
-        });
-      }
-
-      if (sidebarRef.current) {
-        anime({
-          targets: sidebarRef.current,
-          translateX: ["110%", "0%"],
-          opacity: [0.5, 1],
-          easing: "spring(1, 90, 12, 0)",
-          duration: 800,
-        });
-      }
-    } else {
-      
-      if (overlayRef.current) {
-        anime({
-          targets: overlayRef.current,
-          opacity: 0,
-          duration: 300,
-          easing: "linear",
-          complete: () => {
-            if (overlayRef.current) overlayRef.current.style.display = "none";
-          },
-        });
-      }
-
-      if (sidebarRef.current) {
-        anime({
-          targets: sidebarRef.current,
-          translateX: "110%",
-          opacity: 0.5,
-          easing: "easeInQuad",
-          duration: 300,
-        });
-      }
-    }
-  }, [isOpen]);
 
   return (
     <>
       {}
       <div
-        ref={overlayRef}
-        className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[60]"
-        style={{ display: "none", opacity: 0 }}
+        className={cn(
+          "fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[60] transition-opacity duration-300",
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
+        )}
         onClick={onClose}
       />
 
       {}
       <div
-        ref={sidebarRef}
-        className="fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] md:w-[480px] bg-white z-[70] shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] flex flex-col"
-        style={{ transform: "translateX(110%)" }}
+        className={cn(
+          "fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] md:w-[480px] bg-white z-[70] shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          isOpen ? "translate-x-0" : "translate-x-[110%]",
+        )}
       >
         {}
         <div className="p-8 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Mon Panier</h2>
-            <p className="text-sm text-gray-400 font-medium">
-              Order ID: #{Math.floor(Math.random() * 100000)}
-            </p>
           </div>
           <button
             onClick={onClose}
@@ -132,7 +81,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   className="group relative flex gap-5 p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all duration-300"
                 >
                   {}
-                  <div className="w-20 h-24 bg-white rounded-xl flex-shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
+                  <div className="w-20 h-24 bg-white rounded-xl shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
                     {item.image ? (
                       <Image
                         src={item.image}
@@ -235,16 +184,23 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               </div>
             </div>
 
-            <Link
-              href="/checkout"
-              className="group w-full bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-900 transition-all shadow-lg hover:shadow-xl flex items-center justify-between"
-              onClick={onClose}
-            >
-              <span>Passer la commande</span>
-              <div className="bg-white/20 rounded-full p-1 group-hover:bg-white/30 transition-colors">
-                <ArrowRight className="w-5 h-5" />
-              </div>
-            </Link>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/cart"
+                className="w-full bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center justify-center text-sm"
+                onClick={onClose}
+              >
+                Voir le panier
+              </Link>
+              <Link
+                href="/checkout"
+                className="group w-full bg-black text-white px-4 py-3 rounded-xl font-bold hover:bg-gray-900 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm"
+                onClick={onClose}
+              >
+                <span>Commander</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         )}
       </div>

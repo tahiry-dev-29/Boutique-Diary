@@ -56,19 +56,19 @@ export default async function CustomerDashboard() {
       label: "Commandes",
       value: ordersCount.toString(),
       icon: ShoppingBag,
-      href: "/customer/orders",
+      href: "/dashboard/customer/orders",
     },
     {
       label: "Favoris",
       value: wishlistCount.toString(),
       icon: Heart,
-      href: "/customer/wishlist",
+      href: "/dashboard/customer/wishlist",
     },
     {
       label: "Adresses",
       value: addressesCount.toString(),
       icon: MapPin,
-      href: "/customer/addresses",
+      href: "/dashboard/customer/addresses",
     },
   ];
 
@@ -119,7 +119,7 @@ export default async function CustomerDashboard() {
             </h2>
           </div>
           <Link
-            href="/customer/orders"
+            href="/dashboard/customer/orders"
             className="text-sm text-primary hover:underline font-medium"
           >
             Voir tout
@@ -178,7 +178,7 @@ export default async function CustomerDashboard() {
           </p>
         </Link>
         <Link
-          href="/customer/settings"
+          href="/dashboard/customer/settings"
           className="dark:border-gray-700/50 border border-border rounded-xl p-6 hover:shadow-lg transition-shadow"
         >
           <h3 className="font-semibold text-lg text-foreground">

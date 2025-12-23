@@ -92,7 +92,7 @@ const ClientNavbar = () => {
 
               {}
               <Link
-                href="/customer/auth"
+                href="/login"
                 className="p-2 rounded-full hover:bg-accent transition-colors text-foreground flex items-center gap-2"
               >
                 <User size={20} />
@@ -103,7 +103,7 @@ const ClientNavbar = () => {
 
               {}
               <Link
-                href="/customer/wishlist"
+                href="/dashboard/customer/wishlist"
                 className="p-2 rounded-full hover:bg-accent transition-colors text-foreground"
               >
                 <Heart size={20} />
@@ -152,14 +152,14 @@ const ClientNavbar = () => {
                   🔥 Promos
                 </Link>
                 <Link
-                  href="/customer/auth"
+                  href="/login"
                   className="px-4 py-3 text-sm font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   👤 Mon compte
                 </Link>
                 <Link
-                  href="/customer/wishlist"
+                  href="/dashboard/customer/wishlist"
                   className="px-4 py-3 text-sm font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >

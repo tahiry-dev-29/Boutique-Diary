@@ -55,7 +55,7 @@ export default function ClientLayout({
             <ul className="space-y-2 text-muted-foreground">
               <li>
                 <a
-                  href="/customer/auth"
+                  href="/login"
                   className="hover:text-foreground transition-colors"
                 >
                   Connexion
@@ -63,7 +63,7 @@ export default function ClientLayout({
               </li>
               <li>
                 <a
-                  href="/customer/orders"
+                  href="/dashboard/customer/orders"
                   className="hover:text-foreground transition-colors"
                 >
                   Mes commandes
@@ -71,7 +71,7 @@ export default function ClientLayout({
               </li>
               <li>
                 <a
-                  href="/customer/wishlist"
+                  href="/dashboard/customer/wishlist"
                   className="hover:text-foreground transition-colors"
                 >
                   Mes favoris

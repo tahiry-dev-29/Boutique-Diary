@@ -26,7 +26,7 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        window.location.href = "/customer";
+        window.location.href = "/dashboard/customer";
       } else {
         setError(data.message || "Échec de la connexion");
       }

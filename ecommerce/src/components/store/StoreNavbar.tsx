@@ -72,16 +72,13 @@ export default function StoreNavbar({
   };
 
   const handleLogout = async () => {
-    
-    
     try {
-      
       await fetch("/api/auth/logout", { method: "POST" });
-      
+
       window.location.href = "/api/auth/social/logout";
     } catch (err) {
       toast.error("Erreur lors de la déconnexion");
-      
+
       window.location.href = "/api/auth/social/logout";
     }
   };
@@ -352,7 +349,10 @@ export default function StoreNavbar({
                     asChild
                     className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
                   >
-                    <Link href="/customer" className="flex items-center gap-3">
+                    <Link
+                      href="/dashboard/customer"
+                      className="flex items-center gap-3"
+                    >
                       <UserCircle className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
                       <span className="text-sm font-bold text-gray-700">
                         Mon Profil
@@ -364,7 +364,7 @@ export default function StoreNavbar({
                     className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
                   >
                     <Link
-                      href="/customer/wishlist"
+                      href="/dashboard/customer/wishlist"
                       className="flex items-center gap-3"
                     >
                       <Heart className="w-4 h-4 text-gray-400 group-hover:text-rose-500 transition-colors" />
@@ -378,7 +378,7 @@ export default function StoreNavbar({
                     className="rounded-xl px-4 py-2.5 focus:bg-gray-50 cursor-pointer group"
                   >
                     <Link
-                      href="/customer/addresses"
+                      href="/dashboard/customer/addresses"
                       className="flex items-center gap-3"
                     >
                       <MapPin className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
