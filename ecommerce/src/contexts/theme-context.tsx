@@ -113,17 +113,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
 
-    // Sync to DOM
+    
     const root = document.documentElement;
 
-    // 1. Dark Mode
+    
     if (theme.colorMode === "dark") {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
     }
 
-    // 2. CSS Variables
+    
     const preset = THEME_PRESETS[theme.preset];
     const styles = {
       "--theme-primary": preset.primary,
@@ -151,7 +151,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.style.setProperty(key, value);
     });
 
-    // Update data attributes
+    
     root.setAttribute("data-theme", theme.preset);
     root.setAttribute("data-scale", theme.scale);
     root.setAttribute("data-radius", theme.radius);
@@ -171,7 +171,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   if (!mounted) {
-    return null; // Avoid hydration mismatch
+    return null; 
   }
 
   return (

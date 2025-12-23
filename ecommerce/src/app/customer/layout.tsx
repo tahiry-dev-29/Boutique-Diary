@@ -15,7 +15,7 @@ export default function CustomerLayout({
 
   return (
     <div className="min-h-screen dark:bg-gray-900/50">
-      {/* Header */}
+      {}
       <header className="dark:border-gray-700/50 border-b border-border px-4 py-3 bg-background sticky top-0 z-30">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -41,7 +41,7 @@ export default function CustomerLayout({
         </div>
       </header>
 
-      {/* Main Content */}
+      {}
       <div className="flex relative">
         <CustomerSidebar
           isOpen={isSidebarOpen}

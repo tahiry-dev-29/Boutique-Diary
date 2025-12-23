@@ -72,16 +72,16 @@ export default function StoreNavbar({
   };
 
   const handleLogout = async () => {
-    // Redirect to Auth0 logout which will also handle clearing local session if configured correctly
-    // or we can clear local session first.
+    
+    
     try {
-      // Clear local session first
+      
       await fetch("/api/auth/logout", { method: "POST" });
-      // Then redirect to Auth0 logout
+      
       window.location.href = "/api/auth/social/logout";
     } catch (err) {
       toast.error("Erreur lors de la déconnexion");
-      // Fallback redirect
+      
       window.location.href = "/api/auth/social/logout";
     }
   };

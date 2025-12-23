@@ -26,22 +26,26 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Customer {
   id: number;
   username: string;
   email: string;
+  photo?: string | null;
   createdAt: string;
   ordersCount: number;
   totalSpent: number;
 }
-// ... (rest of the file remains, I need to match the context chunks)
-
-// I will use replace_file_content carefully.
-// I need TWO chunks: one for interface, one for the JSX.
-// Since replace_file_content only does ONE chunk per call (unless using multi), I will use multi_replace.
-// Wait, the tool is replace_file_content (singular) in the list but I have multi_replace_file_content.
-// I will use multi_replace_file_content.
 
 export default function CustomerPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -50,6 +54,8 @@ export default function CustomerPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null,
   );
+  const [customerToDelete, setCustomerToDelete] = useState<number | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +85,7 @@ export default function CustomerPage() {
       customer.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Pagination Logic
+  
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
   const paginatedCustomers = filteredCustomers.slice(
     (currentPage - 1) * itemsPerPage,
@@ -87,8 +93,6 @@ export default function CustomerPage() {
   );
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) return;
-
     try {
       const response = await fetch(`/api/customers/${id}`, {
         method: "DELETE",
@@ -102,6 +106,9 @@ export default function CustomerPage() {
     } catch (error) {
       console.error("Error deleting customer:", error);
       toast.error("Erreur lors de la suppression");
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setCustomerToDelete(null);
     }
   };
 
@@ -134,50 +141,50 @@ export default function CustomerPage() {
         description="Gérez votre base de clients et consultez leurs informations"
       />
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-card border-border shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
               <Users size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Total Clients
               </p>
-              <h3 className="text-2xl font-bold text-foreground">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {totalCustomers}
               </h3>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400">
               <UserPlus size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Nouveaux (30j)
               </p>
-              <h3 className="text-2xl font-bold text-foreground">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {newCustomers}
               </h3>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border shadow-sm">
+        <Card className="bg-gray-100 dark:bg-gray-800 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
               <Clock size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Taux de Nouveaux
               </p>
-              <h3 className="text-2xl font-bold text-foreground">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {activeRate}%
               </h3>
             </div>
@@ -185,12 +192,12 @@ export default function CustomerPage() {
         </Card>
       </div>
 
-      {/* Main Content */}
+      {}
       <div className="space-y-4">
-        {/* Search */}
+        {}
         <div className="relative max-w-md">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
             size={18}
           />
           <input
@@ -199,17 +206,17 @@ export default function CustomerPage() {
             value={searchQuery}
             onChange={e => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset pagination on search
+              setCurrentPage(1); 
             }}
-            className="w-full pl-10 pr-4 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary outline-none transition-all"
           />
         </div>
 
-        {/* Table */}
-        <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+        {}
+        <div className="bg-gray-100 dark:bg-gray-800 border-none rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-muted/50">
+              <thead className="bg-gray-200/50 dark:bg-gray-900/50">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
                     Client
@@ -233,7 +240,8 @@ export default function CustomerPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border border-border">
+                        <Avatar className="h-10 w-10 border border-gray-200 dark:border-gray-700">
+                          <AvatarImage src={customer.photo || ""} />
                           <AvatarFallback className="bg-primary/10 text-primary font-bold">
                             {customer.username.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
@@ -281,8 +289,11 @@ export default function CustomerPage() {
                           <Eye size={16} />
                         </button>
                         <button
-                          onClick={() => handleDelete(customer.id)}
-                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-muted-foreground hover:text-destructive"
+                          onClick={() => {
+                            setCustomerToDelete(customer.id);
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-gray-400 hover:text-destructive"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -306,10 +317,10 @@ export default function CustomerPage() {
           )}
         </div>
 
-        {/* Pagination */}
+        {}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-4 border-t border-border bg-card rounded-b-xl">
-            <div className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-b-xl">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               Affichage de {paginatedCustomers.length} sur{" "}
               {filteredCustomers.length} résultats
             </div>
@@ -317,7 +328,7 @@ export default function CustomerPage() {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300"
               >
                 Précédent
               </button>
@@ -350,12 +361,12 @@ export default function CustomerPage() {
         )}
       </div>
 
-      {/* Sidebar (Sheet) */}
+      {}
       <Sheet
         open={!!selectedCustomer}
         onOpenChange={open => !open && setSelectedCustomer(null)}
       >
-        <SheetContent className="sm:max-w-md bg-background dark:bg-background border-l border-border text-foreground p-6 shadow-xl">
+        <SheetContent className="sm:max-w-md bg-gray-100 dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white p-6 shadow-xl">
           <SheetHeader className="mb-6">
             <SheetTitle className="text-xl font-bold">
               Détails du client
@@ -368,7 +379,8 @@ export default function CustomerPage() {
           {selectedCustomer && (
             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
               <div className="flex flex-col items-center justify-center space-y-4">
-                <Avatar className="h-24 w-24 border-4 border-muted">
+                <Avatar className="h-24 w-24 border-4 border-gray-200 dark:border-gray-700">
+                  <AvatarImage src={selectedCustomer.photo || ""} />
                   <AvatarFallback className="bg-primary/10 text-primary text-3xl font-bold">
                     {selectedCustomer.username.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -437,6 +449,35 @@ export default function CustomerPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      {}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-gray-900 dark:text-white text-xl">
+              Confirmer la suppression
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+              Êtes-vous sûr de vouloir supprimer ce client ? Cette action est
+              irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => customerToDelete && handleDelete(customerToDelete)}
+              className="bg-red-600 hover:bg-red-700 text-white border-none"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

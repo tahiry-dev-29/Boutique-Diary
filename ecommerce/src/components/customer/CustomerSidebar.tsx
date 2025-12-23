@@ -43,7 +43,7 @@ const navItems = [
   },
 ];
 
-import { cn } from "@/lib/utils"; // Make sure cn is available or use templates
+import { cn } from "@/lib/utils"; 
 
 interface CustomerSidebarProps {
   isOpen?: boolean;
@@ -84,7 +84,7 @@ export default function CustomerSidebar({
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden animate-in fade-in"
@@ -92,7 +92,7 @@ export default function CustomerSidebar({
         />
       )}
 
-      {/* Sidebar */}
+      {}
       <aside
         className={cn(
           "fixed md:sticky top-0 left-0 h-screen w-64 bg-background dark:border-gray-700/50 border-r border-border p-4 z-50 transition-transform duration-300 md:translate-x-0 overflow-y-auto",
@@ -106,7 +106,7 @@ export default function CustomerSidebar({
           </button>
         </div>
 
-        {/* User Profile */}
+        {}
         <div className="mb-6 p-4 bg-muted rounded-xl">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12 border-2 border-background">
@@ -126,7 +126,7 @@ export default function CustomerSidebar({
           </div>
         </div>
 
-        {/* Navigation */}
+        {}
         <nav className="space-y-1">
           {navItems.map(item => {
             const isActive = pathname === item.href;
@@ -134,7 +134,7 @@ export default function CustomerSidebar({
               <Link
                 key={item.id}
                 href={item.href}
-                onClick={onClose} // Close on mobile navigation
+                onClick={onClose} 
                 className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all group ${
                   isActive
                     ? "bg-primary text-primary-foreground"
@@ -154,7 +154,7 @@ export default function CustomerSidebar({
           })}
         </nav>
 
-        {/* Logout */}
+        {}
         <div className="mt-8 pt-6 border-t border-border">
           <button
             onClick={handleLogout}

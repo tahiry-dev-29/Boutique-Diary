@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const customers = await prisma.user.findMany({
       where: {
-        role: "CUSTOMER", // Filter to only show actual customers
+        role: "CUSTOMER", 
       },
       select: {
         id: true,

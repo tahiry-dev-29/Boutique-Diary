@@ -74,7 +74,7 @@ export default async function CustomerDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
           Bonjour, {user.username} 👋
@@ -84,7 +84,7 @@ export default async function CustomerDashboard() {
         </p>
       </div>
 
-      {/* Stats Grid */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map(stat => (
           <Link
@@ -109,7 +109,7 @@ export default async function CustomerDashboard() {
         ))}
       </div>
 
-      {/* Recent Orders */}
+      {}
       <div className="dark:border-gray-700/50 border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ export default async function CustomerDashboard() {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/shop"

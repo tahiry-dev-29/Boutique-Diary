@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import AdminDashboard from "@/components/admin/dashboard/AdminDashboard";
 import { AdminUser } from "@/types/admin";
 import { useRouter } from "next/navigation";
+import { RedirectMessage } from "@/components/admin/redirect-message";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
+      <RedirectMessage />
       <AdminDashboard user={user} />
     </div>
   );

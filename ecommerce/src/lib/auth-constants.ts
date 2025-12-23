@@ -15,3 +15,21 @@ export interface UserPayload {
   email: string;
   role: Role;
 }
+
+export function hasMinRole(
+  userRole: Role | string,
+  requiredRole: Role,
+): boolean {
+  const normalizedUserRole = userRole.toUpperCase() as Role;
+  const userIndex = ROLE_HIERARCHY.indexOf(normalizedUserRole);
+  const requiredIndex = ROLE_HIERARCHY.indexOf(requiredRole);
+  return userIndex >= requiredIndex;
+}
+
+export function isAdmin(role: Role | string): boolean {
+  return hasMinRole(role, "ADMIN");
+}
+
+export function isSuperAdmin(role: Role | string): boolean {
+  return role.toUpperCase() === "SUPERADMIN";
+}

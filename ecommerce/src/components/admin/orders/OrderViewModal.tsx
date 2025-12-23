@@ -182,7 +182,7 @@ export function OrderFloatingPanel({
           data-[state=open]:slide-in-from-right
         "
       >
-        {/* En-tête Fixe */}
+        {}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border/40 bg-secondary/10">
           <SheetTitle className="sr-only">
             Commande #{order.reference}
@@ -203,10 +203,10 @@ export function OrderFloatingPanel({
           </div>
         </div>
 
-        {/* Contenu Défilant */}
+        {}
         <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6">
           <div className="space-y-6 sm:space-y-8">
-            {/* État */}
+            {}
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-secondary/20 border border-border/50">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-muted-foreground">
@@ -235,7 +235,7 @@ export function OrderFloatingPanel({
               </div>
             </div>
 
-            {/* Client */}
+            {}
             <div className="space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/80">
                 Client

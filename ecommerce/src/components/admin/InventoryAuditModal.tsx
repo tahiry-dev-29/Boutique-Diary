@@ -142,7 +142,7 @@ export function InventoryAuditModal({
           data-[state=open]:slide-in-from-right
         "
       >
-        {/* En-tête Fixe */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-border/40 bg-secondary/10 shrink-0">
           <SheetTitle className="sr-only">Ajustement de Stock</SheetTitle>
           <div className="flex items-center gap-3">
@@ -158,10 +158,10 @@ export function InventoryAuditModal({
           </div>
         </div>
 
-        {/* Contenu Défilant */}
+        {}
         <ScrollArea className="flex-1 min-h-0 p-6">
           <div className="space-y-8 pb-6">
-            {/* Produit Info */}
+            {}
             <div className="relative p-4 rounded-2xl bg-background/50 border border-border/50 shadow-sm">
               <div className="flex gap-4">
                 <div className="w-16 h-16 rounded-lg bg-background overflow-hidden border border-border/50 shrink-0">
@@ -195,7 +195,7 @@ export function InventoryAuditModal({
               </div>
             </div>
 
-            {/* Formulaire */}
+            {}
             <div className="grid grid-cols-2 gap-4 items-end">
               <div className="space-y-2">
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">
@@ -296,7 +296,7 @@ export function InventoryAuditModal({
               />
             </div>
 
-            {/* Historique */}
+            {}
             <div className="pt-6 border-t border-border/40">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-6 flex items-center gap-2">
                 <HistoryIcon className="w-3 h-3" />
@@ -363,7 +363,7 @@ export function InventoryAuditModal({
           </div>
         </ScrollArea>
 
-        {/* Footer Fixe */}
+        {}
         <div className="p-6 bg-background/80 backdrop-blur-md border-t border-border/40 shrink-0">
           <div className="flex justify-between items-center mb-4">
             <span className="text-xs text-muted-foreground">Stock actuel</span>

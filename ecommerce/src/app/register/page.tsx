@@ -8,13 +8,13 @@ import BrandLogo from "@/components/store/BrandLogo";
 export default function RegisterPage() {
   return (
     <div className="fixed inset-0 h-[100dvh] w-screen bg-white flex flex-col md:flex-row overflow-hidden font-montserrat select-none">
-      {/* Background blobs for aesthetic */}
+      {}
       <div className="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] rounded-full bg-indigo-50/40 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] rounded-full bg-rose-50/40 blur-[100px] pointer-events-none" />
 
-      {/* Left side: branding/image (Hidden on mobile) */}
+      {}
       <div className="hidden md:flex md:w-1/2 bg-slate-950 items-center justify-center p-12 relative overflow-hidden">
-        {/* Deep mesh gradient background with rose tint */}
+        {}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(244,63,94,0.1),rgba(0,0,0,0))]" />
 
         <div className="relative z-10 text-center max-w-md space-y-12">
@@ -51,7 +51,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Right side: Register form */}
+      {}
       <div className="flex-1 flex flex-col relative bg-white h-full">
         <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col">
           <div className="p-6 md:p-8 shrink-0 flex justify-between items-center bg-white/80 backdrop-blur-sm sticky top-0 z-20">
@@ -82,7 +82,7 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {/* Social Logins - Minimal */}
+              {}
               <div className="grid grid-cols-2 gap-4">
                 <a
                   href="/api/auth/social/login?connection=google-oauth2"

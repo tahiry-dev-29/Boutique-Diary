@@ -17,7 +17,7 @@ export async function GET() {
             product: {
               select: {
                 name: true,
-                images: true, // Assuming structure allows this or we need to check relation
+                images: true, 
               },
             },
           },

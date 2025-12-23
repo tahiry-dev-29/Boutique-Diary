@@ -318,7 +318,7 @@ export default function StockPage() {
     );
   }, [products]);
 
-  // Sorting Logic
+  
   const handleSort = (key: keyof AuditItem | "status") => {
     setSortConfig(current => ({
       key,
