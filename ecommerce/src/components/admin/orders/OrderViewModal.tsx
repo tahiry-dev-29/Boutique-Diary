@@ -33,7 +33,6 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { generateInvoice } from "@/utils/invoice-generator";
 
-
 export interface OrderDetails {
   id: string;
   reference: string;
@@ -50,8 +49,6 @@ export interface OrderDetails {
     variant?: string;
   }>;
 }
-
-
 
 const StatusBadge = ({ status }: { status: OrderDetails["status"] }) => {
   const styles = {
@@ -106,18 +103,16 @@ const InfoRow = ({
   label: string;
   value: string;
 }) => (
-  <div className="flex items-center gap-3 text-sm group">
-    <div className="p-2 rounded-lg bg-secondary/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+  <div className="flex items-center gap-3 text-sm group min-w-0">
+    <div className="p-2 rounded-lg bg-secondary/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors shrink-0">
       <Icon className="w-4 h-4" />
     </div>
-    <div className="flex flex-col">
+    <div className="flex flex-col min-w-0 flex-1">
       <span className="text-xs text-muted-foreground font-medium">{label}</span>
-      <span className="text-foreground font-semibold">{value}</span>
+      <span className="text-foreground font-semibold break-words">{value}</span>
     </div>
   </div>
 );
-
-
 
 export function OrderFloatingPanel({
   order: initialOrder,
@@ -131,7 +126,6 @@ export function OrderFloatingPanel({
   const [order, setOrder] = useState<OrderDetails | null>(initialOrder);
   const [loading, setLoading] = useState(false);
 
-  
   useEffect(() => {
     if (open && initialOrder?.id) {
       setLoading(true);
@@ -177,26 +171,27 @@ export function OrderFloatingPanel({
       <SheetContent
         side="right"
         className="
-          /* Styles Flottants (Floating) */
-          w-[90vw] sm:w-[480px] 
-          mt-4 mb-4 mr-4 rounded-3xl 
-          h-[calc(100vh-2rem)] 
-          border border-border/40 shadow-2xl 
-          bg-background/95 backdrop-blur-xl
+          /* Styles Responsive */
+          w-full h-full 
+          sm:w-[480px] sm:h-[calc(100vh-2rem)]
+          sm:mt-4 sm:mb-4 sm:mr-4 sm:rounded-3xl 
+          border-l sm:border border-border/40 shadow-2xl 
+          bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-xl
           p-0 flex flex-col overflow-hidden
           data-[state=closed]:slide-out-to-right
           data-[state=open]:slide-in-from-right
         "
       >
         {}
-        {}
-        <div className="flex items-center justify-between p-6 border-b border-border/40 bg-secondary/10">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border/40 bg-secondary/10">
           <SheetTitle className="sr-only">
             Commande #{order.reference}
           </SheetTitle>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-xl font-bold tracking-tight">Commande</h2>
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight">
+                Commande
+              </h2>
               <span className="text-muted-foreground font-mono text-sm">
                 #{order.reference}
               </span>
@@ -206,12 +201,11 @@ export function OrderFloatingPanel({
               {format(orderDate, "dd MMM yyyy à HH:mm", { locale: fr })}
             </p>
           </div>
-          {}
         </div>
 
         {}
-        <ScrollArea className="flex-1 min-h-0 p-6">
-          <div className="space-y-8">
+        <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6">
+          <div className="space-y-6 sm:space-y-8">
             {}
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-secondary/20 border border-border/50">
               <div className="flex justify-between items-center">

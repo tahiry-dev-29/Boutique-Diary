@@ -14,6 +14,8 @@ export default function AdminLayout({
 }) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const pathname = usePathname();
+  const { colorMode, preset, scale, radius, contentLayout, sidebarMode } =
+    useTheme();
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(prev => !prev);
@@ -23,10 +25,6 @@ export default function AdminLayout({
     return <>{children}</>;
   }
 
-  const { colorMode, preset, scale, radius, contentLayout, sidebarMode } =
-    useTheme();
-
-  
   const themeStyle = {
     "--theme-primary": THEME_PRESETS[preset].primary,
     "--theme-accent": THEME_PRESETS[preset].accent,
@@ -47,7 +45,7 @@ export default function AdminLayout({
 
   return (
     <div
-      className={`flex min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 relative transition-colors duration-300 ${
+      className={`flex min-h-screen bg-gray-50 dark:bg-linear-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 relative transition-colors duration-300 ${
         colorMode === "dark" ? "dark" : ""
       }`}
       style={themeStyle}

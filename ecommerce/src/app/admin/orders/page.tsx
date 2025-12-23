@@ -250,7 +250,7 @@ export default function OrdersPage() {
 
       {}
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-border">
           <AlertDialogHeader>
             <AlertDialogTitle>Annuler cette commande ?</AlertDialogTitle>
             <AlertDialogDescription>

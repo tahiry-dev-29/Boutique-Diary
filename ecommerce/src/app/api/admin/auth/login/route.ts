@@ -6,6 +6,7 @@ import {
   getAdminCookieOptions,
   AdminPayload,
 } from "@/lib/adminAuth";
+import { Role } from "@/lib/auth-constants";
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +24,6 @@ export async function POST(request: Request) {
       );
     }
 
-    
     const admin = await prisma.admin.findUnique({
       where: { email },
     });
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
+    
     if (!admin.isActive) {
       return NextResponse.json(
         { error: "Ce compte est désactivé" },
@@ -55,8 +56,17 @@ export async function POST(request: Request) {
       adminId: admin.id,
       username: admin.name,
       email: admin.email,
-      role: admin.role,
+      role: admin.role as Role,
     };
+
+    
+    await prisma.admin.update({
+      where: { id: admin.id },
+      data: {
+        isOnline: true,
+        lastSeen: new Date(),
+      },
+    });
 
     const token = await createAdminToken(payload, rememberMe);
 

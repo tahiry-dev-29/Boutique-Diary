@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -9,7 +8,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +59,8 @@ export default function LoginForm() {
             id="identifier"
             value={identifier}
             onChange={e => setIdentifier(e.target.value)}
-            placeholder="Adresse électronique"
-            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            placeholder="votre@email.com"
+            className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
           />
         </div>
@@ -79,8 +77,8 @@ export default function LoginForm() {
             id="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="Mot de passe"
-            className="block w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2d7a56] focus:border-transparent transition-all"
+            placeholder="••••••••"
+            className="block w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all bg-gray-50/50"
             required
           />
           <div className="flex justify-end">
@@ -96,9 +94,9 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 border border-transparent rounded-full shadow-sm text-base font-bold text-white bg-[#2d7a56] hover:bg-[#236345] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2d7a56] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-black uppercase tracking-widest text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
         >
-          {loading ? "Connexion..." : "Me connecter"}
+          {loading ? "Connexion..." : "Se connecter"}
         </button>
       </form>
 
@@ -115,9 +113,9 @@ export default function LoginForm() {
       {}
       <Link
         href="/register"
-        className="block w-full py-3 px-4 border-2 border-[#1e293b] rounded-full text-center text-base font-bold text-[#1e293b] hover:bg-gray-50 transition-colors"
+        className="block w-full py-4 px-4 border-2 border-slate-900 rounded-xl text-center text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-slate-900 hover:text-white transition-all hover:shadow-lg"
       >
-        Vous n&apos;avez pas encore de compte ?
+        Créer un nouveau compte
       </Link>
     </div>
   );

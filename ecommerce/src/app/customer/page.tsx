@@ -1,40 +1,75 @@
-"use client";
-
 import React from "react";
 import { ShoppingBag, Heart, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { prisma } from "@/lib/prisma";
+import { verifyToken } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function CustomerDashboard() {
-  const [user, setUser] = useState<any>(null);
+async function getData() {
+  const payload = await verifyToken();
+  if (!payload || !payload.userId) {
+    return null;
+  }
 
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) setUser(data.user);
-      });
-  }, []);
+  const userId = payload.userId as number;
+
+  const [user, ordersCount, wishlistCount, addressesCount, recentOrders] =
+    await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { username: true },
+      }),
+      prisma.order.count({ where: { customerId: userId } }),
+      prisma.wishlistItem.count({ where: { userId: userId } }),
+      prisma.address.count({ where: { userId: userId } }),
+      prisma.order.findMany({
+        where: { customerId: userId },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        include: {
+          items: true,
+        },
+      }),
+    ]);
+
+  return {
+    user,
+    ordersCount,
+    wishlistCount,
+    addressesCount,
+    recentOrders,
+  };
+}
+
+export default async function CustomerDashboard() {
+  const data = await getData();
+
+  if (!data || !data.user) {
+    redirect("/login");
+  }
+
+  const { user, ordersCount, wishlistCount, addressesCount, recentOrders } =
+    data;
+
   const stats = [
     {
       label: "Commandes",
-      value: "12",
+      value: ordersCount.toString(),
       icon: ShoppingBag,
       href: "/customer/orders",
     },
-    { label: "Favoris", value: "8", icon: Heart, href: "/customer/wishlist" },
+    {
+      label: "Favoris",
+      value: wishlistCount.toString(),
+      icon: Heart,
+      href: "/customer/wishlist",
+    },
     {
       label: "Adresses",
-      value: "2",
+      value: addressesCount.toString(),
       icon: MapPin,
       href: "/customer/addresses",
     },
-  ];
-
-  const recentOrders = [
-    { id: "ORD-001", date: "10 Déc 2024", status: "Livré", total: "89,90 €" },
-    { id: "ORD-002", date: "5 Déc 2024", status: "En cours", total: "45,00 €" },
-    { id: "ORD-003", date: "28 Nov 2024", status: "Livré", total: "120,50 €" },
   ];
 
   return (
@@ -42,7 +77,7 @@ export default function CustomerDashboard() {
       {}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
-          Bonjour, {user?.username || "..."} 👋
+          Bonjour, {user.username} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
           Bienvenue dans votre espace client
@@ -92,29 +127,42 @@ export default function CustomerDashboard() {
         </div>
 
         <div className="space-y-3">
-          {recentOrders.map(order => (
-            <div
-              key={order.id}
-              className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-accent transition-colors"
-            >
-              <div>
-                <p className="font-medium text-foreground">{order.id}</p>
-                <p className="text-xs text-muted-foreground">{order.date}</p>
+          {recentOrders.length > 0 ? (
+            recentOrders.map(order => (
+              <div
+                key={order.id}
+                className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-accent transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-foreground">
+                    {order.reference}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-foreground">
+                    {order.total.toFixed(2)} Ar
+                  </p>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full ${
+                      order.status === "DELIVERED" ||
+                      order.status === "COMPLETED"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                        : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="font-semibold text-foreground">{order.total}</p>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    order.status === "Livré"
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                      : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                  }`}
-                >
-                  {order.status}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Aucune commande récente.
+            </p>
+          )}
         </div>
       </div>
 

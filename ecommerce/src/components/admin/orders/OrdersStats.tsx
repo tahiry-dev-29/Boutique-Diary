@@ -67,9 +67,7 @@ export function OrdersStats({ stats, loading }: OrdersStatsProps) {
     },
   ];
 
-  
   const Sparkline = ({ color, trend }: { color: string; trend: number }) => {
-    
     const points =
       trend > 0
         ? "0,20 10,18 20,15 30,17 40,12 50,14 60,8 70,10 80,5"

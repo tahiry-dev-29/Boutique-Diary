@@ -11,6 +11,12 @@ export const ALL_PERMISSIONS = [
   { id: "reports.view", label: "Voir les rapports" },
   { id: "settings.view", label: "Voir les paramètres" },
   { id: "settings.edit", label: "Modifier les paramètres" },
+  { id: "categories.manage", label: "Gérer les catégories" },
+  { id: "marketing.manage", label: "Gérer le marketing" },
+  { id: "shipping.manage", label: "Gérer la livraison" },
+  { id: "payment.manage", label: "Gérer les paiements" },
+  { id: "dashboard.view", label: "Voir le tableau de bord" },
+  { id: "search.view", label: "Utiliser la recherche" },
   { id: "appearance.edit", label: "Modifier l'apparence" },
 ] as const;
 
@@ -23,15 +29,15 @@ export interface RoleConfig {
 export const DEFAULT_ROLES: RoleConfig[] = [
   {
     id: "superadmin",
-    name: "superadmin", 
-    permissions: ALL_PERMISSIONS.map((p) => p.id),
+    name: "superadmin",
+    permissions: ALL_PERMISSIONS.map(p => p.id),
   },
   {
     id: "admin",
     name: "admin",
-    permissions: ALL_PERMISSIONS
-      .filter((p) => !p.id.includes("employees"))
-      .map((p) => p.id),
+    permissions: ALL_PERMISSIONS.filter(p => !p.id.includes("employees")).map(
+      p => p.id,
+    ),
   },
   {
     id: "manager",
@@ -48,6 +54,11 @@ export const DEFAULT_ROLES: RoleConfig[] = [
   {
     id: "employee",
     name: "employee",
-    permissions: ["products.view", "orders.view", "customers.view"],
+    permissions: [
+      "dashboard.view",
+      "products.view",
+      "orders.view",
+      "customers.view",
+    ],
   },
 ];

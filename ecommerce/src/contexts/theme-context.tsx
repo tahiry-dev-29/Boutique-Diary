@@ -109,10 +109,54 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  
   useEffect(() => {
     if (!mounted) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
+
+    
+    const root = document.documentElement;
+
+    
+    if (theme.colorMode === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+
+    
+    const preset = THEME_PRESETS[theme.preset];
+    const styles = {
+      "--theme-primary": preset.primary,
+      "--theme-accent": preset.accent,
+      "--theme-indicator": preset.indicator,
+      "--scale-factor":
+        theme.scale === "default"
+          ? "1"
+          : theme.scale === "xs"
+            ? "0.875"
+            : "1.125",
+      "--radius":
+        theme.radius === "default"
+          ? "0.625rem"
+          : theme.radius === "sm"
+            ? "0.375rem"
+            : theme.radius === "md"
+              ? "0.5rem"
+              : theme.radius === "lg"
+                ? "0.75rem"
+                : "1rem",
+    };
+
+    Object.entries(styles).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+
+    
+    root.setAttribute("data-theme", theme.preset);
+    root.setAttribute("data-scale", theme.scale);
+    root.setAttribute("data-radius", theme.radius);
+    root.setAttribute("data-content-layout", theme.contentLayout);
+    root.setAttribute("data-sidebar-mode", theme.sidebarMode);
   }, [theme, mounted]);
 
   const contextValue: ThemeContextType = {
@@ -127,7 +171,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   if (!mounted) {
-    return null;
+    return null; 
   }
 
   return (

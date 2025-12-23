@@ -215,6 +215,7 @@ model Admin {
   password        String
   role            String           @default("admin") // "admin" | "superadmin"
   isActive        Boolean          @default(true)
+  isOnline        Boolean          @default(false)
   lastSeen        DateTime? // Track online status
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt

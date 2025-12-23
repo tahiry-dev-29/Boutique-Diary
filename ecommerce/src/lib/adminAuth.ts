@@ -1,5 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { Role } from "./auth-constants";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "jwt-secret-ecommerce",
@@ -10,7 +11,7 @@ export interface AdminPayload {
   adminId: number;
   username: string;
   email: string;
-  role: string;
+  role: Role;
 }
 
 export async function verifyAdminToken(): Promise<AdminPayload | null> {
@@ -24,7 +25,6 @@ export async function verifyAdminToken(): Promise<AdminPayload | null> {
 
     const { payload } = await jwtVerify(token, JWT_SECRET);
 
-    
     if (!payload.adminId) {
       return null;
     }

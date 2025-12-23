@@ -293,7 +293,7 @@ async function main() {
   // Create Products with real images
   console.log("📦 Creating products...");
   const products = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 100; i++) {
     const category = random(categories);
     const brand = random(BRANDS);
     const productColors = randomSubset(COLORS, 2, 4);
@@ -396,7 +396,7 @@ async function main() {
   // Create Stock Movements
   console.log("📊 Creating stock movements...");
   let stockMovementCount = 0;
-  for (const product of products.slice(0, 30)) {
+  for (const product of products.slice(0, 80)) {
     const numMovements = Math.floor(Math.random() * 5) + 2;
 
     for (let j = 0; j < numMovements; j++) {
@@ -643,6 +643,35 @@ async function main() {
   } else {
     console.log("👤 Admin already exists.\n");
   }
+
+  // Create Emloyees
+  console.log("👨‍💼 Creating employees...");
+  const employeePassword = await bcrypt.hash("employee123", 10);
+  const employeeRoles = ["admin", "manager", "employee", "employee"];
+  const employeeNames = [
+    "Alice Admin",
+    "Bob Manager",
+    "Charlie Employee",
+    "Diana Staff",
+  ];
+
+  for (let i = 0; i < 4; i++) {
+    const email = `employee${i + 1}@boutique.com`;
+    const existingEmp = await prisma.admin.findUnique({ where: { email } });
+
+    if (!existingEmp) {
+      await prisma.admin.create({
+        data: {
+          name: employeeNames[i],
+          email,
+          password: employeePassword,
+          role: employeeRoles[i],
+          isActive: true,
+        },
+      });
+    }
+  }
+  console.log(`✅ Created 4 employees (password: employee123).\n`);
 
   // Create Reviews
   console.log("💬 Creating reviews...");

@@ -13,6 +13,7 @@ import {
 import { ThemeSettings } from "./ThemeSettings";
 import { useTheme } from "@/contexts/theme-context";
 import { CommandPalette } from "./CommandPalette";
+import { isAdmin } from "@/lib/auth-constants";
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
@@ -50,19 +51,21 @@ export function Header({ onToggleSidebar }: HeaderProps) {
     };
 
     fetchUser();
-  }, [pathname]);
+  }, [pathname, router]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setCommandPaletteOpen(open => !open);
+        if (user && isAdmin(user.role)) {
+          e.preventDefault();
+          setCommandPaletteOpen(open => !open);
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [user, router]);
 
   if (pathname === "/admin/login") {
     return null;
@@ -85,17 +88,19 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <PanelLeft className="h-5 w-5" />
           </Button>
           <div className="w-px h-6 bg-white/10 mx-4" />
-          <Button
-            variant="ghost"
-            className="w-full max-w-md justify-start text-sm text-gray-400 hover:bg-white/5 border border-white/10 hover:border-white/20 hover:text-white"
-            onClick={() => setCommandPaletteOpen(true)}
-          >
-            <Search className="mr-2 h-4 w-4" />
-            Rechercher...
-            <kbd className="pointer-events-none ml-auto h-5 select-none items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium opacity-100 text-gray-400">
-              <span className="text-xs">⌘</span>K
-            </kbd>
-          </Button>
+          {user && isAdmin(user.role) && (
+            <Button
+              variant="ghost"
+              className="w-full max-w-md justify-start text-sm text-gray-400 hover:bg-white/5 border border-white/10 hover:border-white/20 hover:text-white"
+              onClick={() => setCommandPaletteOpen(true)}
+            >
+              <Search className="mr-2 h-4 w-4" />
+              Rechercher...
+              <kbd className="pointer-events-none ml-auto h-5 select-none items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium opacity-100 text-gray-400">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </Button>
+          )}
           <div className="flex items-center gap-1 ml-auto">
             <Button
               variant="ghost"

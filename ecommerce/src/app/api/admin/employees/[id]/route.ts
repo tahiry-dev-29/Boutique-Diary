@@ -3,13 +3,16 @@ import bcrypt from "bcryptjs";
 import { checkApiPermission } from "@/lib/backend-permissions";
 import { NextRequest, NextResponse } from "next/server";
 
-
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
   const { id: idStr } = await context.params;
   try {
+    
+    const permissionError = await checkApiPermission("employees.view");
+    if (permissionError) return permissionError;
+
     const id = parseInt(idStr);
 
     if (isNaN(id)) {
@@ -46,7 +49,6 @@ export async function GET(
   }
 }
 
-
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -61,11 +63,9 @@ export async function PUT(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    
     const permissionError = await checkApiPermission("employees.edit");
     if (permissionError) return permissionError;
 
-    
     const updateData: {
       name?: string;
       email?: string;
@@ -119,7 +119,6 @@ export async function PUT(
   }
 }
 
-
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -132,7 +131,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    
     const permissionError = await checkApiPermission("employees.edit");
     if (permissionError) return permissionError;
 

@@ -6,7 +6,7 @@ import { RoleConfig, DEFAULT_ROLES } from "@/lib/permissions-config";
 interface UserProfile {
   id: number;
   username: string;
-  email: string; 
+  email: string;
   role: string;
 }
 
@@ -21,7 +21,6 @@ export function usePermissions() {
 
   const fetchPermissions = async () => {
     try {
-      
       const authRes = await fetch("/api/admin/auth/me");
       if (!authRes.ok) {
         setLoading(false);
@@ -30,24 +29,26 @@ export function usePermissions() {
       const user = await authRes.json();
       setUserRole(user.role);
 
-      
       if (user.role === "superadmin" || user.role === "SUPERADMIN") {
-        const superAdminPerms = DEFAULT_ROLES.find(r => r.id === "superadmin")?.permissions;
+        const superAdminPerms = DEFAULT_ROLES.find(
+          r => r.id === "superadmin",
+        )?.permissions;
         setPermissions(superAdminPerms || []);
         setLoading(false);
         return;
       }
 
-      
       const settingsRes = await fetch("/api/settings?key=admin_roles");
       let rolePermissions: string[] = [];
-      
+
       if (settingsRes.ok) {
         const data = await settingsRes.json();
-        if (data.value) {
+        if (data && data.value) {
           try {
             const roles = JSON.parse(data.value) as RoleConfig[];
-            const myRole = roles.find(r => r.name.toLowerCase() === user.role.toLowerCase());
+            const myRole = roles.find(
+              r => r.name.toLowerCase() === user.role.toLowerCase(),
+            );
             if (myRole) {
               rolePermissions = myRole.permissions;
             }
@@ -57,9 +58,10 @@ export function usePermissions() {
         }
       }
 
-      
       if (rolePermissions.length === 0) {
-        const defaultRole = DEFAULT_ROLES.find(r => r.name.toLowerCase() === user.role.toLowerCase());
+        const defaultRole = DEFAULT_ROLES.find(
+          r => r.name.toLowerCase() === user.role.toLowerCase(),
+        );
         if (defaultRole) {
           rolePermissions = defaultRole.permissions;
         }

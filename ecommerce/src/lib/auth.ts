@@ -1,19 +1,28 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "jwt-secret-ecommerce",
-);
-
 import {
   SESSION_COOKIE,
   ADMIN_SESSION_COOKIE,
   Role,
   UserPayload,
   ROLE_HIERARCHY,
+  hasMinRole,
+  isAdmin,
+  isSuperAdmin,
 } from "./auth-constants";
 
-export { SESSION_COOKIE, ADMIN_SESSION_COOKIE, ROLE_HIERARCHY };
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "jwt-secret-ecommerce",
+);
+
+export {
+  SESSION_COOKIE,
+  ADMIN_SESSION_COOKIE,
+  ROLE_HIERARCHY,
+  hasMinRole,
+  isAdmin,
+  isSuperAdmin,
+};
 export type { Role, UserPayload };
 
 export async function verifyToken(
@@ -63,22 +72,8 @@ export function getCookieOptions(cookieName: string, rememberMe = false) {
   };
 }
 
-export function hasMinRole(userRole: Role, requiredRole: Role): boolean {
-  const userIndex = ROLE_HIERARCHY.indexOf(userRole);
-  const requiredIndex = ROLE_HIERARCHY.indexOf(requiredRole);
-  return userIndex >= requiredIndex;
-}
-
 export function hasRole(userRole: Role, role: Role): boolean {
   return userRole === role;
-}
-
-export function isAdmin(role: Role): boolean {
-  return hasMinRole(role, "ADMIN");
-}
-
-export function isSuperAdmin(role: Role): boolean {
-  return role === "SUPERADMIN";
 }
 
 export const AdminPayload = {} as UserPayload;
