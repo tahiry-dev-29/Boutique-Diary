@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductImage {
+  id: number; // Added for variant tracking
   url: string;
   color?: string | null;
   sizes?: string[];
@@ -167,6 +168,7 @@ export default function ProductDetailClient({
 
     addItem({
       productId: product.id,
+      productImageId: currentImage?.id, // Track specific variant
       name: product.name,
       reference: product.reference,
       image: getImageUrl(selectedImage),

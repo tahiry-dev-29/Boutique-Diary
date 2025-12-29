@@ -8,11 +8,30 @@ import {
   Clock,
   RefreshCcw,
   Loader2,
+  FileText,
 } from "lucide-react";
+import { generateInvoicePDF } from "@/utils/pdf-invoice";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function CustomerOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [actionOrder, setActionOrder] = useState<any>(null);
+  const [actionType, setActionType] = useState<"CANCEL" | "COMPLETE" | null>(
+    null,
+  );
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -32,6 +51,70 @@ export default function CustomerOrders() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const [downloadingRef, setDownloadingRef] = useState<string | null>(null);
+
+  const handleDownloadPDF = async (orderRef: string) => {
+    setDownloadingRef(orderRef);
+    try {
+      const res = await fetch(`/api/orders/${orderRef}/invoice`);
+      if (res.ok) {
+        const data = await res.json();
+        generateInvoicePDF(data);
+        toast.success("Facture téléchargée !");
+      } else {
+        toast.error("Impossible de récupérer les données de la facture");
+      }
+    } catch (error) {
+      console.error("PDF error:", error);
+      toast.error("Erreur lors de la génération du PDF");
+    } finally {
+      setDownloadingRef(null);
+    }
+  };
+
+  const formatMoney = (amount: number) =>
+    new Intl.NumberFormat("fr-MG", {
+      style: "currency",
+      currency: "MGA",
+      maximumFractionDigits: 0,
+    }).format(amount);
+
+  const handleStatusUpdate = async () => {
+    if (!actionOrder || !actionType) return;
+
+    const newStatus = actionType === "CANCEL" ? "CANCELLED" : "COMPLETED";
+
+    try {
+      const res = await fetch(`/api/customer/orders/${actionOrder.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        let errorMessage = "Une erreur est survenue";
+        try {
+          const data = await res.json();
+          errorMessage = data.error || errorMessage;
+        } catch (e) {
+          console.error("Failed to parse error response", e);
+        }
+        throw new Error(errorMessage);
+      }
+
+      toast.success(
+        actionType === "CANCEL" ? "Commande annulée" : "Réception confirmée !",
+      );
+      fetchOrders(); // Refresh list
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message);
+    } finally {
+      setActionOrder(null);
+      setActionType(null);
+    }
+  };
 
   const getStatusIcon = (status: string) => {
     const s = status.toUpperCase();
@@ -91,8 +174,11 @@ export default function CustomerOrders() {
                 <div className="flex items-center gap-4">
                   {getStatusIcon(order.status)}
                   <div>
-                    <p className="font-semibold text-foreground">
+                    <p className="font-semibold text-foreground flex items-center gap-2">
                       {order.reference}
+                      <span className="text-xs font-normal text-muted-foreground bg-muted px-1.5 rounded flex items-center gap-1">
+                        🇲🇬 MG
+                      </span>
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(order.createdAt).toLocaleDateString()}
@@ -123,17 +209,63 @@ export default function CustomerOrders() {
                       </div>
                     </div>
                     <p className="font-semibold text-foreground">
-                      {item.price.toFixed(2)} Ar
+                      {formatMoney(item.price)}
                     </p>
                   </div>
                 ))}
               </div>
 
               <div className="flex items-center justify-between p-4 border-t border-border bg-muted/30">
-                <span className="text-sm text-muted-foreground">Total</span>
-                <span className="text-lg font-bold text-foreground">
-                  {order.total.toFixed(2)} Ar
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-sm text-muted-foreground">Total</span>
+                  <span className="text-lg font-bold text-foreground">
+                    {formatMoney(order.total)}
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => handleDownloadPDF(order.reference)}
+                    disabled={downloadingRef === order.reference}
+                  >
+                    {downloadingRef === order.reference ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <FileText className="w-4 h-4" />
+                    )}
+                    Facture
+                  </Button>
+                  {["PENDING", "PROCESSING"].includes(order.status) && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setActionOrder(order);
+                        setActionType("CANCEL");
+                      }}
+                    >
+                      Annuler
+                    </Button>
+                  )}
+
+                  {["SHIPPED", "DELIVERED"].includes(order.status) && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => {
+                        setActionOrder(order);
+                        setActionType("COMPLETE");
+                      }}
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Confirmer réception
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           ))
@@ -146,6 +278,39 @@ export default function CustomerOrders() {
           </div>
         )}
       </div>
+
+      <AlertDialog
+        open={!!actionOrder}
+        onOpenChange={open => !open && setActionOrder(null)}
+      >
+        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {actionType === "CANCEL"
+                ? "Annuler la commande ?"
+                : "Confirmer la réception ?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {actionType === "CANCEL"
+                ? "Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible."
+                : "Confirmez-vous avoir bien reçu votre commande ? Cela clôturera la commande."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Retour</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleStatusUpdate}
+              className={
+                actionType === "CANCEL"
+                  ? "bg-destructive hover:bg-destructive/90"
+                  : "bg-green-600 hover:bg-green-700"
+              }
+            >
+              {actionType === "CANCEL" ? "Oui, annuler" : "Oui, confirmer"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

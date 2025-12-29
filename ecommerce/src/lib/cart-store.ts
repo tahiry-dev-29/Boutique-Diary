@@ -6,6 +6,7 @@ import { persist } from "zustand/middleware";
 export interface CartItem {
   id: string;
   productId: number;
+  productImageId?: number; // Track specific variant
   name: string;
   reference: string;
   image: string;

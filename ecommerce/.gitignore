@@ -40,6 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+.turbo
+
 /src/generated/prisma
 /public/uploads
 /public/urlProducts

@@ -8,6 +8,7 @@ import {
   OrderFloatingPanel,
   OrderDetails,
 } from "@/components/admin/orders/OrderViewModal";
+import { generateInvoicePDF } from "@/utils/pdf-invoice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -209,11 +210,30 @@ export default function OrdersPage() {
     }
   };
 
+  const handleDownloadPDF = async (order: Order) => {
+    try {
+      toast.message(`Génération du PDF pour #${order.reference}...`);
+      const res = await fetch(`/api/orders/${order.reference}/invoice`);
+      if (res.ok) {
+        const data = await res.json();
+        generateInvoicePDF(data);
+        toast.success("Facture téléchargée !");
+      } else {
+        toast.error("Impossible de récupérer les données de la facture");
+      }
+    } catch (error) {
+      console.error("PDF download error:", error);
+      toast.error("Erreur lors du téléchargement");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Commandes"
         description="Gérer les commandes de votre boutique"
+        onRefresh={fetchOrders}
+        isLoading={loading}
       />
 
       {}
@@ -226,6 +246,7 @@ export default function OrdersPage() {
         counts={counts}
         onViewDetails={handleViewDetails}
         onSendInvoice={handleSendInvoice}
+        onDownloadPDF={handleDownloadPDF}
         onDelete={handleRequestCancel}
       />
 

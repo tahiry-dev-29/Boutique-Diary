@@ -2,10 +2,11 @@ import jsPDF from "jspdf";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+// --- Interfaces ---
 export interface InvoiceData {
   id: string;
   reference: string;
-  status: string;
+  status: "PAID" | "PENDING" | "CANCELLED"; // Typed status for better handling
   total: number;
   createdAt: string;
   customer: {
@@ -23,161 +24,312 @@ export interface InvoiceData {
   }>;
 }
 
-const formatMoney = (amount: number) =>
+// --- Configuration & Constants ---
+const STYLE = {
+  colors: {
+    primary: "#d4a373", // Main brand color (Tan/Gold)
+    secondary: "#faedcd", // Light background for accents
+    text: {
+      dark: "#111827",
+      medium: "#4b5563",
+      light: "#9ca3af",
+    },
+    accent: "#ef4444",
+    white: "#ffffff",
+    tableHeader: "#f9fafb",
+    tableStripe: "#fdfdfd",
+    border: "#e5e7eb",
+  },
+  layout: {
+    marginX: 20,
+    lineHeight: 7,
+  },
+  fonts: {
+    main: "helvetica",
+  },
+};
+
+// --- Helper Functions ---
+
+const formatMoney = (amount: number): string =>
   new Intl.NumberFormat("fr-MG", {
     style: "currency",
     currency: "MGA",
     maximumFractionDigits: 0,
   }).format(amount);
 
-export const generateInvoicePDF = (order: InvoiceData): void => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const orderDate = format(new Date(order.createdAt), "dd MMMM yyyy", {
+const drawStatusBadge = (doc: jsPDF, status: string, x: number, y: number) => {
+  type StatusConfig = {
+    [key: string]: { text: string; color: string };
+  };
+
+  const statusConfig: StatusConfig = {
+    PAID: { color: "#10b981", text: "PAYÉ" },
+    COMPLETED: { color: "#10b981", text: "TERMINÉ" },
+    PENDING: { color: "#f59e0b", text: "EN ATTENTE" },
+    CANCELLED: { color: "#ef4444", text: "ANNULÉ" },
+  };
+
+  const config = statusConfig[status] || {
+    color: STYLE.colors.text.light,
+    text: status,
+  };
+
+  doc.setFillColor(config.color);
+  doc.roundedRect(x - 22, y - 4, 22, 6, 1, 1, "F");
+
+  doc.setFontSize(8);
+  doc.setTextColor(STYLE.colors.white);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text(config.text, x - 11, y, { align: "center" });
+};
+
+// --- Section Generators ---
+
+const drawHeader = (doc: jsPDF, pageWidth: number) => {
+  // Decorative top bar
+  doc.setFillColor(STYLE.colors.primary);
+  doc.rect(0, 0, pageWidth, 5, "F");
+
+  // Brand Logo
+  doc.setFontSize(28);
+  doc.setTextColor(STYLE.colors.text.dark);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text("Boutique", STYLE.layout.marginX, 25);
+
+  doc.setTextColor(STYLE.colors.primary);
+  doc.setFont(STYLE.fonts.main, "italic");
+  doc.text("Diary", STYLE.layout.marginX + 48, 25);
+
+  // Tagline
+  doc.setFont(STYLE.fonts.main, "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(STYLE.colors.text.medium);
+  doc.text("Votre boutique de confiance", STYLE.layout.marginX, 31);
+};
+
+const drawInvoiceDetails = (
+  doc: jsPDF,
+  order: InvoiceData,
+  pageWidth: number,
+) => {
+  const rightX = pageWidth - STYLE.layout.marginX;
+  const date = format(new Date(order.createdAt), "dd/MM/yyyy", {
     locale: fr,
   });
 
-  
-  const primaryColor = "#d4a373";
-  const textColor = "#1f2937";
-  const grayColor = "#666666";
-
-  
-  doc.setFontSize(28);
-  doc.setTextColor(textColor);
-  doc.text("Boutique", 20, 30);
-
-  doc.setFontSize(28);
-  doc.setTextColor(primaryColor);
-  doc.setFont("helvetica", "italic");
-  doc.text("Diary", 67, 30);
-
-  
-  doc.setFont("helvetica", "normal");
-
-  
-  doc.setFontSize(10);
-  doc.setTextColor(grayColor);
-  doc.text("Votre boutique de confiance", 20, 38);
-
-  
-  doc.setFontSize(24);
-  doc.setTextColor(textColor);
-  doc.text("FACTURE", pageWidth - 20, 25, { align: "right" });
-
-  doc.setFontSize(11);
-  doc.setTextColor(grayColor);
-  doc.text(`#${order.reference}`, pageWidth - 20, 33, { align: "right" });
-  doc.text(orderDate, pageWidth - 20, 40, { align: "right" });
-
-  
-  doc.setDrawColor(primaryColor);
-  doc.setLineWidth(0.5);
-  doc.line(20, 50, pageWidth - 20, 50);
-
-  
-  doc.setFontSize(10);
-  doc.setTextColor(grayColor);
-  doc.text("FACTURÉ À", 20, 65);
-
-  doc.setFontSize(12);
-  doc.setTextColor(textColor);
-  doc.text(order.customer.name, 20, 73);
+  doc.setFontSize(22);
+  doc.setTextColor(STYLE.colors.text.dark);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text("FACTURE", rightX, 25, { align: "right" });
 
   doc.setFontSize(10);
-  doc.setTextColor(grayColor);
-  doc.text(order.customer.email, 20, 80);
+  doc.setTextColor(STYLE.colors.text.medium);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text(`RÉF: ${order.reference}`, rightX, 32, { align: "right" });
 
-  if (order.customer.address) {
-    doc.text(order.customer.address.substring(0, 60), 20, 87);
-  }
+  doc.setFont(STYLE.fonts.main, "normal");
+  doc.setTextColor(STYLE.colors.text.light);
+  doc.text(`DATE: ${date}`, rightX, 37, { align: "right" });
 
-  
-  let yPos = 105;
-  doc.setFillColor(248, 248, 248);
-  doc.rect(20, yPos - 5, pageWidth - 40, 10, "F");
+  drawStatusBadge(doc, order.status, rightX, 45);
+};
 
-  doc.setFontSize(9);
-  doc.setTextColor(grayColor);
-  doc.text("DESCRIPTION", 22, yPos + 2);
-  doc.text("QTÉ", 120, yPos + 2);
-  doc.text("PRIX", 145, yPos + 2);
-  doc.text("TOTAL", pageWidth - 22, yPos + 2, { align: "right" });
-
-  
-  yPos += 15;
-  doc.setTextColor(textColor);
-
-  order.items.forEach(item => {
-    doc.setFontSize(11);
-    doc.text(item.productName.substring(0, 40), 22, yPos);
-
-    if (item.variant) {
-      doc.setFontSize(9);
-      doc.setTextColor(grayColor);
-      doc.text(item.variant, 22, yPos + 5);
-      doc.setTextColor(textColor);
-    }
-
-    doc.setFontSize(11);
-    doc.text(`x${item.quantity}`, 120, yPos);
-    doc.text(formatMoney(item.price), 145, yPos);
-    doc.text(formatMoney(item.price * item.quantity), pageWidth - 22, yPos, {
-      align: "right",
-    });
-
-    
-    doc.setDrawColor(240, 240, 240);
-    doc.setLineWidth(0.3);
-    doc.line(20, yPos + 8, pageWidth - 20, yPos + 8);
-
-    yPos += item.variant ? 18 : 15;
-  });
-
-  
-  yPos += 10;
-
-  
-  doc.setFontSize(10);
-  doc.setTextColor(grayColor);
-  doc.text("Sous-total", 130, yPos);
-  doc.text(formatMoney(order.total), pageWidth - 22, yPos, { align: "right" });
-
-  yPos += 8;
-  doc.text("Livraison", 130, yPos);
-  doc.text("Gratuite", pageWidth - 22, yPos, { align: "right" });
-
-  
-  yPos += 12;
-  doc.setDrawColor(textColor);
-  doc.setLineWidth(0.5);
-  doc.line(130, yPos - 3, pageWidth - 20, yPos - 3);
-
-  doc.setFontSize(14);
-  doc.setTextColor(textColor);
-  doc.text("Total", 130, yPos + 5);
-  doc.text(formatMoney(order.total), pageWidth - 22, yPos + 5, {
-    align: "right",
-  });
-
-  
-  const footerY = doc.internal.pageSize.getHeight() - 30;
-  doc.setDrawColor(240, 240, 240);
-  doc.setLineWidth(0.3);
-  doc.line(20, footerY - 10, pageWidth - 20, footerY - 10);
-
-  doc.setFontSize(10);
-  doc.setTextColor(grayColor);
-  doc.text("Merci pour votre confiance !", pageWidth / 2, footerY, {
-    align: "center",
-  });
-  doc.text(
-    "Boutique Diary - contact@boutique-diary.mg",
-    pageWidth / 2,
-    footerY + 7,
-    { align: "center" },
+const drawCustomerSection = (
+  doc: jsPDF,
+  customer: InvoiceData["customer"],
+  startY: number,
+  pageWidth: number,
+) => {
+  // Divider
+  doc.setDrawColor(STYLE.colors.border);
+  doc.line(
+    STYLE.layout.marginX,
+    startY - 10,
+    pageWidth - STYLE.layout.marginX,
+    startY - 10,
   );
 
-  
+  doc.setFontSize(9);
+  doc.setTextColor(STYLE.colors.text.light);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text("DESTINATAIRE", STYLE.layout.marginX, startY);
+
+  doc.setFontSize(11);
+  doc.setTextColor(STYLE.colors.text.dark);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text(customer.name, STYLE.layout.marginX, startY + 7);
+
+  doc.setFont(STYLE.fonts.main, "normal");
+  doc.setTextColor(STYLE.colors.text.medium);
+  doc.text(customer.email, STYLE.layout.marginX, startY + 13);
+
+  if (customer.address) {
+    const addressLines = doc.splitTextToSize(customer.address, 100);
+    doc.text(addressLines, STYLE.layout.marginX, startY + 19);
+  }
+
+  // Shop Info (Right Side)
+  const rightX = pageWidth - STYLE.layout.marginX;
+  doc.setFontSize(9);
+  doc.setTextColor(STYLE.colors.text.light);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text("ÉMETTRICE", rightX, startY, { align: "right" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(STYLE.colors.text.dark);
+  doc.text("Boutique Diary", rightX, startY + 7, { align: "right" });
+  doc.setFont(STYLE.fonts.main, "normal");
+  doc.text("Antananarivo, Madagascar", rightX, startY + 13, { align: "right" });
+  doc.text("contact@boutique-diary.mg", rightX, startY + 19, {
+    align: "right",
+  });
+};
+
+const drawTable = (
+  doc: jsPDF,
+  items: InvoiceData["items"],
+  startY: number,
+  pageWidth: number,
+): number => {
+  let yPos = startY;
+  const rightX = pageWidth - STYLE.layout.marginX;
+  const tableWidth = pageWidth - STYLE.layout.marginX * 2;
+
+  // -- Table Header --
+  doc.setFillColor(STYLE.colors.text.dark);
+  doc.rect(STYLE.layout.marginX, yPos - 6, tableWidth, 9, "F");
+
+  doc.setFontSize(8);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.setTextColor(STYLE.colors.white);
+
+  doc.text("DESCRIPTION", STYLE.layout.marginX + 4, yPos);
+  doc.text("QUANTITÉ", pageWidth - 75, yPos);
+  doc.text("PRIX UNITAIRE", pageWidth - 55, yPos);
+  doc.text("TOTAL", rightX - 4, yPos, { align: "right" });
+
+  yPos += 10;
+
+  // -- Table Rows --
+  items.forEach((item, index) => {
+    if (index % 2 === 0) {
+      doc.setFillColor(STYLE.colors.tableStripe);
+      doc.rect(STYLE.layout.marginX, yPos - 5, tableWidth, 12, "F");
+    }
+
+    doc.setFontSize(9);
+    doc.setTextColor(STYLE.colors.text.dark);
+    doc.setFont(STYLE.fonts.main, "medium");
+
+    const productName = item.productName;
+    doc.text(productName, STYLE.layout.marginX + 4, yPos);
+
+    if (item.variant) {
+      doc.setFontSize(7);
+      doc.setTextColor(STYLE.colors.text.light);
+      doc.text(item.variant, STYLE.layout.marginX + 4, yPos + 4);
+      doc.setTextColor(STYLE.colors.text.dark);
+      doc.setFontSize(9);
+    }
+
+    doc.text(`${item.quantity}`, pageWidth - 75, yPos, { align: "center" });
+    doc.text(formatMoney(item.price), pageWidth - 55, yPos);
+    doc.setFont(STYLE.fonts.main, "bold");
+    doc.text(formatMoney(item.price * item.quantity), rightX - 4, yPos, {
+      align: "right",
+    });
+    doc.setFont(STYLE.fonts.main, "normal");
+
+    yPos += item.variant ? 14 : 12;
+  });
+
+  return yPos;
+};
+
+const drawTotals = (
+  doc: jsPDF,
+  total: number,
+  startY: number,
+  pageWidth: number,
+) => {
+  let yPos = startY + 10;
+  const rightX = pageWidth - STYLE.layout.marginX;
+  const labelX = pageWidth - 80;
+
+  doc.setDrawColor(STYLE.colors.border);
+  doc.line(labelX - 10, yPos - 5, rightX, yPos - 5);
+
+  doc.setFontSize(10);
+  doc.setTextColor(STYLE.colors.text.medium);
+  doc.text("Sous-total", labelX, yPos);
+  doc.text(formatMoney(total), rightX, yPos, { align: "right" });
+
+  yPos += 8;
+  doc.text("Livraison", labelX, yPos);
+  doc.setTextColor(STYLE.colors.primary);
+  doc.text("Gratuite", rightX, yPos, { align: "right" });
+
+  yPos += 12;
+
+  // Total Box
+  doc.setFillColor(STYLE.colors.secondary);
+  doc.rect(labelX - 10, yPos - 8, rightX - (labelX - 10), 14, "F");
+
+  doc.setFontSize(12);
+  doc.setTextColor(STYLE.colors.text.dark);
+  doc.setFont(STYLE.fonts.main, "bold");
+  doc.text("TOTAL", labelX, yPos);
+  doc.text(formatMoney(total), rightX, yPos, { align: "right" });
+};
+
+const drawFooter = (doc: jsPDF, pageWidth: number, pageHeight: number) => {
+  const footerY = pageHeight - 20;
+
+  // Decorative bottom line
+  doc.setDrawColor(STYLE.colors.primary);
+  doc.setLineWidth(0.5);
+  doc.line(
+    STYLE.layout.marginX,
+    footerY,
+    pageWidth - STYLE.layout.marginX,
+    footerY,
+  );
+
+  doc.setFontSize(8);
+  doc.setTextColor(STYLE.colors.text.light);
+  doc.setFont(STYLE.fonts.main, "normal");
+
+  doc.text("Merci pour votre commande !", pageWidth / 2, footerY + 8, {
+    align: "center",
+  });
+
+  doc.setFontSize(7);
+  doc.text(
+    "Cette facture est générée électroniquement et ne nécessite pas de signature.",
+    pageWidth / 2,
+    footerY + 13,
+    { align: "center" },
+  );
+};
+
+export const generateInvoicePDF = (order: InvoiceData): void => {
+  const doc = new jsPDF({
+    orientation: "p",
+    unit: "mm",
+    format: "a4",
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  drawHeader(doc, pageWidth);
+  drawInvoiceDetails(doc, order, pageWidth);
+  drawCustomerSection(doc, order.customer, 65, pageWidth);
+
+  const tableEndY = drawTable(doc, order.items, 105, pageWidth);
+  drawTotals(doc, order.total, tableEndY, pageWidth);
+  drawFooter(doc, pageWidth, pageHeight);
+
   doc.save(`Facture-${order.reference}.pdf`);
 };

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
-  X,
   CheckCircle,
   Clock,
   Truck,
@@ -19,25 +18,33 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetClose,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { generateInvoice } from "@/utils/invoice-generator";
+import { generateInvoicePDF } from "@/utils/pdf-invoice";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 export interface OrderDetails {
   id: string;
   reference: string;
   customer: { name: string; email: string; address?: string };
-  status: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+  status:
+    | "PENDING"
+    | "PROCESSING"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "COMPLETED";
   total: number;
   createdAt: Date | string;
   items: Array<{
@@ -77,6 +84,11 @@ const StatusBadge = ({ status }: { status: OrderDetails["status"] }) => {
       classes: "bg-rose-500/15 text-rose-600 border-rose-200",
       icon: AlertCircle,
     },
+    COMPLETED: {
+      label: "Terminé",
+      classes: "bg-green-500/15 text-green-600 border-green-200",
+      icon: CheckCircle,
+    },
   };
   const config = styles[status] || styles.PENDING;
   const Icon = config.icon;
@@ -99,7 +111,7 @@ const InfoRow = ({
   label,
   value,
 }: {
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: string;
 }) => (
@@ -124,11 +136,8 @@ export function OrderFloatingPanel({
   onClose: () => void;
 }) {
   const [order, setOrder] = useState<OrderDetails | null>(initialOrder);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     if (open && initialOrder?.id) {
-      setLoading(true);
       fetch(`/api/admin/orders/${initialOrder.id}`)
         .then(res => res.json())
         .then(data => {
@@ -151,10 +160,31 @@ export function OrderFloatingPanel({
             });
           }
         })
-        .catch(console.error)
-        .finally(() => setLoading(false));
+        .catch(console.error);
     }
   }, [open, initialOrder?.id]);
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!order) return;
+    try {
+      const res = await fetch(`/api/admin/orders/${order.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Erreur lors de la mise à jour");
+      }
+
+      setOrder({ ...order, status: newStatus as any });
+      toast.success("Statut mis à jour avec succès");
+    } catch (error: any) {
+      console.error("[OrderUpdateError]", error);
+      toast.error(error.message || "Impossible de mettre à jour le statut");
+    }
+  };
 
   if (!order) return null;
 
@@ -171,7 +201,6 @@ export function OrderFloatingPanel({
       <SheetContent
         side="right"
         className="
-          /* Styles Responsive */
           w-full h-full 
           sm:w-[480px] sm:h-[calc(100vh-2rem)]
           sm:mt-4 sm:mb-4 sm:mr-4 sm:rounded-3xl 
@@ -182,7 +211,6 @@ export function OrderFloatingPanel({
           data-[state=open]:slide-in-from-right
         "
       >
-        {}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border/40 bg-secondary/10">
           <SheetTitle className="sr-only">
             Commande #{order.reference}
@@ -203,16 +231,32 @@ export function OrderFloatingPanel({
           </div>
         </div>
 
-        {}
         <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6">
           <div className="space-y-6 sm:space-y-8">
-            {}
+            {/* Status Section */}
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-secondary/20 border border-border/50">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-muted-foreground">
                   État actuel
                 </span>
-                <StatusBadge status={order.status} />
+                <div className="w-[180px]">
+                  <Select
+                    defaultValue={order.status}
+                    onValueChange={handleStatusChange}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENDING">En attente</SelectItem>
+                      <SelectItem value="PROCESSING">Traitement</SelectItem>
+                      <SelectItem value="SHIPPED">Expédié</SelectItem>
+                      <SelectItem value="DELIVERED">Livré</SelectItem>
+                      <SelectItem value="COMPLETED">Terminé</SelectItem>
+                      <SelectItem value="CANCELLED">Annulé</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -227,7 +271,7 @@ export function OrderFloatingPanel({
                   variant="outline"
                   size="sm"
                   className="flex-1 bg-background/50 border-border/50 shadow-sm"
-                  onClick={() => generateInvoice(order)}
+                  onClick={() => generateInvoicePDF(order as any)}
                 >
                   <Download className="w-3.5 h-3.5 mr-2" />
                   Facture
@@ -235,7 +279,6 @@ export function OrderFloatingPanel({
               </div>
             </div>
 
-            {}
             <div className="space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/80">
                 Client
@@ -267,7 +310,6 @@ export function OrderFloatingPanel({
               </div>
             </div>
 
-            {}
             <div className="space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/80">
                 Panier ({order.items.length})
@@ -325,7 +367,6 @@ export function OrderFloatingPanel({
           </div>
         </ScrollArea>
 
-        {}
         <div className="p-6 bg-background/80 backdrop-blur-md border-t border-border/40">
           <div className="space-y-2 mb-4">
             <div className="flex justify-between text-sm text-muted-foreground">

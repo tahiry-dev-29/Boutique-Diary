@@ -21,11 +21,23 @@ export default function PhoneInput({
 }: PhoneInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
+  const normalizePhone = (phone: string) => {
+    if (!phone) return "";
+    // If it starts with 0 (Malagasy local format), prefix with +261
+    if (phone.startsWith("0") && phone.replace(/\s/g, "").length >= 10) {
+      return "+261" + phone.replace(/\s/g, "").slice(1);
+    }
+    return phone;
+  };
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
         <Smartphone className="w-4 h-4" />
-        Numéro de téléphone
+        Numéro de téléphone{" "}
+        <span className="text-xs opacity-50 ml-auto flex items-center gap-1">
+          🇲🇬 MG
+        </span>
       </label>
       <div
         className={cn(
@@ -40,7 +52,7 @@ export default function PhoneInput({
         <PhoneInputFromLib
           international
           defaultCountry="MG"
-          value={value}
+          value={normalizePhone(value)}
           onChange={val => onChange(val as string)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

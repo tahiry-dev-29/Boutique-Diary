@@ -81,6 +81,7 @@ interface OrderListProps {
   };
   onViewDetails?: (order: Order) => void;
   onSendInvoice?: (order: Order) => void;
+  onDownloadPDF?: (order: Order) => void;
   onDelete?: (order: Order) => void;
 }
 
@@ -133,6 +134,7 @@ export function OrderList({
   counts,
   onViewDetails,
   onSendInvoice,
+  onDownloadPDF,
   onDelete,
 }: OrderListProps) {
   const [activeTab, setActiveTab] = useState<TabValue>("all");
@@ -380,9 +382,14 @@ export function OrderList({
                         />
                       </TableCell>
                       <TableCell>
-                        <span className="font-mono font-medium text-primary">
-                          #{order.reference}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-medium text-primary">
+                            #{order.reference}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded flex items-center gap-1 leading-none">
+                            🇲🇬 MG
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -448,6 +455,12 @@ export function OrderList({
                             >
                               <FileText className="w-4 h-4 mr-2" />
                               Envoyer facture
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => onDownloadPDF?.(order)}
+                            >
+                              <Download className="w-4 h-4 mr-2 text-primary" />
+                              Télécharger PDF
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem

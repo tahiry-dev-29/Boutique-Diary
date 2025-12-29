@@ -12,7 +12,6 @@ interface AddressMapProps {
   ) => void;
 }
 
-
 const LeafletMap = dynamic(() => import("./LeafletMap"), {
   loading: () => (
     <div className="h-[300px] w-full bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
@@ -22,20 +21,18 @@ const LeafletMap = dynamic(() => import("./LeafletMap"), {
   ssr: false,
 });
 
-const DEFAULT_CENTER = { lat: -18.8792, lng: 47.5079 }; 
+const DEFAULT_CENTER = { lat: -18.8792, lng: 47.5079 };
 
 export default function AddressMap({ onAddressSelect }: AddressMapProps) {
   const [coords, setCoords] = useState(DEFAULT_CENTER);
   const [loading, setLoading] = useState(false);
 
-  
-  
   const [debouncedCoords, setDebouncedCoords] = useState(coords);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedCoords(coords);
-    }, 1500); 
+    }, 1500);
     return () => clearTimeout(timer);
   }, [coords]);
 
@@ -48,11 +45,19 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
         );
 
         if (!response.ok) {
+          // 503 is temporary - don't show error, next debounce will retry
+          if (response.status === 503) {
+            console.warn(
+              "[AddressMap] Service unavailable, will retry on next move",
+            );
+            return;
+          }
           if (response.status === 429) {
             toast.error("Trop de requêtes. Veuillez patienter un instant.");
             return;
           }
-          throw new Error("Failed to fetch address");
+          console.error(`[AddressMap] API error ${response.status}`);
+          return;
         }
 
         const data = await response.json();
@@ -66,8 +71,8 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
           onAddressSelect(address, debouncedCoords);
         }
       } catch (error) {
-        console.error("Reverse geocoding error:", error);
-        toast.error("Impossible de récupérer l'adresse");
+        console.error("[AddressMap] Geocoding error:", error);
+        // Silent fail - user can retry by moving the map
       } finally {
         setLoading(false);
       }

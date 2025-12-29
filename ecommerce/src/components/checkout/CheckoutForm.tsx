@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -30,6 +30,7 @@ export default function CheckoutForm() {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [addressCoords, setAddressCoords] = useState<{
     lat: number;
     lng: number;
@@ -38,6 +39,7 @@ export default function CheckoutForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email: "",
       phone: "",
       address: "",
       complement: "",
@@ -53,6 +55,69 @@ export default function CheckoutForm() {
     handleSubmit,
     formState: { errors },
   } = form;
+
+  // Fetch logged-in user email and addresses
+  useEffect(() => {
+    const fetchUserAndAddresses = async () => {
+      try {
+        // 1. Fetch User Info
+        const userRes = await fetch("/api/auth/me");
+        const userData = await userRes.json();
+
+        if (userData.user?.email) {
+          setUserEmail(userData.user.email);
+          setValue("email", userData.user.email);
+        }
+
+        // 2. Fetch User Addresses
+        if (userData.user) {
+          const addressRes = await fetch("/api/customer/addresses");
+          if (addressRes.ok) {
+            const addresses = await addressRes.json();
+
+            if (addresses && addresses.length > 0) {
+              // Find default address or take the first one
+              const defaultAddress =
+                addresses.find(
+                  (a: {
+                    isDefault: boolean;
+                    street: string;
+                    city: string;
+                    postalCode: string;
+                    phoneNumber?: string;
+                  }) => a.isDefault,
+                ) || addresses[0];
+
+              if (defaultAddress) {
+                // Construct address string
+                const fullAddress = [
+                  defaultAddress.street,
+                  defaultAddress.city,
+                  defaultAddress.postalCode,
+                ]
+                  .filter(Boolean)
+                  .join(", ");
+
+                setValue("address", fullAddress, { shouldValidate: true });
+
+                // If phone is in address, pre-fill it (if not already set or override?)
+                // Let's only set if the form phone is empty to respect user input if they started typing
+                // But since this runs on mount/auth check, it's likely early.
+                if (defaultAddress.phoneNumber) {
+                  setValue("phone", defaultAddress.phoneNumber, {
+                    shouldValidate: true,
+                  });
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch user data", err);
+      }
+    };
+    fetchUserAndAddresses();
+  }, [setValue]);
 
   const selectedPaymentMethod = watch("paymentMethod");
   const phoneValue = watch("phone");
@@ -100,6 +165,7 @@ export default function CheckoutForm() {
         body: JSON.stringify({
           items: items.map(item => ({
             productId: item.productId,
+            productImageId: item.productImageId,
             quantity: item.quantity,
             price: item.price,
             color: item.color,
@@ -137,7 +203,6 @@ export default function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {}
       <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
           <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
@@ -152,8 +217,12 @@ export default function CheckoutForm() {
               type="email"
               {...form.register("email")}
               placeholder="votre@email.com"
-              className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-900 focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+              readOnly={!!userEmail}
+              className={`w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-900 focus:ring-2 focus:ring-black/5 focus:border-black transition-all ${userEmail ? "cursor-not-allowed opacity-70" : ""}`}
             />
+            {userEmail && (
+              <p className="text-xs text-gray-500">Email de votre compte</p>
+            )}
             {errors.email && (
               <p className="text-xs text-red-500">{errors.email.message}</p>
             )}
@@ -166,7 +235,6 @@ export default function CheckoutForm() {
         </div>
       </section>
 
-      {}
       <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
           <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
@@ -209,7 +277,6 @@ export default function CheckoutForm() {
         </div>
       </section>
 
-      {}
       <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
           <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
@@ -234,7 +301,6 @@ export default function CheckoutForm() {
         )}
       </section>
 
-      {}
       <div className="pt-4">
         <button
           type="submit"

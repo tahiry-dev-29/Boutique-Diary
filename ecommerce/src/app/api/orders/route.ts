@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
-
 function generateOrderReference(): string {
   const date = new Date();
   const year = date.getFullYear().toString().slice(-2);
@@ -16,6 +15,7 @@ function generateOrderReference(): string {
 
 interface OrderItemInput {
   productId: number;
+  productImageId?: number; // Track which variant was purchased
   quantity: number;
   price: number;
   color?: string;
@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
   try {
     const body: CreateOrderBody = await request.json();
 
-    
     if (!body.items || body.items.length === 0) {
       return NextResponse.json(
         { error: "Le panier est vide" },
@@ -53,18 +52,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    
     let customerId: number | null = null;
     try {
       const payload = await verifyToken();
       if (payload?.userId) {
         customerId = payload.userId as number;
       }
-    } catch {
-      
-    }
+    } catch {}
 
-    
     let total = 0;
     const stockUpdates: { productId: number; quantity: number }[] = [];
 
@@ -92,7 +87,6 @@ export async function POST(request: NextRequest) {
       stockUpdates.push({ productId: item.productId, quantity: item.quantity });
     }
 
-    
     let reference = generateOrderReference();
     let attempts = 0;
     while (attempts < 5) {
@@ -102,9 +96,7 @@ export async function POST(request: NextRequest) {
       attempts++;
     }
 
-    
     const order = await prisma.$transaction(async tx => {
-      
       const newOrder = await tx.order.create({
         data: {
           reference,
@@ -114,6 +106,7 @@ export async function POST(request: NextRequest) {
           items: {
             create: body.items.map(item => ({
               productId: item.productId,
+              productImageId: item.productImageId, // Store variant reference
               quantity: item.quantity,
               price: item.price,
             })),
@@ -141,35 +134,6 @@ export async function POST(request: NextRequest) {
           transactions: true,
         },
       });
-
-      
-      for (const update of stockUpdates) {
-        const product = await tx.product.findUnique({
-          where: { id: update.productId },
-          select: { stock: true },
-        });
-
-        const previousStock = product?.stock || 0;
-        const newStock = previousStock - update.quantity;
-
-        await tx.product.update({
-          where: { id: update.productId },
-          data: { stock: newStock },
-        });
-
-        
-        await tx.stockMovement.create({
-          data: {
-            productId: update.productId,
-            type: "ORDER",
-            quantity: -update.quantity,
-            previousStock,
-            newStock,
-            reason: `Commande ${reference}`,
-            note: `Commande client - ${body.phone}`,
-          },
-        });
-      }
 
       return newOrder;
     });

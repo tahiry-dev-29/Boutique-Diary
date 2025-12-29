@@ -23,7 +23,11 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Produits" description="Gestion du catalogue produit">
+      <PageHeader
+        title="Produits"
+        description="Gestion du catalogue produit"
+        onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+      >
         <Link
           href="/admin/products/new"
           className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
