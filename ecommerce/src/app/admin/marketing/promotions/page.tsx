@@ -25,6 +25,7 @@ export default function PromotionRulesPage() {
     deleteRule,
     applyRule,
     revertRule,
+    refresh,
   } = usePromotionRules();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRule, setSelectedRule] = useState<PromotionRule | null>(null);
@@ -58,12 +59,13 @@ export default function PromotionRulesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <PageHeader
-          title="Règles de Promotion"
-          description="Configurez des règles automatiques de réductions (ex: 3 pour 2)."
-        />
+    <div className="space-y-6">
+      <PageHeader
+        title="Règles de Promotion"
+        description="Configurez des règles automatiques de réductions (ex: 3 pour 2)."
+        onRefresh={refresh}
+        isLoading={loading}
+      >
         <Button
           onClick={handleCreate}
           className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
@@ -71,7 +73,7 @@ export default function PromotionRulesPage() {
           <Plus className="w-4 h-4 mr-2" />
           Nouvelle Règle
         </Button>
-      </div>
+      </PageHeader>
 
       {loading ? (
         <div className="grid gap-4">

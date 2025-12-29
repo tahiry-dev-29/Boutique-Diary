@@ -14,14 +14,12 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
-  
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
 
-  
   useEffect(() => {
     if (product?.id) {
       checkWishlistStatus();
@@ -76,37 +74,28 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     }
   };
 
-  
   const images =
     product?.images?.length > 0 ? product.images : [{ id: 0, url: null }];
   const currentImage = images[selectedImageIndex];
 
-  
   const displayPrice = currentImage?.price ?? product?.price;
   const displayOldPrice = currentImage?.oldPrice ?? product?.oldPrice;
   const displayStock = currentImage?.stock ?? product?.stock;
   const currentRef = currentImage?.reference ?? product?.reference;
 
-  
-  
-  
   const uniqueColors = product?.colors || [];
 
-  
-  
   const availableSizes =
     currentImage?.sizes && currentImage.sizes.length > 0
       ? currentImage.sizes
       : product?.sizes || [];
 
-  
   useEffect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
       setSelectedSize(null);
     }
   }, [selectedImageIndex, availableSizes, selectedSize]);
 
-  
   useEffect(() => {
     anime({
       targets: ".product-image-container",
@@ -127,7 +116,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, []);
 
   const handleColorSelect = (color: string) => {
-    
     const index = images.findIndex((img: any) => img.color === color);
     if (index !== -1) {
       setSelectedImageIndex(index);
@@ -141,6 +129,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
     addItem({
       productId: product.id,
+      productImageId: currentImage?.id, // Track specific variant
       name: product.name,
       reference: currentRef || product.reference,
       image: currentImage?.url || "",
@@ -161,7 +150,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     );
   }
 
-  
   const hasDiscount = displayOldPrice && displayOldPrice > displayPrice;
   const discountPercent = hasDiscount
     ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
@@ -321,7 +309,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       >
                         <span
                           className="block w-full h-full rounded-full border border-black/5 shadow-inner"
-                          style={{ background: COLOR_MAP[color] || color }} 
+                          style={{ background: COLOR_MAP[color] || color }}
                         />
                         {isSelected && (
                           <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
