@@ -18,6 +18,7 @@ import {
   User,
   Package,
   Layers,
+  FileText,
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 
@@ -109,6 +110,13 @@ const navSections: NavSection[] = [
         icon: User,
         href: "/admin/employees",
         permission: "employees.view",
+      },
+      {
+        id: "blog",
+        label: "Blog",
+        icon: FileText,
+        href: "/admin/blog",
+        permission: "products.view",
       },
       {
         id: "marketing",

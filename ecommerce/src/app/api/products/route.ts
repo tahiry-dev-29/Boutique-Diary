@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
 
     const whereClause: any = {};
 
-    
     if (deleted === "true") {
       whereClause.deletedAt = { not: null };
     } else {
@@ -35,6 +34,7 @@ export async function GET(request: NextRequest) {
         category: true,
         promotionRule: true,
         variations: true,
+        blogPost: { select: { id: true } },
       },
       orderBy: {
         createdAt: "desc",

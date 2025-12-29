@@ -295,10 +295,10 @@ export default function StoreNavbar({
                       className="!rounded-full transition-none"
                     >
                       <Link
-                        href="/store/blog"
+                        href="/blog"
                         className={cn(
                           pillTriggerStyle,
-                          isActive("/store/blog") &&
+                          pathname.startsWith("/blog") &&
                             "bg-white text-black shadow-sm",
                         )}
                       >
