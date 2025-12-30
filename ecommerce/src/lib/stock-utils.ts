@@ -1,10 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-/**
- * Reduces stock for products in an order.
- * This should only be called when status transitions to DELIVERED or COMPLETED.
- * It is idempotent thanks to the `stockReduced` flag.
- */
 export async function reduceOrderStock(
   orderId: string,
   tx: Prisma.TransactionClient,
@@ -32,7 +27,7 @@ export async function reduceOrderStock(
   );
 
   for (const item of order.items) {
-    // Update Product stock
+    
     const product = await tx.product.findUnique({
       where: { id: item.productId },
       select: { id: true, stock: true, name: true },
@@ -54,9 +49,9 @@ export async function reduceOrderStock(
       data: { stock: newStock },
     });
 
-    // Also update ProductImage stock (using the specific variant from order)
+    
     if (item.productImageId) {
-      // Use the exact variant that was ordered
+      
       const img = await tx.productImage.findUnique({
         where: { id: item.productImageId },
       });
@@ -72,7 +67,7 @@ export async function reduceOrderStock(
           data: { stock: imgNewStock },
         });
 
-        // Create stock movement for ProductImage
+        
         await tx.stockMovement.create({
           data: {
             productId: item.productId,
@@ -87,7 +82,7 @@ export async function reduceOrderStock(
         });
       }
     } else {
-      // Fallback: reduce from first image with enough stock (for old orders)
+      
       const productImages = await tx.productImage.findMany({
         where: { productId: item.productId, stock: { not: null } },
         orderBy: { id: "asc" },
@@ -122,7 +117,7 @@ export async function reduceOrderStock(
       }
     }
 
-    // Create stock movement for Product
+    
     await tx.stockMovement.create({
       data: {
         productId: item.productId,
@@ -143,10 +138,6 @@ export async function reduceOrderStock(
   console.log(`[reduceOrderStock] Completed for order ${order.reference}`);
 }
 
-/**
- * Replenishes stock for products in an order if it was previously reduced.
- * This should be called when an order is CANCELLED.
- */
 export async function replenishOrderStock(
   orderId: string,
   tx: Prisma.TransactionClient,
@@ -163,7 +154,7 @@ export async function replenishOrderStock(
   }
 
   for (const item of order.items) {
-    // Restore Product stock
+    
     const product = await tx.product.findUnique({
       where: { id: item.productId },
       select: { id: true, stock: true, name: true },
@@ -194,7 +185,7 @@ export async function replenishOrderStock(
       },
     });
 
-    // Also restore ProductImage stock (find which image was reduced via StockMovement)
+    
     const imgMovements = await tx.stockMovement.findMany({
       where: {
         productId: item.productId,

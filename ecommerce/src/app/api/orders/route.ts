@@ -15,7 +15,7 @@ function generateOrderReference(): string {
 
 interface OrderItemInput {
   productId: number;
-  productImageId?: number; // Track which variant was purchased
+  productImageId?: number; 
   quantity: number;
   price: number;
   color?: string;
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           items: {
             create: body.items.map(item => ({
               productId: item.productId,
-              productImageId: item.productImageId, // Store variant reference
+              productImageId: item.productImageId, 
               quantity: item.quantity,
               price: item.price,
             })),

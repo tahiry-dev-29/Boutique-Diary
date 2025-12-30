@@ -94,11 +94,11 @@ export default async function BlogPage() {
           </section>
         ) : (
           <div className="space-y-20">
-            {/* Featured Article */}
+            {}
             {featuredPost && (
               <Link href={`/blog/${featuredPost.slug}`} className="group block">
                 <article className="grid md:grid-cols-2 gap-8 items-center bg-gray-50 dark:bg-gray-900 rounded-3xl overflow-hidden p-2 border border-transparent hover:border-amber-500/20 transition-all">
-                  {/* Image */}
+                  {}
                   <div className="relative aspect-4/3 md:aspect-square rounded-2xl overflow-hidden">
                     {featuredPost.coverImage ? (
                       <Image
@@ -119,7 +119,7 @@ export default async function BlogPage() {
                     </div>
                   </div>
 
-                  {/* Content */}
+                  {}
                   <div className="p-8 space-y-6">
                     {featuredPost.product.category && (
                       <span className="inline-block px-4 py-1.5 bg-black dark:bg-white text-white dark:text-black rounded-full text-xs font-bold uppercase tracking-wider">
@@ -162,13 +162,13 @@ export default async function BlogPage() {
               </Link>
             )}
 
-            {/* Other Articles Grid with Load More */}
+            {}
             <BlogListClient initialPosts={otherPosts} />
           </div>
         )}
       </div>
 
-      {/* CTA Section */}
+      {}
       <section className="py-24 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="relative bg-black dark:bg-white text-white dark:text-black rounded-3xl p-12 md:p-16 text-center overflow-hidden">

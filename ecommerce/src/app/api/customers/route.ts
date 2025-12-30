@@ -63,7 +63,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.user.deleteMany({
       where: {
         id: { in: ids },
-        role: "CUSTOMER", // Safety check
+        role: "CUSTOMER", 
       },
     });
 

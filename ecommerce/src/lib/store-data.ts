@@ -108,7 +108,7 @@ export async function getProductById(id: string) {
 
     if (!product) return null;
 
-    // Serialize Decimal objects to numbers for Client Components
+    
     return {
       ...product,
       variations: product.variations.map(v => ({

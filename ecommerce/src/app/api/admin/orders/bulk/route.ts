@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest) {
         id: { in: ids },
       },
       data: {
-        status: status as any, // Using 'any' or importing OrderStatus type from Prisma client if needed for type safety
+        status: status as any, 
       },
     });
 

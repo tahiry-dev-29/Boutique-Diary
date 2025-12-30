@@ -67,7 +67,7 @@ export default function EditBlogPage({
   const [regenerating, setRegenerating] = useState(false);
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
 
-  // Form state
+  
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -156,7 +156,7 @@ export default function EditBlogPage({
         throw new Error(data.error || "Erreur lors de la régénération");
       }
 
-      // Update form with new content
+      
       setTitle(data.blogPost.title);
       setExcerpt(data.blogPost.excerpt || "");
       setContent(data.blogPost.content);
@@ -186,7 +186,7 @@ export default function EditBlogPage({
   return (
     <>
       <div className="p-6 space-y-6 max-w-5xl mx-auto">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
@@ -228,9 +228,9 @@ export default function EditBlogPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
+          {}
           <div className="lg:col-span-2 space-y-6">
-            {/* Magic Regenerate Button */}
+            {}
             <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -262,7 +262,7 @@ export default function EditBlogPage({
               </div>
             </div>
 
-            {/* Title */}
+            {}
             <div className="space-y-2">
               <Label htmlFor="title">Titre</Label>
               <Input
@@ -274,7 +274,7 @@ export default function EditBlogPage({
               />
             </div>
 
-            {/* Excerpt */}
+            {}
             <div className="space-y-2">
               <Label htmlFor="excerpt">Extrait</Label>
               <Textarea
@@ -289,7 +289,7 @@ export default function EditBlogPage({
               </p>
             </div>
 
-            {/* Content */}
+            {}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="content">Contenu (HTML)</Label>
@@ -308,7 +308,7 @@ export default function EditBlogPage({
               />
             </div>
 
-            {/* Content Preview */}
+            {}
             <div className="space-y-2">
               <Label>Aperçu du contenu</Label>
               <div
@@ -318,9 +318,9 @@ export default function EditBlogPage({
             </div>
           </div>
 
-          {/* Sidebar */}
+          {}
           <div className="space-y-6">
-            {/* Product Info */}
+            {}
             <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4">
               <h3 className="font-medium flex items-center gap-2">
                 <Package className="w-4 h-4" />
@@ -351,7 +351,7 @@ export default function EditBlogPage({
               </Button>
             </div>
 
-            {/* Publish Settings */}
+            {}
             <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4">
               <h3 className="font-medium">Publication</h3>
               <div className="flex items-center justify-between">
@@ -382,7 +382,7 @@ export default function EditBlogPage({
               </div>
             </div>
 
-            {/* SEO Settings */}
+            {}
             <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4">
               <h3 className="font-medium">SEO</h3>
               <div className="space-y-3">
@@ -417,7 +417,7 @@ export default function EditBlogPage({
         </div>
       </div>
 
-      {/* Regenerate Confirmation Dialog */}
+      {}
       <AlertDialog
         open={showRegenerateConfirm}
         onOpenChange={setShowRegenerateConfirm}

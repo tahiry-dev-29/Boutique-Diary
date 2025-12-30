@@ -151,7 +151,7 @@ export function OrderList({
     try {
       let res;
       if (action === "delete") {
-        // Assume cancel for now as per page.tsx
+        
         toast.error("Suppression groupée non implémentée pour les commandes");
         return;
       } else {
@@ -168,9 +168,9 @@ export function OrderList({
       if (res?.ok) {
         toast.success(`${selectedOrders.length} commandes mises à jour`);
         setSelectedOrders([]);
-        // We need a way to refresh. In page.tsx it's fetchOrders.
-        // We might need to pass onRefresh prop or just use window.location.reload() if not possible
-        // But better to pass a prop.
+        
+        
+        
       } else {
         toast.error("Échec de l'action groupée");
       }
@@ -184,37 +184,39 @@ export function OrderList({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Filter orders based on tab and search
-  const filteredOrders = useMemo(() => {
-    return orders.filter(order => {
-      // Tab filter
-      if (
-        activeTab === "completed" &&
-        !["COMPLETED", "DELIVERED"].includes(order.status)
-      ) {
-        return false;
-      }
-      if (
-        activeTab === "pending" &&
-        !["PENDING", "PROCESSING"].includes(order.status)
-      ) {
-        return false;
-      }
-      if (activeTab === "cancelled" && order.status !== "CANCELLED") {
-        return false;
-      }
+  
+  const filteredOrders = useMemo(
+    () =>
+      (orders || []).filter(order => {
+        
+        if (
+          activeTab === "completed" &&
+          !["COMPLETED", "DELIVERED"].includes(order.status)
+        ) {
+          return false;
+        }
+        if (
+          activeTab === "pending" &&
+          !["PENDING", "PROCESSING"].includes(order.status)
+        ) {
+          return false;
+        }
+        if (activeTab === "cancelled" && order.status !== "CANCELLED") {
+          return false;
+        }
 
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          order.reference.toLowerCase().includes(query) ||
-          order.customer.name.toLowerCase().includes(query)
-        );
-      }
+        if (searchQuery) {
+          const query = searchQuery.toLowerCase();
+          return (
+            order.reference.toLowerCase().includes(query) ||
+            order.customer.name.toLowerCase().includes(query)
+          );
+        }
 
-      return true;
-    });
-  }, [orders, activeTab, searchQuery]);
+        return true;
+      }),
+    [orders, activeTab, searchQuery],
+  );
 
   const totalPages = Math.ceil(filteredOrders.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
@@ -269,9 +271,9 @@ export function OrderList({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Tabs */}
-        <div className="flex justify-between flex-col gap-4 sm:flex-row sm:items-center justify-between">
-          {/* Tab buttons */}
+        {}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
+          {}
           <div className="flex items-center gap-1 p-1 bg-muted rounded-xl">
             {tabs.map(tab => (
               <button
@@ -300,7 +302,7 @@ export function OrderList({
             ))}
           </div>
 
-          {/* Search and Filter */}
+          {}
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -336,7 +338,7 @@ export function OrderList({
           </div>
         </div>
 
-        {/* Info bar */}
+        {}
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
             {filteredOrders.length} commande
@@ -354,33 +356,36 @@ export function OrderList({
         {/* Table */}
         <div className="rounded-xl border border-border overflow-hidden">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-12">
+            <TableHeader className="bg-gray-50/30 dark:bg-gray-900/50">
+              <TableRow className="border-b border-gray-100 dark:border-gray-700 hover:bg-transparent">
+                <TableHead className="w-12 text-center pl-4">
                   <Checkbox
                     checked={
                       selectedOrders.length === paginatedOrders.length &&
                       paginatedOrders.length > 0
                     }
                     onCheckedChange={toggleSelectAll}
+                    className="rounded-md border-gray-300 data-[state=checked]:bg-black data-[state=checked]:border-black"
                   />
                 </TableHead>
-                <TableHead className="font-semibold text-foreground">
-                  N° Commande
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                  Référence
                 </TableHead>
-                <TableHead className="font-semibold text-foreground">
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                   Client
                 </TableHead>
-                <TableHead className="font-semibold text-foreground">
-                  Statut
-                </TableHead>
-                <TableHead className="font-semibold text-foreground">
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                   Montant
                 </TableHead>
-                <TableHead className="font-semibold text-foreground">
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                   Date
                 </TableHead>
-                <TableHead className="w-12"></TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
+                  Statut
+                </TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4 text-right pr-4">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -410,16 +415,22 @@ export function OrderList({
                 paginatedOrders.map(order => {
                   const status = statusConfig[order.status];
                   const StatusIcon = status.icon;
+                  const isSelected = selectedOrders.includes(order.id);
 
                   return (
                     <TableRow
                       key={order.id}
-                      className="hover:bg-muted/30 cursor-pointer transition-colors"
+                      className={`hover:bg-muted/30 cursor-pointer transition-colors border-b border-gray-100/50 dark:border-gray-700/50 ${
+                        isSelected
+                          ? "bg-blue-50/50 dark:bg-blue-900/20 shadow-[inset_4px_0_0_0_#3b82f6]"
+                          : ""
+                      }`}
                     >
                       <TableCell>
                         <Checkbox
-                          checked={selectedOrders.includes(order.id)}
+                          checked={isSelected}
                           onCheckedChange={() => toggleSelectOrder(order.id)}
+                          className="rounded-md border-gray-300 data-[state=checked]:bg-black/90 data-[state=checked]:border-black"
                         />
                       </TableCell>
                       <TableCell>
@@ -436,7 +447,7 @@ export function OrderList({
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9">
                             <AvatarImage src={order.customer.avatar} />
-                            <AvatarFallback className="bg-gradient-to-br from-violet-500 to-pink-500 text-white text-xs font-medium">
+                            <AvatarFallback className="bg-linear-to-br from-violet-500 to-pink-500 text-white text-xs font-medium">
                               {order.customer.name
                                 .split(" ")
                                 .map(n => n[0])
@@ -522,10 +533,10 @@ export function OrderList({
           </Table>
         </div>
 
-        {/* Pagination */}
+        {}
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-            {/* Page size selector */}
+            {}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>Afficher</span>
               <Select
@@ -548,13 +559,13 @@ export function OrderList({
               <span>par page</span>
             </div>
 
-            {/* Page info */}
+            {}
             <div className="text-sm text-muted-foreground">
               Page {currentPage} sur {totalPages} ({filteredOrders.length}{" "}
               résultats)
             </div>
 
-            {/* Pagination controls */}
+            {}
             <div className="flex items-center gap-1">
               <Button
                 variant="outline"
@@ -569,13 +580,13 @@ export function OrderList({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => goToPage(currentPage - 1)}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
 
-              {/* Page numbers */}
+              {}
               <div className="flex items-center gap-1 mx-2">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum: number;
@@ -625,7 +636,7 @@ export function OrderList({
           </div>
         )}
 
-        {/* Floating Action Bar */}
+        {}
         {selectedOrders.length > 0 && (
           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl bg-black/90">

@@ -139,9 +139,9 @@ export function generateSlug(title: string): string {
     .replace(/[\u0300-\u036f]/g, "") // Remove accents
     .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
     .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens
+    .replace(/-+/g, "-") 
     .trim()
-    .slice(0, 100); // Limit length
+    .slice(0, 100); 
 
   if (slug.length < 2) {
     return `post-${Date.now()}`;

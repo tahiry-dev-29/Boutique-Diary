@@ -70,11 +70,11 @@ interface Product {
   brand: string | null;
   images: { id: number; url: string; reference?: string | null }[];
   blogPosts: { id: number; productImageId: number | null }[];
-  _variantImageId?: number; // Internal for frontend distinction
+  _variantImageId?: number; 
 }
 
 export default function AdminBlogPage() {
-  // --- States ---
+  
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +92,7 @@ export default function AdminBlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  // --- Calculated Data ---
+  
   const filteredProducts = useMemo(() => {
     return products.filter(
       p =>
@@ -123,7 +123,7 @@ export default function AdminBlogPage() {
     currentPage * ITEMS_PER_PAGE,
   );
 
-  // --- Handlers ---
+  
   const fetchPosts = async () => {
     try {
       const res = await fetch("/api/admin/blog");

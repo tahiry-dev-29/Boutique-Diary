@@ -19,7 +19,7 @@ export async function GET(
             email: true,
             addresses: {
               take: 1,
-              orderBy: { createdAt: "desc" }, // Get latest address as fallback
+              orderBy: { createdAt: "desc" }, 
             },
           },
         },
@@ -49,7 +49,7 @@ export async function GET(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Determine address
+    
     let displayAddress = "Point relais";
     if (order.transactions && order.transactions.length > 0) {
       const meta = order.transactions[0].metadata as Record<string, unknown>;
@@ -67,7 +67,7 @@ export async function GET(
       order.customer.addresses &&
       order.customer.addresses.length > 0
     ) {
-      // Fallback to customer's latest address
+      
       const addr = order.customer.addresses[0];
       displayAddress = `${addr.street}, ${addr.city}`;
     }

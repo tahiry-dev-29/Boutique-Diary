@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Product } from "@/types/admin";
 import { formatPrice } from "@/lib/formatPrice";
 import {
@@ -18,7 +17,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +38,6 @@ import {
   Edit,
   Search,
   Eye,
-  Filter,
   ChevronDown,
   ChevronRight,
   MoreHorizontal,
@@ -50,7 +47,7 @@ import {
   Archive,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AVAILABLE_COLORS, AVAILABLE_SIZES, COLOR_MAP } from "@/lib/constants";
+import { COLOR_MAP } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
@@ -83,7 +80,6 @@ export default function ProductList({
   status,
   deleted,
 }: ProductListProps) {
-  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedProductId, setExpandedProductId] = useState<number | null>(
@@ -136,15 +132,18 @@ export default function ProductList({
   const [maxPrice, setMaxPrice] = useState("");
 
   // Advanced filters
-  const [selectedBrand, setSelectedBrand] = useState("all");
-  const [selectedColor, setSelectedColor] = useState("all");
-  const [selectedSize, setSelectedSize] = useState("all");
+  const selectedBrand = useMemo(() => "all", []);
+  const selectedColor = useMemo(() => "all", []);
+  const selectedSize = useMemo(() => "all", []);
   const [availability, setAvailability] = useState("all");
-  const [productType, setProductType] = useState({
-    isNew: false,
-    isPromotion: false,
-    isBestSeller: false,
-  });
+  const productType = useMemo(
+    () => ({
+      isNew: false,
+      isPromotion: false,
+      isBestSeller: false,
+    }),
+    [],
+  );
 
   const [visibleColumns, setVisibleColumns] = useState({
     product: true,
@@ -157,11 +156,7 @@ export default function ProductList({
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [refreshTrigger, status, deleted]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = React.useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (status) params.append("status", status);
@@ -177,7 +172,11 @@ export default function ProductList({
     } finally {
       setLoading(false);
     }
-  };
+  }, [status, deleted]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [refreshTrigger, status, deleted, fetchProducts]);
 
   const handleDelete = async (id: number, permanent: boolean = false) => {
     try {
@@ -234,7 +233,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter(p => p.id !== id));
+        setProducts(p => p.filter(product => product.id !== id));
         toast.success("Produit publié avec succès");
       } else {
         toast.error("Erreur lors de la publication");
@@ -254,7 +253,7 @@ export default function ProductList({
       });
 
       if (response.ok) {
-        setProducts(products.filter(p => p.id !== id));
+        setProducts(p => p.filter(product => product.id !== id));
         toast.success("Produit archivé avec succès");
       } else {
         toast.error("Erreur lors de l'archivage");
@@ -265,63 +264,42 @@ export default function ProductList({
     }
   };
 
-  const categories = Array.from(
-    new Set(
-      products
-        .map(p => p.category?.name)
-        .filter((c): c is string => Boolean(c)),
-    ),
-  ).sort();
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          products
+            .map(p => p.category?.name)
+            .filter((c): c is string => Boolean(c)),
+        ),
+      ).sort(),
+    [products],
+  );
 
-  const brands = Array.from(
-    new Set(products.map(p => p.brand).filter((b): b is string => Boolean(b))),
-  ).sort();
+  const filteredProducts = useMemo(
+    () =>
+      products.filter(product => {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch =
+          product.name.toLowerCase().includes(searchLower) ||
+          product.reference.toLowerCase().includes(searchLower);
 
-  const filteredProducts = products.filter(product => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchLower) ||
-      product.reference.toLowerCase().includes(searchLower);
+        const matchesCategory =
+          selectedCategory === "all" ||
+          product.category?.name === selectedCategory;
 
-    const matchesCategory =
-      selectedCategory === "all" || product.category?.name === selectedCategory;
+        const price = product.price;
+        const matchesMinPrice =
+          minPrice === "" || price >= parseFloat(minPrice);
+        const matchesMaxPrice =
+          maxPrice === "" || price <= parseFloat(maxPrice);
 
-    const price = product.price;
-    const matchesMinPrice = minPrice === "" || price >= parseFloat(minPrice);
-    const matchesMaxPrice = maxPrice === "" || price <= parseFloat(maxPrice);
-
-    // Advanced filters
-    const matchesBrand =
-      selectedBrand === "all" || product.brand === selectedBrand;
-    const matchesColor =
-      selectedColor === "all" || product.colors?.includes(selectedColor);
-    const matchesSize =
-      selectedSize === "all" || product.sizes?.includes(selectedSize);
-
-    const totalStock = product.stock || 0;
-
-    const matchesAvailability =
-      availability === "all" ||
-      (availability === "in-stock" && totalStock > 0) ||
-      (availability === "out-of-stock" && totalStock === 0);
-
-    const matchesType =
-      (!productType.isNew || product.isNew) &&
-      (!productType.isPromotion || product.isPromotion) &&
-      (!productType.isBestSeller || product.isBestSeller);
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesMinPrice &&
-      matchesMaxPrice &&
-      matchesBrand &&
-      matchesColor &&
-      matchesSize &&
-      matchesAvailability &&
-      matchesType
-    );
-  });
+        return (
+          matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice
+        );
+      }),
+    [searchTerm, selectedCategory, minPrice, maxPrice, products],
+  );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
@@ -341,11 +319,9 @@ export default function ProductList({
   };
 
   const toggleSelectRow = (id: number) => {
-    if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
-    } else {
-      setSelectedRows([...selectedRows, id]);
-    }
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id],
+    );
   };
 
   useEffect(() => {
@@ -374,7 +350,7 @@ export default function ProductList({
     <div className="flex flex-col gap-6">
       {}
       <DashboardStats products={products} />
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
         <div className="flex items-center gap-3 flex-1 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
           {}
           <div className="relative min-w-[200px] max-w-sm">
@@ -389,7 +365,10 @@ export default function ProductList({
 
           {}
           <div className="w-[150px]">
-            <Select value={availability} onValueChange={setAvailability}>
+            <Select
+              value={availability}
+              onValueChange={value => setAvailability(value)}
+            >
               <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-400 font-light">×</span>
@@ -408,7 +387,7 @@ export default function ProductList({
           <div className="w-[160px]">
             <Select
               value={selectedCategory}
-              onValueChange={setSelectedCategory}
+              onValueChange={value => setSelectedCategory(value)}
             >
               <SelectTrigger className="h-11 border-none shadow-[0_2px_5px_-1px_rgba(0,0,0,0.05)] rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors px-4">
                 <div className="flex items-center gap-2">
@@ -491,7 +470,7 @@ export default function ProductList({
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.product}
                 onCheckedChange={checked =>
-                  setVisibleColumns(prev => ({ ...prev, product: checked }))
+                  setVisibleColumns(prev => ({ ...prev, product: !!checked }))
                 }
               >
                 Produit
@@ -499,7 +478,10 @@ export default function ProductList({
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.category}
                 onCheckedChange={checked =>
-                  setVisibleColumns(prev => ({ ...prev, category: checked }))
+                  setVisibleColumns(prev => ({
+                    ...prev,
+                    category: !!checked,
+                  }))
                 }
               >
                 Catégorie
@@ -507,7 +489,7 @@ export default function ProductList({
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.stock}
                 onCheckedChange={checked =>
-                  setVisibleColumns(prev => ({ ...prev, stock: checked }))
+                  setVisibleColumns(prev => ({ ...prev, stock: !!checked }))
                 }
               >
                 Stock
@@ -515,7 +497,7 @@ export default function ProductList({
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.status}
                 onCheckedChange={checked =>
-                  setVisibleColumns(prev => ({ ...prev, status: checked }))
+                  setVisibleColumns(prev => ({ ...prev, status: !!checked }))
                 }
               >
                 Statut
@@ -523,7 +505,7 @@ export default function ProductList({
               <DropdownMenuCheckboxItem
                 checked={visibleColumns.price}
                 onCheckedChange={checked =>
-                  setVisibleColumns(prev => ({ ...prev, price: checked }))
+                  setVisibleColumns(prev => ({ ...prev, price: !!checked }))
                 }
               >
                 Prix
@@ -599,8 +581,17 @@ export default function ProductList({
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group transition-all border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${isExpanded ? "bg-gray-50 dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"} h-20 cursor-pointer`}
-                        onClick={() => onView(product)}
+                        key={product.id}
+                        className={`hover:bg-muted/30 cursor-pointer transition-colors border-b border-gray-100/50 dark:border-gray-700/50 ${
+                          isSelected
+                            ? "bg-blue-50/50 dark:bg-blue-900/20 shadow-[inset_4px_0_0_0_#3b82f6]"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          setExpandedProductId(
+                            isExpanded ? null : (product.id as number),
+                          )
+                        }
                       >
                         <TableCell
                           className="text-center pl-4"
@@ -638,7 +629,7 @@ export default function ProductList({
                         {visibleColumns.product && (
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
+                              <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 overflow-hidden shrink-0">
                                 <img
                                   src={
                                     product.images && product.images[0]
@@ -855,7 +846,7 @@ export default function ProductList({
 
                       {}
                       {isExpanded && (
-                        <TableRow className="bg-gray-50/30 dark:bg-gray-800/50 hover:bg-gray-50/30 border-none">
+                        <TableRow className="bg-gray-50/50 dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-900/40 border-none transition-colors">
                           <TableCell colSpan={7} className="p-6">
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                               {product.images?.map((img, idx) => {
@@ -872,7 +863,7 @@ export default function ProductList({
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         alt=""
                                       />
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                                         <p className="text-white text-xs font-medium truncate">
                                           {product.name}
                                         </p>
@@ -899,7 +890,7 @@ export default function ProductList({
                                               title={imgData.color || ""}
                                             ></div>
                                           )}
-                                          <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                          <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
                                             {imgData.color || "Standard"}
                                           </span>
                                         </div>
@@ -975,7 +966,7 @@ export default function ProductList({
         </div>
       </div>
 
-      {/* Floating Action Bar */}
+      {}
       {selectedRows.length > 0 && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div className="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl bg-black/90">

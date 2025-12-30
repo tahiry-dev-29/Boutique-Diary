@@ -106,7 +106,7 @@ export default function CustomerOrders() {
       toast.success(
         actionType === "CANCEL" ? "Commande annulée" : "Réception confirmée !",
       );
-      fetchOrders(); // Refresh list
+      fetchOrders(); 
     } catch (err: any) {
       console.error(err);
       toast.error(err.message);

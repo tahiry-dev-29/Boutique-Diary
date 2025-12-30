@@ -6,7 +6,7 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// POST: Regenerate blog content using Gemini AI
+
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 });
     }
 
-    // Get blog post with product details
+    
     const blogPost = await prisma.blogPost.findUnique({
       where: { id: blogId },
       include: {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Generate new content with Gemini
+    
     const generatedContent = await generateBlogContent({
       name: blogPost.product.name,
       description: blogPost.product.description,
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       sizes: blogPost.product.sizes,
     });
 
-    // Update blog post with new content
+    
     const updatedPost = await prisma.blogPost.update({
       where: { id: blogId },
       data: {

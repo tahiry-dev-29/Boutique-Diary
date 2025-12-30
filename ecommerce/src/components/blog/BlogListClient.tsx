@@ -37,15 +37,15 @@ export default function BlogList({ initialPosts }: BlogListProps) {
     setLoading(true);
 
     try {
-      // Offset logic:
-      // Server renders 1 featured + initialPosts.length (list).
-      // Total items rendered before loadMore = 1 + posts.length.
-      // So the next item starts at offset = 1 + posts.length.
-      // Example: 1 featured, 19 in list. Total 20. Next offset should be 20. (Since offset is 0-indexed count).
-      // Actually strictly speaking:
-      // If we have 20 items (0..19), the next one is index 20.
-      // So offset = current total count.
-      const currentOffset = posts.length + 1; // +1 for the featured post
+      
+      
+      
+      
+      
+      
+      
+      
+      const currentOffset = posts.length + 1; 
 
       const nextPosts = await fetch(
         `/api/blog?limit=${limit}&offset=${currentOffset}&excludeFeatured=true`,
@@ -53,7 +53,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
 
       if (nextPosts.posts && nextPosts.posts.length > 0) {
         setPosts((prev) => {
-          // Ensure no duplicates just in case
+          
           const existingIds = new Set(prev.map((p) => p.id));
           const uniqueNewPosts = nextPosts.posts.filter(
             (p: BlogPost) => !existingIds.has(p.id),
@@ -80,7 +80,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
         {posts.map((post) => (
           <Link key={post.id} href={`/blog/${post.slug}`} className="group">
             <article className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
-              {/* Image */}
+              {}
               <div className="relative aspect-video overflow-hidden">
                 {post.coverImage ? (
                   <Image
@@ -101,7 +101,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
                 )}
               </div>
 
-              {/* Content */}
+              {}
               <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   {post.title}

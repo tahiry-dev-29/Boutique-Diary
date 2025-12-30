@@ -5,7 +5,7 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// GET: Get single blog post
+
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// PATCH: Update blog post
+
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -101,7 +101,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// DELETE: Delete blog post
+
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;

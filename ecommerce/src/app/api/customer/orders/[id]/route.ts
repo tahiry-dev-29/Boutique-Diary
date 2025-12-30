@@ -23,7 +23,7 @@ export async function PATCH(
 
     const { status } = body;
 
-    // Verify order ownership
+    
     const order = await prisma.order.findUnique({
       where: { id },
     });
@@ -36,8 +36,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Logic for Customer Updates
-    // Allow Cancel if PENDING or PROCESSING
+    
+    
     if (status === "CANCELLED") {
       if (!["PENDING", "PROCESSING"].includes(order.status)) {
         return NextResponse.json(
@@ -49,7 +49,7 @@ export async function PATCH(
         );
       }
     }
-    // Allow Complete if SHIPPED or DELIVERED
+    
     else if (status === "COMPLETED") {
       if (!["SHIPPED", "DELIVERED", "COMPLETED"].includes(order.status)) {
         return NextResponse.json(
@@ -58,7 +58,7 @@ export async function PATCH(
         );
       }
 
-      // If already completed, just return it
+      
       if (order.status === "COMPLETED") {
         return NextResponse.json(order);
       }

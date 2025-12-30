@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateBlogContent, generateSlug } from "@/lib/gemini";
 
-// GET: List all blog posts (admin)
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Generate blog post for a product using Gemini AI
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -60,13 +60,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if product exists
+    
     const product = await prisma.product.findUnique({
       where: { id: productId },
       include: {
         category: { select: { name: true } },
-        images: true, // Fetch all images to find the variant
-        blogPosts: true, // Use array
+        images: true, 
+        blogPosts: true, 
       },
     });
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Check if blog post already exists for this specific target (Main or Variant)
+    
     const existingPost = product.blogPosts.find(bp =>
       productImageId
         ? bp.productImageId === productImageId
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Determine context for AI
+    
     let contextName = product.name;
     let contextColors = product.colors;
     let coverImage = product.images[0]?.url || null;
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate content with Gemini
+    
     const generatedContent = await generateBlogContent({
       name: contextName,
       description: product.description,
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       sizes: product.sizes,
     });
 
-    // Generate unique slug
+    
     let slug = generateSlug(generatedContent.title);
     let slugSuffix = 0;
     while (await prisma.blogPost.findUnique({ where: { slug } })) {
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       slug = `${generateSlug(generatedContent.title)}-${slugSuffix}`;
     }
 
-    // Create blog post
+    
     const blogPost = await prisma.blogPost.create({
       data: {
         title: generatedContent.title,
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         productImageId: productImageId || null,
         metaTitle: generatedContent.metaTitle,
         metaDescription: generatedContent.metaDescription,
-        isPublished: false, // Draft by default
+        isPublished: false, 
       },
       include: {
         product: {
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-// PUT: Bulk update blog posts
+
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
@@ -188,7 +188,7 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
-// DELETE: Bulk delete blog posts
+
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();

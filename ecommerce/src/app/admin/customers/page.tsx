@@ -13,6 +13,14 @@ import {
   Clock,
   Trash2,
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -36,6 +44,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 interface Customer {
@@ -131,10 +140,9 @@ export default function CustomerPage() {
   );
 
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
-  const paginatedCustomers = filteredCustomers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
 
   const handleDelete = async (id: number) => {
     try {
@@ -164,6 +172,14 @@ export default function CustomerPage() {
     return diffDays <= 30;
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   const totalCustomers = customers.length;
   const newCustomers = customers.filter(c => isNew(c.createdAt)).length;
 
@@ -187,7 +203,7 @@ export default function CustomerPage() {
         isLoading={loading}
       />
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gray-100 dark:bg-gray-800 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
@@ -238,9 +254,9 @@ export default function CustomerPage() {
         </Card>
       </div>
 
-      {/* Customers Table */}
+      {}
       <div className="space-y-4">
-        {/* Search Input */}
+        {}
         <div className="relative max-w-md">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
@@ -258,13 +274,13 @@ export default function CustomerPage() {
           />
         </div>
 
-        {/* Table */}
-        <div className="bg-gray-100 dark:bg-gray-800 border-none rounded-xl overflow-hidden shadow-sm">
+        {}
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100/50 dark:border-gray-700/50 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-200/50 dark:bg-gray-900/50">
-                <tr>
-                  <th className="px-6 py-4 text-left w-12">
+            <Table>
+              <TableHeader className="bg-gray-50/30 dark:bg-gray-900/50">
+                <TableRow className="border-b border-gray-100 dark:border-gray-700 hover:bg-transparent">
+                  <TableHead className="w-12 text-center pl-4">
                     <Checkbox
                       checked={
                         selectedCustomers.length ===
@@ -272,135 +288,153 @@ export default function CustomerPage() {
                         paginatedCustomers.length > 0
                       }
                       onCheckedChange={toggleSelectAll}
+                      className="rounded-md border-gray-300 data-[state=checked]:bg-black/90 data-[state=checked]:border-black"
                     />
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                  </TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                     Client
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+                  </TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4">
                     Email
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-foreground hidden md:table-cell">
+                  </TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4 hidden md:table-cell">
                     Date d&apos;inscription
-                  </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
+                  </TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-400 uppercase tracking-wider py-4 text-right pr-4">
                     Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {paginatedCustomers.map(customer => (
-                  <tr
-                    key={customer.id}
-                    className={`hover:bg-muted/50 transition-colors ${
-                      selectedCustomers.includes(customer.id)
-                        ? "bg-primary/5 shadow-[inset_4px_0_0_0_#3b82f6]"
-                        : ""
-                    }`}
-                  >
-                    <td className="px-6 py-4">
-                      <Checkbox
-                        checked={selectedCustomers.includes(customer.id)}
-                        onCheckedChange={() =>
-                          toggleSelectCustomer(customer.id)
-                        }
-                      />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border border-gray-200 dark:border-gray-700">
-                          <AvatarImage src={customer.photo || ""} />
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                            {customer.username.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-foreground flex items-center gap-2">
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedCustomers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <Search className="h-8 w-8 mb-2 opacity-20" />
+                        <p>Aucun client trouvé</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedCustomers.map(customer => (
+                    <TableRow
+                      key={customer.id}
+                      onClick={() => setSelectedCustomer(customer)}
+                      className={`hover:bg-muted/30 cursor-pointer transition-colors border-b border-gray-100/50 dark:border-gray-700/50 ${
+                        selectedCustomers.includes(customer.id)
+                          ? "bg-blue-50/50 dark:bg-blue-900/20 shadow-[inset_4px_0_0_0_#3b82f6]"
+                          : ""
+                      }`}
+                    >
+                      <TableCell
+                        className="pl-4 text-center"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <Checkbox
+                          checked={selectedCustomers.includes(customer.id)}
+                          onCheckedChange={() =>
+                            toggleSelectCustomer(customer.id)
+                          }
+                          className="rounded-md border-gray-300 data-[state=checked]:bg-black/90 data-[state=checked]:border-black"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9 border border-gray-200 dark:border-gray-700">
+                            <AvatarImage
+                              src={customer.photo || undefined}
+                              alt={customer.username}
+                            />
+                            <AvatarFallback className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 text-gray-600 dark:text-gray-300 text-xs font-bold">
+                              {customer.username.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-gray-900 dark:text-white">
                             {customer.username}
-                            {isNew(customer.createdAt) && (
-                              <Badge
-                                variant="secondary"
-                                className="text-xs px-1.5 py-0 h-5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-none"
-                              >
-                                Nouveau
-                              </Badge>
-                            )}
-                          </p>
+                          </span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Mail size={14} />
+                      </TableCell>
+                      <TableCell className="text-gray-500 dark:text-gray-400">
                         {customer.email}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar size={14} />
-                        {new Date(customer.createdAt).toLocaleDateString(
-                          "fr-FR",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setSelectedCustomer(customer)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          <Eye size={16} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setCustomerToDelete(customer.id);
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="text-gray-400 hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 opacity-50" />
+                          {formatDate(customer.createdAt)}
+                        </div>
+                      </TableCell>
+                      <TableCell
+                        className="text-right pr-4"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-full"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Confirmer la suppression
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+                                  Voulez-vous vraiment supprimer ce client ?
+                                  Cette action est irréversible.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                  Annuler
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(customer.id)}
+                                  className="bg-red-600 hover:bg-red-700 text-white"
+                                >
+                                  Supprimer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
 
-          {paginatedCustomers.length === 0 && (
-            <div className="p-12 text-center text-muted-foreground">
-              <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>
-                {customers.length === 0
-                  ? "Aucun client enregistré"
-                  : "Aucun client trouvé avec ces critères"}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-b-xl">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Affichage de {paginatedCustomers.length} sur{" "}
-              {filteredCustomers.length} résultats
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/30">
+            <div className="text-sm text-gray-500">
+              Affichage de{" "}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {startIndex + 1}-{Math.min(endIndex, filteredCustomers.length)}
+              </span>{" "}
+              sur{" "}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {filteredCustomers.length}
+              </span>{" "}
+              clients
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300"
+                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
               >
                 Précédent
               </button>
@@ -413,7 +447,7 @@ export default function CustomerPage() {
                       className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-medium transition-colors ${
                         currentPage === page
                           ? "bg-primary text-primary-foreground"
-                          : "hover:bg-accent text-muted-foreground"
+                          : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
                       }`}
                     >
                       {page}
@@ -424,16 +458,16 @@ export default function CustomerPage() {
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
               >
                 Suivant
               </button>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Customer Details Sheet */}
+      {}
       <Sheet
         open={!!selectedCustomer}
         onOpenChange={open => !open && setSelectedCustomer(null)}
@@ -551,7 +585,7 @@ export default function CustomerPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Bulk Delete Alert */}
+      {}
       <AlertDialog
         open={isBulkDeleteDialogOpen}
         onOpenChange={setIsBulkDeleteDialogOpen}
@@ -580,10 +614,10 @@ export default function CustomerPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Floating Action Bar */}
+      {}
       {selectedCustomers.length > 0 && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl bg-black/90">
+          <div className="bg-black/90 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl">
             <div className="flex items-center gap-3 border-r border-white/10 pr-6">
               <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center text-xs font-bold">
                 {selectedCustomers.length}

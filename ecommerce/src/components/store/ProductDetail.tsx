@@ -32,7 +32,7 @@ interface Product {
   id: number;
   name: string;
   reference: string;
-  description: string;
+  description: string | null;
   price: number;
   oldPrice?: number | null;
   stock: number;
@@ -190,7 +190,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
     addItem({
       productId: product.id,
-      productImageId: currentImage?.id, // Track specific variant
+      productImageId: currentImage?.id, 
       name: product.name,
       reference: currentRef || product.reference,
       image: currentImage?.url || "",
@@ -216,8 +216,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
     : 0;
 
-  // Determine which blog post to link to
-  // Priority: Specific variant blog -> Main product blog
+  
+  
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
     blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
@@ -226,9 +226,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   return (
     <section className="py-8 md:py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_450px] gap-12 items-start">
-        {/* Product Images */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
-          {/* Thumbnail Images */}
+          {}
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible order-2 md:order-1">
             {images.map((img, i) => (
               <button
@@ -253,7 +253,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             ))}
           </div>
 
-          {/* Main Image */}
+          {}
           <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
@@ -269,7 +269,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </div>
             )}
 
-            {/* Badges */}
+            {}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.isNew && (
                 <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -290,7 +290,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
         </div>
 
-        {/* Product Details */}
+        {}
         <div className="product-info-stagger flex flex-col gap-8">
           <div>
             <div className="flex justify-between items-start">
@@ -306,7 +306,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.name}
             </h1>
 
-            {/* Price */}
+            {}
             <div className="flex items-end gap-3 mb-6">
               <span className="text-4xl font-bold tracking-tight">
                 ${displayPrice?.toFixed(2)}
@@ -318,7 +318,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
             </div>
 
-            {/* Rating */}
+            {}
             <div className="flex items-center gap-2 mb-8">
               <div className="flex text-amber-500">
                 {[...Array(5)].map((_, i) => (
@@ -338,10 +338,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
             </div>
 
-            {/* Separator */}
+            {}
             <div className="h-px bg-gray-100 my-2" />
 
-            {/* Description */}
+            {}
             <div className="mb-8">
               <h3 className="font-bold text-gray-900 mb-2">Description</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
@@ -349,7 +349,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </p>
             </div>
 
-            {/* Color Selector */}
+            {}
             <div className="mb-6">
               <div className="flex justify-between mb-3">
                 <h3 className="font-bold text-gray-900">

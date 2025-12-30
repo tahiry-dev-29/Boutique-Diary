@@ -81,7 +81,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
-      {/* Hero Image */}
+      {}
       {post.coverImage && (
         <div className="relative h-[40vh] md:h-[50vh] overflow-hidden">
           <Image
@@ -114,10 +114,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Content */}
+      {}
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
-          {/* Article Content */}
+          {}
           <article className="lg:col-span-2">
             {!post.coverImage && (
               <>
@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               </>
             )}
 
-            {/* Meta info */}
+            {}
             <div className="flex items-center gap-6 text-sm text-muted-foreground mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
               <span className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
@@ -150,15 +150,15 @@ export default async function BlogPostPage({ params }: PageProps) {
               </span>
             </div>
 
-            {/* Excerpt */}
+            {}
             {post.excerpt && (
               <p className="text-xl text-muted-foreground mb-8 font-medium leading-relaxed">
                 {post.excerpt}
               </p>
             )}
 
-            {/* Article Content */}
-            {/* Article Content */}
+            {}
+            {}
             <div
               className="prose prose-lg dark:prose-invert max-w-none
                 font-medium
@@ -173,10 +173,10 @@ export default async function BlogPostPage({ params }: PageProps) {
             />
           </article>
 
-          {/* Sidebar - Product Card */}
+          {}
           <aside className="lg:sticky lg:top-24 h-fit">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-              {/* Product Image */}
+              {}
               {post.product.images[0]?.url && (
                 <div className="relative aspect-square">
                   <Image
@@ -188,7 +188,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Product Info */}
+              {}
               <div className="p-6 space-y-4">
                 <div>
                   {post.product.brand && (
@@ -208,7 +208,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {formatMoney(post.product.price)}
                 </p>
 
-                {/* Color options */}
+                {}
                 {post.product.images.length > 1 && (
                   <div className="flex gap-2">
                     {post.product.images.slice(0, 4).map(img => (
@@ -238,7 +238,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Share */}
+            {}
             <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
               <p className="text-sm font-medium text-foreground mb-3">
                 Partager
@@ -266,7 +266,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Back to blog CTA */}
+      {}
       <section className="py-12 px-4 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-xl font-bold mb-4">

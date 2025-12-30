@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET: List published blog posts (public)
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
