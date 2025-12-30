@@ -157,7 +157,7 @@ export async function getCategories() {
       take: 10,
     });
     return categories;
-  } catch (error) {
+  } catch {
     return [];
   }
 }

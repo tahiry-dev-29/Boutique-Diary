@@ -6,19 +6,20 @@ import {
   Mail,
   Calendar,
   Loader2,
-  Trash2,
   Eye,
   User,
   Users,
   UserPlus,
   Clock,
-  X,
+  Trash2,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -57,9 +58,53 @@ export default function CustomerPage() {
   const [customerToDelete, setCustomerToDelete] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const [selectedCustomers, setSelectedCustomers] = useState<number[]>([]);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const toggleSelectAll = () => {
+    if (selectedCustomers.length === paginatedCustomers.length) {
+      setSelectedCustomers([]);
+    } else {
+      setSelectedCustomers(paginatedCustomers.map(c => c.id));
+    }
+  };
+
+  const toggleSelectCustomer = (id: number) => {
+    setSelectedCustomers(prev =>
+      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id],
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCustomers.length === 0) return;
+
+    setIsBulkLoading(true);
+    try {
+      const response = await fetch("/api/customers", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedCustomers }),
+      });
+
+      if (!response.ok) throw new Error("Failed to delete");
+
+      const data = await response.json();
+      setCustomers(prev => prev.filter(c => !selectedCustomers.includes(c.id)));
+      toast.success(`${selectedCustomers.length} clients supprimés`);
+      setSelectedCustomers([]);
+    } catch (error) {
+      console.error("Error deleting customers:", error);
+      toast.error("Erreur lors de la suppression groupée");
+    } finally {
+      setIsBulkLoading(false);
+      setIsBulkDeleteDialogOpen(false);
+    }
+  };
 
   useEffect(() => {
     fetchCustomers();
@@ -142,7 +187,7 @@ export default function CustomerPage() {
         isLoading={loading}
       />
 
-      {}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gray-100 dark:bg-gray-800 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
@@ -193,9 +238,9 @@ export default function CustomerPage() {
         </Card>
       </div>
 
-      {}
+      {/* Customers Table */}
       <div className="space-y-4">
-        {}
+        {/* Search Input */}
         <div className="relative max-w-md">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
@@ -213,12 +258,22 @@ export default function CustomerPage() {
           />
         </div>
 
-        {}
+        {/* Table */}
         <div className="bg-gray-100 dark:bg-gray-800 border-none rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-200/50 dark:bg-gray-900/50">
                 <tr>
+                  <th className="px-6 py-4 text-left w-12">
+                    <Checkbox
+                      checked={
+                        selectedCustomers.length ===
+                          paginatedCustomers.length &&
+                        paginatedCustomers.length > 0
+                      }
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
                     Client
                   </th>
@@ -237,8 +292,20 @@ export default function CustomerPage() {
                 {paginatedCustomers.map(customer => (
                   <tr
                     key={customer.id}
-                    className="hover:bg-muted/50 transition-colors"
+                    className={`hover:bg-muted/50 transition-colors ${
+                      selectedCustomers.includes(customer.id)
+                        ? "bg-primary/5 shadow-[inset_4px_0_0_0_#3b82f6]"
+                        : ""
+                    }`}
                   >
+                    <td className="px-6 py-4">
+                      <Checkbox
+                        checked={selectedCustomers.includes(customer.id)}
+                        onCheckedChange={() =>
+                          toggleSelectCustomer(customer.id)
+                        }
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10 border border-gray-200 dark:border-gray-700">
@@ -283,21 +350,25 @@ export default function CustomerPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => setSelectedCustomer(customer)}
-                          className="p-2 hover:bg-accent rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground"
                         >
                           <Eye size={16} />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => {
                             setCustomerToDelete(customer.id);
                             setIsDeleteDialogOpen(true);
                           }}
-                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-gray-400 hover:text-destructive"
+                          className="text-gray-400 hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 size={16} />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -318,7 +389,7 @@ export default function CustomerPage() {
           )}
         </div>
 
-        {}
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-b-xl">
             <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -362,7 +433,7 @@ export default function CustomerPage() {
         )}
       </div>
 
-      {}
+      {/* Customer Details Sheet */}
       <Sheet
         open={!!selectedCustomer}
         onOpenChange={open => !open && setSelectedCustomer(null)}
@@ -479,6 +550,64 @@ export default function CustomerPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Bulk Delete Alert */}
+      <AlertDialog
+        open={isBulkDeleteDialogOpen}
+        onOpenChange={setIsBulkDeleteDialogOpen}
+      >
+        <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-gray-900 dark:text-white text-xl">
+              Confirmer la suppression groupée
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+              Êtes-vous sûr de vouloir supprimer les {selectedCustomers.length}{" "}
+              clients sélectionnés ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="bg-red-600 hover:bg-red-700 text-white border-none"
+            >
+              Supprimer ({selectedCustomers.length})
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Floating Action Bar */}
+      {selectedCustomers.length > 0 && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl bg-black/90">
+            <div className="flex items-center gap-3 border-r border-white/10 pr-6">
+              <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center text-xs font-bold">
+                {selectedCustomers.length}
+              </div>
+              <span className="text-sm font-medium text-white/90">
+                Clients sélectionnés
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-rose-400 hover:bg-rose-500/10 h-10 px-4 rounded-xl gap-2 transition-all active:scale-95 disabled:opacity-50"
+                onClick={() => setIsBulkDeleteDialogOpen(true)}
+                disabled={isBulkLoading}
+              >
+                <Trash2 className="h-4 w-4" />
+                Supprimer
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -90,6 +90,45 @@ export default function ProductList({
     null,
   );
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+
+  const handleBulkAction = async (action: "publish" | "archive" | "delete") => {
+    if (selectedRows.length === 0) return;
+
+    setIsBulkLoading(true);
+    try {
+      let res;
+      if (action === "delete") {
+        res = await fetch("/api/products", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: selectedRows, permanent: false }),
+        });
+      } else {
+        res = await fetch("/api/products", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ids: selectedRows,
+            data: { status: action === "publish" ? "PUBLISHED" : "DRAFT" },
+          }),
+        });
+      }
+
+      if (res.ok) {
+        toast.success(`${selectedRows.length} produits mis à jour`);
+        setSelectedRows([]);
+        fetchProducts();
+      } else {
+        toast.error("Une erreur est survenue lors de l'action groupée");
+      }
+    } catch (error) {
+      console.error("Bulk action error:", error);
+      toast.error("Erreur de connexion au serveur");
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -901,7 +940,6 @@ export default function ProductList({
           </Table>
         </div>
 
-        {}
         <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/30">
           <div className="text-sm text-gray-500">
             Affichage de{" "}
@@ -936,6 +974,81 @@ export default function ProductList({
           </div>
         </div>
       </div>
+
+      {/* Floating Action Bar */}
+      {selectedRows.length > 0 && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl bg-black/90">
+            <div className="flex items-center gap-3 border-r border-white/10 pr-6">
+              <div className="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center text-xs font-bold">
+                {selectedRows.length}
+              </div>
+              <span className="text-sm font-medium text-white/90">
+                Produits sélectionnés
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-white">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-white hover:bg-white/10 h-10 px-4 rounded-xl gap-2 transition-all active:scale-95 disabled:opacity-50"
+                onClick={() => handleBulkAction("publish")}
+                disabled={isBulkLoading}
+              >
+                <Send className="h-4 w-4" />
+                Publier
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-white hover:bg-white/10 h-10 px-4 rounded-xl gap-2 transition-all active:scale-95 disabled:opacity-50"
+                onClick={() => handleBulkAction("archive")}
+                disabled={isBulkLoading}
+              >
+                <Archive className="h-4 w-4" />
+                Archiver
+              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-rose-400 hover:bg-rose-500/10 h-10 px-4 rounded-xl gap-2 transition-all active:scale-95 disabled:opacity-50"
+                    disabled={isBulkLoading}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Supprimer
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-gray-900 border-white/10 text-white">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmer la suppression
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-gray-400">
+                      Voulez-vous vraiment déplacer ces {selectedRows.length}{" "}
+                      produits vers la corbeille ?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                      Annuler
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-rose-600 hover:bg-rose-700 text-white border-none"
+                      onClick={() => handleBulkAction("delete")}
+                    >
+                      Supprimer
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
