@@ -8,6 +8,7 @@ import {
   OrderFloatingPanel,
   OrderDetails,
 } from "@/components/admin/orders/OrderViewModal";
+import { generateInvoicePDF } from "@/utils/pdf-invoice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +19,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { generateInvoice } from "@/utils/invoice-generator";
 import { PageHeader } from "@/components/admin/PageHeader";
 
 interface OrdersResponse {
@@ -148,37 +148,26 @@ export default function OrdersPage() {
 
   const handleSendInvoice = async (order: Order | OrderDetails) => {
     try {
-      let orderToPrint = order as OrderDetails;
+      toast.message(`Envoi de la facture #${order.reference}...`);
 
-      if (!orderToPrint.items) {
-        toast.message(`Préparation de la facture #${order.reference}...`);
-        const res = await fetch(`/api/admin/orders/${order.id}`);
-        if (!res.ok)
-          throw new Error("Impossible de récupérer les détails de la commande");
-        const data = await res.json();
+      const res = await fetch(`/api/admin/orders/${order.id}/send-invoice`, {
+        method: "POST",
+      });
 
-        orderToPrint = {
-          ...data,
-          createdAt: new Date(data.createdAt),
-          items: data.items.map((item: any) => ({
-            id: item.id,
-            productName: item.productName,
-            productImage: item.productImage,
-            quantity: item.quantity,
-            price: item.price,
-            variant:
-              item.color || item.size
-                ? [item.color, item.size].filter(Boolean).join(", ")
-                : undefined,
-          })),
-        };
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Échec de l'envoi");
       }
 
-      generateInvoice(orderToPrint);
-      toast.success(`Facture #${order.reference} générée`);
+      toast.success(
+        data.message || `Facture envoyée à ${order.customer.email}`,
+      );
     } catch (error) {
-      console.error("Failed to generate invoice:", error);
-      toast.error("Erreur lors de la génération de la facture");
+      console.error("Failed to send invoice:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de l'envoi",
+      );
     }
   };
 
@@ -221,11 +210,30 @@ export default function OrdersPage() {
     }
   };
 
+  const handleDownloadPDF = async (order: Order) => {
+    try {
+      toast.message(`Génération du PDF pour #${order.reference}...`);
+      const res = await fetch(`/api/orders/${order.reference}/invoice`);
+      if (res.ok) {
+        const data = await res.json();
+        generateInvoicePDF(data);
+        toast.success("Facture téléchargée !");
+      } else {
+        toast.error("Impossible de récupérer les données de la facture");
+      }
+    } catch (error) {
+      console.error("PDF download error:", error);
+      toast.error("Erreur lors du téléchargement");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Commandes"
         description="Gérer les commandes de votre boutique"
+        onRefresh={fetchOrders}
+        isLoading={loading}
       />
 
       {}
@@ -238,6 +246,7 @@ export default function OrdersPage() {
         counts={counts}
         onViewDetails={handleViewDetails}
         onSendInvoice={handleSendInvoice}
+        onDownloadPDF={handleDownloadPDF}
         onDelete={handleRequestCancel}
       />
 

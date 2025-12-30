@@ -170,6 +170,7 @@ model ProductImage {
   productId       Int
   product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   stockMovements  StockMovement[] // Relation for history
+  orderItems      OrderItem[]
 }
 
 model Category {
@@ -265,6 +266,8 @@ model Order {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  stockReduced Boolean @default(false)
 }
 
 model OrderItem {
@@ -275,11 +278,16 @@ model OrderItem {
   productId Int
   product   Product @relation(fields: [productId], references: [id])
 
+  // Optional: Track specific variant for stock management
+  productImageId Int?
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id])
+
   quantity Int
   price    Float
 
   @@index([orderId])
   @@index([productId])
+  @@index([productImageId])
 }
 
 // Payment Module

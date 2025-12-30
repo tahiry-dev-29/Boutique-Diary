@@ -85,7 +85,6 @@ export default function CustomerPage() {
       customer.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
   const paginatedCustomers = filteredCustomers.slice(
     (currentPage - 1) * itemsPerPage,
@@ -139,6 +138,8 @@ export default function CustomerPage() {
       <PageHeader
         title="Clients"
         description="Gérez votre base de clients et consultez leurs informations"
+        onRefresh={fetchCustomers}
+        isLoading={loading}
       />
 
       {}
@@ -206,7 +207,7 @@ export default function CustomerPage() {
             value={searchQuery}
             onChange={e => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); 
+              setCurrentPage(1);
             }}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary outline-none transition-all"
           />

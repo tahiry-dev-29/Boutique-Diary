@@ -100,11 +100,11 @@ _(Cette partie reste inchangée car ton API NestJS sert de source de vérité po
 
 ### 🛒 Checkout Experience
 
-- [ ] Composant `CartSheet` (Sheet Shadcn/UI pour le mini-panier).
-- [ ] Page `cart/page.ts` (Résumé détaillé - Server Component).
-- [ ] Page `checkout/page.ts` (Tunnel de commande).
-  - [ ] Step 1: Informations (Server Action validation).
-  - [ ] Step 2: Adresses (Selection visuelle).
+- [x] Composant `CartSheet` (Sheet Shadcn/UI pour le mini-panier).
+- [x] Page `cart/page.ts` (Résumé détaillé - Server Component).
+- [x] Page `checkout/page.ts` (Tunnel de commande).
+  - [x] Step 1: Informations (Server Action validation).
+  - [x] Step 2: Adresses (Selection visuelle).
   - [ ] Step 3: Livraison (Calcul frais de port temps réel).
   - [ ] Step 4: Paiement (Intégration MVola/Stripe/Paypal Elements).
 

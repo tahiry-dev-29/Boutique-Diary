@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    
     const where: Record<string, unknown> = {};
 
     if (status && status !== "all") {
@@ -29,7 +28,6 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
         where,
@@ -39,6 +37,12 @@ export async function GET(request: NextRequest) {
               id: true,
               username: true,
               email: true,
+            },
+          },
+          transactions: {
+            take: 1,
+            select: {
+              metadata: true,
             },
           },
           items: {
@@ -63,7 +67,6 @@ export async function GET(request: NextRequest) {
       prisma.order.count({ where }),
     ]);
 
-    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -85,21 +88,37 @@ export async function GET(request: NextRequest) {
       prisma.order.count({ where: { createdAt: { gte: today } } }),
     ]);
 
-    
-    const formattedOrders = orders.map(order => ({
-      id: order.id,
-      reference: order.reference,
-      customer: order.customer
-        ? {
-            name: order.customer.username,
-            email: order.customer.email,
-          }
-        : { name: "Invité", email: "" },
-      status: order.status,
-      total: order.total,
-      itemCount: order.items.length,
-      createdAt: order.createdAt.toISOString(),
-    }));
+    const formattedOrders = orders.map(order => {
+      // Logic to determine customer info
+      let customerName = "Invité";
+      let customerEmail = "";
+
+      if (order.customer) {
+        customerName = order.customer.username;
+        customerEmail = order.customer.email;
+      } else if (order.transactions && order.transactions.length > 0) {
+        const metadata = order.transactions[0].metadata as any;
+        if (metadata) {
+          // Try to get name from mvolaName or fallback to phone
+          customerName =
+            metadata.mvolaName || metadata.phone || metadata.email || "Invité";
+          customerEmail = metadata.email || "";
+        }
+      }
+
+      return {
+        id: order.id,
+        reference: order.reference,
+        customer: {
+          name: customerName,
+          email: customerEmail,
+        },
+        status: order.status,
+        total: order.total,
+        itemCount: order.items.length,
+        createdAt: order.createdAt.toISOString(),
+      };
+    });
 
     return NextResponse.json({
       orders: formattedOrders,

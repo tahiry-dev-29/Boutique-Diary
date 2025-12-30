@@ -149,6 +149,8 @@ export default function PaymentTransactionsPage() {
         title="Transactions"
         description="Historique complet des paiements reçus."
         backHref="/admin/payment"
+        onRefresh={fetchTransactions}
+        isLoading={loading}
       >
         <Button variant="outline">
           <Download className="w-4 h-4 mr-2" />

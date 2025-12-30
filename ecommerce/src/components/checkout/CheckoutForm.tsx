@@ -1,0 +1,331 @@
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import PhoneInput from "./PhoneInput";
+import AddressMap from "./AddressMap";
+import PaymentMethods from "./PaymentMethods";
+import { useCartStore } from "@/lib/cart-store";
+
+const formSchema = z.object({
+  email: z.string().email("Email invalide"),
+  phone: z.string().min(10, "Numéro de téléphone invalide"),
+  address: z.string().min(5, "L'adresse est requise"),
+  complement: z.string().optional(),
+  paymentMethod: z.enum(["mvola", "orange_money", "airtel_money", "card"]),
+  mvolaPhone: z.string().optional(),
+  mvolaName: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export default function CheckoutForm() {
+  const router = useRouter();
+  const { items, clearCart } = useCartStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [addressCoords, setAddressCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      phone: "",
+      address: "",
+      complement: "",
+      paymentMethod: undefined,
+      mvolaPhone: "",
+      mvolaName: "",
+    },
+  });
+
+  const {
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+
+  // Fetch logged-in user email and addresses
+  useEffect(() => {
+    const fetchUserAndAddresses = async () => {
+      try {
+        // 1. Fetch User Info
+        const userRes = await fetch("/api/auth/me");
+        const userData = await userRes.json();
+
+        if (userData.user?.email) {
+          setUserEmail(userData.user.email);
+          setValue("email", userData.user.email);
+        }
+
+        // 2. Fetch User Addresses
+        if (userData.user) {
+          const addressRes = await fetch("/api/customer/addresses");
+          if (addressRes.ok) {
+            const addresses = await addressRes.json();
+
+            if (addresses && addresses.length > 0) {
+              // Find default address or take the first one
+              const defaultAddress =
+                addresses.find(
+                  (a: {
+                    isDefault: boolean;
+                    street: string;
+                    city: string;
+                    postalCode: string;
+                    phoneNumber?: string;
+                  }) => a.isDefault,
+                ) || addresses[0];
+
+              if (defaultAddress) {
+                // Construct address string
+                const fullAddress = [
+                  defaultAddress.street,
+                  defaultAddress.city,
+                  defaultAddress.postalCode,
+                ]
+                  .filter(Boolean)
+                  .join(", ");
+
+                setValue("address", fullAddress, { shouldValidate: true });
+
+                // If phone is in address, pre-fill it (if not already set or override?)
+                // Let's only set if the form phone is empty to respect user input if they started typing
+                // But since this runs on mount/auth check, it's likely early.
+                if (defaultAddress.phoneNumber) {
+                  setValue("phone", defaultAddress.phoneNumber, {
+                    shouldValidate: true,
+                  });
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch user data", err);
+      }
+    };
+    fetchUserAndAddresses();
+  }, [setValue]);
+
+  const selectedPaymentMethod = watch("paymentMethod");
+  const phoneValue = watch("phone");
+  const addressValue = watch("address");
+  const mvolaPhoneValue = watch("mvolaPhone");
+  const mvolaNameValue = watch("mvolaName");
+
+  const onAddressSelect = useCallback(
+    (address: string, latLng: { lat: number; lng: number }) => {
+      setValue("address", address, { shouldValidate: true });
+      setAddressCoords(latLng);
+    },
+    [setValue],
+  );
+
+  const onSubmit = async (data: FormValues) => {
+    if (items.length === 0) {
+      toast.error("Votre panier est vide");
+      return;
+    }
+
+    if (data.paymentMethod === "mvola") {
+      if (!data.mvolaPhone) {
+        form.setError("mvolaPhone", {
+          type: "manual",
+          message: "Numéro MVola requis",
+        });
+        return;
+      }
+      if (!data.mvolaName) {
+        form.setError("mvolaName", {
+          type: "manual",
+          message: "Nom du titulaire requis",
+        });
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            productId: item.productId,
+            productImageId: item.productImageId,
+            quantity: item.quantity,
+            price: item.price,
+            color: item.color,
+            size: item.size,
+          })),
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          addressComplement: data.complement,
+          addressCoords,
+          paymentMethod: data.paymentMethod,
+          mvolaPhone: data.mvolaPhone,
+          mvolaName: data.mvolaName,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error(result.error || "Erreur lors de la commande");
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast.success("Commande validée avec succès !");
+      clearCart();
+      router.push(`/checkout/success?ref=${result.order.reference}`);
+    } catch (error) {
+      console.error("Order error:", error);
+      toast.error("Erreur de connexion. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+            1
+          </span>
+          Identification
+        </h2>
+        <div className="grid gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Email *</label>
+            <input
+              type="email"
+              {...form.register("email")}
+              placeholder="votre@email.com"
+              readOnly={!!userEmail}
+              className={`w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-900 focus:ring-2 focus:ring-black/5 focus:border-black transition-all ${userEmail ? "cursor-not-allowed opacity-70" : ""}`}
+            />
+            {userEmail && (
+              <p className="text-xs text-gray-500">Email de votre compte</p>
+            )}
+            {errors.email && (
+              <p className="text-xs text-red-500">{errors.email.message}</p>
+            )}
+          </div>
+          <PhoneInput
+            value={phoneValue}
+            onChange={val => setValue("phone", val, { shouldValidate: true })}
+            error={errors.phone?.message}
+          />
+        </div>
+      </section>
+
+      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+            2
+          </span>
+          Livraison
+        </h2>
+
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Adresse de livraison
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={addressValue}
+                readOnly
+                placeholder="Sélectionnez votre position sur la carte"
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-700 cursor-not-allowed"
+              />
+            </div>
+            {errors.address && (
+              <p className="text-xs text-red-500">{errors.address.message}</p>
+            )}
+          </div>
+
+          <AddressMap onAddressSelect={onAddressSelect} />
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Complément d'adresse (Cité, étage, porte...)
+            </label>
+            <input
+              {...form.register("complement")}
+              placeholder="Ex: Porte A, 2ème étage..."
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-gray-400"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+            3
+          </span>
+          Paiement
+        </h2>
+        <PaymentMethods
+          selected={selectedPaymentMethod || null}
+          onChange={val =>
+            setValue("paymentMethod", val, { shouldValidate: true })
+          }
+          mvolaPhone={mvolaPhoneValue || ""}
+          onMvolaPhoneChange={val => setValue("mvolaPhone", val)}
+          mvolaName={mvolaNameValue || ""}
+          onMvolaNameChange={val => setValue("mvolaName", val)}
+        />
+        {errors.paymentMethod && (
+          <p className="text-xs text-red-500 mt-2">
+            {errors.paymentMethod.message}
+          </p>
+        )}
+      </section>
+
+      <div className="pt-4">
+        <button
+          type="submit"
+          disabled={isSubmitting || items.length === 0}
+          className="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-gray-900 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Traitement...
+            </>
+          ) : (
+            "Confirmer le paiement"
+          )}
+        </button>
+        <div className="text-center mt-4">
+          <Link
+            href="/"
+            className="text-sm text-gray-500 hover:text-black hover:underline flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour à la boutique
+          </Link>
+        </div>
+      </div>
+    </form>
+  );
+}

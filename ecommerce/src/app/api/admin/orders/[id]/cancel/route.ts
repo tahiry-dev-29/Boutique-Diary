@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
+import { replenishOrderStock } from "@/lib/stock-utils";
 
 export async function PATCH(
   request: NextRequest,
@@ -9,7 +9,6 @@ export async function PATCH(
   try {
     const { id } = await params;
 
-    
     const order = await prisma.order.findUnique({
       where: { id },
     });
@@ -18,7 +17,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    
     if (!["PENDING", "PROCESSING"].includes(order.status)) {
       return NextResponse.json(
         { error: "Cette commande ne peut pas être annulée" },
@@ -26,12 +24,16 @@ export async function PATCH(
       );
     }
 
-    
-    const updatedOrder = await prisma.order.update({
-      where: { id },
-      data: {
-        status: "CANCELLED",
-      },
+    const updatedOrder = await prisma.$transaction(async tx => {
+      const order = await tx.order.update({
+        where: { id },
+        data: {
+          status: "CANCELLED",
+        },
+      });
+
+      await replenishOrderStock(id, tx);
+      return order;
     });
 
     return NextResponse.json({

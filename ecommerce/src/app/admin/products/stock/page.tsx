@@ -9,7 +9,6 @@ import {
   Loader2,
   Save,
   Check,
-  RefreshCw,
   TrendingUp,
   ClipboardList,
   ChevronLeft,
@@ -318,7 +317,6 @@ export default function StockPage() {
     );
   }, [products]);
 
-  
   const handleSort = (key: keyof AuditItem | "status") => {
     setSortConfig(current => ({
       key,
@@ -362,6 +360,8 @@ export default function StockPage() {
       <PageHeader
         title="Gestion des Stocks"
         description="Suivez et mettez à jour l'inventaire de vos produits"
+        onRefresh={fetchStock}
+        isLoading={loading}
       />
 
       {}
@@ -445,13 +445,6 @@ export default function StockPage() {
               autoFocus
             />
           </div>
-          <Button
-            variant="outline"
-            onClick={() => fetchStock()}
-            className="flex items-center gap-2"
-          >
-            <RefreshCw size={16} /> Actualiser
-          </Button>
         </div>
 
         <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
