@@ -26,7 +26,10 @@ interface GeneratedBlogContent {
 export async function generateBlogContent(
   product: ProductInfo,
 ): Promise<GeneratedBlogContent> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3-flash-preview",
+    generationConfig: { responseMimeType: "application/json" },
+  });
 
   const prompt = `Tu es un rédacteur web expert spécialisé dans la mode et le lifestyle pour une boutique e-commerce malgache premium appelée "Boutique Diary".
 
@@ -82,16 +85,9 @@ Génère un article de blog COMPLET, PROFESSIONNEL et ENGAGEANT pour ce produit:
 
   try {
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+    const text = result.response.text();
 
-    // Clean potential markdown code blocks
-    const cleanedText = text
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
-
-    const parsed = JSON.parse(cleanedText) as GeneratedBlogContent;
+    const parsed = JSON.parse(text) as GeneratedBlogContent;
 
     return {
       title: parsed.title || `Découvrez ${product.name}`,
@@ -103,7 +99,10 @@ Génère un article de blog COMPLET, PROFESSIONNEL et ENGAGEANT pour ce produit:
       metaDescription: parsed.metaDescription || parsed.excerpt || "",
     };
   } catch (error) {
-    console.error("[Gemini] Error generating blog content:", error);
+    console.error("[Gemini] ERROR IN GENERATION:", error);
+    if (error instanceof Error) {
+      console.error("[Gemini] Error details:", error.message);
+    }
 
     // Fallback content if Gemini fails
     return {
@@ -132,7 +131,9 @@ Génère un article de blog COMPLET, PROFESSIONNEL et ENGAGEANT pour ce produit:
  * Generate a URL-safe slug from a title
  */
 export function generateSlug(title: string): string {
-  return title
+  if (!title) return `post-${Date.now()}`;
+
+  const slug = title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") // Remove accents
@@ -141,4 +142,10 @@ export function generateSlug(title: string): string {
     .replace(/-+/g, "-") // Replace multiple hyphens
     .trim()
     .slice(0, 100); // Limit length
+
+  if (slug.length < 2) {
+    return `post-${Date.now()}`;
+  }
+
+  return slug;
 }

@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId } = body;
+    const { productId, productImageId } = body;
 
     if (!productId) {
       return NextResponse.json(
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
       where: { id: productId },
       include: {
         category: { select: { name: true } },
-        images: { take: 1, select: { url: true } },
-        blogPost: true,
+        images: true, // Fetch all images to find the variant
+        blogPosts: true, // Use array
       },
     });
 
@@ -74,25 +74,51 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Check if blog post already exists
-    if (product.blogPost) {
+    // Check if blog post already exists for this specific target (Main or Variant)
+    const existingPost = product.blogPosts.find(bp =>
+      productImageId
+        ? bp.productImageId === productImageId
+        : !bp.productImageId,
+    );
+
+    if (existingPost) {
       return NextResponse.json(
         {
-          error: "Un article existe déjà pour ce produit",
-          existing: product.blogPost,
+          error: "Un article existe déjà pour ce produit/variante",
+          existing: existingPost,
         },
         { status: 409 },
       );
     }
 
+    // Determine context for AI
+    let contextName = product.name;
+    let contextColors = product.colors;
+    let coverImage = product.images[0]?.url || null;
+
+    if (productImageId) {
+      const variantImage = product.images.find(
+        img => img.id === productImageId,
+      );
+      if (variantImage) {
+        if (variantImage.reference) {
+          contextName = `${product.name} (${variantImage.reference})`;
+        }
+        if (variantImage.color) {
+          contextColors = [variantImage.color];
+        }
+        coverImage = variantImage.url;
+      }
+    }
+
     // Generate content with Gemini
     const generatedContent = await generateBlogContent({
-      name: product.name,
+      name: contextName,
       description: product.description,
       brand: product.brand,
       category: product.category?.name || null,
       price: product.price,
-      colors: product.colors,
+      colors: contextColors,
       sizes: product.sizes,
     });
 
@@ -111,8 +137,9 @@ export async function POST(request: NextRequest) {
         slug,
         excerpt: generatedContent.excerpt,
         content: generatedContent.content,
-        coverImage: product.images[0]?.url || null,
+        coverImage,
         productId: product.id,
+        productImageId: productImageId || null,
         metaTitle: generatedContent.metaTitle,
         metaDescription: generatedContent.metaDescription,
         isPublished: false, // Draft by default
@@ -157,6 +184,29 @@ export async function PUT(request: NextRequest) {
     console.error("[Blog API] Error bulk updating:", error);
     return NextResponse.json(
       { error: "Failed to update blog posts" },
+      { status: 500 },
+    );
+  }
+}
+// DELETE: Bulk delete blog posts
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { ids } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "No IDs provided" }, { status: 400 });
+    }
+
+    await prisma.blogPost.deleteMany({
+      where: { id: { in: ids } },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[Blog API] Error bulk deleting:", error);
+    return NextResponse.json(
+      { error: "Failed to delete blog posts" },
       { status: 500 },
     );
   }

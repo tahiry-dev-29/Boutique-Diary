@@ -92,7 +92,7 @@ model Product {
   orderItems     OrderItem[]
   reviews        Review[]
   wishlistedBy   WishlistItem[]
-  blogPost       BlogPost?
+  blogPosts      BlogPost[]
 }
 
 // Cart Models
@@ -172,6 +172,7 @@ model ProductImage {
   product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   stockMovements  StockMovement[] // Relation for history
   orderItems      OrderItem[]
+  blogPosts       BlogPost[]
 }
 
 model Category {
@@ -474,8 +475,12 @@ model BlogPost {
   coverImage String? @db.Text
 
   // Link to product
-  productId Int     @unique
+  productId Int
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Optional: Link to specific variant image
+  productImageId Int?
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id])
 
   // Metadata
   isPublished Boolean @default(false)

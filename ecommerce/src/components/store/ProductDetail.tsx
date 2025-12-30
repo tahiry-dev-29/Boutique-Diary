@@ -1,16 +1,61 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Check, AlertCircle, ShoppingCart, Heart } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  Star,
+  Check,
+  AlertCircle,
+  ShoppingCart,
+  Heart,
+  BookOpen,
+} from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { COLOR_MAP } from "@/lib/constants";
 import { useCartStore } from "@/lib/cart-store";
 import anime from "animejs";
 import { toast } from "sonner";
 
+interface ProductImage {
+  id: number;
+  url: string;
+  color?: string | null;
+  reference?: string | null;
+  price?: number | null;
+  oldPrice?: number | null;
+  stock?: number | null;
+  sizes?: string[];
+}
+
+interface Product {
+  id: number;
+  name: string;
+  reference: string;
+  description: string;
+  price: number;
+  oldPrice?: number | null;
+  stock: number;
+  rating?: number | null;
+  reviewCount?: number | null;
+  isNew?: boolean;
+  isBestSeller?: boolean;
+  colors: string[];
+  sizes: string[];
+  category?: { name: string } | null;
+  images: ProductImage[];
+  blogPosts: BlogPost[];
+}
+
 interface ProductDetailProps {
-  product: any;
+  product: Product;
+}
+
+interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  productImageId: number | null;
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
@@ -21,25 +66,25 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
 
   useEffect(() => {
+    const checkWishlistStatus = async () => {
+      try {
+        const res = await fetch("/api/customer/wishlist");
+        if (res.ok) {
+          const wishlist = await res.json();
+          const isInWishlist = wishlist.some(
+            (item: { productId: number }) => item.productId === product.id,
+          );
+          setIsWishlisted(isInWishlist);
+        }
+      } catch (err) {
+        console.error("Error checking wishlist", err);
+      }
+    };
+
     if (product?.id) {
       checkWishlistStatus();
     }
   }, [product?.id]);
-
-  const checkWishlistStatus = async () => {
-    try {
-      const res = await fetch("/api/customer/wishlist");
-      if (res.ok) {
-        const wishlist = await res.json();
-        const isInWishlist = wishlist.some(
-          (item: any) => item.productId === product.id,
-        );
-        setIsWishlisted(isInWishlist);
-      }
-    } catch (err) {
-      console.error("Error checking wishlist", err);
-    }
-  };
 
   const toggleWishlist = async () => {
     setIsWishlistLoading(true);
@@ -67,15 +112,28 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           },
         });
       }
-    } catch (err) {
+    } catch {
       toast.error("Erreur de connexion");
     } finally {
       setIsWishlistLoading(false);
     }
   };
 
-  const images =
-    product?.images?.length > 0 ? product.images : [{ id: 0, url: null }];
+  const images: ProductImage[] =
+    product?.images?.length > 0
+      ? product.images
+      : [
+          {
+            id: 0,
+            url: "",
+            color: null,
+            reference: null,
+            price: null,
+            oldPrice: null,
+            stock: null,
+            sizes: [],
+          },
+        ];
   const currentImage = images[selectedImageIndex];
 
   const displayPrice = currentImage?.price ?? product?.price;
@@ -85,16 +143,19 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const uniqueColors = product?.colors || [];
 
-  const availableSizes =
-    currentImage?.sizes && currentImage.sizes.length > 0
-      ? currentImage.sizes
-      : product?.sizes || [];
+  const availableSizes = useMemo(
+    () =>
+      currentImage?.sizes && currentImage.sizes.length > 0
+        ? currentImage.sizes
+        : product?.sizes || [],
+    [currentImage, product?.sizes],
+  );
 
   useEffect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
       setSelectedSize(null);
     }
-  }, [selectedImageIndex, availableSizes, selectedSize]);
+  }, [availableSizes, selectedSize]);
 
   useEffect(() => {
     anime({
@@ -116,7 +177,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, []);
 
   const handleColorSelect = (color: string) => {
-    const index = images.findIndex((img: any) => img.color === color);
+    const index = images.findIndex(img => img.color === color);
     if (index !== -1) {
       setSelectedImageIndex(index);
     }
@@ -155,6 +216,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
     : 0;
 
+  // Determine which blog post to link to
+  // Priority: Specific variant blog -> Main product blog
+  const blogPosts: BlogPost[] = product.blogPosts || [];
+  const currentBlogPost =
+    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
+    blogPosts.find(bp => !bp.productImageId);
+
   return (
     <section className="py-8 md:py-16 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_450px] gap-12 items-start">
@@ -162,12 +230,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
           {}
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible order-2 md:order-1">
-            {images.map((img: any, i: number) => (
+            {images.map((img, i) => (
               <button
                 key={img.id || i}
                 onClick={() => setSelectedImageIndex(i)}
                 className={cn(
-                  "relative flex-shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-all",
+                  "relative shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-all",
                   selectedImageIndex === i
                     ? "border-black ring-1 ring-black/20"
                     : "border-transparent hover:border-gray-300",
@@ -186,7 +254,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {}
-          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-[3/4] md:aspect-[4/5] max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
+          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
                 src={currentImage.url}
@@ -347,7 +415,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={cn(
-                        "h-12 min-w-[3rem] px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
+                        "h-12 min-w-12 px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
                         selectedSize === size
                           ? "bg-black text-white border-black shadow-md"
                           : "border-gray-200 text-gray-700 hover:border-black",
@@ -438,6 +506,28 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               Livraison gratuite pour les commandes de plus de $200. Retours
               sous 30 jours.
             </p>
+
+            {currentBlogPost && currentBlogPost.slug && (
+              <div className="mt-8 pt-8 border-t border-gray-100">
+                <Link
+                  href={`/blog/${currentBlogPost.slug}`}
+                  className="group flex items-center gap-4 p-4 rounded-xl bg-linear-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all border border-amber-100/50"
+                  target="_blank"
+                >
+                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-0.5">
+                      Découvrir
+                    </p>
+                    <h4 className="font-bold text-gray-900 group-hover:text-amber-800 transition-colors">
+                      {currentBlogPost.title}
+                    </h4>
+                  </div>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

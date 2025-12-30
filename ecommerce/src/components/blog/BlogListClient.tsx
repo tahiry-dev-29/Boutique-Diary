@@ -30,7 +30,6 @@ export default function BlogList({ initialPosts }: BlogListProps) {
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
   const limit = 10;
 
   const loadMore = async () => {
@@ -38,13 +37,29 @@ export default function BlogList({ initialPosts }: BlogListProps) {
     setLoading(true);
 
     try {
+      // Offset logic:
+      // Server renders 1 featured + initialPosts.length (list).
+      // Total items rendered before loadMore = 1 + posts.length.
+      // So the next item starts at offset = 1 + posts.length.
+      // Example: 1 featured, 19 in list. Total 20. Next offset should be 20. (Since offset is 0-indexed count).
+      // Actually strictly speaking:
+      // If we have 20 items (0..19), the next one is index 20.
+      // So offset = current total count.
+      const currentOffset = posts.length + 1; // +1 for the featured post
+
       const nextPosts = await fetch(
-        `/api/blog?limit=${limit}&offset=${page * limit + 1}&excludeFeatured=true`, // +1 for featured post potentially? Adjusted logic needed
-      ).then(res => res.json());
+        `/api/blog?limit=${limit}&offset=${currentOffset}&excludeFeatured=true`,
+      ).then((res) => res.json());
 
       if (nextPosts.posts && nextPosts.posts.length > 0) {
-        setPosts(prev => [...prev, ...nextPosts.posts]);
-        setPage(prev => prev + 1);
+        setPosts((prev) => {
+          // Ensure no duplicates just in case
+          const existingIds = new Set(prev.map((p) => p.id));
+          const uniqueNewPosts = nextPosts.posts.filter(
+            (p: BlogPost) => !existingIds.has(p.id),
+          );
+          return [...prev, ...uniqueNewPosts];
+        });
         if (nextPosts.posts.length < limit) setHasMore(false);
       } else {
         setHasMore(false);
@@ -57,12 +72,12 @@ export default function BlogList({ initialPosts }: BlogListProps) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="w-full">
       <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-10">
         Tous nos articles
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map(post => (
+        {posts.map((post) => (
           <Link key={post.id} href={`/blog/${post.slug}`} className="group">
             <article className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
               {/* Image */}

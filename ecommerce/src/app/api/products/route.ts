@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         category: true,
         promotionRule: true,
         variations: true,
-        blogPost: { select: { id: true } },
+        blogPosts: { select: { id: true, productImageId: true } },
       },
       orderBy: {
         createdAt: "desc",

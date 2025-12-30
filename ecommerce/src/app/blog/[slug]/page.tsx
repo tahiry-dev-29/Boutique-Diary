@@ -2,13 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ArrowLeft,
-  Calendar,
-  Eye,
-  ShoppingBag,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, Calendar, Eye, ShoppingBag } from "lucide-react";
 
 interface BlogPost {
   id: number;
@@ -86,7 +80,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     }).format(amount);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
       {/* Hero Image */}
       {post.coverImage && (
         <div className="relative h-[40vh] md:h-[50vh] overflow-hidden">
@@ -97,7 +91,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
             <div className="max-w-4xl mx-auto">
               <Link
@@ -121,8 +115,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
           {/* Article Content */}
           <article className="lg:col-span-2">
             {!post.coverImage && (
@@ -164,13 +158,17 @@ export default async function BlogPostPage({ params }: PageProps) {
             )}
 
             {/* Article Content */}
+            {/* Article Content */}
             <div
               className="prose prose-lg dark:prose-invert max-w-none
-                prose-headings:font-bold prose-headings:text-foreground
-                prose-p:text-muted-foreground prose-p:leading-relaxed
-                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                prose-li:text-muted-foreground
-                prose-strong:text-foreground"
+                font-medium
+                prose-headings:font-black prose-headings:tracking-tight prose-headings:text-foreground prose-headings:mb-6 prose-headings:mt-12
+                prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-[2.0] prose-p:mb-8 prose-p:text-lg
+                prose-a:text-primary prose-a:font-bold prose-a:no-underline hover:prose-a:underline
+                prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-li:leading-loose prose-li:my-2
+                prose-strong:text-foreground prose-strong:font-black
+                prose-ul:my-8 prose-ul:list-disc prose-ul:pl-6
+                prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-10 prose-img:border prose-img:border-gray-100 dark:prose-img:border-gray-800"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </article>
