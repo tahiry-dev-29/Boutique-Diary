@@ -233,7 +233,7 @@ export function OrderFloatingPanel({
 
         <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6">
           <div className="space-y-6 sm:space-y-8">
-            {/* Status Section */}
+            {}
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-secondary/20 border border-border/50">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-muted-foreground">

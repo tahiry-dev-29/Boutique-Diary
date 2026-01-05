@@ -45,7 +45,7 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
         );
 
         if (!response.ok) {
-          // 503 is temporary - don't show error, next debounce will retry
+          
           if (response.status === 503) {
             console.warn(
               "[AddressMap] Service unavailable, will retry on next move",
@@ -72,7 +72,7 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
         }
       } catch (error) {
         console.error("[AddressMap] Geocoding error:", error);
-        // Silent fail - user can retry by moving the map
+        
       } finally {
         setLoading(false);
       }

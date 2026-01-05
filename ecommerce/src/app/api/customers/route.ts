@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const customers = await prisma.user.findMany({
       where: {
-        role: "CUSTOMER", 
+        role: "CUSTOMER",
       },
       select: {
         id: true,
@@ -48,3 +48,35 @@ export async function GET() {
     );
   }
 }
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { ids } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid or empty IDs" },
+        { status: 400 },
+      );
+    }
+
+    await prisma.user.deleteMany({
+      where: {
+        id: { in: ids },
+        role: "CUSTOMER", 
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      count: ids.length,
+    });
+  } catch (error) {
+    console.error("Bulk customer delete error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete customers" },
+      { status: 500 },
+    );
+  }
+}
+import { NextRequest } from "next/server";

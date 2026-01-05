@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductImage {
-  id: number; // Added for variant tracking
+  id: number; 
   url: string;
   color?: string | null;
   sizes?: string[];

@@ -92,6 +92,7 @@ model Product {
   orderItems     OrderItem[]
   reviews        Review[]
   wishlistedBy   WishlistItem[]
+  blogPosts      BlogPost[]
 }
 
 // Cart Models
@@ -171,6 +172,7 @@ model ProductImage {
   product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   stockMovements  StockMovement[] // Relation for history
   orderItems      OrderItem[]
+  blogPosts       BlogPost[]
 }
 
 model Category {
@@ -461,4 +463,39 @@ model Address {
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Blog system - AI generated articles for products
+model BlogPost {
+  id         Int     @id @default(autoincrement())
+  title      String  @db.VarChar(255)
+  slug       String  @unique @db.VarChar(300)
+  excerpt    String? @db.Text
+  content    String  @db.Text
+  coverImage String? @db.Text
+
+  // Link to product
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Optional: Link to specific variant image
+  productImageId Int?
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id])
+
+  // Metadata
+  isPublished Boolean @default(false)
+  viewCount   Int     @default(0)
+
+  // SEO
+  metaTitle       String? @db.VarChar(255)
+  metaDescription String? @db.Text
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  @@index([productId])
+  @@index([isPublished])
+  @@index([slug])
 }

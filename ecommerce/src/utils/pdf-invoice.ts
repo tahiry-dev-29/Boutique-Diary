@@ -2,11 +2,11 @@ import jsPDF from "jspdf";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-// --- Interfaces ---
+
 export interface InvoiceData {
   id: string;
   reference: string;
-  status: "PAID" | "PENDING" | "CANCELLED"; // Typed status for better handling
+  status: "PAID" | "PENDING" | "CANCELLED"; 
   total: number;
   createdAt: string;
   customer: {
@@ -24,11 +24,11 @@ export interface InvoiceData {
   }>;
 }
 
-// --- Configuration & Constants ---
+
 const STYLE = {
   colors: {
-    primary: "#d4a373", // Main brand color (Tan/Gold)
-    secondary: "#faedcd", // Light background for accents
+    primary: "#d4a373", 
+    secondary: "#faedcd", 
     text: {
       dark: "#111827",
       medium: "#4b5563",
@@ -49,7 +49,7 @@ const STYLE = {
   },
 };
 
-// --- Helper Functions ---
+
 
 const formatMoney = (amount: number): string =>
   new Intl.NumberFormat("fr-MG", {
@@ -84,14 +84,14 @@ const drawStatusBadge = (doc: jsPDF, status: string, x: number, y: number) => {
   doc.text(config.text, x - 11, y, { align: "center" });
 };
 
-// --- Section Generators ---
+
 
 const drawHeader = (doc: jsPDF, pageWidth: number) => {
-  // Decorative top bar
+  
   doc.setFillColor(STYLE.colors.primary);
   doc.rect(0, 0, pageWidth, 5, "F");
 
-  // Brand Logo
+  
   doc.setFontSize(28);
   doc.setTextColor(STYLE.colors.text.dark);
   doc.setFont(STYLE.fonts.main, "bold");
@@ -101,7 +101,7 @@ const drawHeader = (doc: jsPDF, pageWidth: number) => {
   doc.setFont(STYLE.fonts.main, "italic");
   doc.text("Diary", STYLE.layout.marginX + 48, 25);
 
-  // Tagline
+  
   doc.setFont(STYLE.fonts.main, "normal");
   doc.setFontSize(9);
   doc.setTextColor(STYLE.colors.text.medium);
@@ -141,7 +141,7 @@ const drawCustomerSection = (
   startY: number,
   pageWidth: number,
 ) => {
-  // Divider
+  
   doc.setDrawColor(STYLE.colors.border);
   doc.line(
     STYLE.layout.marginX,
@@ -169,7 +169,7 @@ const drawCustomerSection = (
     doc.text(addressLines, STYLE.layout.marginX, startY + 19);
   }
 
-  // Shop Info (Right Side)
+  
   const rightX = pageWidth - STYLE.layout.marginX;
   doc.setFontSize(9);
   doc.setTextColor(STYLE.colors.text.light);
@@ -196,7 +196,7 @@ const drawTable = (
   const rightX = pageWidth - STYLE.layout.marginX;
   const tableWidth = pageWidth - STYLE.layout.marginX * 2;
 
-  // -- Table Header --
+  
   doc.setFillColor(STYLE.colors.text.dark);
   doc.rect(STYLE.layout.marginX, yPos - 6, tableWidth, 9, "F");
 
@@ -211,7 +211,7 @@ const drawTable = (
 
   yPos += 10;
 
-  // -- Table Rows --
+  
   items.forEach((item, index) => {
     if (index % 2 === 0) {
       doc.setFillColor(STYLE.colors.tableStripe);
@@ -272,7 +272,7 @@ const drawTotals = (
 
   yPos += 12;
 
-  // Total Box
+  
   doc.setFillColor(STYLE.colors.secondary);
   doc.rect(labelX - 10, yPos - 8, rightX - (labelX - 10), 14, "F");
 
@@ -286,7 +286,7 @@ const drawTotals = (
 const drawFooter = (doc: jsPDF, pageWidth: number, pageHeight: number) => {
   const footerY = pageHeight - 20;
 
-  // Decorative bottom line
+  
   doc.setDrawColor(STYLE.colors.primary);
   doc.setLineWidth(0.5);
   doc.line(

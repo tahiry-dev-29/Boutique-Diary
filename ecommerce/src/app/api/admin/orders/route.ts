@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const formattedOrders = orders.map(order => {
-      // Logic to determine customer info
+      
       let customerName = "Invité";
       let customerEmail = "";
 

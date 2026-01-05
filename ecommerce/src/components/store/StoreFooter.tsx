@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 
 export default function StoreFooter() {
   return (
@@ -34,8 +34,27 @@ export default function StoreFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
+                <Link
+                  href="/dashboard/customer/orders"
+                  className="hover:text-white transition-colors"
+                >
                   Mes Commandes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/customer/wishlist"
+                  className="hover:text-white transition-colors"
+                >
+                  Mes Favoris
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/customer/addresses"
+                  className="hover:text-white transition-colors"
+                >
+                  Mes Adresses
                 </Link>
               </li>
               <li>
@@ -68,32 +87,50 @@ export default function StoreFooter() {
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Chaussures
+                <Link
+                  href="/nouveautes"
+                  className="hover:text-white transition-colors"
+                >
+                  Nouveautés
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Vêtements
+                <Link
+                  href="/promotions"
+                  className="hover:text-white transition-colors"
+                >
+                  Promotions
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Accessoires
+                <Link
+                  href="/top-vente"
+                  className="hover:text-white transition-colors"
+                >
+                  Top Vente
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Bijoux
+                <Link
+                  href="/produits"
+                  className="hover:text-white transition-colors"
+                >
+                  Tous les produits
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
+                <Link
+                  href="/shop?category=men"
+                  className="hover:text-white transition-colors"
+                >
                   Hommes
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
+                <Link
+                  href="/shop?category=women"
+                  className="hover:text-white transition-colors"
+                >
                   Femmes
                 </Link>
               </li>
@@ -106,6 +143,14 @@ export default function StoreFooter() {
               Infos Entreprise
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
+              <li>
+                <Link
+                  href="/blog"
+                  className="hover:text-white transition-colors"
+                >
+                  Blog
+                </Link>
+              </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
                   À Propos

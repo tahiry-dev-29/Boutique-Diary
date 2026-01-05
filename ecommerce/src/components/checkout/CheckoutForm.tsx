@@ -69,14 +69,14 @@ export default function CheckoutForm() {
           setValue("email", userData.user.email);
         }
 
-        // 2. Fetch User Addresses
+        
         if (userData.user) {
           const addressRes = await fetch("/api/customer/addresses");
           if (addressRes.ok) {
             const addresses = await addressRes.json();
 
             if (addresses && addresses.length > 0) {
-              // Find default address or take the first one
+              
               const defaultAddress =
                 addresses.find(
                   (a: {
@@ -89,7 +89,7 @@ export default function CheckoutForm() {
                 ) || addresses[0];
 
               if (defaultAddress) {
-                // Construct address string
+                
                 const fullAddress = [
                   defaultAddress.street,
                   defaultAddress.city,
@@ -100,9 +100,9 @@ export default function CheckoutForm() {
 
                 setValue("address", fullAddress, { shouldValidate: true });
 
-                // If phone is in address, pre-fill it (if not already set or override?)
-                // Let's only set if the form phone is empty to respect user input if they started typing
-                // But since this runs on mount/auth check, it's likely early.
+                
+                
+                
                 if (defaultAddress.phoneNumber) {
                   setValue("phone", defaultAddress.phoneNumber, {
                     shouldValidate: true,

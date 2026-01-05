@@ -107,8 +107,8 @@ export default function StoreProductBanner({
               key={i}
               className="absolute w-1.5 h-1.5 bg-white rounded-full opacity-30 blur-[1px]"
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
+                top: `${(i * 13) % 100}%`,
+                left: `${(i * 21) % 100}%`,
                 animationDelay: `${i * 0.8}s`,
               }}
             />
@@ -127,7 +127,10 @@ export default function StoreProductBanner({
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.85] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-both">
             {title.split(" ").map((word, i) => (
               <span key={i} className="inline-block mr-4 last:mr-0">
-                {word === "Produits" || word === "Promotions" ? (
+                {word === "Produits" ||
+                word === "Promotions" ||
+                word === "Journal" ||
+                word === "Nouveautés" ? (
                   <span
                     className={cn(
                       "bg-gradient-to-r bg-clip-text text-transparent italic",

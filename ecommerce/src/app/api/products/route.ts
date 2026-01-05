@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
 
     const whereClause: any = {};
 
-    
     if (deleted === "true") {
       whereClause.deletedAt = { not: null };
     } else {
@@ -35,6 +34,7 @@ export async function GET(request: NextRequest) {
         category: true,
         promotionRule: true,
         variations: true,
+        blogPosts: { select: { id: true, productImageId: true } },
       },
       orderBy: {
         createdAt: "desc",
@@ -202,6 +202,60 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: "Failed to create product" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { ids, data } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "No IDs provided" }, { status: 400 });
+    }
+
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[Products API] Error bulk updating:", error);
+    return NextResponse.json(
+      { error: "Failed to update products" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { ids, permanent } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "No IDs provided" }, { status: 400 });
+    }
+
+    if (permanent === true) {
+      await prisma.product.deleteMany({
+        where: { id: { in: ids } },
+      });
+    } else {
+      await prisma.product.updateMany({
+        where: { id: { in: ids } },
+        data: { deletedAt: new Date() },
+      });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[Products API] Error bulk deleting:", error);
+    return NextResponse.json(
+      { error: "Failed to delete products" },
       { status: 500 },
     );
   }

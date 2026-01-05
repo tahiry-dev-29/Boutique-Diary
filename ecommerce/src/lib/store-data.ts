@@ -41,7 +41,6 @@ export async function getPromotionalProducts(limit = 3) {
       },
     });
 
-    
     if (products.length < limit) {
       const fallback = await prisma.product.findMany({
         where: {
@@ -51,7 +50,7 @@ export async function getPromotionalProducts(limit = 3) {
         },
         include: { images: true, category: true },
         take: limit - products.length,
-        orderBy: { createdAt: "asc" }, 
+        orderBy: { createdAt: "asc" },
       });
       return [...products, ...fallback];
     }
@@ -64,7 +63,6 @@ export async function getPromotionalProducts(limit = 3) {
 
 export async function getTopSellingProducts(limit = 4) {
   try {
-    
     const products = await prisma.product.findMany({
       where: {
         status: "PUBLISHED",
@@ -77,7 +75,7 @@ export async function getTopSellingProducts(limit = 4) {
       },
       take: limit,
       orderBy: {
-        price: "desc", 
+        price: "desc",
       },
     });
     return products;
@@ -97,9 +95,28 @@ export async function getProductById(id: string) {
         images: true,
         category: true,
         variations: true,
+        blogPosts: {
+          select: {
+            id: true,
+            slug: true,
+            productImageId: true,
+            title: true,
+          },
+        },
       },
     });
-    return product;
+
+    if (!product) return null;
+
+    
+    return {
+      ...product,
+      variations: product.variations.map(v => ({
+        ...v,
+        price: Number(v.price),
+        oldPrice: v.oldPrice ? Number(v.oldPrice) : null,
+      })),
+    };
   } catch (error) {
     console.error(`Error fetching product ${id}:`, error);
     return null;
@@ -140,7 +157,7 @@ export async function getCategories() {
       take: 10,
     });
     return categories;
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -183,7 +200,7 @@ export async function getProducts(
         images: true,
         category: true,
       },
-      take: limit, 
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
@@ -202,7 +219,6 @@ export async function getCategoryProductsMap(
   try {
     const results: Record<string, any[]> = {};
 
-    
     await Promise.all(
       categoryNames.map(async name => {
         const category = await prisma.category.findFirst({
