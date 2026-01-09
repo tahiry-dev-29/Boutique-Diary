@@ -19,6 +19,7 @@ import {
   Package,
   Layers,
   FileText,
+  MessageSquare,
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 
@@ -104,6 +105,13 @@ const navSections: NavSection[] = [
   {
     title: "Gestion",
     items: [
+      {
+        id: "messages",
+        label: "Messages",
+        icon: MessageSquare,
+        href: "/admin/messages",
+        permission: "dashboard.view",
+      },
       {
         id: "employees",
         label: "Employés",
@@ -255,19 +263,19 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
   const getFilteredSections = (): NavSection[] => {
     return navSections
-      .map(section => ({
+      .map((section) => ({
         ...section,
         items: section.items
           .filter(filterMenuItem)
-          .map(item => ({
+          .map((item) => ({
             ...item,
             subItems: item.subItems?.filter(
-              sub => !sub.permission || hasPermission(sub.permission),
+              (sub) => !sub.permission || hasPermission(sub.permission)
             ),
           }))
-          .filter(item => !item.subItems || item.subItems.length > 0),
+          .filter((item) => !item.subItems || item.subItems.length > 0),
       }))
-      .filter(section => section.items.length > 0);
+      .filter((section) => section.items.length > 0);
   };
 
   const filteredSections = getFilteredSections();
@@ -275,20 +283,20 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const isItemActive = (item: MenuItem) => {
     if (item.href === pathname) return true;
     if (item.subItems) {
-      return item.subItems.some(sub => pathname.startsWith(sub.href));
+      return item.subItems.some((sub) => pathname.startsWith(sub.href));
     }
     return false;
   };
 
   React.useEffect(() => {
-    filteredSections.forEach(section => {
-      section.items.forEach(item => {
+    filteredSections.forEach((section) => {
+      section.items.forEach((item) => {
         if (
           item.subItems &&
           isItemActive(item) &&
           !expandedSections.includes(item.id)
         ) {
-          setExpandedSections(prev => [...prev, item.id]);
+          setExpandedSections((prev) => [...prev, item.id]);
         }
       });
     });
@@ -296,7 +304,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
-      setExpandedSections(expandedSections.filter(id => id !== sectionId));
+      setExpandedSections(expandedSections.filter((id) => id !== sectionId));
     } else {
       setExpandedSections([...expandedSections, sectionId]);
     }
@@ -367,7 +375,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
             </div>
             {isExpanded && (
               <h2 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                Boutique Dialy
+                Boutique Diary
               </h2>
             )}
           </div>
@@ -387,7 +395,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
                 <div className="h-px bg-gray-200 dark:bg-white/10 my-2 mx-2" />
               )}
 
-              {section.items.map(item => {
+              {section.items.map((item) => {
                 const isActive = isItemActive(item);
                 const isOpen = expandedSections.includes(item.id);
 
@@ -456,7 +464,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
 
                     {isExpanded && isOpen && (
                       <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 space-y-1 py-1">
-                        {item.subItems.map(subItem => {
+                        {item.subItems.map((subItem) => {
                           const isSubActive = pathname === subItem.href;
                           return (
                             <Link

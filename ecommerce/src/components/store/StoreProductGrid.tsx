@@ -29,12 +29,10 @@ export default function StoreProductGrid({
   showTitle = true,
   showFooter = true,
 }: StoreProductGridProps) {
-  const categories = ["Shoes", "Clothing", "Accessories", "Jewellery"];
+  const categories = ["Chaussures", "Vêtements", "Accessoires", "Bijoux"];
 
-  
   const displayProducts = products;
 
-  
   const colors = [
     "bg-[#f3f4f6]",
     "bg-[#f9fafb]",
@@ -59,7 +57,7 @@ export default function StoreProductGrid({
 
             {}
             <div className="flex flex-wrap gap-2">
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   className="px-5 py-2 rounded-full border border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-400 hover:border-black hover:text-black transition-all duration-300"

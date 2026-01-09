@@ -41,6 +41,13 @@ export default function CategoryTabsSection({
 
   const displayProducts = productsMap[activeTab] || [];
 
+  const categoryTranslations: Record<string, string> = {
+    Shoes: "Chaussures",
+    Clothing: "Vêtements",
+    Accessories: "Accessoires",
+    Jewellery: "Bijoux",
+  };
+
   // Animation when tab changes
   useEffect(() => {
     if (containerRef.current) {
@@ -75,7 +82,7 @@ export default function CategoryTabsSection({
 
         {}
         <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveTab(cat)}
@@ -85,7 +92,7 @@ export default function CategoryTabsSection({
                   : "bg-gray-100 text-gray-400 hover:bg-gray-200"
               }`}
             >
-              {cat}
+              {categoryTranslations[cat] || cat}
             </button>
           ))}
         </div>
@@ -116,7 +123,8 @@ export default function CategoryTabsSection({
             ))
           ) : (
             <div className="col-span-full text-center py-20 text-gray-400 font-medium italic">
-              Aucun produit trouvé dans {activeTab}.
+              Aucun produit trouvé dans{" "}
+              {categoryTranslations[activeTab] || activeTab}.
             </div>
           )}
         </div>

@@ -15,9 +15,11 @@ export async function GET(request: NextRequest) {
 
     const whereClause: any = {};
 
+    // Only show deleted products if explicitly requested
     if (deleted === "true") {
       whereClause.deletedAt = { not: null };
     } else {
+      // Default: show only non-deleted products
       whereClause.deletedAt = null;
     }
 
@@ -26,6 +28,8 @@ export async function GET(request: NextRequest) {
     if (promotionRuleId)
       whereClause.promotionRuleId = parseInt(promotionRuleId);
     if (status) whereClause.status = status;
+
+    console.log("[Products API] Fetching with filters:", whereClause);
 
     const products = await prisma.product.findMany({
       where: whereClause,
@@ -42,12 +46,14 @@ export async function GET(request: NextRequest) {
       ...(limit ? { take: parseInt(limit) } : {}),
     });
 
+    console.log(`[Products API] Found ${products.length} products`);
+
     return NextResponse.json(products);
   } catch (error: unknown) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -196,13 +202,13 @@ export async function POST(request: NextRequest) {
           error:
             "A product or variation with this reference/SKU already exists.",
         },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
     return NextResponse.json(
       { error: "Failed to create product" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -226,7 +232,7 @@ export async function PUT(request: NextRequest) {
     console.error("[Products API] Error bulk updating:", error);
     return NextResponse.json(
       { error: "Failed to update products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -256,7 +262,7 @@ export async function DELETE(request: NextRequest) {
     console.error("[Products API] Error bulk deleting:", error);
     return NextResponse.json(
       { error: "Failed to delete products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

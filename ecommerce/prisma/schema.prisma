@@ -224,6 +224,7 @@ model Admin {
   updatedAt       DateTime         @updatedAt
   reviewReplies   ReviewReply[]
   reviewReactions ReviewReaction[]
+  contactMessages ContactMessage[]
 }
 
 // New model for Stock Audit/History
@@ -498,4 +499,22 @@ model BlogPost {
   @@index([productId])
   @@index([isPublished])
   @@index([slug])
+}
+
+model ContactMessage {
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(255)
+  email   String  @db.VarChar(255)
+  phone   String? @db.VarChar(50)
+  message String  @db.Text
+  status  String  @default("UNREAD") // UNREAD, READ, REPLIED
+
+  adminId Int? // Optional field if you want to assign to an admin
+  admin   Admin? @relation(fields: [adminId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
 }
