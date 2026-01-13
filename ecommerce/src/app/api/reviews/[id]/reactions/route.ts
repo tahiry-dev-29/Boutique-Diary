@@ -9,7 +9,7 @@ export async function POST(
   try {
     const { id } = await params;
     const reviewId = parseInt(id);
-    const { type } = await request.json(); 
+    const { type } = await request.json();
 
     if (!type) {
       return NextResponse.json({ error: "Type is required" }, { status: 400 });
@@ -25,7 +25,6 @@ export async function POST(
     const userId = userPayload?.userId as number | undefined;
     const adminId = adminPayload?.userId as number | undefined;
 
-    
     const existing = await prisma.reviewReaction.findFirst({
       where: {
         reviewId,
@@ -36,11 +35,9 @@ export async function POST(
 
     if (existing) {
       if (existing.type === type) {
-        
         await prisma.reviewReaction.delete({ where: { id: existing.id } });
         return NextResponse.json({ message: "Reaction removed" });
       } else {
-        
         const updated = await prisma.reviewReaction.update({
           where: { id: existing.id },
           data: { type },

@@ -37,7 +37,7 @@ export function ProductNav() {
 
   return (
     <div className="flex items-center space-x-1 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 mb-6 w-fit">
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <Link
           key={tab.href}
           href={tab.href}

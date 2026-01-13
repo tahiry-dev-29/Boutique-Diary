@@ -69,14 +69,12 @@ export default function CheckoutForm() {
           setValue("email", userData.user.email);
         }
 
-        
         if (userData.user) {
           const addressRes = await fetch("/api/customer/addresses");
           if (addressRes.ok) {
             const addresses = await addressRes.json();
 
             if (addresses && addresses.length > 0) {
-              
               const defaultAddress =
                 addresses.find(
                   (a: {
@@ -89,7 +87,6 @@ export default function CheckoutForm() {
                 ) || addresses[0];
 
               if (defaultAddress) {
-                
                 const fullAddress = [
                   defaultAddress.street,
                   defaultAddress.city,
@@ -100,9 +97,6 @@ export default function CheckoutForm() {
 
                 setValue("address", fullAddress, { shouldValidate: true });
 
-                
-                
-                
                 if (defaultAddress.phoneNumber) {
                   setValue("phone", defaultAddress.phoneNumber, {
                     shouldValidate: true,
@@ -163,7 +157,7 @@ export default function CheckoutForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map(item => ({
+          items: items.map((item) => ({
             productId: item.productId,
             productImageId: item.productImageId,
             quantity: item.quantity,
@@ -229,7 +223,7 @@ export default function CheckoutForm() {
           </div>
           <PhoneInput
             value={phoneValue}
-            onChange={val => setValue("phone", val, { shouldValidate: true })}
+            onChange={(val) => setValue("phone", val, { shouldValidate: true })}
             error={errors.phone?.message}
           />
         </div>
@@ -286,13 +280,13 @@ export default function CheckoutForm() {
         </h2>
         <PaymentMethods
           selected={selectedPaymentMethod || null}
-          onChange={val =>
+          onChange={(val) =>
             setValue("paymentMethod", val, { shouldValidate: true })
           }
           mvolaPhone={mvolaPhoneValue || ""}
-          onMvolaPhoneChange={val => setValue("mvolaPhone", val)}
+          onMvolaPhoneChange={(val) => setValue("mvolaPhone", val)}
           mvolaName={mvolaNameValue || ""}
-          onMvolaNameChange={val => setValue("mvolaName", val)}
+          onMvolaNameChange={(val) => setValue("mvolaName", val)}
         />
         {errors.paymentMethod && (
           <p className="text-xs text-red-500 mt-2">

@@ -51,7 +51,7 @@ export default function ElectricButton({
     backgroundSize: "400% 400%",
     borderRadius: "54px",
     zIndex: -1,
-    filter: isHovered ? "blur(2px)" : "blur(0px)", 
+    filter: isHovered ? "blur(2px)" : "blur(0px)",
     opacity: isHovered ? 1 : 0.7,
     animation: "electricGlow 3s ease infinite",
   };

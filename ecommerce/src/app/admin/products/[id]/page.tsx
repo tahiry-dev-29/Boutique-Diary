@@ -1,9 +1,6 @@
-
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductDetailsView } from "@/features/products/components/ProductDetails/ProductDetailsView";
-
-
 
 async function getProduct(id: string) {
   const product = await prisma.product.findUnique({
@@ -33,7 +30,6 @@ export default async function ProductDetailsPage({
     notFound();
   }
 
-  
   const serializedProduct = {
     ...product,
     price: Number(product.price),

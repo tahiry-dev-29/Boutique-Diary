@@ -12,10 +12,10 @@ interface CartSidebarProps {
 }
 
 export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
-  const items = useCartStore(state => state.items);
-  const removeItem = useCartStore(state => state.removeItem);
-  const updateQuantity = useCartStore(state => state.updateQuantity);
-  const getSubtotal = useCartStore(state => state.getSubtotal);
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const getSubtotal = useCartStore((state) => state.getSubtotal);
 
   const subtotal = getSubtotal();
   const delivery = 0;
@@ -75,7 +75,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
                 Order Summary
               </h3>
-              {items.map(item => (
+              {items.map((item) => (
                 <div
                   key={item.id}
                   className="group relative flex gap-5 p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all duration-300"

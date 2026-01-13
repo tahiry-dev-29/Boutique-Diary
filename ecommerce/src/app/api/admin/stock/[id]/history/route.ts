@@ -12,7 +12,6 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const productImageId = searchParams.get("productImageId");
 
-    
     const productId = parseInt(id);
     const imgId = productImageId ? parseInt(productImageId) : null;
 
@@ -28,10 +27,8 @@ export async function GET(
     const history = await prisma.stockMovement.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      take: 20, 
-      include: {
-        
-      },
+      take: 20,
+      include: {},
     });
 
     return NextResponse.json(history);

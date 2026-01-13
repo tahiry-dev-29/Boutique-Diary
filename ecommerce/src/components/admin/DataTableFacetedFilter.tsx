@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -117,7 +116,11 @@ export function DataTableFacetedFilter<TData, TValue>({
                       <Check className={cn("h-4 w-4")} />
                     </div>
                     {option.icon && (
-                      <img src={option.icon} alt="" className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <img
+                        src={option.icon}
+                        alt=""
+                        className="mr-2 h-4 w-4 text-muted-foreground"
+                      />
                     )}
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (

@@ -30,7 +30,7 @@ export function ProductPerformanceTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map(product => (
+          {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell className="font-medium">{product.name}</TableCell>
               <TableCell className="text-gray-500">

@@ -37,12 +37,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    
     if (key === "admin_roles") {
       const permError = await checkApiPermission("employees.edit");
       if (permError) return permError;
     } else {
-      
       const permError = await checkApiPermission("settings.edit");
       if (permError) return permError;
     }
@@ -75,12 +73,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    
     if (key === "admin_roles") {
       const permError = await checkApiPermission("employees.edit");
       if (permError) return permError;
     } else {
-      
       const permError = await checkApiPermission("settings.edit");
       if (permError) return permError;
     }

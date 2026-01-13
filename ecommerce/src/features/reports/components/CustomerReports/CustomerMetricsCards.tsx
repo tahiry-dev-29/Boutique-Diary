@@ -12,10 +12,8 @@ export function CustomerMetricsCards({
   metrics,
   recentSignups = [],
 }: CustomerMetricsCardsProps) {
-  
-  const newCustomersChartData = recentSignups.map(d => ({ value: d.count }));
+  const newCustomersChartData = recentSignups.map((d) => ({ value: d.count }));
 
-  
   const customersChartData: any[] = [];
   const activeChartData: any[] = [];
 

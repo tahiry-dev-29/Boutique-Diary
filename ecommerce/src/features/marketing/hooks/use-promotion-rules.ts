@@ -78,7 +78,7 @@ export function usePromotionRules() {
 
       if (!res.ok) throw new Error("Erreur de suppression");
 
-      setRules(prev => prev.filter(r => r.id !== id));
+      setRules((prev) => prev.filter((r) => r.id !== id));
       toast.success("Règle supprimée");
       return true;
     } catch (err: any) {

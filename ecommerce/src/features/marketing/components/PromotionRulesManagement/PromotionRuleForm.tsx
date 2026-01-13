@@ -47,7 +47,7 @@ import { useCategories } from "@/features/categories/hooks/useCategories";
 const formSchema = z.object({
   name: z.string().min(3, "Le nom est trop court").max(255),
   priority: z.coerce.number().int().default(0),
-  conditions: z.string().refine(val => {
+  conditions: z.string().refine((val) => {
     try {
       JSON.parse(val);
       return true;
@@ -55,7 +55,7 @@ const formSchema = z.object({
       return false;
     }
   }, "JSON invalide"),
-  actions: z.string().refine(val => {
+  actions: z.string().refine((val) => {
     try {
       JSON.parse(val);
       return true;
@@ -277,7 +277,7 @@ export function PromotionRuleForm({
               <select
                 className="w-full flex h-10 rounded-md border border-input dark:bg-gray-900/50 px-3 py-2 text-sm ring-offset-background"
                 value={selectedCategoryId}
-                onChange={e => {
+                onChange={(e) => {
                   setSelectedCategoryId(e.target.value);
                   if (e.target.value) {
                     setSelectedProductId(""); // Clear specific product if category selected
@@ -286,7 +286,7 @@ export function PromotionRuleForm({
                 }}
               >
                 <option value="">-- Ignorer Catégorie --</option>
-                {categories.map(cat => (
+                {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
@@ -313,7 +313,7 @@ export function PromotionRuleForm({
                       >
                         {selectedProductId
                           ? products.find(
-                              p => p.id?.toString() === selectedProductId,
+                              (p) => p.id?.toString() === selectedProductId,
                             )?.name
                           : "Choisir un produit..."}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -342,7 +342,7 @@ export function PromotionRuleForm({
                               />
                               -- Aucun --
                             </CommandItem>
-                            {products.map(product => (
+                            {products.map((product) => (
                               <CommandItem
                                 key={product.id}
                                 value={`${product.name} ${product.reference}`}
@@ -387,7 +387,7 @@ export function PromotionRuleForm({
                 <Input
                   placeholder="Ex: PANT-HE-001"
                   value={targetReference}
-                  onChange={e => {
+                  onChange={(e) => {
                     setTargetReference(e.target.value);
                     if (e.target.value) setSelectedCategoryId("");
                   }}
@@ -430,7 +430,7 @@ export function PromotionRuleForm({
                 type="number"
                 placeholder="Ex: 20"
                 value={discountPercent}
-                onChange={e => setDiscountPercent(e.target.value)}
+                onChange={(e) => setDiscountPercent(e.target.value)}
                 min="0"
                 max="100"
               />

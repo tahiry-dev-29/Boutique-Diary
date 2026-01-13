@@ -79,7 +79,7 @@ export default function ProductCard({
       setIsWishlistLoading(false);
     }
   };
-  
+
   const discountPercentage =
     isPromotion && oldPrice && oldPrice > price
       ? Math.round(((oldPrice - price) / oldPrice) * 100)

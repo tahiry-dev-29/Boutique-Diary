@@ -35,7 +35,6 @@ export async function POST(request: Request) {
       );
     }
 
-    
     if (!admin.isActive) {
       return NextResponse.json(
         { error: "Ce compte est désactivé" },
@@ -59,7 +58,6 @@ export async function POST(request: Request) {
       role: admin.role as Role,
     };
 
-    
     await prisma.admin.update({
       where: { id: admin.id },
       data: {

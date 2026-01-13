@@ -10,7 +10,6 @@ export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    
     anime({
       targets: ".about-hero-text",
       translateY: [30, 0],
@@ -21,8 +20,8 @@ export default function AboutPage() {
     });
 
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".anim-item"),
@@ -39,7 +38,7 @@ export default function AboutPage() {
       { threshold: 0.1 },
     );
 
-    document.querySelectorAll(".anim-section").forEach(section => {
+    document.querySelectorAll(".anim-section").forEach((section) => {
       observer.observe(section);
     });
 

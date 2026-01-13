@@ -37,15 +37,7 @@ export default function BlogList({ initialPosts }: BlogListProps) {
     setLoading(true);
 
     try {
-      
-      
-      
-      
-      
-      
-      
-      
-      const currentOffset = posts.length + 1; 
+      const currentOffset = posts.length + 1;
 
       const nextPosts = await fetch(
         `/api/blog?limit=${limit}&offset=${currentOffset}&excludeFeatured=true`,
@@ -53,7 +45,6 @@ export default function BlogList({ initialPosts }: BlogListProps) {
 
       if (nextPosts.posts && nextPosts.posts.length > 0) {
         setPosts((prev) => {
-          
           const existingIds = new Set(prev.map((p) => p.id));
           const uniqueNewPosts = nextPosts.posts.filter(
             (p: BlogPost) => !existingIds.has(p.id),

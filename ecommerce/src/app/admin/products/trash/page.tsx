@@ -12,9 +12,6 @@ export default function TrashPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleEdit = (product: Product) => {
-    
-    
-    
     router.push(`/admin/products/${product.id}/edit`);
   };
 

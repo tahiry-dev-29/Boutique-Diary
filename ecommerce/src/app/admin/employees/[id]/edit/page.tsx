@@ -63,7 +63,7 @@ export default function EditEmployeePage() {
       const response = await fetch(`/api/admin/employees/${params.id}`);
       if (!response.ok) throw new Error("Failed to fetch");
       const employee = await response.json();
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         name: employee.name,
         email: employee.email,
@@ -79,12 +79,11 @@ export default function EditEmployeePage() {
     }
   };
 
-  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
@@ -171,8 +170,11 @@ export default function EditEmployeePage() {
                 type="checkbox"
                 name="isActive"
                 checked={formData.isActive}
-                onChange={e =>
-                  setFormData(prev => ({ ...prev, isActive: e.target.checked }))
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isActive: e.target.checked,
+                  }))
                 }
                 className="sr-only peer"
               />
@@ -241,7 +243,7 @@ export default function EditEmployeePage() {
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none appearance-none transition-colors"
                 >
-                  {availableRoles.map(role => (
+                  {availableRoles.map((role) => (
                     <option key={role.id} value={role.name}>
                       {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
                     </option>

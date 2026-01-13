@@ -21,7 +21,7 @@ export default function CategoriesPage() {
   };
 
   const handleSuccess = () => {
-    setRefreshTrigger(prev => prev + 1);
+    setRefreshTrigger((prev) => prev + 1);
     setShowForm(false);
     setSelectedCategory(null);
   };

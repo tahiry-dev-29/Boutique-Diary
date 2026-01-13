@@ -17,7 +17,7 @@ export default function MeherHero({
   const displayCount = customerCount;
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.map(c => ({
+      ? recentCustomers.map((c) => ({
           url: `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
@@ -30,7 +30,6 @@ export default function MeherHero({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    
     anime({
       targets: containerRef.current.querySelectorAll(".hero-animate"),
       translateY: [20, 0],
@@ -40,7 +39,6 @@ export default function MeherHero({
       duration: 800,
     });
 
-    
     anime({
       targets: containerRef.current.querySelector(".hero-badge"),
       translateX: [20, 0],

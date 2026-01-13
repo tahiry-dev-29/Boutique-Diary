@@ -7,7 +7,6 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    
     const permissionError = await checkApiPermission("employees.view");
     if (permissionError) return permissionError;
 

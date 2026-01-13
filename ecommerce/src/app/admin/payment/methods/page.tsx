@@ -78,9 +78,8 @@ export default function PaymentMethodsPage() {
     checked: boolean,
   ) => {
     try {
-      
-      setMethods(prev =>
-        prev.map(m => (m.id === method.id ? { ...m, isActive: checked } : m)),
+      setMethods((prev) =>
+        prev.map((m) => (m.id === method.id ? { ...m, isActive: checked } : m)),
       );
 
       const res = await fetch("/api/admin/payments/methods", {
@@ -94,15 +93,15 @@ export default function PaymentMethodsPage() {
     } catch (error) {
       console.error(error);
       toast.error("Erreur lors de la mise à jour");
-      fetchMethods(); 
+      fetchMethods();
     }
   };
 
   const handleSetDefault = async (method: PaymentMethod) => {
     if (method.isDefault) return;
     try {
-      setMethods(prev =>
-        prev.map(m => ({ ...m, isDefault: m.id === method.id })),
+      setMethods((prev) =>
+        prev.map((m) => ({ ...m, isDefault: m.id === method.id })),
       );
 
       const res = await fetch("/api/admin/payments/methods", {
@@ -112,7 +111,7 @@ export default function PaymentMethodsPage() {
           id: method.id,
           isDefault: true,
           isActive: true,
-        }), 
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to set default");
@@ -153,7 +152,7 @@ export default function PaymentMethodsPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {methods.map(method => (
+          {methods.map((method) => (
             <Card
               key={method.id}
               className={`transition-all ${method.isActive ? "border-primary/50 bg-primary/5" : "opacity-80"}`}
@@ -186,7 +185,7 @@ export default function PaymentMethodsPage() {
                 </div>
                 <Switch
                   checked={method.isActive}
-                  onCheckedChange={checked =>
+                  onCheckedChange={(checked) =>
                     handleToggleActive(method, checked)
                   }
                 />
@@ -211,7 +210,7 @@ export default function PaymentMethodsPage() {
                 </Button>
                 <Dialog
                   open={configuringMethod?.id === method.id}
-                  onOpenChange={open => !open && setConfiguringMethod(null)}
+                  onOpenChange={(open) => !open && setConfiguringMethod(null)}
                 >
                   <DialogTrigger asChild>
                     <Button

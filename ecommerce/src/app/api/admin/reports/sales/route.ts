@@ -9,7 +9,6 @@ export async function GET() {
   }
 
   try {
-    
     const paidOrders = await prisma.order.findMany({
       where: {
         status: {
@@ -29,20 +28,17 @@ export async function GET() {
     const totalOrders = paidOrders.length;
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-    
     const allOrdersCount = await prisma.order.count();
 
-    
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const recentOrders = paidOrders.filter(
-      order => new Date(order.createdAt) >= thirtyDaysAgo,
+      (order) => new Date(order.createdAt) >= thirtyDaysAgo,
     );
 
-    
     const salesByDate: Record<string, { revenue: number; orders: number }> = {};
-    recentOrders.forEach(order => {
+    recentOrders.forEach((order) => {
       const date = new Date(order.createdAt);
       const key = `${date.getDate().toString().padStart(2, "0")}/${(
         date.getMonth() + 1

@@ -12,10 +12,8 @@ export default function StoreBreadcrumb({
 }) {
   const pathname = usePathname();
 
-  
-  const paths = pathname.split("/").filter(path => path);
+  const paths = pathname.split("/").filter((path) => path);
 
-  
   const pathNames: Record<string, string> = {
     store: "Boutique",
     product: "Produit",
@@ -40,7 +38,6 @@ export default function StoreBreadcrumb({
       </Link>
 
       {paths.map((path, index) => {
-        
         if (
           path === "store" &&
           paths[index + 1] &&
@@ -51,19 +48,16 @@ export default function StoreBreadcrumb({
         const isLast = index === paths.length - 1;
         let href = `/${paths.slice(0, index + 1).join("/")}`;
 
-        
         if (path === "product") {
           href = "/produits";
         }
 
         let label = pathNames[path] || path;
 
-        
         if (isLast && productName) {
           label = productName;
         }
 
-        
         if (!pathNames[path] && !productName) {
           label = label.charAt(0).toUpperCase() + label.slice(1);
         }

@@ -75,7 +75,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data = defaultData }) => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#9ca3af", fontSize: 12 }}
-                tickFormatter={value => `$${value}`}
+                tickFormatter={(value) => `$${value}`}
               />
               <Tooltip
                 contentStyle={{

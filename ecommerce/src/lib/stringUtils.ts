@@ -4,7 +4,5 @@ export const generateRandomReference = (prefix: string = "REF") => {
   const randomChar = () => chars[Math.floor(Math.random() * chars.length)];
   const randomNum = () => nums[Math.floor(Math.random() * nums.length)];
 
-  
-  
   return `#${randomChar()}${randomChar()}${randomNum()}${randomNum()}${randomChar()}${randomChar()}`;
 };

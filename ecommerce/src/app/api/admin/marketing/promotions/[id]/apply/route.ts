@@ -3,10 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { checkApiPermission } from "@/lib/backend-permissions";
 import { z } from "zod";
 
-
-
-
-
 export async function POST(
   req: Request,
   props: { params: Promise<{ id: string }> },
@@ -21,7 +17,6 @@ export async function POST(
       return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
-    
     const rule = await prisma.promotionRule.findUnique({
       where: { id },
     });
@@ -37,50 +32,36 @@ export async function POST(
       );
     }
 
-    
-    
     const conditions = rule.conditions as any;
     const actions = rule.actions as any;
 
     if (!conditions?.cart_total_gt && !conditions?.categoryId) {
-      
-      
-      
-      
-      
     }
 
-    
     const whereClause: any = {};
 
-    
     if (conditions?.categoryId || conditions?.category_id) {
       whereClause.categoryId = parseInt(
         conditions.categoryId || conditions.category_id,
       );
     }
 
-    
     if (conditions?.productId) {
       whereClause.id = parseInt(conditions.productId);
     }
 
-    
     if (conditions?.reference) {
       whereClause.reference = conditions.reference;
     }
 
-    
     if (conditions?.isBestSeller) {
       whereClause.isBestSeller = true;
     }
 
-    
     if (conditions?.isNew) {
       whereClause.isNew = true;
     }
 
-    
     if (Object.keys(whereClause).length === 0) {
       return NextResponse.json(
         {
@@ -109,12 +90,10 @@ export async function POST(
       );
     }
 
-    
     const products = await prisma.product.findMany({
       where: whereClause,
     });
 
-    
     let matchingImages: any[] = [];
     if (conditions?.reference) {
       matchingImages = await prisma.productImage.findMany({
@@ -125,7 +104,6 @@ export async function POST(
     let updatedCount = 0;
     const factor = (100 - discountPercent) / 100;
 
-    
     for (const product of products) {
       const basePrice = product.oldPrice ?? product.price;
       const newPrice = Math.round(basePrice * factor);
@@ -142,10 +120,8 @@ export async function POST(
       updatedCount++;
     }
 
-    
     for (const img of matchingImages) {
       if (img.price) {
-        
         const basePrice = img.oldPrice ?? img.price;
         const newPrice = Math.round(basePrice * factor);
 
@@ -155,16 +131,14 @@ export async function POST(
             oldPrice: basePrice,
             price: newPrice,
             isPromotion: true,
-            
           },
         });
 
-        
         await prisma.product.update({
           where: { id: img.productId },
           data: {
             isPromotion: true,
-            promotionRuleId: id, 
+            promotionRuleId: id,
           },
         });
         updatedCount++;

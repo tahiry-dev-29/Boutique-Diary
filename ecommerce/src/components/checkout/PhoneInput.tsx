@@ -53,7 +53,7 @@ export default function PhoneInput({
           international
           defaultCountry="MG"
           value={normalizePhone(value)}
-          onChange={val => onChange(val as string)}
+          onChange={(val) => onChange(val as string)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className="flex h-12 px-4 focus:outline-none [&>.PhoneInputCountry]:mr-3 [&>input]:bg-transparent [&>input]:outline-none [&>input]:placeholder:text-gray-400 [&>input]:font-medium"

@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -70,7 +69,7 @@ export function ClientDataTable<TData, TValue>({
           <Input
             placeholder="Filter by email..."
             value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-            onChange={event =>
+            onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
@@ -88,9 +87,9 @@ export function ClientDataTable<TData, TValue>({
       <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
+                {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -107,12 +106,12 @@ export function ClientDataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

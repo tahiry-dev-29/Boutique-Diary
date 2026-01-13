@@ -35,7 +35,6 @@ export async function POST(req: Request) {
     const { label, street, city, postalCode, country, phoneNumber, isDefault } =
       body;
 
-    
     if (isDefault) {
       await prisma.address.updateMany({
         where: { userId: payload.userId as number },

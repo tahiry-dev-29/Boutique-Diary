@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     // MOCK MODE: If no SMTP settings are present, just log
     if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
       console.log(
-        "⚠️ MOCK EMAIL MODE - No SMTP credentials found. Skipping email send."
+        "⚠️ MOCK EMAIL MODE - No SMTP credentials found. Skipping email send.",
       );
       // No delay needed, DB save is enough confirmation
     } else {
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: "Message envoyé et enregistré avec succès",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Contact form error:", error);
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Données invalides",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: "Une erreur est survenue lors de l'envoi du message",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

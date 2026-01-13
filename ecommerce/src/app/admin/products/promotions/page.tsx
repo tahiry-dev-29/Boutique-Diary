@@ -64,7 +64,7 @@ export default function PromotionsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Toutes les promotions</SelectItem>
-              {rules.map(rule => (
+              {rules.map((rule) => (
                 <SelectItem key={rule.id} value={rule.id.toString()}>
                   {rule.name}
                 </SelectItem>
@@ -78,7 +78,7 @@ export default function PromotionsPage() {
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="h-[300px] bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"
@@ -108,7 +108,7 @@ export default function PromotionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map(product => {
+          {products.map((product) => {
             const promotedVariant = product.images?.find(
               (img: any) => img.isPromotion && typeof img !== "string",
             );

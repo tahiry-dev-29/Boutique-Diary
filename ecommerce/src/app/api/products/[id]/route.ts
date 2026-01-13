@@ -125,7 +125,6 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(initialReference !== undefined && { reference: initialReference }),
 
-        
         ...(variations !== undefined && {
           price: globalPrice,
           stock: globalStock,
@@ -148,7 +147,6 @@ export async function PUT(
         ...(status !== undefined && { status }),
         ...(deletedAt !== undefined && { deletedAt }),
 
-        
         ...(images !== undefined && globalCategoryId
           ? { category: { connect: { id: globalCategoryId } } }
           : body.categoryId !== undefined

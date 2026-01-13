@@ -81,7 +81,7 @@ export function ProductTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map(product => (
+          {products.map((product) => (
             <React.Fragment key={product.id}>
               <TableRow
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -168,7 +168,7 @@ export function ProductTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation();
                       onView(product);
                     }}
@@ -179,7 +179,7 @@ export function ProductTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation();
                       onEdit(product);
                     }}
@@ -192,7 +192,7 @@ export function ProductTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>

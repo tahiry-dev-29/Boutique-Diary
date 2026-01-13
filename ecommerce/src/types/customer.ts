@@ -1,5 +1,3 @@
-
-
 export type Role = "Admin" | "User" | "SuperAdmin";
 
 export interface Customer {
@@ -8,15 +6,14 @@ export interface Customer {
   email: string;
   role: Role;
   createdAt: string;
-  avatar?: string; 
+  avatar?: string;
 }
-
 
 export const roles = [
   {
     value: "User",
     label: "User",
-    icon: "/icons/user.svg", 
+    icon: "/icons/user.svg",
   },
   {
     value: "Admin",

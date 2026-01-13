@@ -65,7 +65,7 @@ export default function ShopProductModal({
       : product.stock;
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity(prev => {
+    setQuantity((prev) => {
       const newValue = prev + delta;
       return newValue >= 1 && newValue <= currentStock ? newValue : prev;
     });
@@ -306,7 +306,7 @@ export default function ShopProductModal({
                     Couleurs disponibles
                   </span>
                   <div className="flex flex-wrap gap-2">
-                    {product.colors.map(color => (
+                    {product.colors.map((color) => (
                       <button
                         key={color}
                         className={`px-3 py-1 text-sm border rounded-md transition-colors ${
@@ -336,7 +336,7 @@ export default function ShopProductModal({
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {product.sizes.map(size => (
+                    {product.sizes.map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}

@@ -20,7 +20,6 @@ const callbackAuth0 = new Auth0Client({
       const { email, name, picture, nickname } = session.user;
 
       try {
-        
         let user = await prisma.user.findFirst({
           where: { email },
         });
@@ -30,7 +29,7 @@ const callbackAuth0 = new Auth0Client({
           const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
           let username = nickname || name || email.split("@")[0];
-          
+
           const existingUsername = await prisma.user.findFirst({
             where: { username },
           });
@@ -50,7 +49,6 @@ const callbackAuth0 = new Auth0Client({
           });
         }
 
-        
         const payload = {
           userId: user.id,
           username: user.username,
@@ -61,7 +59,6 @@ const callbackAuth0 = new Auth0Client({
         const token = await createToken(payload, false);
         const cookieOptions = getCookieOptions(SESSION_COOKIE, false);
 
-        
         const returnUrl = ctx.returnTo || "/customer";
 
         console.log("Setting session cookie:", SESSION_COOKIE);
@@ -80,7 +77,6 @@ const callbackAuth0 = new Auth0Client({
       }
     }
 
-    
     return NextResponse.redirect(new URL("/", process.env.AUTH0_BASE_URL!));
   },
 });

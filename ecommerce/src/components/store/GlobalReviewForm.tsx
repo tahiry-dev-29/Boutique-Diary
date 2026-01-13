@@ -110,7 +110,7 @@ export default function GlobalReviewModal() {
   const filteredProducts = useMemo(() => {
     if (!searchTerm) return products;
     return products.filter(
-      p =>
+      (p) =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.category?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
@@ -162,7 +162,7 @@ export default function GlobalReviewModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <button
-          onClick={e => {
+          onClick={(e) => {
             if (!user) {
               e.preventDefault();
               toast.error("Veuillez vous connecter pour donner un avis");
@@ -215,7 +215,7 @@ export default function GlobalReviewModal() {
                             placeholder="Rechercher un produit..."
                             className="w-full pl-9 pr-3 py-2.5 bg-gray-50/50 border border-gray-100 rounded-[14px] focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-white transition-all font-medium text-xs"
                             value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                           />
                         </div>
 
@@ -225,7 +225,7 @@ export default function GlobalReviewModal() {
                               Aucun produit trouvé
                             </div>
                           ) : (
-                            filteredProducts.map(product => (
+                            filteredProducts.map((product) => (
                               <button
                                 key={product.id}
                                 type="button"

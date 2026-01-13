@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductImage {
-  id: number; 
+  id: number;
   url: string;
   color?: string | null;
   sizes?: string[];
@@ -105,7 +105,7 @@ export default function ProductDetailClient({
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const selectedImageIndex = product.images.findIndex(
-    img => img.url === selectedImage,
+    (img) => img.url === selectedImage,
   );
   const currentImage =
     selectedImageIndex !== -1 ? product.images[selectedImageIndex] : null;
@@ -118,7 +118,7 @@ export default function ProductDetailClient({
   const selectImageAndSyncStock = (imgUrl: string) => {
     setSelectedImage(imgUrl);
 
-    const img = product.images.find(i => i.url === imgUrl);
+    const img = product.images.find((i) => i.url === imgUrl);
     const newStock =
       img?.stock !== undefined && img?.stock !== null
         ? img.stock
@@ -147,7 +147,7 @@ export default function ProductDetailClient({
   };
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity(prev => Math.max(1, Math.min(prev + delta, currentStock)));
+    setQuantity((prev) => Math.max(1, Math.min(prev + delta, currentStock)));
   };
 
   // Calculate discount and totals
@@ -284,7 +284,7 @@ export default function ProductDetailClient({
               {product.rating && product.rating > 0 && (
                 <div className="flex items-center gap-3">
                   <div className="flex">
-                    {[1, 2, 3, 4, 5].map(star => (
+                    {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
                         size={16}
@@ -321,7 +321,7 @@ export default function ProductDetailClient({
                   Choisir Couleur
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {product.colors.map(color => {
+                  {product.colors.map((color) => {
                     const colorCode = getColorCode(color);
                     const isSelected = selectedColor === color;
                     return (
@@ -330,7 +330,7 @@ export default function ProductDetailClient({
                         onClick={() => {
                           setSelectedColor(color);
                           const imageWithColor = product.images.find(
-                            img => img.color === color,
+                            (img) => img.color === color,
                           );
                           if (imageWithColor) {
                             selectImageAndSyncStock(imageWithColor.url);
@@ -361,7 +361,7 @@ export default function ProductDetailClient({
                   Choisir Taille
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map(size => {
+                  {product.sizes.map((size) => {
                     const isAvailable = currentImage?.sizes?.length
                       ? currentImage.sizes.includes(size)
                       : true;

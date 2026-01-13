@@ -19,10 +19,8 @@ interface CollectionScrollProps {
 export default function CollectionScroll({
   products = [],
 }: CollectionScrollProps) {
-  
   const displayProducts = products.length > 0 ? products : [];
 
-  
   const bgColors = [
     "bg-[#e5fcf4]",
     "bg-[#6ec1e4]",

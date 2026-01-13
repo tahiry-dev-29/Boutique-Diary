@@ -79,13 +79,13 @@ export default function CustomerPage() {
     if (selectedCustomers.length === paginatedCustomers.length) {
       setSelectedCustomers([]);
     } else {
-      setSelectedCustomers(paginatedCustomers.map(c => c.id));
+      setSelectedCustomers(paginatedCustomers.map((c) => c.id));
     }
   };
 
   const toggleSelectCustomer = (id: number) => {
-    setSelectedCustomers(prev =>
-      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id],
+    setSelectedCustomers((prev) =>
+      prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id],
     );
   };
 
@@ -103,7 +103,9 @@ export default function CustomerPage() {
       if (!response.ok) throw new Error("Failed to delete");
 
       const data = await response.json();
-      setCustomers(prev => prev.filter(c => !selectedCustomers.includes(c.id)));
+      setCustomers((prev) =>
+        prev.filter((c) => !selectedCustomers.includes(c.id)),
+      );
       toast.success(`${selectedCustomers.length} clients supprimés`);
       setSelectedCustomers([]);
     } catch (error) {
@@ -134,7 +136,7 @@ export default function CustomerPage() {
   };
 
   const filteredCustomers = customers.filter(
-    customer =>
+    (customer) =>
       customer.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -152,7 +154,7 @@ export default function CustomerPage() {
 
       if (!response.ok) throw new Error("Failed to delete");
 
-      setCustomers(prev => prev.filter(c => c.id !== id));
+      setCustomers((prev) => prev.filter((c) => c.id !== id));
       toast.success("Client supprimé avec succès");
       if (selectedCustomer?.id === id) setSelectedCustomer(null);
     } catch (error) {
@@ -181,7 +183,7 @@ export default function CustomerPage() {
   };
 
   const totalCustomers = customers.length;
-  const newCustomers = customers.filter(c => isNew(c.createdAt)).length;
+  const newCustomers = customers.filter((c) => isNew(c.createdAt)).length;
 
   const activeRate =
     totalCustomers > 0 ? Math.round((newCustomers / totalCustomers) * 100) : 0;
@@ -266,7 +268,7 @@ export default function CustomerPage() {
             type="text"
             placeholder="Rechercher par nom ou email..."
             value={searchQuery}
-            onChange={e => {
+            onChange={(e) => {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
@@ -316,7 +318,7 @@ export default function CustomerPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedCustomers.map(customer => (
+                  paginatedCustomers.map((customer) => (
                     <TableRow
                       key={customer.id}
                       onClick={() => setSelectedCustomer(customer)}
@@ -328,7 +330,7 @@ export default function CustomerPage() {
                     >
                       <TableCell
                         className="pl-4 text-center"
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <Checkbox
                           checked={selectedCustomers.includes(customer.id)}
@@ -365,7 +367,7 @@ export default function CustomerPage() {
                       </TableCell>
                       <TableCell
                         className="text-right pr-4"
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex items-center justify-end gap-1">
                           <Button
@@ -432,7 +434,7 @@ export default function CustomerPage() {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
               >
@@ -440,7 +442,7 @@ export default function CustomerPage() {
               </button>
               <div className="flex items-center gap-1">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  page => (
+                  (page) => (
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
@@ -456,7 +458,9 @@ export default function CustomerPage() {
                 )}
               </div>
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 text-sm font-medium rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
               >
@@ -470,7 +474,7 @@ export default function CustomerPage() {
       {}
       <Sheet
         open={!!selectedCustomer}
-        onOpenChange={open => !open && setSelectedCustomer(null)}
+        onOpenChange={(open) => !open && setSelectedCustomer(null)}
       >
         <SheetContent className="sm:max-w-md bg-gray-100 dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white p-6 shadow-xl">
           <SheetHeader className="mb-6">

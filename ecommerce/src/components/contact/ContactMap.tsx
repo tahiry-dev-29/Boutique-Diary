@@ -14,7 +14,7 @@ export default function ContactMap() {
 
     const map = L.map(mapRef.current).setView(
       [contactInfo.coordinates.lat, contactInfo.coordinates.lng],
-      13
+      13,
     );
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -48,7 +48,7 @@ export default function ContactMap() {
           <strong class="text-[#3d6b6b]">Boutique Diary</strong><br/>
           ${contactInfo.address}<br/>
           ${contactInfo.postalCode} ${contactInfo.city}
-        </div>`
+        </div>`,
       );
 
     mapInstanceRef.current = map;

@@ -101,7 +101,7 @@ export function PromoCodeTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(code => (
+          {data.map((code) => (
             <TableRow
               key={code.id}
               className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"

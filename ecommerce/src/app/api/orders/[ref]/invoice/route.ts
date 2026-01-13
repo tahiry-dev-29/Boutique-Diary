@@ -43,7 +43,6 @@ export async function GET(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    
     const invoiceData = {
       id: order.id,
       reference: order.reference,
@@ -57,7 +56,7 @@ export async function GET(
           (order.transactions[0]?.metadata as Record<string, string>)
             ?.address || "",
       },
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         id: item.id,
         productName: item.product.name,
         productImage: item.product.images[0]?.url || null,

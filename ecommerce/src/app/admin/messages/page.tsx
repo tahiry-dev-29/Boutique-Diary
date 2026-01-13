@@ -70,7 +70,7 @@ export default function MessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(
-    null
+    null,
   );
   const [showModal, setShowModal] = useState(false);
 
@@ -108,7 +108,7 @@ export default function MessagesPage() {
         body: JSON.stringify({ id, status: "READ" }),
       });
       setMessages(
-        messages.map((m) => (m.id === id ? { ...m, status: "READ" } : m))
+        messages.map((m) => (m.id === id ? { ...m, status: "READ" } : m)),
       );
     } catch (error) {
       console.error("Error updating message:", error);
@@ -335,7 +335,7 @@ export default function MessagesPage() {
                   <AvatarImage
                     src={getAvatarUrl(
                       selectedMessage.email,
-                      selectedMessage.name
+                      selectedMessage.name,
                     )}
                     alt={selectedMessage.name}
                     className="object-cover"

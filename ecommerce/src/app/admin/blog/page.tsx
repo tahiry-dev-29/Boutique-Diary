@@ -70,11 +70,10 @@ interface Product {
   brand: string | null;
   images: { id: number; url: string; reference?: string | null }[];
   blogPosts: { id: number; productImageId: number | null }[];
-  _variantImageId?: number; 
+  _variantImageId?: number;
 }
 
 export default function AdminBlogPage() {
-  
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,17 +91,16 @@ export default function AdminBlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  
   const filteredProducts = useMemo(() => {
     return products.filter(
-      p =>
+      (p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.reference.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [products, searchQuery]);
 
   const filteredPosts = useMemo(() => {
-    return posts.filter(p => {
+    return posts.filter((p) => {
       if (statusFilter === "published" && !p.isPublished) return false;
       if (statusFilter === "draft" && p.isPublished) return false;
       if (searchQuery) {
@@ -123,7 +121,6 @@ export default function AdminBlogPage() {
     currentPage * ITEMS_PER_PAGE,
   );
 
-  
   const fetchPosts = async () => {
     try {
       const res = await fetch("/api/admin/blog");
@@ -147,15 +144,15 @@ export default function AdminBlogPage() {
         const generatableItems: Product[] = [];
 
         allProducts.forEach((p: Product) => {
-          const hasMainBlog = p.blogPosts?.some(bp => !bp.productImageId);
+          const hasMainBlog = p.blogPosts?.some((bp) => !bp.productImageId);
           if (!hasMainBlog) {
             generatableItems.push({ ...p, realProductId: p.id });
           }
           if (p.images && Array.isArray(p.images)) {
-            p.images.forEach(img => {
+            p.images.forEach((img) => {
               if (img.reference) {
                 const hasVariantBlog = p.blogPosts?.some(
-                  bp => bp.productImageId === img.id,
+                  (bp) => bp.productImageId === img.id,
                 );
                 if (!hasVariantBlog) {
                   const syntheticId = p.id * 1000000 + img.id;
@@ -190,7 +187,7 @@ export default function AdminBlogPage() {
     let successCount = 0;
     for (const uiId of selectedProducts) {
       try {
-        const product = products.find(p => p.id === uiId);
+        const product = products.find((p) => p.id === uiId);
         if (!product) continue;
         const res = await fetch("/api/admin/blog", {
           method: "POST",
@@ -261,14 +258,14 @@ export default function AdminBlogPage() {
     if (selectedPostIds.length === filteredPosts.length) {
       setSelectedPostIds([]);
     } else {
-      setSelectedPostIds(filteredPosts.map(p => p.id));
+      setSelectedPostIds(filteredPosts.map((p) => p.id));
     }
   };
 
   const toggleSelectPost = (postId: number) => {
-    setSelectedPostIds(prev =>
+    setSelectedPostIds((prev) =>
       prev.includes(postId)
-        ? prev.filter(id => id !== postId)
+        ? prev.filter((id) => id !== postId)
         : [...prev, postId],
     );
   };
@@ -308,9 +305,9 @@ export default function AdminBlogPage() {
   };
 
   const toggleProductSelection = (productId: number) => {
-    setSelectedProducts(prev =>
+    setSelectedProducts((prev) =>
       prev.includes(productId)
-        ? prev.filter(id => id !== productId)
+        ? prev.filter((id) => id !== productId)
         : [...prev, productId],
     );
   };
@@ -394,7 +391,7 @@ export default function AdminBlogPage() {
             />
           </div>
           <p className="text-3xl font-bold text-green-500">
-            {posts.filter(p => p.isPublished).length}
+            {posts.filter((p) => p.isPublished).length}
           </p>
         </button>
 
@@ -419,7 +416,7 @@ export default function AdminBlogPage() {
             />
           </div>
           <p className="text-3xl font-bold text-amber-500">
-            {posts.filter(p => !p.isPublished).length}
+            {posts.filter((p) => !p.isPublished).length}
           </p>
         </button>
 
@@ -464,7 +461,7 @@ export default function AdminBlogPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {products.map(product => (
+              {products.map((product) => (
                 <div
                   key={product.id}
                   className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
@@ -574,7 +571,7 @@ export default function AdminBlogPage() {
                 <Input
                   placeholder="Rechercher..."
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 bg-white dark:bg-gray-800"
                 />
               </div>
@@ -630,7 +627,7 @@ export default function AdminBlogPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedPosts.map(post => (
+                paginatedPosts.map((post) => (
                   <TableRow
                     key={post.id}
                     className="group hover:bg-muted/30 transition-colors"
@@ -766,7 +763,7 @@ export default function AdminBlogPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 >
                   Précédent
@@ -775,7 +772,7 @@ export default function AdminBlogPage() {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    setCurrentPage(p => Math.min(totalPages, p + 1))
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
                 >
@@ -807,12 +804,12 @@ export default function AdminBlogPage() {
               <Input
                 placeholder="Rechercher..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="border-none bg-transparent"
               />
             </div>
             <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-              {filteredProducts.map(product => (
+              {filteredProducts.map((product) => (
                 <div
                   key={product.id}
                   onClick={() => toggleProductSelection(product.id)}

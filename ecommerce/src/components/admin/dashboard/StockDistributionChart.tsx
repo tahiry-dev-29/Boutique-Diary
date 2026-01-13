@@ -20,21 +20,20 @@ interface StockDistributionProps {
 const StockDistributionChart: React.FC<StockDistributionProps> = ({
   data = [],
 }) => {
-  
   const processedData = data
-    .map(item => ({
+    .map((item) => ({
       name: item.name,
       stock: item.stock || 0,
     }))
-    .sort((a, b) => b.stock - a.stock); 
+    .sort((a, b) => b.stock - a.stock);
 
   const COLORS = [
-    "#3b82f6", 
-    "#10b981", 
-    "#8b5cf6", 
-    "#f59e0b", 
-    "#ec4899", 
-    "#06b6d4", 
+    "#3b82f6",
+    "#10b981",
+    "#8b5cf6",
+    "#f59e0b",
+    "#ec4899",
+    "#06b6d4",
   ];
 
   return (
@@ -82,7 +81,7 @@ const StockDistributionChart: React.FC<StockDistributionProps> = ({
                 color: "var(--foreground)",
                 boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
               }}
-              formatter={value => [value, "Unités"]}
+              formatter={(value) => [value, "Unités"]}
             />
             <Bar dataKey="stock" radius={[4, 4, 0, 0]}>
               {processedData.map((entry, index) => (

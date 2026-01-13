@@ -79,7 +79,7 @@ export default function OrdersPage() {
       const res = await fetch("/api/admin/orders?limit=200");
       const data: OrdersResponse = await res.json();
 
-      const formattedOrders: Order[] = data.orders.map(order => ({
+      const formattedOrders: Order[] = data.orders.map((order) => ({
         id: order.id,
         reference: order.reference,
         customer: {

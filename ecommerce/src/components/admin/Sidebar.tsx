@@ -270,7 +270,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           .map((item) => ({
             ...item,
             subItems: item.subItems?.filter(
-              (sub) => !sub.permission || hasPermission(sub.permission)
+              (sub) => !sub.permission || hasPermission(sub.permission),
             ),
           }))
           .filter((item) => !item.subItems || item.subItems.length > 0),

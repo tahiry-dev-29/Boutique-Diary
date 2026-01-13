@@ -22,7 +22,6 @@ export default function AddressesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
-  
   const [formData, setFormData] = useState({
     label: "",
     street: "",
@@ -147,7 +146,7 @@ export default function AddressesPage() {
         {}
         <div className="space-y-4">
           {addresses.length > 0 ? (
-            addresses.map(address => (
+            addresses.map((address) => (
               <div
                 key={address.id}
                 className={cn(
@@ -244,7 +243,7 @@ export default function AddressesPage() {
               <input
                 type="text"
                 value={formData.label}
-                onChange={e =>
+                onChange={(e) =>
                   setFormData({ ...formData, label: e.target.value })
                 }
                 className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -260,7 +259,7 @@ export default function AddressesPage() {
                 required
                 type="text"
                 value={formData.street}
-                onChange={e =>
+                onChange={(e) =>
                   setFormData({ ...formData, street: e.target.value })
                 }
                 className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -277,7 +276,7 @@ export default function AddressesPage() {
                   required
                   type="text"
                   value={formData.city}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, city: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -292,7 +291,7 @@ export default function AddressesPage() {
                   required
                   type="text"
                   value={formData.postalCode}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, postalCode: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -308,7 +307,7 @@ export default function AddressesPage() {
               <input
                 type="tel"
                 value={formData.phoneNumber}
-                onChange={e =>
+                onChange={(e) =>
                   setFormData({ ...formData, phoneNumber: e.target.value })
                 }
                 className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"

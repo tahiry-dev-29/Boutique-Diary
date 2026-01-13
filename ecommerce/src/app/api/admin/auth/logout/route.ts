@@ -4,10 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST() {
   try {
-    
     const admin = await verifyAdminToken();
 
-    
     const response = NextResponse.json(
       { message: "Logout successful" },
       { status: 200 },
@@ -19,7 +17,6 @@ export async function POST() {
       path: "/",
     });
 
-    
     if (admin) {
       await prisma.admin.update({
         where: { id: admin.adminId },

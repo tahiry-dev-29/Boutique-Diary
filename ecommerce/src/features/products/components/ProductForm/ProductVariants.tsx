@@ -31,7 +31,7 @@ export function ProductVariants({
   setFormData,
 }: ProductVariantsProps) {
   const { rules } = usePromotionRules();
-  const activeRules = rules.filter(r => r.isActive);
+  const activeRules = rules.filter((r) => r.isActive);
 
   const generateVariants = () => {
     const images = formData.images || [];
@@ -46,7 +46,6 @@ export function ProductVariants({
     let generatedCount = 0;
 
     images.forEach((img, index) => {
-      
       if (typeof img === "string") return;
 
       const productImg = img as ProductImage;
@@ -55,17 +54,16 @@ export function ProductVariants({
       const sizes =
         productImg.sizes && productImg.sizes.length > 0
           ? productImg.sizes
-          : [null]; 
+          : [null];
 
-      sizes.forEach(size => {
-        
+      sizes.forEach((size) => {
         const skuSuffix = size
           ? `-${size.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()}`
           : "";
         const sku = `${baseRef}${skuSuffix}`;
 
         // Check if exists to preserve Price/Stock if re-generating
-        const exists = existingVariations.find(v => v.sku === sku);
+        const exists = existingVariations.find((v) => v.sku === sku);
 
         if (exists) {
           newVariations.push(exists);
@@ -90,7 +88,7 @@ export function ProductVariants({
       });
     });
 
-    setFormData(prev => ({ ...prev, variations: newVariations }));
+    setFormData((prev) => ({ ...prev, variations: newVariations }));
     if (generatedCount > 0) {
       toast.success(`${generatedCount} nouvelles variantes générées.`);
     } else {
@@ -105,11 +103,11 @@ export function ProductVariants({
   ) => {
     const newVariations = [...(formData.variations || [])];
     newVariations[index] = { ...newVariations[index], [field]: value };
-    setFormData(prev => ({ ...prev, variations: newVariations }));
+    setFormData((prev) => ({ ...prev, variations: newVariations }));
   };
 
   const applyPromotionToVariant = (index: number, ruleId: string) => {
-    const rule = rules.find(r => r.id.toString() === ruleId);
+    const rule = rules.find((r) => r.id.toString() === ruleId);
     // If clearing rule
     if (!rule && ruleId === "none") {
       const newVariations = [...(formData.variations || [])];
@@ -118,7 +116,7 @@ export function ProductVariants({
         promotionRuleId: null,
         oldPrice: null,
       };
-      setFormData(prev => ({ ...prev, variations: newVariations }));
+      setFormData((prev) => ({ ...prev, variations: newVariations }));
       return;
     }
 
@@ -136,12 +134,6 @@ export function ProductVariants({
 
     if (discountPercent > 0) {
       const currentPrice = Number(formData.variations?.[index].price || 0);
-      
-      
-      
-      
-      
-      
 
       const basePrice = Number(
         formData.variations?.[index].oldPrice || currentPrice,
@@ -156,13 +148,13 @@ export function ProductVariants({
         oldPrice: basePrice,
         promotionRuleId: Number(ruleId),
       };
-      setFormData(prev => ({ ...prev, variations: newVariations }));
+      setFormData((prev) => ({ ...prev, variations: newVariations }));
       toast.success(`Active: -${discountPercent}%`);
     }
   };
 
   const clearVariants = () => {
-    setFormData(prev => ({ ...prev, variations: [] }));
+    setFormData((prev) => ({ ...prev, variations: [] }));
   };
 
   return (
@@ -276,14 +268,16 @@ export function ProductVariants({
                   <TableCell>
                     <Select
                       value={variant.promotionRuleId?.toString() || "none"}
-                      onValueChange={val => applyPromotionToVariant(index, val)}
+                      onValueChange={(val) =>
+                        applyPromotionToVariant(index, val)
+                      }
                     >
                       <SelectTrigger className="h-8 text-xs w-full bg-transparent border-dashed hover:bg-accent hover:border-solid text-muted-foreground">
                         <SelectValue placeholder="-" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">Aucune</SelectItem>
-                        {activeRules.map(rule => (
+                        {activeRules.map((rule) => (
                           <SelectItem key={rule.id} value={rule.id.toString()}>
                             {rule.name}
                           </SelectItem>
@@ -297,7 +291,7 @@ export function ProductVariants({
                       type="number"
                       value={variant.price}
                       min="0"
-                      onChange={e =>
+                      onChange={(e) =>
                         updateVariant(index, "price", Number(e.target.value))
                       }
                       className="h-8 w-full text-right font-medium text-xs"
@@ -309,7 +303,7 @@ export function ProductVariants({
                       type="number"
                       value={variant.stock}
                       min="0"
-                      onChange={e =>
+                      onChange={(e) =>
                         updateVariant(index, "stock", Number(e.target.value))
                       }
                       className={`h-8 w-full text-center font-medium text-xs ${
@@ -330,7 +324,10 @@ export function ProductVariants({
                         const newVars = formData.variations?.filter(
                           (_, i) => i !== index,
                         );
-                        setFormData(prev => ({ ...prev, variations: newVars }));
+                        setFormData((prev) => ({
+                          ...prev,
+                          variations: newVars,
+                        }));
                       }}
                     >
                       <X className="w-4 h-4" />

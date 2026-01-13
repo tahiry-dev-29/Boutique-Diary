@@ -74,7 +74,7 @@ const defaultRoles: Role[] = [
     description: "Accès complet à toutes les fonctionnalités",
     color:
       "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    permissions: allPermissions.map(p => p.id),
+    permissions: allPermissions.map((p) => p.id),
     isEditable: false,
   },
   {
@@ -84,8 +84,8 @@ const defaultRoles: Role[] = [
     description: "Gestion complète sauf création d'admins",
     color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
     permissions: allPermissions
-      .filter(p => !p.id.includes("employees"))
-      .map(p => p.id),
+      .filter((p) => !p.id.includes("employees"))
+      .map((p) => p.id),
     isEditable: true,
   },
   {
@@ -150,7 +150,7 @@ export function EmployeesRolesClient() {
                 ? {
                     ...r,
                     isEditable: false,
-                    permissions: allPermissions.map(p => p.id),
+                    permissions: allPermissions.map((p) => p.id),
                   }
                 : r,
             );
@@ -205,7 +205,7 @@ export function EmployeesRolesClient() {
   };
 
   const saveEditing = async () => {
-    const updatedRoles = roles.map(role =>
+    const updatedRoles = roles.map((role) =>
       role.id === editingRole
         ? { ...role, permissions: editedPermissions }
         : role,
@@ -219,9 +219,9 @@ export function EmployeesRolesClient() {
   };
 
   const togglePermission = (permId: string) => {
-    setEditedPermissions(prev =>
+    setEditedPermissions((prev) =>
       prev.includes(permId)
-        ? prev.filter(p => p !== permId)
+        ? prev.filter((p) => p !== permId)
         : [...prev, permId],
     );
   };
@@ -238,7 +238,7 @@ export function EmployeesRolesClient() {
     <div className="space-y-6">
       {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {roles.map(role => {
+        {roles.map((role) => {
           const isEditing = editingRole === role.id;
           const currentPermissions = isEditing
             ? editedPermissions
@@ -311,7 +311,7 @@ export function EmployeesRolesClient() {
 
               {}
               <div className="p-4 space-y-2 max-h-[300px] overflow-y-auto">
-                {allPermissions.map(perm => {
+                {allPermissions.map((perm) => {
                   const hasPermission = currentPermissions.includes(perm.id);
                   const Icon = perm.icon;
 

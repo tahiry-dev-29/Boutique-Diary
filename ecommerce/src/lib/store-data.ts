@@ -46,7 +46,7 @@ export async function getPromotionalProducts(limit = 3) {
         where: {
           status: "PUBLISHED",
           deletedAt: null,
-          id: { notIn: products.map(p => p.id) },
+          id: { notIn: products.map((p) => p.id) },
         },
         include: { images: true, category: true },
         take: limit - products.length,
@@ -108,10 +108,9 @@ export async function getProductById(id: string) {
 
     if (!product) return null;
 
-    
     return {
       ...product,
-      variations: product.variations.map(v => ({
+      variations: product.variations.map((v) => ({
         ...v,
         price: Number(v.price),
         oldPrice: v.oldPrice ? Number(v.oldPrice) : null,
@@ -220,7 +219,7 @@ export async function getCategoryProductsMap(
     const results: Record<string, any[]> = {};
 
     await Promise.all(
-      categoryNames.map(async name => {
+      categoryNames.map(async (name) => {
         const category = await prisma.category.findFirst({
           where: {
             name: {
@@ -313,7 +312,7 @@ export async function getTestimonials(limit = 6) {
       take: limit,
     });
 
-    return reviews.map(review => ({
+    return reviews.map((review) => ({
       id: review.id,
       name: review.user.username,
       date: new Date(review.createdAt).toLocaleDateString("fr-FR", {

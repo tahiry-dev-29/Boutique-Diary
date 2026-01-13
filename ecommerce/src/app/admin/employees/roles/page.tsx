@@ -5,14 +5,12 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { EmployeesRolesClient } from "@/components/admin/employees/employees-roles-client";
 
 export default async function RolesPage() {
-  
   const admin = await verifyAdminToken();
 
   if (!admin) {
     redirect("/admin/login?message=not-authenticated");
   }
 
-  
   const canView = await hasPermission(admin.role, "employees.view");
 
   if (!canView) {

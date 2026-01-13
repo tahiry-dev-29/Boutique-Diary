@@ -12,7 +12,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-
 const segmentLabels: Record<string, string> = {
   admin: "Admin",
   dashboard: "Tableau de bord",
@@ -30,7 +29,7 @@ const segmentLabels: Record<string, string> = {
 
 export const Breadcrumbs = () => {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(segment => segment !== "");
+  const segments = pathname.split("/").filter((segment) => segment !== "");
 
   // Don't show on admin root (dashboard) if you prefer, or show "Admin"
   if (segments.length === 0) return null;
@@ -41,9 +40,8 @@ export const Breadcrumbs = () => {
         {segments.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join("/")}`;
           const isLast = index === segments.length - 1;
-          const label = segmentLabels[segment] || segment; 
+          const label = segmentLabels[segment] || segment;
 
-          
           const displayLabel = segmentLabels[segment]
             ? label
             : label.charAt(0).toUpperCase() + label.slice(1);

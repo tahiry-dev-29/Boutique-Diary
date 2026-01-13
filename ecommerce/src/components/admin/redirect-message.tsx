@@ -19,7 +19,6 @@ export function RedirectMessage() {
     if (messageKey && REDIRECT_MESSAGES[messageKey]) {
       toast.error(REDIRECT_MESSAGES[messageKey]);
 
-      
       const url = new URL(window.location.href);
       url.searchParams.delete("message");
       window.history.replaceState({}, "", url.pathname);

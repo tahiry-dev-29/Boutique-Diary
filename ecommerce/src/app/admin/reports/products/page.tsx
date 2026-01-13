@@ -43,13 +43,11 @@ export default function ProductsReportsPage() {
   const totalProducts = data?.totalProducts || 0;
   const totalValue = data?.totalValue || 0;
 
-  
   const outOfStockCount =
-    stockDistribution.find(d => d.status === "Out of Stock")?.count || 0;
+    stockDistribution.find((d) => d.status === "Out of Stock")?.count || 0;
   const outOfStockPercent =
     totalProducts > 0 ? Math.round((outOfStockCount / totalProducts) * 100) : 0;
 
-  
   const productsChartData: any[] = [];
   const valueChartData: any[] = [];
   const stockChartData: any[] = [];

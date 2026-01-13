@@ -87,7 +87,7 @@ export async function POST(
         rating,
         comment,
         tags: tags || [],
-        isVerified: true, 
+        isVerified: true,
       },
       include: {
         user: {
@@ -99,7 +99,6 @@ export async function POST(
       },
     });
 
-    
     const aggregate = await prisma.review.aggregate({
       where: { productId },
       _avg: { rating: true },

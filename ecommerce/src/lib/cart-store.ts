@@ -6,7 +6,7 @@ import { persist } from "zustand/middleware";
 export interface CartItem {
   id: string;
   productId: number;
-  productImageId?: number; 
+  productImageId?: number;
   name: string;
   reference: string;
   image: string;
@@ -40,13 +40,13 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
 
-      addItem: item => {
+      addItem: (item) => {
         const id = generateId(item);
-        const existingItem = get().items.find(i => i.id === id);
+        const existingItem = get().items.find((i) => i.id === id);
 
         if (existingItem) {
           set({
-            items: get().items.map(i =>
+            items: get().items.map((i) =>
               i.id === id
                 ? {
                     ...i,
@@ -67,9 +67,9 @@ export const useCartStore = create<CartState>()(
         set({ isOpen: true });
       },
 
-      removeItem: id => {
+      removeItem: (id) => {
         set({
-          items: get().items.filter(i => i.id !== id),
+          items: get().items.filter((i) => i.id !== id),
         });
       },
 
@@ -79,7 +79,7 @@ export const useCartStore = create<CartState>()(
           return;
         }
         set({
-          items: get().items.map(i =>
+          items: get().items.map((i) =>
             i.id === id
               ? { ...i, quantity: Math.min(quantity, i.maxStock) }
               : i,
@@ -91,7 +91,7 @@ export const useCartStore = create<CartState>()(
         set({ items: [] });
       },
 
-      setOpen: open => {
+      setOpen: (open) => {
         set({ isOpen: open });
       },
 

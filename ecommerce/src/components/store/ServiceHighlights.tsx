@@ -9,8 +9,8 @@ export default function ServiceHighlights() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".service-card"),

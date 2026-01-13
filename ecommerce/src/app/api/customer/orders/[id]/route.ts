@@ -23,7 +23,6 @@ export async function PATCH(
 
     const { status } = body;
 
-    
     const order = await prisma.order.findUnique({
       where: { id },
     });
@@ -36,8 +35,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    
-    
     if (status === "CANCELLED") {
       if (!["PENDING", "PROCESSING"].includes(order.status)) {
         return NextResponse.json(
@@ -48,9 +45,7 @@ export async function PATCH(
           { status: 400 },
         );
       }
-    }
-    
-    else if (status === "COMPLETED") {
+    } else if (status === "COMPLETED") {
       if (!["SHIPPED", "DELIVERED", "COMPLETED"].includes(order.status)) {
         return NextResponse.json(
           { error: "Impossible de confirmer la réception pour le moment." },
@@ -58,7 +53,6 @@ export async function PATCH(
         );
       }
 
-      
       if (order.status === "COMPLETED") {
         return NextResponse.json(order);
       }
@@ -73,7 +67,7 @@ export async function PATCH(
       `[CustomerOrderPATCH] Updating order ${id} to status: ${status}`,
     );
 
-    const updatedOrder = await prisma.$transaction(async tx => {
+    const updatedOrder = await prisma.$transaction(async (tx) => {
       const updatedOrderData = await tx.order.update({
         where: { id },
         data: { status },

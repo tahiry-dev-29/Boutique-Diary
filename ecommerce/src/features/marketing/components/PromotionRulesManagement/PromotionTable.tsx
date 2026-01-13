@@ -79,7 +79,7 @@ export function PromotionTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(rule => (
+          {data.map((rule) => (
             <TableRow
               key={rule.id}
               className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"

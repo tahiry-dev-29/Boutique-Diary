@@ -12,7 +12,6 @@ export async function GET() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    
     const totalCustomers = await prisma.user.count({
       where: { role: "CUSTOMER" },
     });
@@ -27,12 +26,10 @@ export async function GET() {
     const activeCustomers = await prisma.user.count({
       where: {
         role: "CUSTOMER",
-        isActive: true, 
+        isActive: true,
       },
     });
 
-    
-    
     const topSpenders = await prisma.order.groupBy({
       by: ["customerId"],
       _sum: {
@@ -54,7 +51,7 @@ export async function GET() {
     });
 
     const topCustomers = await Promise.all(
-      topSpenders.map(async item => {
+      topSpenders.map(async (item) => {
         if (!item.customerId) return null;
         const customer = await prisma.user.findUnique({
           where: { id: item.customerId },
@@ -71,15 +68,10 @@ export async function GET() {
       }),
     );
 
-    
     const validTopCustomers = topCustomers.filter(
       (c): c is NonNullable<typeof c> => c !== null,
     );
 
-    
-    
-    
-    
     const recentUsers = await prisma.user.findMany({
       where: {
         role: "CUSTOMER",
@@ -89,7 +81,7 @@ export async function GET() {
     });
 
     const signupsByDate: Record<string, number> = {};
-    
+
     for (let i = 0; i < 30; i++) {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -97,7 +89,7 @@ export async function GET() {
       signupsByDate[dayStr] = 0;
     }
 
-    recentUsers.forEach(u => {
+    recentUsers.forEach((u) => {
       const d = new Date(u.createdAt);
       const dayStr = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
       if (signupsByDate[dayStr] !== undefined) {
@@ -111,7 +103,6 @@ export async function GET() {
         count,
       }))
       .sort((a, b) => {
-        
         const [dA, mA] = a.date.split("/").map(Number);
         const [dB, mB] = b.date.split("/").map(Number);
         return (

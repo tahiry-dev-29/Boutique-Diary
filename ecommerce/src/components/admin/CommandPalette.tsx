@@ -10,7 +10,12 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface NavItem {
   id: string;
@@ -19,101 +24,153 @@ interface NavItem {
 }
 
 const navSections = [
-    {
-      items: [
-        { id: "dashboard", label: "Vue d'ensemble", href: "/admin" },
-      ],
-    },
-    {
-      title: "Catalogue",
-      items: [
-        { id: "products", label: "Produits", href: "/admin/products" },
-        { id: "categories", label: "Catégories", href: "/admin/categories" },
-        { id: "stock", label: "Gestion des Stocks", href: "/admin/products/stock" },
-      ],
-    },
-    {
-      title: "Ventes",
-      items: [
-        { id: "orders", label: "Commandes", href: "/admin/orders" },
-        { id: "customers", label: "Clients", href: "/admin/customers" },
-      ],
-    },
-    {
-      title: "Gestion",
-      items: [
-        { id: "employees", label: "Employés", href: "/admin/employees" },
-        {
-          id: "marketing",
-          label: "Marketing",
-          subItems: [
-            { id: "promo-codes", label: "Codes promo", href: "/admin/marketing/codes-promo" },
-            { id: "promotions", label: "Règles", href: "/admin/marketing/promotions" },
-          ],
-        },
-        {
-          id: "reports",
-          label: "Rapports",
-          subItems: [
-            { id: "sales-reports", label: "Ventes", href: "/admin/reports/sales" },
-            { id: "product-reports", label: "Produits", href: "/admin/reports/products" },
-            { id: "customer-reports", label: "Clients", href: "/admin/reports/customers" },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Paramètres",
-      items: [
-        {
-          id: "payment",
-          label: "Paiement",
-          subItems: [
-            { id: "payment-methods", label: "Méthodes de paiement", href: "/admin/payment/methods" },
-            { id: "transactions", label: "Transactions", href: "/admin/payment/transactions" },
-          ],
-        },
-        {
-          id: "shipping",
-          label: "Livraison",
-          subItems: [
-            { id: "shipping-methods", label: "Méthodes de livraison", href: "/admin/shipping/methods" },
-            { id: "shipping-zones", label: "Zones de livraison", href: "/admin/shipping/zones" },
-          ],
-        },
-        {
-          id: "appearance",
-          label: "Apparence",
-          subItems: [
-            { id: "logo", label: "Logo", href: "/admin/appearance/logo" },
-            { id: "banner", label: "Bannière", href: "/admin/appearance/banner" },
-            { id: "layout", label: "Disposition", href: "/admin/appearance/layout" },
-          ],
-        },
-      ],
-    },
-  ];
-  
+  {
+    items: [{ id: "dashboard", label: "Vue d'ensemble", href: "/admin" }],
+  },
+  {
+    title: "Catalogue",
+    items: [
+      { id: "products", label: "Produits", href: "/admin/products" },
+      { id: "categories", label: "Catégories", href: "/admin/categories" },
+      {
+        id: "stock",
+        label: "Gestion des Stocks",
+        href: "/admin/products/stock",
+      },
+    ],
+  },
+  {
+    title: "Ventes",
+    items: [
+      { id: "orders", label: "Commandes", href: "/admin/orders" },
+      { id: "customers", label: "Clients", href: "/admin/customers" },
+    ],
+  },
+  {
+    title: "Gestion",
+    items: [
+      { id: "employees", label: "Employés", href: "/admin/employees" },
+      {
+        id: "marketing",
+        label: "Marketing",
+        subItems: [
+          {
+            id: "promo-codes",
+            label: "Codes promo",
+            href: "/admin/marketing/codes-promo",
+          },
+          {
+            id: "promotions",
+            label: "Règles",
+            href: "/admin/marketing/promotions",
+          },
+        ],
+      },
+      {
+        id: "reports",
+        label: "Rapports",
+        subItems: [
+          {
+            id: "sales-reports",
+            label: "Ventes",
+            href: "/admin/reports/sales",
+          },
+          {
+            id: "product-reports",
+            label: "Produits",
+            href: "/admin/reports/products",
+          },
+          {
+            id: "customer-reports",
+            label: "Clients",
+            href: "/admin/reports/customers",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Paramètres",
+    items: [
+      {
+        id: "payment",
+        label: "Paiement",
+        subItems: [
+          {
+            id: "payment-methods",
+            label: "Méthodes de paiement",
+            href: "/admin/payment/methods",
+          },
+          {
+            id: "transactions",
+            label: "Transactions",
+            href: "/admin/payment/transactions",
+          },
+        ],
+      },
+      {
+        id: "shipping",
+        label: "Livraison",
+        subItems: [
+          {
+            id: "shipping-methods",
+            label: "Méthodes de livraison",
+            href: "/admin/shipping/methods",
+          },
+          {
+            id: "shipping-zones",
+            label: "Zones de livraison",
+            href: "/admin/shipping/zones",
+          },
+        ],
+      },
+      {
+        id: "appearance",
+        label: "Apparence",
+        subItems: [
+          { id: "logo", label: "Logo", href: "/admin/appearance/logo" },
+          { id: "banner", label: "Bannière", href: "/admin/appearance/banner" },
+          {
+            id: "layout",
+            label: "Disposition",
+            href: "/admin/appearance/layout",
+          },
+        ],
+      },
+    ],
+  },
+];
+
 function flattenNavSections(sections: any[]): NavItem[] {
-    const items: NavItem[] = [];
-    for (const section of sections) {
-        for (const item of section.items) {
-        if (item.href) {
-            items.push({ id: item.id, label: item.label, href: item.href });
+  const items: NavItem[] = [];
+  for (const section of sections) {
+    for (const item of section.items) {
+      if (item.href) {
+        items.push({ id: item.id, label: item.label, href: item.href });
+      }
+      if (item.subItems) {
+        for (const subItem of item.subItems) {
+          if (subItem.href) {
+            items.push({
+              id: subItem.id,
+              label: `${item.label} > ${subItem.label}`,
+              href: subItem.href,
+            });
+          }
         }
-        if (item.subItems) {
-            for (const subItem of item.subItems) {
-            if (subItem.href) {
-                items.push({ id: subItem.id, label: `${item.label} > ${subItem.label}`, href: subItem.href });
-            }
-            }
-        }
-        }
+      }
     }
-    return items;
+  }
+  return items;
 }
 
-export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export function CommandPalette({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
   const router = useRouter();
   const navItems = useMemo(() => flattenNavSections(navSections), []);
 

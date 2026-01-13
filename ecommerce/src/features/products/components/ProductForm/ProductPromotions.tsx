@@ -22,11 +22,11 @@ export function ProductPromotions({
 }: ProductPromotionsProps) {
   const { rules, loading } = usePromotionRules();
 
-  const activeRules = rules.filter(r => r.isActive);
+  const activeRules = rules.filter((r) => r.isActive);
 
   const handleRuleChange = (ruleId: string) => {
     const id = parseInt(ruleId);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       promotionRuleId: id,
       isPromotion: true,
@@ -34,7 +34,7 @@ export function ProductPromotions({
   };
 
   const clearSelection = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       promotionRuleId: null,
       isPromotion: false,
@@ -85,7 +85,7 @@ export function ProductPromotions({
           onValueChange={handleRuleChange}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          {activeRules.map(rule => {
+          {activeRules.map((rule) => {
             const actions =
               typeof rule.actions === "string"
                 ? JSON.parse(rule.actions)

@@ -21,7 +21,7 @@ export default function SalesReportsPage() {
       <div className="p-6">
         <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div
               key={i}
               className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"
@@ -52,10 +52,13 @@ export default function SalesReportsPage() {
     chartData: [],
   };
 
-  
-  const revenueChartData = (rawChartData || []).map(d => ({ value: d.amount }));
-  const ordersChartData = (rawChartData || []).map(d => ({ value: d.orders }));
-  const aovChartData = (rawChartData || []).map(d => ({ value: d.aov }));
+  const revenueChartData = (rawChartData || []).map((d) => ({
+    value: d.amount,
+  }));
+  const ordersChartData = (rawChartData || []).map((d) => ({
+    value: d.orders,
+  }));
+  const aovChartData = (rawChartData || []).map((d) => ({ value: d.aov }));
 
   return (
     <div className="p-6 space-y-6">
@@ -78,7 +81,7 @@ export default function SalesReportsPage() {
           trendValue="+12.5%"
           subValue="vs. mois dernier"
           chartData={revenueChartData}
-          color="#10b981" 
+          color="#10b981"
         />
         <KpiCard
           title="Commandes"
@@ -88,7 +91,7 @@ export default function SalesReportsPage() {
           trendValue="+5.2%"
           chartData={ordersChartData}
           chartType="bar"
-          color="#3b82f6" 
+          color="#3b82f6"
         />
         <KpiCard
           title="Panier Moyen"
@@ -101,7 +104,7 @@ export default function SalesReportsPage() {
           trend="down"
           trendValue="-2.1%"
           chartData={aovChartData}
-          color="#f59e0b" 
+          color="#f59e0b"
         />
         <KpiCard
           title="Taux de Conversion"
@@ -109,8 +112,8 @@ export default function SalesReportsPage() {
           icon={TrendingUp}
           trend="neutral"
           subValue="Visiteurs vs Commandes"
-          chartData={revenueChartData} 
-          color="#8b5cf6" 
+          chartData={revenueChartData}
+          color="#8b5cf6"
         />
       </div>
 

@@ -205,7 +205,7 @@ export function InventoryAuditModal({
                   <Input
                     type="number"
                     value={physicalCount}
-                    onChange={e => setPhysicalCount(e.target.value)}
+                    onChange={(e) => setPhysicalCount(e.target.value)}
                     className="h-14 text-2xl font-bold bg-background/50 border-border/50 focus:border-primary/50 focus:ring-0 transition-all rounded-xl px-4 text-foreground placeholder:text-muted-foreground font-mono"
                     autoFocus
                   />
@@ -242,7 +242,7 @@ export function InventoryAuditModal({
                 Raison
               </Label>
               <div className="grid grid-cols-2 gap-3">
-                {REASONS.map(r => {
+                {REASONS.map((r) => {
                   const isSelected = reason === r.id;
                   const Icon = r.icon;
                   return (
@@ -290,7 +290,7 @@ export function InventoryAuditModal({
               </Label>
               <Textarea
                 value={note}
-                onChange={e => setNote(e.target.value)}
+                onChange={(e) => setNote(e.target.value)}
                 placeholder="Ajouter un commentaire..."
                 className="bg-background/50 border-border/50 min-h-[80px] resize-none focus:border-primary/50 rounded-xl text-foreground placeholder:text-muted-foreground"
               />

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -202,13 +202,13 @@ export async function POST(request: NextRequest) {
           error:
             "A product or variation with this reference/SKU already exists.",
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     return NextResponse.json(
       { error: "Failed to create product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -232,7 +232,7 @@ export async function PUT(request: NextRequest) {
     console.error("[Products API] Error bulk updating:", error);
     return NextResponse.json(
       { error: "Failed to update products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -262,7 +262,7 @@ export async function DELETE(request: NextRequest) {
     console.error("[Products API] Error bulk deleting:", error);
     return NextResponse.json(
       { error: "Failed to delete products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

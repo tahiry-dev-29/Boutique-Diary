@@ -5,7 +5,6 @@ interface RouteParams {
   params: Promise<{ slug: string }>;
 }
 
-
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { slug } = await params;
@@ -31,7 +30,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    
     if (!blogPost.isPublished) {
       return NextResponse.json(
         { error: "Article not published" },
@@ -39,7 +37,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    
     await prisma.blogPost.update({
       where: { id: blogPost.id },
       data: { viewCount: { increment: 1 } },

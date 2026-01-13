@@ -42,7 +42,7 @@ export default function MarketingDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {marketingSections.map(section => (
+        {marketingSections.map((section) => (
           <Link key={section.title} href={section.href} className="group">
             <Card className="h-full border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer bg-white dark:bg-gray-900/40 backdrop-blur-sm">
               <CardHeader>

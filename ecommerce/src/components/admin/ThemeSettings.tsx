@@ -41,8 +41,13 @@ export function ThemeSettings() {
     <div className="p-4 space-y-5">
       {}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-600">Theme preset:</label>
-        <Select value={preset} onValueChange={(v) => setPreset(v as ThemePreset)}>
+        <label className="text-sm font-medium text-gray-600">
+          Theme preset:
+        </label>
+        <Select
+          value={preset}
+          onValueChange={(v) => setPreset(v as ThemePreset)}
+        >
           <SelectTrigger className="w-full h-9">
             <SelectValue>
               <div className="flex items-center gap-2">
@@ -126,7 +131,9 @@ export function ThemeSettings() {
 
       {}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-600">Content layout:</label>
+        <label className="text-sm font-medium text-gray-600">
+          Content layout:
+        </label>
         <div className="flex gap-2">
           {(["full", "centered"] as ContentLayout[]).map((l) => (
             <Button
@@ -144,7 +151,9 @@ export function ThemeSettings() {
 
       {}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-600">Sidebar mode:</label>
+        <label className="text-sm font-medium text-gray-600">
+          Sidebar mode:
+        </label>
         <div className="flex gap-2">
           {(["default", "icon"] as SidebarMode[]).map((m) => (
             <Button

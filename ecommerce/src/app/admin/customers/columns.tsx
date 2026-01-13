@@ -1,4 +1,3 @@
-
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
@@ -16,15 +15,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Customer, Role } from "@/types/customer";
 import { Badge } from "@/components/ui/badge";
 
-
 const useCurrentUser = (): { role: Role } => {
-  
-  
   return { role: "SuperAdmin" };
 };
 
-
-const DataTableColumnHeader = ({ column, title }: { column: any; title: string }) => {
+const DataTableColumnHeader = ({
+  column,
+  title,
+}: {
+  column: any;
+  title: string;
+}) => {
   return (
     <Button
       variant="ghost"
@@ -58,7 +59,9 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Customer" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Customer" />
+    ),
     cell: ({ row }) => {
       const customer = row.original;
       return (
@@ -73,17 +76,23 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
   },
   {
     accessorKey: "role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Rôle" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Rôle" />
+    ),
     cell: ({ row }) => {
       const role = row.getValue("role") as Role;
-      const variant: "default" | "secondary" | "destructive" | "outline" = 
-        role === "Admin" ? "secondary" 
-        : role === "SuperAdmin" ? "destructive" 
-        : "default";
+      const variant: "default" | "secondary" | "destructive" | "outline" =
+        role === "Admin"
+          ? "secondary"
+          : role === "SuperAdmin"
+            ? "destructive"
+            : "default";
       return <Badge variant={variant}>{role}</Badge>;
     },
     filterFn: (row, id, value) => {
@@ -92,7 +101,9 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date d'inscription" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date d'inscription" />
+    ),
     cell: ({ row }) => {
       return new Date(row.getValue("createdAt")).toLocaleDateString();
     },
@@ -104,10 +115,11 @@ export const columns: ColumnDef<Customer>[] = [
       const { role: currentUserRole } = useCurrentUser();
 
       const canDelete =
-        (currentUserRole === "SuperAdmin" && (customer.role === "Admin" || customer.role === "User")) ||
+        (currentUserRole === "SuperAdmin" &&
+          (customer.role === "Admin" || customer.role === "User")) ||
         (currentUserRole === "Admin" && customer.role === "User");
 
-      const canEdit = canDelete; 
+      const canEdit = canDelete;
 
       return (
         <DropdownMenu>
@@ -120,8 +132,16 @@ export const columns: ColumnDef<Customer>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             {canEdit && <DropdownMenuItem>Modifier</DropdownMenuItem>}
-            {canDelete && <DropdownMenuItem className="text-red-500">Supprimer</DropdownMenuItem>}
-            {!canEdit && !canDelete && <DropdownMenuItem disabled>Aucune action disponible</DropdownMenuItem>}
+            {canDelete && (
+              <DropdownMenuItem className="text-red-500">
+                Supprimer
+              </DropdownMenuItem>
+            )}
+            {!canEdit && !canDelete && (
+              <DropdownMenuItem disabled>
+                Aucune action disponible
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

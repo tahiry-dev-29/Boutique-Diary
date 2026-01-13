@@ -16,11 +16,6 @@ export async function POST(
       return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
-    
-    
-    
-    
-
     const rule = await prisma.promotionRule.findUnique({
       where: { id },
     });
@@ -46,7 +41,6 @@ export async function POST(
     if (conditions?.isNew) whereClause.isNew = true;
 
     if (Object.keys(whereClause).length <= 2) {
-      
       return NextResponse.json(
         {
           error:
@@ -56,7 +50,6 @@ export async function POST(
       );
     }
 
-    
     const products = await prisma.product.findMany({
       where: whereClause,
     });

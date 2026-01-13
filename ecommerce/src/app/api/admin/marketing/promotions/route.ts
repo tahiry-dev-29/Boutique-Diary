@@ -3,14 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { checkApiPermission } from "@/lib/backend-permissions";
 import { z } from "zod";
 
-
 const jsonSchema = z.any();
 
 const promotionRuleSchema = z.object({
   name: z.string().min(3).max(255),
   priority: z.number().int().default(0),
-  conditions: jsonSchema, 
-  actions: jsonSchema, 
+  conditions: jsonSchema,
+  actions: jsonSchema,
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
@@ -22,10 +21,7 @@ export async function GET() {
 
   try {
     const rules = await prisma.promotionRule.findMany({
-      orderBy: [
-        { priority: "desc" }, 
-        { createdAt: "desc" },
-      ],
+      orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
     });
     return NextResponse.json(rules);
   } catch (error) {

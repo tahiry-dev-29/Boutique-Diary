@@ -19,7 +19,6 @@ export default function SettingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -75,9 +74,9 @@ export default function SettingsPage() {
 
       if (res.ok) {
         toast.success("Profil mis à jour avec succès");
-        
+
         fetchUser();
-        setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
+        setFormData((prev) => ({ ...prev, password: "", confirmPassword: "" }));
       } else {
         toast.error("Une erreur est survenue");
       }
@@ -159,7 +158,7 @@ export default function SettingsPage() {
                       required
                       type="text"
                       value={formData.username}
-                      onChange={e =>
+                      onChange={(e) =>
                         setFormData({ ...formData, username: e.target.value })
                       }
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -177,7 +176,7 @@ export default function SettingsPage() {
                       required
                       type="email"
                       value={formData.email}
-                      onChange={e =>
+                      onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -202,7 +201,7 @@ export default function SettingsPage() {
                   <input
                     type="password"
                     value={formData.password}
-                    onChange={e =>
+                    onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
                     className="w-full px-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
@@ -216,7 +215,7 @@ export default function SettingsPage() {
                   <input
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={e =>
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
                         confirmPassword: e.target.value,

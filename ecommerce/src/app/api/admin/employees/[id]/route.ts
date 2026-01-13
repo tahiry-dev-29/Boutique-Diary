@@ -9,7 +9,6 @@ export async function GET(
 ) {
   const { id: idStr } = await context.params;
   try {
-    
     const permissionError = await checkApiPermission("employees.view");
     if (permissionError) return permissionError;
 

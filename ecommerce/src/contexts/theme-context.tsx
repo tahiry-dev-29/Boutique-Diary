@@ -113,17 +113,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
 
-    
     const root = document.documentElement;
 
-    
     if (theme.colorMode === "dark") {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
     }
 
-    
     const preset = THEME_PRESETS[theme.preset];
     const styles = {
       "--theme-primary": preset.primary,
@@ -151,7 +148,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.style.setProperty(key, value);
     });
 
-    
     root.setAttribute("data-theme", theme.preset);
     root.setAttribute("data-scale", theme.scale);
     root.setAttribute("data-radius", theme.radius);
@@ -161,17 +157,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const contextValue: ThemeContextType = {
     ...theme,
-    setPreset: preset => setTheme(t => ({ ...t, preset })),
-    setColorMode: colorMode => setTheme(t => ({ ...t, colorMode })),
-    setScale: scale => setTheme(t => ({ ...t, scale })),
-    setRadius: radius => setTheme(t => ({ ...t, radius })),
-    setContentLayout: contentLayout => setTheme(t => ({ ...t, contentLayout })),
-    setSidebarMode: sidebarMode => setTheme(t => ({ ...t, sidebarMode })),
+    setPreset: (preset) => setTheme((t) => ({ ...t, preset })),
+    setColorMode: (colorMode) => setTheme((t) => ({ ...t, colorMode })),
+    setScale: (scale) => setTheme((t) => ({ ...t, scale })),
+    setRadius: (radius) => setTheme((t) => ({ ...t, radius })),
+    setContentLayout: (contentLayout) =>
+      setTheme((t) => ({ ...t, contentLayout })),
+    setSidebarMode: (sidebarMode) => setTheme((t) => ({ ...t, sidebarMode })),
     resetTheme: () => setTheme(DEFAULT_THEME),
   };
 
   if (!mounted) {
-    return null; 
+    return null;
   }
 
   return (

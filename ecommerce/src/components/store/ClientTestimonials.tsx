@@ -27,7 +27,7 @@ export default function ClientTestimonials({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
+      (entries) => {
         if (entries[0].isIntersecting) {
           anime({
             targets: ".testimonial-card",
@@ -50,12 +50,12 @@ export default function ClientTestimonials({
   if (!testimonials || testimonials.length === 0) return null;
 
   const nextSlide = () => {
-    setCurrentIndex(prev => (prev + 1) % testimonials.length);
+    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevSlide = () => {
     setCurrentIndex(
-      prev => (prev - 1 + testimonials.length) % testimonials.length,
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
   };
 

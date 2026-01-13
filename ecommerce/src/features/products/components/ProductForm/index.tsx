@@ -132,7 +132,7 @@ export default function ProductForm({
   // Sync with product prop changes
   useEffect(() => {
     if (product) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         ...product, // Simplified spread, but explicit mapping above is safer for nested structure if needed
       }));
@@ -147,7 +147,7 @@ export default function ProductForm({
       if (typeof mainImage !== "string") {
         const newCategoryId = mainImage.categoryId ?? null;
         if (formData.categoryId !== newCategoryId) {
-          setFormData(prev => ({ ...prev, categoryId: newCategoryId }));
+          setFormData((prev) => ({ ...prev, categoryId: newCategoryId }));
         }
       }
     }

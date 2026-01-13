@@ -162,8 +162,8 @@ export default function StockPage() {
 
       const result = await response.json();
 
-      setProducts(prev =>
-        prev.map(p => {
+      setProducts((prev) =>
+        prev.map((p) => {
           if (p.id === productId) {
             let updatedProduct = { ...p };
             if (result.totalStock !== undefined)
@@ -172,7 +172,7 @@ export default function StockPage() {
               updatedProduct.stock = result.newStock;
 
             if (imageId) {
-              updatedProduct.images = p.images.map(img =>
+              updatedProduct.images = p.images.map((img) =>
                 img.id === imageId ? { ...img, stock: newStock } : img,
               );
             }
@@ -221,8 +221,8 @@ export default function StockPage() {
       if (!response.ok) throw new Error("Failed to update");
       const result = await response.json();
 
-      setProducts(prev =>
-        prev.map(p => {
+      setProducts((prev) =>
+        prev.map((p) => {
           if (p.id === productId) {
             let updatedProduct = { ...p };
             if (result.totalStock !== undefined)
@@ -230,7 +230,7 @@ export default function StockPage() {
             if (!imageId && result.newStock !== undefined)
               updatedProduct.stock = result.newStock;
             if (imageId) {
-              updatedProduct.images = p.images.map(img =>
+              updatedProduct.images = p.images.map((img) =>
                 img.id === imageId ? { ...img, stock: newStock } : img,
               );
             }
@@ -281,9 +281,9 @@ export default function StockPage() {
         p,
       ): (AuditItem & { type: string; price: number; category?: string })[] => {
         if (p.images && p.images.length > 0) {
-          const stockImages = p.images.filter(img => img.stock !== null);
+          const stockImages = p.images.filter((img) => img.stock !== null);
           if (stockImages.length > 0) {
-            return stockImages.map(img => ({
+            return stockImages.map((img) => ({
               type: "variation",
               uniqueId: `i-${img.id}`,
               productId: p.id,
@@ -318,7 +318,7 @@ export default function StockPage() {
   }, [products]);
 
   const handleSort = (key: keyof AuditItem | "status") => {
-    setSortConfig(current => ({
+    setSortConfig((current) => ({
       key,
       direction:
         current.key === key && current.direction === "asc" ? "desc" : "asc",
@@ -437,7 +437,7 @@ export default function StockPage() {
               type="text"
               placeholder="Rechercher par nom ou référence..."
               value={searchQuery}
-              onChange={e => {
+              onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setPage(1);
               }}
@@ -552,7 +552,7 @@ export default function StockPage() {
                     </td>
                   </tr>
                 )}
-                {sortedItems.map(item => {
+                {sortedItems.map((item) => {
                   const status = getStockStatus(item.stock);
                   const StatusIcon = status.icon;
                   const isModified =
@@ -622,13 +622,13 @@ export default function StockPage() {
                                 "ring-2 ring-blue-500 border-blue-500",
                             )}
                             value={currentValue}
-                            onChange={e =>
-                              setModifiedStocks(prev => ({
+                            onChange={(e) =>
+                              setModifiedStocks((prev) => ({
                                 ...prev,
                                 [item.uniqueId]: parseInt(e.target.value) || 0,
                               }))
                             }
-                            onKeyDown={e => {
+                            onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 handleUpdateStock(
                                   item.productId,

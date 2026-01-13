@@ -71,7 +71,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
       targetRef !== autoSelectedRef
     ) {
       const index = product.images.findIndex(
-        img => img.reference === targetRef,
+        (img) => img.reference === targetRef,
       );
       if (index !== -1) {
         setSelectedImageIndex(index);
@@ -269,7 +269,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                       Couleurs Disponibles
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {product.colors.map(color => {
+                      {product.colors.map((color) => {
                         const isActive = currentImage?.color === color;
                         return (
                           <div
@@ -296,7 +296,7 @@ export function ProductDetailsView({ product }: ProductDetailsViewProps) {
                       Tailles Disponibles
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {product.sizes.map(size => {
+                      {product.sizes.map((size) => {
                         const isActive = currentImage?.sizes?.includes(size);
                         return (
                           <Badge

@@ -137,7 +137,7 @@ const CartSheet = () => {
           <>
             <ScrollArea className="flex-1 -mx-4 px-4">
               <div className="divide-y divide-border">
-                {items.map(item => (
+                {items.map((item) => (
                   <CartItemRow
                     key={item.id}
                     item={item}

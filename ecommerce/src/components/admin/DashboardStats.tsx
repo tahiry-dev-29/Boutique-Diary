@@ -15,7 +15,6 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ products }: DashboardStatsProps) {
-  
   const totalProducts = products.length;
   const totalStock = products.reduce((acc, p) => acc + (p.stock || 0), 0);
   const totalValue = products.reduce(
@@ -23,7 +22,7 @@ export function DashboardStats({ products }: DashboardStatsProps) {
     0,
   );
 
-  const inStockCount = products.filter(p => (p.stock || 0) > 0).length;
+  const inStockCount = products.filter((p) => (p.stock || 0) > 0).length;
   const outOfStockCount = totalProducts - inStockCount;
 
   const stats = [

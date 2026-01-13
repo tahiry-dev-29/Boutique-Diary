@@ -130,7 +130,7 @@ export async function POST(
               <tbody>
                 ${order.items
                   .map(
-                    item => `
+                    (item) => `
                   <tr>
                     <td>
                       <div style="font-weight: 600;">${item.product.name}</div>

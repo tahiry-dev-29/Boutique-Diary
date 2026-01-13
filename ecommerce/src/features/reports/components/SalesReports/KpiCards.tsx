@@ -10,9 +10,9 @@ interface KpiCardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   icon?: React.ElementType;
-  chartData?: any[]; 
+  chartData?: any[];
   chartType?: "area" | "bar";
-  color?: string; 
+  color?: string;
 }
 
 export function KpiCard({
@@ -24,7 +24,7 @@ export function KpiCard({
   icon: Icon,
   chartData,
   chartType = "area",
-  color = "#8b5cf6", 
+  color = "#8b5cf6",
 }: KpiCardProps) {
   const trendColor =
     trend === "up"
@@ -99,7 +99,7 @@ export function KpiCard({
                       strokeWidth={2}
                       fillOpacity={1}
                       fill={`url(#gradient-${title})`}
-                      isAnimationActive={false} 
+                      isAnimationActive={false}
                     />
                   </AreaChart>
                 ) : (

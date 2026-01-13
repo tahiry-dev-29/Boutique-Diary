@@ -39,10 +39,10 @@ const formSchema = z.object({
   value: z.coerce
     .number()
     .min(0, "La valeur doit être positive")
-    .refine(val => val > 0, "La valeur doit être supérieure à 0"),
+    .refine((val) => val > 0, "La valeur doit être supérieure à 0"),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  usageLimit: z.coerce.number().min(0).optional().nullable(), 
+  usageLimit: z.coerce.number().min(0).optional().nullable(),
   minOrderAmount: z.coerce.number().min(0).optional().nullable(),
   isActive: z.boolean().default(true),
 });
@@ -129,7 +129,7 @@ export function PromoCodeForm({
                     <Input
                       placeholder="SUMMER2025"
                       {...field}
-                      onChange={e =>
+                      onChange={(e) =>
                         field.onChange(e.target.value.toUpperCase())
                       }
                     />
@@ -216,7 +216,7 @@ export function PromoCodeForm({
                     type="number"
                     placeholder="20"
                     {...field}
-                    onChange={e => field.onChange(e.target.value)}
+                    onChange={(e) => field.onChange(e.target.value)}
                   />
                 </FormControl>
                 <FormDescription>
@@ -271,7 +271,7 @@ export function PromoCodeForm({
                     placeholder="Illimité"
                     {...field}
                     value={field.value === null ? "" : field.value}
-                    onChange={e => {
+                    onChange={(e) => {
                       const val = e.target.value;
                       field.onChange(val === "" ? null : Number(val));
                     }}
@@ -297,7 +297,7 @@ export function PromoCodeForm({
                     placeholder="0"
                     {...field}
                     value={field.value === null ? "" : field.value}
-                    onChange={e => {
+                    onChange={(e) => {
                       const val = e.target.value;
                       field.onChange(val === "" ? null : Number(val));
                     }}

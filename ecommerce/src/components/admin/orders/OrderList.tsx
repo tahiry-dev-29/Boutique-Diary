@@ -151,7 +151,6 @@ export function OrderList({
     try {
       let res;
       if (action === "delete") {
-        
         toast.error("Suppression groupée non implémentée pour les commandes");
         return;
       } else {
@@ -168,9 +167,6 @@ export function OrderList({
       if (res?.ok) {
         toast.success(`${selectedOrders.length} commandes mises à jour`);
         setSelectedOrders([]);
-        
-        
-        
       } else {
         toast.error("Échec de l'action groupée");
       }
@@ -184,11 +180,9 @@ export function OrderList({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  
   const filteredOrders = useMemo(
     () =>
-      (orders || []).filter(order => {
-        
+      (orders || []).filter((order) => {
         if (
           activeTab === "completed" &&
           !["COMPLETED", "DELIVERED"].includes(order.status)
@@ -233,14 +227,14 @@ export function OrderList({
     if (selectedOrders.length === paginatedOrders.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(paginatedOrders.map(o => o.id));
+      setSelectedOrders(paginatedOrders.map((o) => o.id));
     }
   };
 
   const toggleSelectOrder = (orderId: string) => {
-    setSelectedOrders(prev =>
+    setSelectedOrders((prev) =>
       prev.includes(orderId)
-        ? prev.filter(id => id !== orderId)
+        ? prev.filter((id) => id !== orderId)
         : [...prev, orderId],
     );
   };
@@ -275,7 +269,7 @@ export function OrderList({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
           {}
           <div className="flex items-center gap-1 p-1 bg-muted rounded-xl">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <button
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
@@ -309,7 +303,7 @@ export function OrderList({
               <Input
                 placeholder="Rechercher..."
                 value={searchQuery}
-                onChange={e => {
+                onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
@@ -412,7 +406,7 @@ export function OrderList({
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedOrders.map(order => {
+                paginatedOrders.map((order) => {
                   const status = statusConfig[order.status];
                   const StatusIcon = status.icon;
                   const isSelected = selectedOrders.includes(order.id);
@@ -450,7 +444,7 @@ export function OrderList({
                             <AvatarFallback className="bg-linear-to-br from-violet-500 to-pink-500 text-white text-xs font-medium">
                               {order.customer.name
                                 .split(" ")
-                                .map(n => n[0])
+                                .map((n) => n[0])
                                 .join("")
                                 .toUpperCase()
                                 .slice(0, 2)}
@@ -541,7 +535,7 @@ export function OrderList({
               <span>Afficher</span>
               <Select
                 value={pageSize.toString()}
-                onValueChange={value => {
+                onValueChange={(value) => {
                   setPageSize(parseInt(value));
                   setCurrentPage(1);
                 }}
@@ -580,7 +574,7 @@ export function OrderList({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 <ChevronLeft className="w-4 h-4" />

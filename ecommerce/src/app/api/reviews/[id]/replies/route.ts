@@ -18,7 +18,6 @@ export async function POST(
       );
     }
 
-    
     const adminPayoad = await verifyAdminToken();
     if (adminPayoad) {
       const reply = await prisma.reviewReply.create({
@@ -38,7 +37,6 @@ export async function POST(
       return NextResponse.json(reply);
     }
 
-    
     const userPayload = await verifyToken();
     if (userPayload) {
       const reply = await prisma.reviewReply.create({

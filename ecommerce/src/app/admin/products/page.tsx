@@ -26,7 +26,7 @@ export default function ProductsPage() {
       <PageHeader
         title="Produits"
         description="Gestion du catalogue produit"
-        onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+        onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
       >
         <Link
           href="/admin/products/new"

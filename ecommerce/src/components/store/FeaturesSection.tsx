@@ -15,13 +15,11 @@ export default function FeaturesSection({
   const [openIndex, setOpenIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
-  
   const displayCount = customerCount;
 
-  
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.map(c => ({
+      ? recentCustomers.map((c) => ({
           url: `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
@@ -34,10 +32,9 @@ export default function FeaturesSection({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            
             anime({
               targets: entry.target.querySelector(".feature-image"),
               translateX: [-50, 0],
@@ -46,7 +43,6 @@ export default function FeaturesSection({
               duration: 1000,
             });
 
-            
             anime({
               targets: entry.target.querySelector(".feature-content"),
               translateX: [50, 0],

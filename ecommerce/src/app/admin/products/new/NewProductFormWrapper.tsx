@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import ProductForm from "@/components/admin/ProductForm";
 import { Category } from "@/types/category";
 
-export default function NewProductFormWrapper({ categories }: { categories: Category[] }) {
+export default function NewProductFormWrapper({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const router = useRouter();
 
   const handleSuccess = () => {

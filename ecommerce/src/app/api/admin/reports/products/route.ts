@@ -9,16 +9,11 @@ export async function GET() {
   }
 
   try {
-    
-    
     const topSelling = await prisma.orderItem.groupBy({
       by: ["productId"],
       _sum: {
         quantity: true,
-        price: true, 
-        
-        
-        
+        price: true,
       },
       orderBy: {
         _sum: {
@@ -28,19 +23,13 @@ export async function GET() {
       take: 5,
     });
 
-    
     const topProducts = await Promise.all(
-      topSelling.map(async item => {
+      topSelling.map(async (item) => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
           select: { id: true, name: true, reference: true, stock: true },
         });
 
-        
-        
-        
-
-        
         const orderItems = await prisma.orderItem.findMany({
           where: { productId: item.productId },
           select: { price: true, quantity: true },
@@ -61,7 +50,6 @@ export async function GET() {
       }),
     );
 
-    
     const products = await prisma.product.findMany({
       select: { stock: true, price: true },
     });
@@ -71,7 +59,7 @@ export async function GET() {
     let outOfStock = 0;
     let totalValue = 0;
 
-    products.forEach(p => {
+    products.forEach((p) => {
       totalValue += p.price * p.stock;
       if (p.stock === 0) outOfStock++;
       else if (p.stock < 5) lowStock++;

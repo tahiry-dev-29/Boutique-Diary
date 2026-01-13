@@ -211,7 +211,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 {}
                 {post.product.images.length > 1 && (
                   <div className="flex gap-2">
-                    {post.product.images.slice(0, 4).map(img => (
+                    {post.product.images.slice(0, 4).map((img) => (
                       <div
                         key={img.id}
                         className="w-10 h-10 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600"

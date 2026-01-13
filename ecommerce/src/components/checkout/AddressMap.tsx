@@ -45,7 +45,6 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
         );
 
         if (!response.ok) {
-          
           if (response.status === 503) {
             console.warn(
               "[AddressMap] Service unavailable, will retry on next move",
@@ -72,7 +71,6 @@ export default function AddressMap({ onAddressSelect }: AddressMapProps) {
         }
       } catch (error) {
         console.error("[AddressMap] Geocoding error:", error);
-        
       } finally {
         setLoading(false);
       }

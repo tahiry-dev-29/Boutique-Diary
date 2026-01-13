@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-
 export interface OrderDetails {
   id: string;
   reference: string;
@@ -220,7 +219,7 @@ export const generateInvoice = (order: OrderDetails) => {
         <tbody>
           ${order.items
             .map(
-              item => `
+              (item) => `
             <tr>
               <td>
                 <div style="font-weight: 500; color: #111;">${item.productName}</div>

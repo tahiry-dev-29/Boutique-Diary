@@ -6,12 +6,18 @@ import { Product } from "@/types/admin";
 
 import { Category } from "@/types/category";
 
-export default function ProductFormWrapper({ product, categories }: { product: Product, categories: Category[] }) {
+export default function ProductFormWrapper({
+  product,
+  categories,
+}: {
+  product: Product;
+  categories: Category[];
+}) {
   const router = useRouter();
 
   const handleSuccess = () => {
     router.push("/admin/products");
-    router.refresh(); 
+    router.refresh();
   };
 
   const handleCancel = () => {

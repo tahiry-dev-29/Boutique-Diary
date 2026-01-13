@@ -27,7 +27,6 @@ export async function reduceOrderStock(
   );
 
   for (const item of order.items) {
-    
     const product = await tx.product.findUnique({
       where: { id: item.productId },
       select: { id: true, stock: true, name: true },
@@ -49,9 +48,7 @@ export async function reduceOrderStock(
       data: { stock: newStock },
     });
 
-    
     if (item.productImageId) {
-      
       const img = await tx.productImage.findUnique({
         where: { id: item.productImageId },
       });
@@ -67,7 +64,6 @@ export async function reduceOrderStock(
           data: { stock: imgNewStock },
         });
 
-        
         await tx.stockMovement.create({
           data: {
             productId: item.productId,
@@ -82,7 +78,6 @@ export async function reduceOrderStock(
         });
       }
     } else {
-      
       const productImages = await tx.productImage.findMany({
         where: { productId: item.productId, stock: { not: null } },
         orderBy: { id: "asc" },
@@ -117,7 +112,6 @@ export async function reduceOrderStock(
       }
     }
 
-    
     await tx.stockMovement.create({
       data: {
         productId: item.productId,
@@ -154,7 +148,6 @@ export async function replenishOrderStock(
   }
 
   for (const item of order.items) {
-    
     const product = await tx.product.findUnique({
       where: { id: item.productId },
       select: { id: true, stock: true, name: true },
@@ -185,7 +178,6 @@ export async function replenishOrderStock(
       },
     });
 
-    
     const imgMovements = await tx.stockMovement.findMany({
       where: {
         productId: item.productId,

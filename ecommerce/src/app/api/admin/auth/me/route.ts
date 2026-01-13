@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { verifyAdminToken } from "@/lib/adminAuth";
 import { prisma } from "@/lib/prisma";
@@ -11,13 +10,12 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    
     prisma.admin
       .update({
         where: { id: user.adminId },
         data: { lastSeen: new Date() },
       })
-      .catch(err => console.error("Failed to update lastSeen:", err));
+      .catch((err) => console.error("Failed to update lastSeen:", err));
 
     return NextResponse.json(user, { status: 200 });
   } catch (error) {

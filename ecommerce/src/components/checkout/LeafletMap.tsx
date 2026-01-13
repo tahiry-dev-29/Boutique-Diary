@@ -9,7 +9,6 @@ interface LeafletMapProps {
   defaultCenter: { lat: number; lng: number };
 }
 
-
 function MapController({
   onCenterChange,
 }: {

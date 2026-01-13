@@ -49,7 +49,7 @@ export default function ReportsDashboardPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reportSections.map(section => (
+        {reportSections.map((section) => (
           <Link key={section.title} href={section.href} className="group">
             <Card className="h-full border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-gray-100 dark:bg-gray-900">
               <CardHeader>

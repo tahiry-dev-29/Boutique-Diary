@@ -167,7 +167,7 @@ export default function PaymentTransactionsPage() {
                 placeholder="Rechercher par réf. commande ou transaction..."
                 className="pl-9"
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
@@ -220,7 +220,7 @@ export default function PaymentTransactionsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  transactions.map(tx => (
+                  transactions.map((tx) => (
                     <TableRow key={tx.id} className="hover:bg-muted/50">
                       <TableCell className="font-mono text-xs">
                         {tx.reference || "N/A"}

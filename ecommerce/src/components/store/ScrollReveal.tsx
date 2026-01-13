@@ -38,8 +38,8 @@ export default function ScrollReveal({
     if (!element) return;
 
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const targets = selector
               ? element.querySelectorAll(selector)
@@ -64,7 +64,6 @@ export default function ScrollReveal({
               duration,
               easing: "easeOutExpo",
               complete: () => {
-                
                 if (selector) {
                   const items = element.querySelectorAll(selector);
                   items.forEach((item: any) => (item.style.opacity = "1"));
@@ -108,7 +107,6 @@ export default function ScrollReveal({
 
     observer.observe(element);
 
-    
     const failsafe = setTimeout(() => {
       if (element.style.opacity !== "1") {
         element.style.opacity = "1";

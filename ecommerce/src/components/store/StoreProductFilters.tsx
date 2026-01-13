@@ -58,7 +58,7 @@ export default function StoreProductFilters({
           Tous les articles
         </button>
 
-        {categories.map(category => (
+        {categories.map((category) => (
           <button
             key={category.id}
             onClick={() => onCategoryChange(category.id)}

@@ -35,7 +35,7 @@ export function ProductOrganization({
           <Label htmlFor="category">Catégorie Principale</Label>
           <Select
             value={formData.categoryId?.toString() || "uncategorized"}
-            onValueChange={value =>
+            onValueChange={(value) =>
               setFormData({
                 ...formData,
                 categoryId: value === "uncategorized" ? null : parseInt(value),
@@ -47,7 +47,7 @@ export function ProductOrganization({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="uncategorized">Non classé</SelectItem>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <SelectItem
                   key={category.id}
                   value={category.id?.toString() || ""}
@@ -69,7 +69,7 @@ export function ProductOrganization({
           </div>
           <Switch
             checked={formData.isNew}
-            onCheckedChange={checked =>
+            onCheckedChange={(checked) =>
               setFormData({ ...formData, isNew: checked })
             }
           />
@@ -84,7 +84,7 @@ export function ProductOrganization({
           </div>
           <Switch
             checked={formData.isPromotion}
-            onCheckedChange={checked =>
+            onCheckedChange={(checked) =>
               setFormData({ ...formData, isPromotion: checked })
             }
           />
@@ -99,7 +99,7 @@ export function ProductOrganization({
           </div>
           <Switch
             checked={formData.isBestSeller}
-            onCheckedChange={checked =>
+            onCheckedChange={(checked) =>
               setFormData({ ...formData, isBestSeller: checked })
             }
           />

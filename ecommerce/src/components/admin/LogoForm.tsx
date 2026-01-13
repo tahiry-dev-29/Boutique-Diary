@@ -44,7 +44,7 @@ export default function LogoForm() {
     }
 
     const reader = new FileReader();
-    reader.onload = event => {
+    reader.onload = (event) => {
       setPreviewUrl(event.target?.result as string);
     };
     reader.readAsDataURL(file);

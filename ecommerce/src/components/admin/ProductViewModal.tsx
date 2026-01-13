@@ -247,7 +247,7 @@ export default function ProductViewModal({
                       Couleurs
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.colors.map(color => {
+                      {product.colors.map((color) => {
                         const isAvailable = selectedImageObj?.color === color;
                         return (
                           <Badge
@@ -276,7 +276,7 @@ export default function ProductViewModal({
                       Tailles
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.sizes.map(size => {
+                      {product.sizes.map((size) => {
                         const isAvailable =
                           selectedImageObj?.sizes?.includes(size) || false;
                         return (

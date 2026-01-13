@@ -48,7 +48,7 @@ const getInitialColor = (name: string) => {
 const getInitials = (name: string) => {
   return name
     .split(" ")
-    .map(word => word[0])
+    .map((word) => word[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -79,7 +79,7 @@ export default function CategoryList({
 
   // Filter categories
   const filteredCategories = useMemo(() => {
-    return categories.filter(category => {
+    return categories.filter((category) => {
       // Search filter
       const matchesSearch =
         searchTerm === "" ||
@@ -99,7 +99,6 @@ export default function CategoryList({
       const matchesDateTo =
         !dateTo || (createdAt && createdAt <= new Date(dateTo + "T23:59:59"));
 
-      
       const productCount = category._count?.products || 0;
       const matchesMinProducts =
         !minProducts || productCount >= parseInt(minProducts);
@@ -116,7 +115,6 @@ export default function CategoryList({
     });
   }, [categories, searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
 
-  
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, dateFrom, dateTo, minProducts, maxProducts]);
@@ -177,7 +175,7 @@ export default function CategoryList({
       });
 
       if (response.ok) {
-        setCategories(categories.filter(c => c.id !== id));
+        setCategories(categories.filter((c) => c.id !== id));
         toast.success("Catégorie supprimée avec succès");
       } else {
         toast.error("Erreur lors de la suppression");
@@ -255,7 +253,7 @@ export default function CategoryList({
             <Input
               placeholder="Rechercher..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 h-10 w-[200px] border-gray-200 rounded-full"
             />
             {searchTerm && (
@@ -295,7 +293,7 @@ export default function CategoryList({
                     <Input
                       type="date"
                       value={dateFrom}
-                      onChange={e => setDateFrom(e.target.value)}
+                      onChange={(e) => setDateFrom(e.target.value)}
                       className="h-9"
                     />
                   </div>
@@ -304,7 +302,7 @@ export default function CategoryList({
                     <Input
                       type="date"
                       value={dateTo}
-                      onChange={e => setDateTo(e.target.value)}
+                      onChange={(e) => setDateTo(e.target.value)}
                       className="h-9"
                     />
                   </div>
@@ -354,7 +352,7 @@ export default function CategoryList({
                       type="number"
                       placeholder="0"
                       value={minProducts}
-                      onChange={e => setMinProducts(e.target.value)}
+                      onChange={(e) => setMinProducts(e.target.value)}
                       className="h-9"
                       min="0"
                     />
@@ -367,7 +365,7 @@ export default function CategoryList({
                       type="number"
                       placeholder="∞"
                       value={maxProducts}
-                      onChange={e => setMaxProducts(e.target.value)}
+                      onChange={(e) => setMaxProducts(e.target.value)}
                       className="h-9"
                       min="0"
                     />
@@ -405,7 +403,7 @@ export default function CategoryList({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {currentCategories.map(category => (
+            {currentCategories.map((category) => (
               <React.Fragment key={category.id}>
                 <tr
                   className="hover:bg-gray-50/50 cursor-pointer transition-colors group"
@@ -451,7 +449,7 @@ export default function CategoryList({
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           onEdit(category);
                         }}
@@ -461,7 +459,7 @@ export default function CategoryList({
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           if (category.id) handleDelete(category.id);
                         }}
@@ -503,7 +501,7 @@ export default function CategoryList({
                               Produits de &quot;{category.name}&quot;
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                              {categoryProducts.map(product => (
+                              {categoryProducts.map((product) => (
                                 <Link
                                   href={`/admin/products/${product.id}`}
                                   key={product.id}
@@ -558,7 +556,7 @@ export default function CategoryList({
           <div className="flex items-center gap-1">
             {}
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -586,7 +584,7 @@ export default function CategoryList({
             {}
             <button
               onClick={() =>
-                setCurrentPage(prev => Math.min(prev + 1, totalPages))
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

@@ -35,7 +35,7 @@ export default function StarRating({
       className="flex items-center gap-1"
       onMouseLeave={() => setHoverRating(null)}
     >
-      {stars.map(star => (
+      {stars.map((star) => (
         <button
           key={star}
           type="button"

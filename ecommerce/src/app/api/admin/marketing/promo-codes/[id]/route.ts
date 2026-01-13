@@ -31,7 +31,6 @@ export async function PUT(
     const body = await req.json();
     const validatedData = promoCodeUpdateSchema.parse(body);
 
-    
     if (validatedData.code) {
       const existing = await prisma.promoCode.findUnique({
         where: { code: validatedData.code },

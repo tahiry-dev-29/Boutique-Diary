@@ -68,7 +68,7 @@ export function EmployeesListClient() {
     return diff < 5 * 60 * 1000;
   };
 
-  const filteredEmployees = employees.filter(emp => {
+  const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -90,7 +90,7 @@ export function EmployeesListClient() {
 
       if (!response.ok) throw new Error("Failed to delete");
 
-      setEmployees(prev => prev.filter(e => e.id !== id));
+      setEmployees((prev) => prev.filter((e) => e.id !== id));
       toast.success("Employé supprimé avec succès");
     } catch (error) {
       console.error("Error deleting employee:", error);
@@ -119,14 +119,14 @@ export function EmployeesListClient() {
             type="text"
             placeholder="Rechercher par nom ou email..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
           />
         </div>
 
         <select
           value={selectedRole}
-          onChange={e => setSelectedRole(e.target.value)}
+          onChange={(e) => setSelectedRole(e.target.value)}
           className="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors"
         >
           <option value="all">Tous les rôles</option>
@@ -162,7 +162,7 @@ export function EmployeesListClient() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredEmployees.map(employee => {
+              {filteredEmployees.map((employee) => {
                 const online = isOnline(employee.lastSeen);
                 return (
                   <tr

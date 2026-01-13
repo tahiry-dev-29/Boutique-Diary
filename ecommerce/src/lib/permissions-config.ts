@@ -30,13 +30,13 @@ export const DEFAULT_ROLES: RoleConfig[] = [
   {
     id: "superadmin",
     name: "superadmin",
-    permissions: ALL_PERMISSIONS.map(p => p.id),
+    permissions: ALL_PERMISSIONS.map((p) => p.id),
   },
   {
     id: "admin",
     name: "admin",
-    permissions: ALL_PERMISSIONS.filter(p => !p.id.includes("employees")).map(
-      p => p.id,
+    permissions: ALL_PERMISSIONS.filter((p) => !p.id.includes("employees")).map(
+      (p) => p.id,
     ),
   },
   {

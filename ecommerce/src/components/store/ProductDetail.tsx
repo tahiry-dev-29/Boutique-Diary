@@ -177,20 +177,20 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, []);
 
   const handleColorSelect = (color: string) => {
-    const index = images.findIndex(img => img.color === color);
+    const index = images.findIndex((img) => img.color === color);
     if (index !== -1) {
       setSelectedImageIndex(index);
     }
   };
 
-  const addItem = useCartStore(state => state.addItem);
+  const addItem = useCartStore((state) => state.addItem);
 
   const handleAddToCart = () => {
     if (!product) return;
 
     addItem({
       productId: product.id,
-      productImageId: currentImage?.id, 
+      productImageId: currentImage?.id,
       name: product.name,
       reference: currentRef || product.reference,
       image: currentImage?.url || "",
@@ -216,12 +216,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     ? Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100)
     : 0;
 
-  
-  
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
-    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
-    blogPosts.find(bp => !bp.productImageId);
+    blogPosts.find((bp) => bp.productImageId === currentImage?.id) ||
+    blogPosts.find((bp) => !bp.productImageId);
 
   return (
     <section className="py-8 md:py-16 px-4 md:px-6">
@@ -363,7 +361,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 {uniqueColors.length > 0 ? (
                   uniqueColors.map((color: string) => {
                     const isSelected = currentImage?.color === color;
-                    const index = images.findIndex(img => img.color === color);
+                    const index = images.findIndex(
+                      (img) => img.color === color,
+                    );
                     return (
                       <button
                         key={color}

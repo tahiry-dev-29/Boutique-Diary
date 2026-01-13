@@ -4,7 +4,7 @@ import NewProductFormWrapper from "./NewProductFormWrapper";
 
 export default async function NewProductPage() {
   const categories = await prisma.category.findMany({
-    orderBy: { name: 'asc' }
+    orderBy: { name: "asc" },
   });
 
   return (

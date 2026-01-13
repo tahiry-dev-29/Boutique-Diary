@@ -56,7 +56,7 @@ export default function NewEmployeePage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -229,7 +229,7 @@ export default function NewEmployeePage() {
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none transition-all"
                 >
-                  {availableRoles.map(role => (
+                  {availableRoles.map((role) => (
                     <option key={role.id} value={role.name}>
                       {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
                     </option>

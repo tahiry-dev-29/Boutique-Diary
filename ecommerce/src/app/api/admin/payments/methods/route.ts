@@ -21,9 +21,6 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id, isActive, config, isDefault } = body;
 
-    
-    
-    
     if (isDefault) {
       await prisma.paymentMethod.updateMany({
         where: { id: { not: id } },

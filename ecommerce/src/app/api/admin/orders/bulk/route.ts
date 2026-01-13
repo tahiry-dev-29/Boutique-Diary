@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest) {
         id: { in: ids },
       },
       data: {
-        status: status as any, 
+        status: status as any,
       },
     });
 

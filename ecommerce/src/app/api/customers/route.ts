@@ -26,7 +26,7 @@ export async function GET() {
       },
     });
 
-    const formattedCustomers = customers.map(customer => ({
+    const formattedCustomers = customers.map((customer) => ({
       id: customer.id,
       username: customer.username,
       email: customer.email,
@@ -63,7 +63,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.user.deleteMany({
       where: {
         id: { in: ids },
-        role: "CUSTOMER", 
+        role: "CUSTOMER",
       },
     });
 

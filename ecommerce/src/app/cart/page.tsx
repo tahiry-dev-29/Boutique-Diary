@@ -14,10 +14,10 @@ import { useCartStore, formatPrice } from "@/lib/cart-store";
 import { cn } from "@/lib/utils";
 
 export default function CartPage() {
-  const items = useCartStore(state => state.items);
-  const removeItem = useCartStore(state => state.removeItem);
-  const updateQuantity = useCartStore(state => state.updateQuantity);
-  const getSubtotal = useCartStore(state => state.getSubtotal);
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const getSubtotal = useCartStore((state) => state.getSubtotal);
 
   const subtotal = getSubtotal();
   const delivery = 0;
@@ -61,7 +61,7 @@ export default function CartPage() {
           </div>
 
           <div className="space-y-4">
-            {items.map(item => (
+            {items.map((item) => (
               <div
                 key={item.id}
                 className="group relative flex gap-6 p-4 sm:p-6 rounded-3xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm transition-all duration-300"

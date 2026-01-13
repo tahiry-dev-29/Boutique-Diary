@@ -31,7 +31,7 @@ export function usePermissions() {
 
       if (user.role === "superadmin" || user.role === "SUPERADMIN") {
         const superAdminPerms = DEFAULT_ROLES.find(
-          r => r.id === "superadmin",
+          (r) => r.id === "superadmin",
         )?.permissions;
         setPermissions(superAdminPerms || []);
         setLoading(false);
@@ -47,7 +47,7 @@ export function usePermissions() {
           try {
             const roles = JSON.parse(data.value) as RoleConfig[];
             const myRole = roles.find(
-              r => r.name.toLowerCase() === user.role.toLowerCase(),
+              (r) => r.name.toLowerCase() === user.role.toLowerCase(),
             );
             if (myRole) {
               rolePermissions = myRole.permissions;
@@ -60,7 +60,7 @@ export function usePermissions() {
 
       if (rolePermissions.length === 0) {
         const defaultRole = DEFAULT_ROLES.find(
-          r => r.name.toLowerCase() === user.role.toLowerCase(),
+          (r) => r.name.toLowerCase() === user.role.toLowerCase(),
         );
         if (defaultRole) {
           rolePermissions = defaultRole.permissions;

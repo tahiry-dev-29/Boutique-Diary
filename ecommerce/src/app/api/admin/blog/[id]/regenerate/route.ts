@@ -6,7 +6,6 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -16,7 +15,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 });
     }
 
-    
     const blogPost = await prisma.blogPost.findUnique({
       where: { id: blogId },
       include: {
@@ -35,7 +33,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    
     const generatedContent = await generateBlogContent({
       name: blogPost.product.name,
       description: blogPost.product.description,
@@ -46,7 +43,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       sizes: blogPost.product.sizes,
     });
 
-    
     const updatedPost = await prisma.blogPost.update({
       where: { id: blogId },
       data: {

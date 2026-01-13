@@ -19,8 +19,8 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".promo-card"),
@@ -52,7 +52,6 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
     <section ref={sectionRef} className="py-8 px-4 md:px-6">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayProducts.map((product, index) => {
-          
           const bgColor = bgColors[index % bgColors.length];
           const rotation = rotations[index % rotations.length];
           const imageUrl = product.images?.[0]?.url;

@@ -15,7 +15,7 @@ function generateOrderReference(): string {
 
 interface OrderItemInput {
   productId: number;
-  productImageId?: number; 
+  productImageId?: number;
   quantity: number;
   price: number;
   color?: string;
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       attempts++;
     }
 
-    const order = await prisma.$transaction(async tx => {
+    const order = await prisma.$transaction(async (tx) => {
       const newOrder = await tx.order.create({
         data: {
           reference,
@@ -104,9 +104,9 @@ export async function POST(request: NextRequest) {
           status: "PENDING",
           customerId,
           items: {
-            create: body.items.map(item => ({
+            create: body.items.map((item) => ({
               productId: item.productId,
-              productImageId: item.productImageId, 
+              productImageId: item.productImageId,
               quantity: item.quantity,
               price: item.price,
             })),

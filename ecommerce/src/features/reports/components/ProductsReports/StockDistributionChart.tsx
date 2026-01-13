@@ -17,9 +17,9 @@ interface StockDistributionChartProps {
 }
 
 const COLORS = {
-  "In Stock": "#10b981", 
-  "Low Stock": "#f97316", 
-  "Out of Stock": "#ef4444", 
+  "In Stock": "#10b981",
+  "Low Stock": "#f97316",
+  "Out of Stock": "#ef4444",
 };
 
 export function StockDistributionChart({ data }: StockDistributionChartProps) {
@@ -61,7 +61,7 @@ export function StockDistributionChart({ data }: StockDistributionChartProps) {
           <Legend
             verticalAlign="bottom"
             height={36}
-            formatter={value => (
+            formatter={(value) => (
               <span style={{ color: isDark ? "#d1d5db" : "#374151" }}>
                 {value}
               </span>

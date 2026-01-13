@@ -174,7 +174,7 @@ export default function StoreProductBanner({
                         />
                       </div>
                     ))
-                  : [1, 2, 3, 4].map(i => (
+                  : [1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
                         className="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl transition-transform group-hover/stats:-translate-y-1"

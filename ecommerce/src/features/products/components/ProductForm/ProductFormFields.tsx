@@ -7,7 +7,7 @@ import { Tag } from "lucide-react";
 interface ProductFormFieldsProps {
   formData: Product;
   setFormData: React.Dispatch<React.SetStateAction<Product>>;
-  categories?: any[]; 
+  categories?: any[];
 }
 
 export function ProductFormFields({
@@ -15,7 +15,7 @@ export function ProductFormFields({
   setFormData,
 }: ProductFormFieldsProps) {
   const handleChange = (field: keyof Product, value: unknown) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -44,7 +44,7 @@ export function ProductFormFields({
               type="text"
               required
               value={formData.name}
-              onChange={e => handleChange("name", e.target.value)}
+              onChange={(e) => handleChange("name", e.target.value)}
               placeholder="Ex: Robe d'été fleurie"
               className="h-11 border-black/5 bg-black/5 dark:border-white/10 dark:bg-white/5 focus:border-primary focus:ring-primary/20"
             />
@@ -61,7 +61,7 @@ export function ProductFormFields({
               id="brand"
               type="text"
               value={formData.brand || ""}
-              onChange={e => handleChange("brand", e.target.value)}
+              onChange={(e) => handleChange("brand", e.target.value)}
               placeholder="Ex: Zara"
               className="h-11 border-black/5 bg-black/5 dark:border-white/10 dark:bg-white/5 focus:border-primary focus:ring-primary/20"
             />
@@ -77,7 +77,7 @@ export function ProductFormFields({
             <Textarea
               id="description"
               value={formData.description || ""}
-              onChange={e => handleChange("description", e.target.value)}
+              onChange={(e) => handleChange("description", e.target.value)}
               rows={5}
               placeholder="Description détaillée..."
               className="resize-none border-black/5 bg-black/5 dark:border-white/10 dark:bg-white/5 focus:border-primary focus:ring-primary/20 min-h-[100px]"

@@ -61,7 +61,7 @@ export default function StoreHero() {
             <div className="mb-8">
               <h3 className="font-semibold mb-3">Size</h3>
               <div className="flex gap-3">
-                {["S", "M", "L", "XL"].map(size => (
+                {["S", "M", "L", "XL"].map((size) => (
                   <button
                     key={size}
                     className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all

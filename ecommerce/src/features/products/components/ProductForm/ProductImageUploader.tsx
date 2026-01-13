@@ -51,7 +51,7 @@ export function ProductImageUploader({
 }: ProductImageUploaderProps) {
   const [urlInput, setUrlInput] = useState("");
   const { rules } = usePromotionRules();
-  const activeRules = rules.filter(r => r.isActive);
+  const activeRules = rules.filter((r) => r.isActive);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -83,7 +83,7 @@ export function ProductImageUploader({
 
     if (validFiles.length === 0) return;
 
-    const uploadPromises = validFiles.map(async file => {
+    const uploadPromises = validFiles.map(async (file) => {
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
 
@@ -109,10 +109,10 @@ export function ProductImageUploader({
     try {
       const loadingToast = toast.loading("Téléchargement des images...");
       const urls = (await Promise.all(uploadPromises)).filter(
-        url => url !== null,
+        (url) => url !== null,
       );
 
-      const newImages: ProductImage[] = urls.map(url => ({
+      const newImages: ProductImage[] = urls.map((url) => ({
         url,
         color: null,
         sizes: [],
@@ -121,7 +121,7 @@ export function ProductImageUploader({
         price: null,
       }));
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         images: [...(prev.images || []), ...newImages],
       }));
@@ -163,7 +163,7 @@ export function ProductImageUploader({
         return;
       }
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         images: [
           ...(prev.images || []),
@@ -190,12 +190,12 @@ export function ProductImageUploader({
 
   const handleRemoveImage = (index: number) => {
     const images = formData.images || [];
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: (prev.images || []).filter((_, i) => i !== index),
     }));
     if (selectedImageIndex >= index && selectedImageIndex > 0) {
-      setSelectedImageIndex(prev => prev - 1);
+      setSelectedImageIndex((prev) => prev - 1);
     } else if (selectedImageIndex === index && images.length === 1) {
       setSelectedImageIndex(0);
     } else if (selectedImageIndex === index && index === images.length - 1) {
@@ -209,7 +209,7 @@ export function ProductImageUploader({
     const newImages = [...images];
     const [selectedImage] = newImages.splice(index, 1);
     newImages.unshift(selectedImage);
-    setFormData(prev => ({ ...prev, images: newImages }));
+    setFormData((prev) => ({ ...prev, images: newImages }));
     setSelectedImageIndex(0);
   };
 
@@ -226,7 +226,7 @@ export function ProductImageUploader({
       | "promotionRuleId",
     value: string | string[] | number | boolean | null,
   ) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const images = prev.images || [];
       const newImages = [...images];
 
@@ -292,7 +292,7 @@ export function ProductImageUploader({
             <Input
               type="text"
               value={urlInput}
-              onChange={e => setUrlInput(e.target.value)}
+              onChange={(e) => setUrlInput(e.target.value)}
               placeholder="URL de l'image (https://...)"
               className="h-10 flex-1 border-black/5 bg-black/5 dark:border-white/10 dark:bg-white/5 focus:border-primary focus:ring-primary/20"
             />
@@ -431,7 +431,7 @@ export function ProductImageUploader({
                 <div className="flex gap-2">
                   <Input
                     value={currentImageAsProductImage.reference || ""}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleUpdateImageAttribute(
                         selectedImageIndex,
                         "reference",
@@ -470,7 +470,7 @@ export function ProductImageUploader({
                     currentImageAsProductImage.categoryId?.toString() ||
                     "uncategorized"
                   }
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     handleUpdateImageAttribute(
                       selectedImageIndex,
                       "categoryId",
@@ -483,7 +483,7 @@ export function ProductImageUploader({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="uncategorized">Non classé</SelectItem>
-                    {categories?.map(category => (
+                    {categories?.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.id?.toString() || ""}
@@ -504,7 +504,7 @@ export function ProductImageUploader({
                   <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
                     <Checkbox
                       checked={currentImageAsProductImage.isNew || false}
-                      onCheckedChange={checked =>
+                      onCheckedChange={(checked) =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "isNew",
@@ -521,7 +521,7 @@ export function ProductImageUploader({
                         (currentImageAsProductImage as any).isBestSeller ||
                         false
                       }
-                      onCheckedChange={checked =>
+                      onCheckedChange={(checked) =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "isBestSeller",
@@ -556,7 +556,7 @@ export function ProductImageUploader({
                     currentImageAsProductImage.promotionRuleId?.toString() ||
                     "none"
                   }
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     handleUpdateImageAttribute(
                       selectedImageIndex,
                       "promotionRuleId",
@@ -569,7 +569,7 @@ export function ProductImageUploader({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Aucune</SelectItem>
-                    {activeRules.map(rule => (
+                    {activeRules.map((rule) => (
                       <SelectItem key={rule.id} value={rule.id.toString()}>
                         {rule.name}
                       </SelectItem>
@@ -587,7 +587,7 @@ export function ProductImageUploader({
                   {}
                   <Select
                     value={currentImageAsProductImage.color || "none"}
-                    onValueChange={value =>
+                    onValueChange={(value) =>
                       handleUpdateImageAttribute(
                         selectedImageIndex,
                         "color",
@@ -600,7 +600,7 @@ export function ProductImageUploader({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Aucune</SelectItem>
-                      {AVAILABLE_COLORS.map(color => (
+                      {AVAILABLE_COLORS.map((color) => (
                         <SelectItem key={color} value={color}>
                           <div className="flex items-center gap-2">
                             <span
@@ -622,7 +622,7 @@ export function ProductImageUploader({
                   Tailles Disponibles
                 </Label>
                 <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-black/5 bg-black/5 dark:border-white/5 dark:bg-white/5">
-                  {AVAILABLE_SIZES.map(size => (
+                  {AVAILABLE_SIZES.map((size) => (
                     <label
                       key={size}
                       className={cn(
@@ -639,12 +639,12 @@ export function ProductImageUploader({
                           currentImageAsProductImage.sizes?.includes(size) ||
                           false
                         }
-                        onChange={e => {
+                        onChange={(e) => {
                           const currentSizes =
                             currentImageAsProductImage.sizes || [];
                           const newSizes = e.target.checked
                             ? [...currentSizes, size]
-                            : currentSizes.filter(s => s !== size);
+                            : currentSizes.filter((s) => s !== size);
                           handleUpdateImageAttribute(
                             selectedImageIndex,
                             "sizes",

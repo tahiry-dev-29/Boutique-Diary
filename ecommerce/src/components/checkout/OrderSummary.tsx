@@ -5,12 +5,12 @@ import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 
 export default function OrderSummary() {
-  const items = useCartStore(state => state.items);
-  const getSubtotal = useCartStore(state => state.getSubtotal);
+  const items = useCartStore((state) => state.items);
+  const getSubtotal = useCartStore((state) => state.getSubtotal);
 
   const subtotal = getSubtotal();
-  const delivery = 0; 
-  const taxes = subtotal * 0.2; 
+  const delivery = 0;
+  const taxes = subtotal * 0.2;
   const total = subtotal + delivery + taxes;
 
   if (items.length === 0) {
@@ -30,7 +30,7 @@ export default function OrderSummary() {
 
       {}
       <div className="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-        {items.map(item => (
+        {items.map((item) => (
           <div key={item.id} className="flex gap-4">
             <div className="w-16 h-20 bg-white rounded-lg relative overflow-hidden shrink-0 border border-gray-100">
               {item.image ? (

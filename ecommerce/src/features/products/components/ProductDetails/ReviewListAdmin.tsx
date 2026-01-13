@@ -13,7 +13,6 @@ interface ReviewListAdminProps {
   productId: number;
 }
 
-
 const ReviewItemBase = ({
   review,
   handleDelete,
@@ -86,7 +85,7 @@ const ReviewItemBase = ({
           Répondre
         </Button>
         <div className="flex gap-2">
-          {["LIKE", "LOVE"].map(type => {
+          {["LIKE", "LOVE"].map((type) => {
             const hasReacted = review.reactions?.some(
               (r: any) => r.type === type,
             );
@@ -117,7 +116,7 @@ const ReviewItemBase = ({
             className="w-full p-5 rounded-[24px] bg-gray-50 dark:bg-gray-900 border-2 border-transparent focus:border-black/5 dark:focus:border-white/5 focus:bg-white dark:focus:bg-black text-sm min-h-[120px] font-medium resize-none transition-all shadow-inner"
             placeholder="Votre réponse officielle ici..."
             value={replyContent}
-            onChange={e => setReplyContent(e.target.value)}
+            onChange={(e) => setReplyContent(e.target.value)}
           />
           <div className="flex justify-end gap-3">
             <Button
@@ -167,7 +166,7 @@ const ReviewItemBase = ({
 
       {review.tags && review.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-3">
-          {(review.tags as string[]).map(tag => (
+          {(review.tags as string[]).map((tag) => (
             <span
               key={tag}
               className="text-[10px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-3 py-1 rounded-full text-gray-500 font-bold shadow-sm"
@@ -261,7 +260,7 @@ export function ReviewListAdmin({ productId }: ReviewListAdminProps) {
 
       if (response.ok) {
         toast.success("Avis supprimé");
-        setReviews(reviews.filter(r => r.id !== reviewId));
+        setReviews(reviews.filter((r) => r.id !== reviewId));
       } else {
         toast.error("Échec de la suppression");
       }

@@ -58,7 +58,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         if (user && isAdmin(user.role)) {
           e.preventDefault();
-          setCommandPaletteOpen(open => !open);
+          setCommandPaletteOpen((open) => !open);
         }
       }
     };

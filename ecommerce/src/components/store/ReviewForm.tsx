@@ -154,7 +154,7 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                   Les points forts ?
                 </FormLabel>
                 <div className="flex flex-wrap gap-2">
-                  {PREDEFINED_TAGS.map(tag => (
+                  {PREDEFINED_TAGS.map((tag) => (
                     <label
                       key={tag}
                       className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all border border-transparent has-[:checked]:border-black has-[:checked]:bg-white has-[:checked]:shadow-lg has-[:checked]:shadow-black/5"
@@ -162,14 +162,14 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                       <Checkbox
                         className="hidden"
                         checked={form.watch("tags").includes(tag)}
-                        onCheckedChange={checked => {
+                        onCheckedChange={(checked) => {
                           const current = form.getValues("tags");
                           if (checked) {
                             form.setValue("tags", [...current, tag]);
                           } else {
                             form.setValue(
                               "tags",
-                              current.filter(t => t !== tag),
+                              current.filter((t) => t !== tag),
                             );
                           }
                         }}

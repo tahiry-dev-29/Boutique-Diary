@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
           ...msg,
           userAvatar: user?.photo || null,
         };
-      })
+      }),
     );
 
     return NextResponse.json(enhancedMessages);
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching messages:", error);
     return NextResponse.json(
       { error: "Failed to fetch messages" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest) {
     if (!id || !status) {
       return NextResponse.json(
         { error: "ID and Status are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function PATCH(request: NextRequest) {
     console.error("Error updating message:", error);
     return NextResponse.json(
       { error: "Failed to update message" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,7 +81,7 @@ export async function DELETE(request: NextRequest) {
     console.error("Error deleting message:", error);
     return NextResponse.json(
       { error: "Failed to delete message" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

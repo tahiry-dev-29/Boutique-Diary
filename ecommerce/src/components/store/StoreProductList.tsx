@@ -36,14 +36,14 @@ export default function StoreProductList({
 
   const filteredProducts = useMemo(() => {
     if (!selectedCategoryId) return initialProducts;
-    return initialProducts.filter(p => p.categoryId === selectedCategoryId);
+    return initialProducts.filter((p) => p.categoryId === selectedCategoryId);
   }, [initialProducts, selectedCategoryId]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProducts.length;
 
   const handleLoadMore = () => {
-    setVisibleCount(prev => prev + 20);
+    setVisibleCount((prev) => prev + 20);
   };
 
   return (
@@ -51,7 +51,7 @@ export default function StoreProductList({
       <StoreProductFilters
         categories={categories}
         selectedCategoryId={selectedCategoryId}
-        onCategoryChange={id => {
+        onCategoryChange={(id) => {
           setSelectedCategoryId(id);
           setVisibleCount(20);
         }}

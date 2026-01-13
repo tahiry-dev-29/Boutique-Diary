@@ -57,9 +57,9 @@ export default function ReviewItem({ review, onReaction }: ReviewItemProps) {
 
       <div className="flex items-center gap-4 mb-4">
         <div className="flex gap-1.5">
-          {["LIKE", "LOVE"].map(type => {
+          {["LIKE", "LOVE"].map((type) => {
             const count =
-              review.reactions?.filter(r => r.type === type).length || 0;
+              review.reactions?.filter((r) => r.type === type).length || 0;
             return (
               <button
                 key={type}

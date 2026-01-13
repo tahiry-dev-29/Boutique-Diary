@@ -26,19 +26,17 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    
     const sanitizedRef = reference.replace(/[^a-zA-Z0-9-]/g, "").toUpperCase();
     const sanitizedName = productName
       .replace(/[^a-zA-Z0-9-]/g, "_")
       .toLowerCase();
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 6);
-    
+
     const extension =
       file.name.split(".").pop()?.toLowerCase() ||
       (file.type === "image/jpeg" ? "jpg" : "png");
 
-    
     const fileName = `${sanitizedName}_${sanitizedRef}_${timestamp}-${random}.${extension}`;
 
     const uploadDir = path.join(process.cwd(), "public", "uploads");

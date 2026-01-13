@@ -19,7 +19,7 @@ export async function GET(
             email: true,
             addresses: {
               take: 1,
-              orderBy: { createdAt: "desc" }, 
+              orderBy: { createdAt: "desc" },
             },
           },
         },
@@ -49,7 +49,6 @@ export async function GET(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    
     let displayAddress = "Point relais";
     if (order.transactions && order.transactions.length > 0) {
       const meta = order.transactions[0].metadata as Record<string, unknown>;
@@ -67,7 +66,6 @@ export async function GET(
       order.customer.addresses &&
       order.customer.addresses.length > 0
     ) {
-      
       const addr = order.customer.addresses[0];
       displayAddress = `${addr.street}, ${addr.city}`;
     }
@@ -86,7 +84,7 @@ export async function GET(
             address: displayAddress,
           }
         : { name: "Invité", email: "", address: displayAddress },
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         id: item.id,
         productId: item.productId,
         productName: item.product.name,
@@ -131,7 +129,7 @@ export async function PATCH(
 
     console.log(`[OrderPATCH] Updating order ${id} to status: ${status}`);
 
-    const updatedOrder = await prisma.$transaction(async tx => {
+    const updatedOrder = await prisma.$transaction(async (tx) => {
       const order = await tx.order.update({
         where: { id },
         data: { status },

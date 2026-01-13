@@ -56,7 +56,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
             fontSize={12}
             tickLine={false}
             axisLine={false}
-            tickFormatter={value => `${value}Ar`}
+            tickFormatter={(value) => `${value}Ar`}
           />
           <Tooltip
             contentStyle={{
