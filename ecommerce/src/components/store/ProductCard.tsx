@@ -5,7 +5,7 @@ import { Eye, Heart, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/cart-store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface ProductCardProps {
@@ -35,6 +35,7 @@ export default function ProductCard({
   isPromotion,
   isBestSeller,
   rating,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   reviewCount,
   imageColor,
   initialIsWishlisted = false,
@@ -73,7 +74,7 @@ export default function ProductCard({
       } else {
         toast.error("Une erreur est survenue");
       }
-    } catch (err) {
+    } catch {
       toast.error("Erreur de connexion");
     } finally {
       setIsWishlistLoading(false);
@@ -90,7 +91,7 @@ export default function ProductCard({
       {}
       <div
         className={cn(
-          "relative aspect-[4/5] overflow-hidden rounded-[24px] mb-4 transition-all duration-500",
+          "relative aspect-6/7 overflow-hidden rounded-[24px] mb-4 transition-all duration-500",
           imageColor || "bg-[#F8F8F8]",
         )}
       >

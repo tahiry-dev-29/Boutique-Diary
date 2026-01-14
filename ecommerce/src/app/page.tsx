@@ -12,22 +12,16 @@ import {
   getFeaturedProducts,
   getTopSellingProducts,
   getPromotionalProducts,
-  getCategoryProductsMap,
   getStoreStats,
   getTestimonials,
+  getCategories,
 } from "@/lib/store-data";
-import CategoryTabsSection from "@/components/store/CategoryTabsSection";
 
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts(12);
   const topSellingProducts = await getTopSellingProducts(4);
   const promotionalProducts = await getPromotionalProducts(3);
-  const categoryProducts = await getCategoryProductsMap([
-    "Shoes",
-    "Clothing",
-    "Accessories",
-    "Jewellery",
-  ]);
+  const categories = await getCategories();
   const { customerCount, recentCustomers } = await getStoreStats();
   const testimonials = await getTestimonials(6);
 
@@ -40,10 +34,6 @@ export default async function Home() {
 
       <ScrollReveal animation="fade-up" delay={200}>
         <PromoSection products={promotionalProducts} />
-      </ScrollReveal>
-
-      <ScrollReveal animation="fade-up" threshold={0.1}>
-        <CategoryTabsSection productsMap={categoryProducts} />
       </ScrollReveal>
 
       <ScrollReveal animation="fade-left">
@@ -70,7 +60,7 @@ export default async function Home() {
         stagger={100}
         selector=".product-card-reveal"
       >
-        <StoreProductGrid products={featuredProducts} />
+        <StoreProductGrid products={featuredProducts} categories={categories} />
       </ScrollReveal>
 
       <ClientTestimonials testimonials={testimonials} />

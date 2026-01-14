@@ -57,7 +57,7 @@ export default function ScrollReveal({
               anime.set(targets, { opacity: 0 });
             }
 
-            let animeConfig: any = {
+            const animeConfig: any = {
               targets,
               opacity: [0, 1],
               delay: anime.stagger(stagger, { start: delay }),
