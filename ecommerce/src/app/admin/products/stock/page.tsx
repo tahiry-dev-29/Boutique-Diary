@@ -47,6 +47,7 @@ interface StockProduct {
   price: number;
   category: { name: string } | null;
   images: StockImage[];
+  variations: StockVariation[];
 }
 
 interface StockImage {
@@ -57,10 +58,19 @@ interface StockImage {
   reference: string | null;
 }
 
+interface StockVariation {
+  id: number;
+  sku: string;
+  color: string | null;
+  size: string | null;
+  stock: number;
+}
+
 interface AuditItem {
   uniqueId: string;
   productId: number;
   imageId: number | null;
+  variationId: number | null;
   name: string;
   reference: string;
   variant: string;
@@ -136,21 +146,27 @@ export default function StockPage() {
   const handleUpdateStock = async (
     productId: number,
     imageId: number | null,
+    variationId: number | null,
     currentStock: number,
   ) => {
-    const uniqueId = imageId ? `i-${imageId}` : `p-${productId}`;
+    const uniqueId = variationId
+      ? `v-${variationId}`
+      : imageId
+        ? `i-${imageId}`
+        : `p-${productId}`;
     const newStock = modifiedStocks[uniqueId];
 
     if (newStock === undefined || newStock === currentStock) return;
 
     try {
-      setUpdating(imageId || productId);
+      setUpdating(variationId || imageId || productId);
       const response = await fetch("/api/admin/stock", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId,
           imageId,
+          variationId,
           newStock,
           type: "ADJUSTMENT",
           reason: "Quick Edit",
@@ -162,17 +178,23 @@ export default function StockPage() {
 
       const result = await response.json();
 
-      setProducts((prev) =>
-        prev.map((p) => {
+      setProducts(prev =>
+        prev.map(p => {
           if (p.id === productId) {
-            let updatedProduct = { ...p };
+            const updatedProduct = { ...p };
             if (result.totalStock !== undefined)
               updatedProduct.stock = result.totalStock;
-            if (!imageId && result.newStock !== undefined)
+            if (!imageId && !variationId && result.newStock !== undefined)
               updatedProduct.stock = result.newStock;
 
+            if (variationId) {
+              updatedProduct.variations = p.variations.map(v =>
+                v.id === variationId ? { ...v, stock: newStock } : v,
+              );
+            }
+
             if (imageId) {
-              updatedProduct.images = p.images.map((img) =>
+              updatedProduct.images = p.images.map(img =>
                 img.id === imageId ? { ...img, stock: newStock } : img,
               );
             }
@@ -182,8 +204,10 @@ export default function StockPage() {
         }),
       );
 
-      const { [uniqueId]: _, ...rest } = modifiedStocks;
-      setModifiedStocks(rest);
+      setModifiedStocks(prev => {
+        const { [uniqueId]: _, ...rest } = prev;
+        return rest;
+      });
       toast.success("Stock mis à jour");
 
       fetchStock();
@@ -202,7 +226,7 @@ export default function StockPage() {
   }) => {
     if (!auditItem) return;
     const { newStock, reason, note } = data;
-    const { productId, imageId } = auditItem;
+    const { productId, imageId, variationId } = auditItem;
 
     try {
       const response = await fetch("/api/admin/stock", {
@@ -211,6 +235,7 @@ export default function StockPage() {
         body: JSON.stringify({
           productId,
           imageId,
+          variationId,
           newStock,
           type: "ADJUSTMENT",
           reason,
@@ -221,16 +246,23 @@ export default function StockPage() {
       if (!response.ok) throw new Error("Failed to update");
       const result = await response.json();
 
-      setProducts((prev) =>
-        prev.map((p) => {
+      setProducts(prev =>
+        prev.map(p => {
           if (p.id === productId) {
-            let updatedProduct = { ...p };
+            const updatedProduct = { ...p };
             if (result.totalStock !== undefined)
               updatedProduct.stock = result.totalStock;
-            if (!imageId && result.newStock !== undefined)
+            if (!imageId && !variationId && result.newStock !== undefined)
               updatedProduct.stock = result.newStock;
+
+            if (variationId) {
+              updatedProduct.variations = p.variations.map(v =>
+                v.id === variationId ? { ...v, stock: newStock } : v,
+              );
+            }
+
             if (imageId) {
-              updatedProduct.images = p.images.map((img) =>
+              updatedProduct.images = p.images.map(img =>
                 img.id === imageId ? { ...img, stock: newStock } : img,
               );
             }
@@ -240,10 +272,16 @@ export default function StockPage() {
         }),
       );
       toast.success("Inventaire ajusté avec succès");
-      const uniqueId = imageId ? `i-${imageId}` : `p-${productId}`;
+      const uniqueId = variationId
+        ? `v-${variationId}`
+        : imageId
+          ? `i-${imageId}`
+          : `p-${productId}`;
       if (modifiedStocks[uniqueId] !== undefined) {
-        const { [uniqueId]: _, ...rest } = modifiedStocks;
-        setModifiedStocks(rest);
+        setModifiedStocks(prev => {
+          const { [uniqueId]: _, ...rest } = prev;
+          return rest;
+        });
       }
 
       fetchStock();
@@ -280,14 +318,38 @@ export default function StockPage() {
       (
         p,
       ): (AuditItem & { type: string; price: number; category?: string })[] => {
-        if (p.images && p.images.length > 0) {
-          const stockImages = p.images.filter((img) => img.stock !== null);
-          if (stockImages.length > 0) {
-            return stockImages.map((img) => ({
+        // Priority to full variations (Color + Size)
+        if (p.variations && p.variations.length > 0) {
+          return p.variations.map(v => {
+            const matchingImg = p.images.find(img => img.color === v.color);
+            return {
               type: "variation",
+              uniqueId: `v-${v.id}`,
+              productId: p.id,
+              variationId: v.id,
+              imageId: matchingImg?.id || null,
+              name: p.name,
+              reference: v.sku,
+              variant: `${v.color || "Standard"} / ${v.size || "-"}`,
+              stock: v.stock,
+              price: p.price,
+              image:
+                matchingImg?.url || p.images?.[0]?.url || "/placeholder.png",
+              category: p.category?.name,
+            };
+          });
+        }
+
+        // Fallback to Color variations if no detailed Variations
+        if (p.images && p.images.length > 0) {
+          const stockImages = p.images.filter(img => img.stock !== null);
+          if (stockImages.length > 0) {
+            return stockImages.map(img => ({
+              type: "image-variation",
               uniqueId: `i-${img.id}`,
               productId: p.id,
               imageId: img.id,
+              variationId: null,
               name: p.name,
               reference: img.reference || p.reference,
               variant: img.color || "Standard",
@@ -298,12 +360,15 @@ export default function StockPage() {
             }));
           }
         }
+
+        // Simple product
         return [
           {
             type: "product",
             uniqueId: `p-${p.id}`,
             productId: p.id,
             imageId: null,
+            variationId: null,
             name: p.name,
             reference: p.reference,
             variant: "-",
@@ -318,7 +383,7 @@ export default function StockPage() {
   }, [products]);
 
   const handleSort = (key: keyof AuditItem | "status") => {
-    setSortConfig((current) => ({
+    setSortConfig(current => ({
       key,
       direction:
         current.key === key && current.direction === "asc" ? "desc" : "asc",
@@ -437,7 +502,7 @@ export default function StockPage() {
               type="text"
               placeholder="Rechercher par nom ou référence..."
               value={searchQuery}
-              onChange={(e) => {
+              onChange={e => {
                 setSearchQuery(e.target.value);
                 setPage(1);
               }}
@@ -552,7 +617,7 @@ export default function StockPage() {
                     </td>
                   </tr>
                 )}
-                {sortedItems.map((item) => {
+                {sortedItems.map(item => {
                   const status = getStockStatus(item.stock);
                   const StatusIcon = status.icon;
                   const isModified =
@@ -622,17 +687,18 @@ export default function StockPage() {
                                 "ring-2 ring-blue-500 border-blue-500",
                             )}
                             value={currentValue}
-                            onChange={(e) =>
-                              setModifiedStocks((prev) => ({
+                            onChange={e =>
+                              setModifiedStocks(prev => ({
                                 ...prev,
                                 [item.uniqueId]: parseInt(e.target.value) || 0,
                               }))
                             }
-                            onKeyDown={(e) => {
+                            onKeyDown={e => {
                               if (e.key === "Enter") {
                                 handleUpdateStock(
                                   item.productId,
                                   item.imageId,
+                                  item.variationId,
                                   item.stock,
                                 );
                               }
@@ -650,14 +716,21 @@ export default function StockPage() {
                                 handleUpdateStock(
                                   item.productId,
                                   item.imageId,
+                                  item.variationId,
                                   item.stock,
                                 )
                               }
                               disabled={
-                                updating === (item.imageId || item.productId)
+                                updating ===
+                                (item.variationId ||
+                                  item.imageId ||
+                                  item.productId)
                               }
                             >
-                              {updating === (item.imageId || item.productId) ? (
+                              {updating ===
+                              (item.variationId ||
+                                item.imageId ||
+                                item.productId) ? (
                                 <Loader2 size={14} className="animate-spin" />
                               ) : (
                                 <Save size={14} />
