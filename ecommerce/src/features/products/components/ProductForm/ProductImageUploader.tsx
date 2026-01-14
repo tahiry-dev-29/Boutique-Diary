@@ -16,17 +16,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  UploadCloud,
   X,
   Image as ImageIcon,
-  MoreVertical,
   Star,
-  Check,
-  Package,
   Wand2,
   Plus,
   Upload,
-  Tag,
+  Sparkles,
+  Loader2,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { generateRandomReference } from "@/lib/stringUtils";
@@ -51,11 +49,12 @@ export function ProductImageUploader({
 }: ProductImageUploaderProps) {
   const [urlInput, setUrlInput] = useState("");
   const { rules } = usePromotionRules();
-  const activeRules = rules.filter((r) => r.isActive);
+  const activeRules = rules.filter(r => r.isActive);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files) return;
 
     const images = formData.images || [];
     const remainingSlots = 6 - images.length;
@@ -83,7 +82,7 @@ export function ProductImageUploader({
 
     if (validFiles.length === 0) return;
 
-    const uploadPromises = validFiles.map(async (file) => {
+    const uploadPromises = validFiles.map(async file => {
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
 
@@ -109,10 +108,10 @@ export function ProductImageUploader({
     try {
       const loadingToast = toast.loading("Téléchargement des images...");
       const urls = (await Promise.all(uploadPromises)).filter(
-        (url) => url !== null,
+        url => url !== null,
       );
 
-      const newImages: ProductImage[] = urls.map((url) => ({
+      const newImages: ProductImage[] = urls.map(url => ({
         url,
         color: null,
         sizes: [],
@@ -121,7 +120,7 @@ export function ProductImageUploader({
         price: null,
       }));
 
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         images: [...(prev.images || []), ...newImages],
       }));
@@ -163,7 +162,7 @@ export function ProductImageUploader({
         return;
       }
 
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         images: [
           ...(prev.images || []),
@@ -188,14 +187,83 @@ export function ProductImageUploader({
     }
   };
 
+  const handleGenerateAiImage = async () => {
+    if (!formData.name) {
+      toast.error("Le nom du produit est requis pour générer une image");
+      return;
+    }
+
+    const images = formData.images || [];
+    if (images.length >= 6) {
+      toast.error("Maximum 6 images autorisées");
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    const loadingToast = toast.loading("L'IA imagine votre produit...");
+
+    try {
+      const response = await fetch("/api/admin/products/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      // Check if we actually got an image URL
+      if (!data.imageUrl) {
+        toast.warning(data.warning || "L'image n'a pas pu être générée.");
+      } else {
+        // Add the generated image
+        setFormData(prev => ({
+          ...prev,
+          images: [
+            ...(prev.images || []),
+            {
+              url: data.imageUrl,
+              color: null,
+              sizes: [],
+              reference: generateRandomReference(),
+              stock: 0,
+              price: null,
+            },
+          ],
+        }));
+      }
+
+      // Copy prompt to clipboard automatically or show it
+      if (data.prompt) {
+        navigator.clipboard.writeText(data.prompt).catch(() => {});
+        toast.info(
+          "Prompt copié ! Utilisez-le dans Midjourney ou autre si besoin.",
+          {
+            duration: 8000,
+            icon: <Copy className="w-4 h-4" />,
+          },
+        );
+      }
+
+      toast.success("Image générée (Placeholder + Prompt) !");
+      toast.dismiss(loadingToast);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur génération image");
+      toast.dismiss(loadingToast);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
   const handleRemoveImage = (index: number) => {
     const images = formData.images || [];
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       images: (prev.images || []).filter((_, i) => i !== index),
     }));
     if (selectedImageIndex >= index && selectedImageIndex > 0) {
-      setSelectedImageIndex((prev) => prev - 1);
+      setSelectedImageIndex(prev => prev - 1);
     } else if (selectedImageIndex === index && images.length === 1) {
       setSelectedImageIndex(0);
     } else if (selectedImageIndex === index && index === images.length - 1) {
@@ -209,7 +277,7 @@ export function ProductImageUploader({
     const newImages = [...images];
     const [selectedImage] = newImages.splice(index, 1);
     newImages.unshift(selectedImage);
-    setFormData((prev) => ({ ...prev, images: newImages }));
+    setFormData(prev => ({ ...prev, images: newImages }));
     setSelectedImageIndex(0);
   };
 
@@ -226,7 +294,7 @@ export function ProductImageUploader({
       | "promotionRuleId",
     value: string | string[] | number | boolean | null,
   ) => {
-    setFormData((prev) => {
+    setFormData(prev => {
       const images = prev.images || [];
       const newImages = [...images];
 
@@ -268,7 +336,7 @@ export function ProductImageUploader({
   return (
     <div className="space-y-6">
       <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
         <h3 className="relative mb-6 flex items-center gap-2 text-lg font-semibold tracking-tight">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/20">
@@ -292,7 +360,7 @@ export function ProductImageUploader({
             <Input
               type="text"
               value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
+              onChange={e => setUrlInput(e.target.value)}
               placeholder="URL de l'image (https://...)"
               className="h-10 flex-1 border-black/5 bg-black/5 dark:border-white/10 dark:bg-white/5 focus:border-primary focus:ring-primary/20"
             />
@@ -305,6 +373,23 @@ export function ProductImageUploader({
               className="h-10 w-10 border-black/5 bg-black/5 hover:bg-primary/10 hover:text-primary dark:border-white/10 dark:bg-white/5"
             >
               <Plus className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handleGenerateAiImage}
+              disabled={
+                isGeneratingImage || images.length >= 6 || !formData.name
+              }
+              className="h-10 w-10 border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-600 dark:border-purple-900 dark:bg-purple-900/20 dark:text-purple-400"
+              title="Générer une image avec l'IA"
+            >
+              {isGeneratingImage ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4" />
+              )}
             </Button>
             <label
               className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-dashed border-primary/30 bg-primary/5 text-primary transition-colors hover:bg-primary/10 ${
@@ -406,7 +491,7 @@ export function ProductImageUploader({
       {}
       {currentImageAsProductImage && (
         <div className="group relative overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 p-6 backdrop-blur-xl transition-all hover:shadow-2xl hover:shadow-primary/5">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
           <h4 className="relative mb-6 flex items-center gap-2 text-sm font-semibold tracking-tight">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/20">
@@ -431,7 +516,7 @@ export function ProductImageUploader({
                 <div className="flex gap-2">
                   <Input
                     value={currentImageAsProductImage.reference || ""}
-                    onChange={(e) =>
+                    onChange={e =>
                       handleUpdateImageAttribute(
                         selectedImageIndex,
                         "reference",
@@ -470,7 +555,7 @@ export function ProductImageUploader({
                     currentImageAsProductImage.categoryId?.toString() ||
                     "uncategorized"
                   }
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleUpdateImageAttribute(
                       selectedImageIndex,
                       "categoryId",
@@ -483,7 +568,7 @@ export function ProductImageUploader({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="uncategorized">Non classé</SelectItem>
-                    {categories?.map((category) => (
+                    {categories?.map(category => (
                       <SelectItem
                         key={category.id}
                         value={category.id?.toString() || ""}
@@ -504,7 +589,7 @@ export function ProductImageUploader({
                   <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
                     <Checkbox
                       checked={currentImageAsProductImage.isNew || false}
-                      onCheckedChange={(checked) =>
+                      onCheckedChange={checked =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "isNew",
@@ -518,10 +603,11 @@ export function ProductImageUploader({
                   <label className="flex cursor-pointer items-center gap-2 rounded-md border border-black/5 bg-black/5 px-2 py-1.5 transition-colors hover:bg-primary/5 hover:border-primary/20 dark:border-white/5 dark:bg-white/5 text-xs">
                     <Checkbox
                       checked={
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         (currentImageAsProductImage as any).isBestSeller ||
                         false
                       }
-                      onCheckedChange={(checked) =>
+                      onCheckedChange={checked =>
                         handleUpdateImageAttribute(
                           selectedImageIndex,
                           "isBestSeller",
@@ -556,7 +642,7 @@ export function ProductImageUploader({
                     currentImageAsProductImage.promotionRuleId?.toString() ||
                     "none"
                   }
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleUpdateImageAttribute(
                       selectedImageIndex,
                       "promotionRuleId",
@@ -569,7 +655,7 @@ export function ProductImageUploader({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Aucune</SelectItem>
-                    {activeRules.map((rule) => (
+                    {activeRules.map(rule => (
                       <SelectItem key={rule.id} value={rule.id.toString()}>
                         {rule.name}
                       </SelectItem>
@@ -587,7 +673,7 @@ export function ProductImageUploader({
                   {}
                   <Select
                     value={currentImageAsProductImage.color || "none"}
-                    onValueChange={(value) =>
+                    onValueChange={value =>
                       handleUpdateImageAttribute(
                         selectedImageIndex,
                         "color",
@@ -600,12 +686,14 @@ export function ProductImageUploader({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Aucune</SelectItem>
-                      {AVAILABLE_COLORS.map((color) => (
+                      {AVAILABLE_COLORS.map(color => (
                         <SelectItem key={color} value={color}>
                           <div className="flex items-center gap-2">
                             <span
                               className="h-3 w-3 rounded-full border shadow-sm"
-                              style={{ background: COLOR_MAP[color] || color }}
+                              style={{
+                                background: COLOR_MAP[color] || color,
+                              }}
                             />
                             {color}
                           </div>
@@ -622,7 +710,7 @@ export function ProductImageUploader({
                   Tailles Disponibles
                 </Label>
                 <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-black/5 bg-black/5 dark:border-white/5 dark:bg-white/5">
-                  {AVAILABLE_SIZES.map((size) => (
+                  {AVAILABLE_SIZES.map(size => (
                     <label
                       key={size}
                       className={cn(
@@ -639,12 +727,12 @@ export function ProductImageUploader({
                           currentImageAsProductImage.sizes?.includes(size) ||
                           false
                         }
-                        onChange={(e) => {
+                        onChange={e => {
                           const currentSizes =
                             currentImageAsProductImage.sizes || [];
                           const newSizes = e.target.checked
                             ? [...currentSizes, size]
-                            : currentSizes.filter((s) => s !== size);
+                            : currentSizes.filter(s => s !== size);
                           handleUpdateImageAttribute(
                             selectedImageIndex,
                             "sizes",

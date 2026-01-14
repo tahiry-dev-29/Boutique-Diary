@@ -149,3 +149,75 @@ export function generateSlug(title: string): string {
 
   return slug;
 }
+
+/**
+ * Generate a compelling product description
+ */
+export async function generateProductDescription(
+  product: ProductInfo,
+): Promise<string> {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+  });
+
+  const prompt = `Tu es un expert en copywriting e-commerce pour "Boutique Diary".
+Rédige une description produit textuelle (sans balises HTML, sans markdown) pour:
+- Nom: ${product.name}
+- Marque: ${product.brand || "Non spécifiée"}
+- Catégorie: ${product.category || "Mode"}
+
+Consignes:
+- Ton: Élégant, persuasif, et professionnel.
+- Contenu: Mets en avant les bénéfices, le style, et la qualité.
+- Longueur: ~100-150 mots.
+- Langue: Français.
+- IMPORTANT: Ne mets AUCUNE balise HTML comme <p>, <ul>, etc. Juste du texte fluide avec des sauts de ligne si nécessaire.`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    // Clean up any potential markdown code blocks or html tags if the model adds them
+    return text
+      .replace(/```html/g, "")
+      .replace(/```/g, "")
+      .replace(/<[^>]*>/g, "")
+      .trim();
+  } catch (error) {
+    console.error("[Gemini] Description generation error:", error);
+    return `Découvrez notre superbe ${product.name}, une pièce essentielle de la collection ${product.brand || "Boutique Diary"}. Alliant style et confort, ce produit saura vous séduire par sa qualité.`;
+  }
+}
+
+/**
+ * Generate a prompt for image generation
+ */
+export async function generateProductImagePrompt(
+  product: ProductInfo,
+): Promise<string> {
+  // Utilizing gemini-1.5-flash as it is the current stable efficient model.
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+  });
+
+  const prompt = `Crée un prompt en ANGLAIS très détaillé pour un générateur d'images IA (comme Midjourney ou DALL-E) pour ce produit:
+- Produit: ${product.name}
+- Brand: ${product.brand}
+- Category: ${product.category}
+- Description: ${product.description}
+
+Le prompt doit décrire:
+- Le produit sous son meilleur angle (photographie studio professionnelle).
+- Un éclairage cinématique doux.
+- Un fond neutre ou lifestyle minimaliste chic.
+- Haute résolution, 8k, ultra-réaliste.
+
+Réponds UNIQUEMENT par le prompt en anglais.`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+  } catch (error) {
+    console.error("[Gemini] Prompt generation error:", error);
+    return `Professional studio photography of ${product.name}, ${product.category || "fashion item"}, minimal elegance, high resolution, 8k, cinematic lighting, photorealistic`;
+  }
+}
