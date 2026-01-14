@@ -8,9 +8,10 @@ import {
   ShoppingCart,
   Heart,
   BookOpen,
+  User,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { COLOR_MAP } from "@/lib/constants";
 import { useCartStore } from "@/lib/cart-store";
@@ -26,6 +27,16 @@ interface ProductImage {
   oldPrice?: number | null;
   stock?: number | null;
   sizes?: string[];
+}
+
+interface ProductVariation {
+  id: number;
+  sku: string;
+  color: string | null;
+  size: string | null;
+  price: number;
+  oldPrice: number | null;
+  stock: number;
 }
 
 interface Product {
@@ -44,6 +55,7 @@ interface Product {
   sizes: string[];
   category?: { name: string } | null;
   images: ProductImage[];
+  variations: ProductVariation[];
   blogPosts: BlogPost[];
 }
 
@@ -64,25 +76,40 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    const checkWishlistStatus = async () => {
+    const checkUserAndWishlist = async () => {
       try {
-        const res = await fetch("/api/customer/wishlist");
-        if (res.ok) {
-          const wishlist = await res.json();
-          const isInWishlist = wishlist.some(
-            (item: { productId: number }) => item.productId === product.id,
-          );
-          setIsWishlisted(isInWishlist);
+        // First check if user is logged in via a 200-returning endpoint
+        const authRes = await fetch("/api/auth/me");
+        if (authRes.ok) {
+          const authData = await authRes.json();
+          const user = authData.user;
+
+          if (user) {
+            setIsLoggedIn(true);
+            // Only fetch wishlist if we know we are logged in
+            const wishlistRes = await fetch("/api/customer/wishlist");
+            if (wishlistRes.ok) {
+              const wishlist = await wishlistRes.json();
+              const isInWishlist = wishlist.some(
+                (item: { productId: number }) => item.productId === product.id,
+              );
+              setIsWishlisted(isInWishlist);
+            }
+          } else {
+            setIsLoggedIn(false);
+          }
         }
-      } catch (err) {
-        console.error("Error checking wishlist", err);
+      } catch {
+        // Silently handle check failure
+        setIsLoggedIn(false);
       }
     };
 
     if (product?.id) {
-      checkWishlistStatus();
+      checkUserAndWishlist();
     }
   }, [product?.id]);
 
@@ -136,20 +163,78 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         ];
   const currentImage = images[selectedImageIndex];
 
-  const displayPrice = currentImage?.price ?? product?.price;
-  const displayOldPrice = currentImage?.oldPrice ?? product?.oldPrice;
-  const displayStock = currentImage?.stock ?? product?.stock;
-  const currentRef = currentImage?.reference ?? product?.reference;
+  // Filter variations by current color
+  const colorVariations = useMemo(() => {
+    if (!currentImage?.color) return [];
+    return product.variations.filter(v => v.color === currentImage.color);
+  }, [product.variations, currentImage.color]);
+
+  const displayPrice = useMemo(() => {
+    if (selectedSize && colorVariations.length > 0) {
+      const variant = colorVariations.find(v => v.size === selectedSize);
+      return variant
+        ? Number(variant.price)
+        : (currentImage?.price ?? product?.price);
+    }
+    return currentImage?.price ?? product?.price;
+  }, [selectedSize, colorVariations, currentImage?.price, product?.price]);
+
+  const displayOldPrice = useMemo(() => {
+    if (selectedSize && colorVariations.length > 0) {
+      const variant = colorVariations.find(v => v.size === selectedSize);
+      return variant
+        ? variant.oldPrice
+          ? Number(variant.oldPrice)
+          : null
+        : (currentImage?.oldPrice ?? product?.oldPrice);
+    }
+    return currentImage?.oldPrice ?? product?.oldPrice;
+  }, [
+    selectedSize,
+    colorVariations,
+    currentImage?.oldPrice,
+    product?.oldPrice,
+  ]);
 
   const uniqueColors = product?.colors || [];
 
-  const availableSizes = useMemo(
-    () =>
-      currentImage?.sizes && currentImage.sizes.length > 0
-        ? currentImage.sizes
-        : product?.sizes || [],
-    [currentImage, product?.sizes],
-  );
+  const currentRef = useMemo(() => {
+    if (selectedSize && colorVariations.length > 0) {
+      const variant = colorVariations.find(v => v.size === selectedSize);
+      return variant?.sku ?? currentImage?.reference ?? product?.reference;
+    }
+    return currentImage?.reference ?? product?.reference;
+  }, [
+    selectedSize,
+    colorVariations,
+    currentImage?.reference,
+    product?.reference,
+  ]);
+
+  const availableSizes = useMemo(() => {
+    if (colorVariations.length > 0) {
+      return colorVariations.map(v => v.size).filter(Boolean) as string[];
+    }
+    return currentImage?.sizes && currentImage.sizes.length > 0
+      ? currentImage.sizes
+      : product?.sizes || [];
+  }, [colorVariations, currentImage, product?.sizes]);
+
+  const displayStock = useMemo(() => {
+    // 1. If we have a specific size selected, get that variant's stock
+    if (selectedSize && colorVariations.length > 0) {
+      const variant = colorVariations.find(v => v.size === selectedSize);
+      return variant ? variant.stock : 0;
+    }
+
+    // 2. If no size selected but we have color variations, return sum of their stocks
+    if (colorVariations.length > 0) {
+      return colorVariations.reduce((acc, v) => acc + (v.stock || 0), 0);
+    }
+
+    // 3. Fallback to image stock or product stock
+    return currentImage?.stock ?? product?.stock ?? 0;
+  }, [selectedSize, colorVariations, currentImage, product?.stock]);
 
   useEffect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
@@ -176,14 +261,104 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     });
   }, []);
 
-  const handleColorSelect = (color: string) => {
-    const index = images.findIndex((img) => img.color === color);
-    if (index !== -1) {
-      setSelectedImageIndex(index);
-    }
-  };
+  const addItem = useCartStore(state => state.addItem);
+  const cartItems = useCartStore(state => state.items);
 
-  const addItem = useCartStore((state) => state.addItem);
+  // Optimistic stock calculation: subtract quantity already in cart
+  const reactiveStock = useMemo(() => {
+    const targetColor = currentImage?.color || null;
+    const targetSize = selectedSize || null;
+
+    const itemsMatchingSelection = cartItems.filter(item => {
+      if (item.productId !== product.id) return false;
+
+      const itemColor = item.color || null;
+      if (itemColor !== targetColor) return false;
+
+      if (targetSize !== null) {
+        return (item.size || null) === targetSize;
+      }
+      return true; // No size selected: sum all sizes of this color
+    });
+
+    const inCartQuantity = itemsMatchingSelection.reduce(
+      (acc, item) => acc + item.quantity,
+      0,
+    );
+    return Math.max(0, displayStock - inCartQuantity);
+  }, [displayStock, cartItems, product.id, currentImage?.color, selectedSize]);
+
+  // Global reactive stock (all variations sum minus all items in cart)
+  const globalReactiveStock = useMemo(() => {
+    const physicalTotal =
+      product.variations.length > 0
+        ? product.variations.reduce((acc, v) => acc + (v.stock || 0), 0)
+        : product.images.reduce((acc, img) => acc + (img.stock || 0), 0) ||
+          product.stock;
+
+    const inCartTotal = cartItems
+      .filter(item => item.productId === product.id)
+      .reduce((acc, item) => acc + item.quantity, 0);
+
+    return Math.max(0, physicalTotal - inCartTotal);
+  }, [product, cartItems]);
+
+  // Live remaining stock (Physical - Cart - Current Quantity)
+  const liveRemainingStock = useMemo(
+    () => Math.max(0, reactiveStock - quantity),
+    [reactiveStock, quantity],
+  );
+  const liveGlobalRemainingStock = useMemo(
+    () => Math.max(0, globalReactiveStock - quantity),
+    [globalReactiveStock, quantity],
+  );
+
+  // Animated states
+  const [animatedStock, setAnimatedStock] = useState(liveRemainingStock);
+  const [animatedGlobalStock, setAnimatedGlobalStock] = useState(
+    liveGlobalRemainingStock,
+  );
+  const stockRef = useRef(liveRemainingStock);
+  const globalStockRef = useRef(liveGlobalRemainingStock);
+
+  useEffect(() => {
+    const obj = { val: stockRef.current };
+    anime({
+      targets: obj,
+      val: liveRemainingStock,
+      round: 1,
+      duration: 600,
+      easing: "easeOutExpo",
+      update: () => {
+        setAnimatedStock(obj.val);
+        stockRef.current = obj.val;
+      },
+    });
+  }, [liveRemainingStock]);
+
+  useEffect(() => {
+    const obj = { val: globalStockRef.current };
+    anime({
+      targets: obj,
+      val: liveGlobalRemainingStock,
+      round: 1,
+      duration: 600,
+      easing: "easeOutExpo",
+      update: () => {
+        setAnimatedGlobalStock(obj.val);
+        globalStockRef.current = obj.val;
+      },
+    });
+  }, [liveGlobalRemainingStock]);
+
+  // Adjust quantity if it exceeds reactive stock
+  useEffect(() => {
+    if (quantity > reactiveStock && reactiveStock > 0) {
+      setQuantity(reactiveStock);
+    } else if (reactiveStock === 0 && quantity > 1) {
+      setQuantity(1);
+    }
+  }, [reactiveStock, quantity]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -218,14 +393,24 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
-    blogPosts.find((bp) => bp.productImageId === currentImage?.id) ||
-    blogPosts.find((bp) => !bp.productImageId);
+    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
+    blogPosts.find(bp => !bp.productImageId);
 
   return (
-    <section className="py-8 md:py-16 px-4 md:px-6">
-      <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_450px] gap-12 items-start">
+    <section className="py-4 md:py-8 px-4 md:px-6">
+      <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_420px] gap-8 md:gap-12 items-start">
         {}
         <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
+          {/* Global Stock Display above gallery */}
+          <div className="col-span-1 md:col-span-2 flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
+              <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                Stock Total:{" "}
+                <span className="text-black">{animatedGlobalStock}</span> unités
+              </span>
+            </div>
+          </div>
           {}
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible order-2 md:order-1">
             {images.map((img, i) => (
@@ -252,7 +437,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {}
-          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-[40px] aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[600px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
+          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-3xl aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
                 src={currentImage.url}
@@ -285,6 +470,30 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 </span>
               )}
             </div>
+
+            {/* Reactive Stock Badge on main image */}
+            <div className="absolute top-4 right-4 animate-in fade-in zoom-in duration-500">
+              <div
+                className={cn(
+                  "px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-md shadow-lg border",
+                  globalReactiveStock < 5
+                    ? "bg-orange-500/90 text-white border-orange-400"
+                    : "bg-black/80 text-white border-white/20",
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    globalReactiveStock < 5
+                      ? "bg-white animate-pulse"
+                      : "bg-green-400",
+                  )}
+                />
+                <span className="text-[10px] font-black uppercase tracking-tight">
+                  {animatedGlobalStock} Dispos
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -300,163 +509,216 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black mb-4 text-gray-900 tracking-tighter leading-tight">
+            <h1 className="text-2xl md:text-3xl font-black mb-3 text-gray-900 tracking-tight leading-tight">
               {product.name}
             </h1>
 
-            {}
-            <div className="flex items-end gap-3 mb-6">
-              <span className="text-4xl font-bold tracking-tight">
-                ${displayPrice?.toFixed(2)}
-              </span>
-              {hasDiscount && (
-                <span className="text-gray-400 line-through text-lg mb-1">
-                  ${displayOldPrice.toFixed(2)}
-                </span>
-              )}
-            </div>
+            {!isLoggedIn && (
+              <div className="mb-6 p-3 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+                <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <p className="font-bold text-amber-900 mb-0.5">
+                    Mode visiteur
+                  </p>
+                  <p className="text-amber-700 leading-normal">
+                    Vous n&apos;êtes pas encore connecté.{" "}
+                    <Link
+                      href="/login"
+                      className="font-black underline hover:text-amber-900 transition-colors"
+                    >
+                      Connectez-vous
+                    </Link>{" "}
+                    pour acheter cet article.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {}
-            <div className="flex items-center gap-2 mb-8">
-              <div className="flex text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={cn(
-                      "w-4 h-4 fill-current",
-                      i < Math.round(product.rating || 0)
-                        ? "text-amber-500"
-                        : "text-gray-200",
-                    )}
-                  />
-                ))}
+            {/* Price and Rating Row */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-end gap-3">
+                <span className="text-2xl md:text-3xl font-bold tracking-tight">
+                  ${displayPrice?.toFixed(2)}
+                </span>
+                {hasDiscount && (
+                  <span className="text-gray-400 line-through text-lg mb-1">
+                    ${displayOldPrice.toFixed(2)}
+                  </span>
+                )}
               </div>
-              <span className="text-sm text-gray-500 font-medium">
-                {product.rating || 0} ({product.reviewCount || 0} avis)
-              </span>
+              <div className="h-6 w-px bg-gray-200" />
+              <div className="flex items-center gap-2">
+                <div className="flex text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={cn(
+                        "w-4 h-4 fill-current",
+                        i < Math.round(product.rating || 0)
+                          ? "text-amber-500"
+                          : "text-gray-200",
+                      )}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500 font-medium">
+                  ({product.reviewCount || 0})
+                </span>
+              </div>
             </div>
 
             {}
             <div className="h-px bg-gray-100 my-2" />
 
             {}
-            <div className="mb-8">
-              <h3 className="font-bold text-gray-900 mb-2">Description</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {product.description || "Aucune description disponible."}
-              </p>
-            </div>
+            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              {product.description || "Aucune description disponible."}
+            </p>
 
-            {}
-            <div className="mb-6">
-              <div className="flex justify-between mb-3">
-                <h3 className="font-bold text-gray-900">
-                  Couleur:{" "}
-                  <span className="font-normal text-gray-500">
-                    {currentImage?.color || "Standard"}
-                  </span>
-                </h3>
+            <div className="grid gap-4 mb-6">
+              {/* Color Selector */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    Couleur:{" "}
+                    <span className="font-normal text-gray-500">
+                      {currentImage?.color || "Standard"}
+                    </span>
+                  </h3>
+                </div>
+                <div className="flex gap-2">
+                  {uniqueColors.length > 0 ? (
+                    uniqueColors.map((color: string) => {
+                      const isSelected = currentImage?.color === color;
+                      const index = images.findIndex(
+                        img => img.color === color,
+                      );
+                      return (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedImageIndex(index)}
+                          className={cn(
+                            "w-10 h-10 rounded-full border-2 transition-all p-0.5 relative",
+                            isSelected
+                              ? "border-black ring-1 ring-black"
+                              : "border-gray-200 hover:border-gray-400",
+                          )}
+                          title={color}
+                        >
+                          <span
+                            className="block w-full h-full rounded-full border border-black/5 shadow-inner"
+                            style={{ background: COLOR_MAP[color] || color }}
+                          />
+                          {isSelected && (
+                            <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
+                              <Check className="w-2.5 h-2.5" />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <span className="text-sm text-gray-400 italic">
+                      Aucune variante couleur
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex gap-3">
-                {uniqueColors.length > 0 ? (
-                  uniqueColors.map((color: string) => {
-                    const isSelected = currentImage?.color === color;
-                    const index = images.findIndex(
-                      (img) => img.color === color,
-                    );
-                    return (
+
+              {/* Size Selector */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    Taille:{" "}
+                    <span className="font-normal text-gray-500">
+                      {selectedSize || "Sélectionnez"}
+                    </span>
+                  </h3>
+                  <button className="text-xs text-black underline">
+                    Guide des tailles
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.length > 0 ? (
+                    availableSizes.map((size: string) => (
                       <button
-                        key={color}
-                        onClick={() => setSelectedImageIndex(index)}
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
                         className={cn(
-                          "w-10 h-10 rounded-full border-2 transition-all p-0.5 relative",
-                          isSelected
-                            ? "border-black ring-1 ring-black"
-                            : "border-gray-200 hover:border-gray-400",
+                          "h-12 min-w-12 px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
+                          selectedSize === size
+                            ? "bg-black text-white border-black shadow-md"
+                            : "border-gray-200 text-gray-700 hover:border-black",
                         )}
-                        title={color}
                       >
-                        <span
-                          className="block w-full h-full rounded-full border border-black/5 shadow-inner"
-                          style={{ background: COLOR_MAP[color] || color }}
-                        />
-                        {isSelected && (
-                          <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
-                            <Check className="w-2.5 h-2.5" />
-                          </span>
-                        )}
+                        {size}
                       </button>
-                    );
-                  })
-                ) : (
-                  <span className="text-sm text-gray-400 italic">
-                    Aucune variante couleur
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {}
-            <div className="mb-8">
-              <div className="flex justify-between mb-3">
-                <h3 className="font-bold text-gray-900">
-                  Taille:{" "}
-                  <span className="font-normal text-gray-500">
-                    {selectedSize || "Sélectionnez"}
-                  </span>
-                </h3>
-                <button className="text-xs text-black underline">
-                  Guide des tailles
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {availableSizes.length > 0 ? (
-                  availableSizes.map((size: string) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={cn(
-                        "h-12 min-w-12 px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
-                        selectedSize === size
-                          ? "bg-black text-white border-black shadow-md"
-                          : "border-gray-200 text-gray-700 hover:border-black",
-                      )}
-                    >
-                      {size}
-                    </button>
-                  ))
-                ) : (
-                  <span className="text-sm text-gray-400 italic">
-                    Taille unique
-                  </span>
-                )}
+                    ))
+                  ) : (
+                    <span className="text-sm text-gray-400 italic">
+                      Taille unique
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
             {}
             <div className="mb-6">
-              {displayStock > 0 ? (
-                <div className="flex items-center text-green-600 text-sm font-medium gap-2 p-3 bg-green-50 rounded-lg w-fit">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                  </span>
-                  En Stock ({displayStock} disponibles)
+              {reactiveStock > 0 ? (
+                <div className="flex flex-col gap-2">
+                  <div
+                    className={cn(
+                      "flex items-center text-sm font-medium gap-2 p-3 rounded-xl w-fit transition-colors duration-500",
+                      reactiveStock < 5
+                        ? "bg-orange-50 text-orange-600 border border-orange-100"
+                        : "bg-green-50 text-green-600 border border-green-100",
+                    )}
+                  >
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span
+                        className={cn(
+                          "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                          reactiveStock < 5 ? "bg-orange-400" : "bg-green-400",
+                        )}
+                      ></span>
+                      <span
+                        className={cn(
+                          "relative inline-flex rounded-full h-2.5 w-2.5",
+                          reactiveStock < 5 ? "bg-orange-500" : "bg-green-500",
+                        )}
+                      ></span>
+                    </span>
+                    <span className="stock-counter-wrapper inline-flex items-center gap-1">
+                      En Stock (
+                      <span className="font-black text-base min-w-[1.2rem] text-center">
+                        {animatedStock}
+                      </span>{" "}
+                      restants après sélection)
+                    </span>
+                  </div>
+                  {availableSizes.length > 0 && !selectedSize && (
+                    <p className="text-[10px] text-gray-400 font-medium italic">
+                      * Sélectionnez une taille pour voir le stock précis
+                    </p>
+                  )}
                 </div>
               ) : (
-                <div className="flex items-center text-red-600 text-sm font-medium gap-2 p-3 bg-red-50 rounded-lg w-fit">
+                <div className="flex items-center text-red-600 text-sm font-medium gap-2 p-3 bg-red-50 rounded-xl border border-red-100 w-fit">
                   <AlertCircle className="w-4 h-4" />
                   Rupture de stock
                 </div>
               )}
             </div>
 
-            {}
+            {/* Quantity and Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex border border-gray-100 bg-gray-50/50 backdrop-blur-sm rounded-2xl items-center p-1">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl"
+                  disabled={reactiveStock <= 0}
+                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   -
                 </button>
@@ -465,26 +727,41 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 </span>
                 <button
                   onClick={() =>
-                    setQuantity(Math.min(displayStock, quantity + 1))
+                    setQuantity(Math.min(reactiveStock, quantity + 1))
                   }
-                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl"
+                  disabled={reactiveStock <= 0 || quantity >= reactiveStock}
+                  className="w-12 h-12 hover:bg-white rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   +
                 </button>
               </div>
 
               <button
-                onClick={handleAddToCart}
+                onClick={
+                  isLoggedIn
+                    ? handleAddToCart
+                    : () => (window.location.href = "/login")
+                }
                 disabled={displayStock <= 0}
                 className={cn(
-                  "flex-1 py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl active:scale-[0.98]",
+                  "flex-1 py-5 rounded-2xl font-black text-sm md:text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl active:scale-[0.98] whitespace-nowrap px-6",
                   displayStock > 0
-                    ? "bg-black text-white hover:bg-gray-800 shadow-black/10"
+                    ? isLoggedIn
+                      ? "bg-black text-white hover:bg-gray-800 shadow-black/10"
+                      : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed",
                 )}
               >
-                <ShoppingCart className="w-6 h-6" />
-                {displayStock > 0 ? "Ajouter au panier" : "Indisponible"}
+                {isLoggedIn ? (
+                  <ShoppingCart className="w-6 h-6 shrink-0" />
+                ) : (
+                  <User className="w-6 h-6 shrink-0" />
+                )}
+                {displayStock > 0
+                  ? isLoggedIn
+                    ? "Ajouter au panier"
+                    : "Se connecter"
+                  : "Indisponible"}
               </button>
 
               <button
