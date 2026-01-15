@@ -163,9 +163,9 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                handleSubmit(data => onSave(data, true))();
+                handleSubmit((data) => onSave(data, true))();
               }}
               disabled={isSaving}
             >
@@ -192,7 +192,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
       {/* Main Tabs: Design vs Layout */}
       <Tabs
         value={activeMainTab}
-        onValueChange={v => setActiveMainTab(v as "design" | "layout")}
+        onValueChange={(v) => setActiveMainTab(v as "design" | "layout")}
       >
         <TabsList className="bg-muted w-full justify-start h-auto p-1 rounded-lg">
           <TabsTrigger value="design" className="flex-1 max-w-[200px] gap-2">
@@ -221,7 +221,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                       <ThemeColorPicker
                         label="Principale"
                         value={currentValues.primaryColor}
-                        onChange={val =>
+                        onChange={(val) =>
                           setValue("primaryColor", val, { shouldDirty: true })
                         }
                       />
@@ -266,7 +266,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                       <ThemeColorPicker
                         label="Secondaire"
                         value={currentValues.secondaryColor}
-                        onChange={val =>
+                        onChange={(val) =>
                           setValue("secondaryColor", val, { shouldDirty: true })
                         }
                       />
@@ -311,7 +311,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                       <ThemeColorPicker
                         label="Accent"
                         value={currentValues.accentColor}
-                        onChange={val =>
+                        onChange={(val) =>
                           setValue("accentColor", val, { shouldDirty: true })
                         }
                       />
@@ -330,14 +330,14 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                     <ThemeFontSelector
                       label="Police des Titres"
                       value={currentValues.fontHeading}
-                      onChange={val =>
+                      onChange={(val) =>
                         setValue("fontHeading", val, { shouldDirty: true })
                       }
                     />
                     <ThemeFontSelector
                       label="Police du Corps"
                       value={currentValues.fontBody}
-                      onChange={val =>
+                      onChange={(val) =>
                         setValue("fontBody", val, { shouldDirty: true })
                       }
                     />
@@ -358,14 +358,14 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                     <ThemeColorPicker
                       label="Couleur de Fond"
                       value={currentValues.backgroundColor || "#ffffff"}
-                      onChange={val =>
+                      onChange={(val) =>
                         setValue("backgroundColor", val, { shouldDirty: true })
                       }
                     />
                     <ThemeColorPicker
                       label="Couleur du Texte"
                       value={currentValues.textColor || "#111111"}
-                      onChange={val =>
+                      onChange={(val) =>
                         setValue("textColor", val, { shouldDirty: true })
                       }
                     />
@@ -384,7 +384,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
                   <CardDescription>Styles rapides</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-4 space-y-2 max-h-[calc(100vh-250px)] overflow-y-auto">
-                  {Object.keys(THEME_PRESETS).map(preset => (
+                  {Object.keys(THEME_PRESETS).map((preset) => (
                     <button
                       key={preset}
                       type="button"

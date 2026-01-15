@@ -73,7 +73,7 @@ export function ThemeList({ themes }: ThemeListProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {themes.map(theme => (
+      {themes.map((theme) => (
         <Card
           key={theme.id}
           className={cn(

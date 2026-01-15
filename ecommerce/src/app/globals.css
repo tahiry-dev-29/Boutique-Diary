@@ -187,12 +187,15 @@
     font-size: 16px !important;
     font-weight: 600 !important;
     color: #ffffff !important;
-    background: var(--store-primary-gradient, linear-gradient(
-      135deg,
-      var(--store-primary) 0%,
-      var(--store-secondary) 50%,
-      var(--store-primary) 100%
-    )) !important;
+    background: var(
+      --store-primary-gradient,
+      linear-gradient(
+        135deg,
+        var(--store-primary) 0%,
+        var(--store-secondary) 50%,
+        var(--store-primary) 100%
+      )
+    ) !important;
     border: none !important;
     border-radius: 50px !important;
     cursor: pointer !important;
@@ -250,7 +253,15 @@
   left: 2px;
   right: 2px;
   bottom: 2px;
-  background: var(--store-primary-gradient, linear-gradient(135deg, var(--store-primary) 0%, var(--store-secondary) 50%, var(--store-primary) 100%));
+  background: var(
+    --store-primary-gradient,
+    linear-gradient(
+      135deg,
+      var(--store-primary) 0%,
+      var(--store-secondary) 50%,
+      var(--store-primary) 100%
+    )
+  );
   border-radius: 48px;
   z-index: -1;
 }
@@ -476,11 +487,14 @@
 
 .hero-heading-gradient {
   display: block;
-  background: var(--store-primary-gradient, linear-gradient(
-    135deg,
-    var(--store-primary) 0%,
-    var(--store-secondary) 100%
-  ));
+  background: var(
+    --store-primary-gradient,
+    linear-gradient(
+      135deg,
+      var(--store-primary) 0%,
+      var(--store-secondary) 100%
+    )
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

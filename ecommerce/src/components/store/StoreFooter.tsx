@@ -50,7 +50,7 @@ export default function StoreFooter() {
                 { label: "Livraison et Retours", href: "#" },
                 { label: "Conditions Générales", href: "#" },
                 { label: "Politique de Confidentialité", href: "#" },
-              ].map(link => (
+              ].map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
@@ -76,7 +76,7 @@ export default function StoreFooter() {
                 { label: "Tous les produits", href: "/produits" },
                 { label: "Hommes", href: "/shop?category=men" },
                 { label: "Femmes", href: "/shop?category=women" },
-              ].map(link => (
+              ].map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
@@ -102,7 +102,7 @@ export default function StoreFooter() {
                 { label: "Rejoignez-nous", href: "#" },
                 { label: "Nos Valeurs", href: "#" },
                 { label: "Support", href: "#" },
-              ].map(link => (
+              ].map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}

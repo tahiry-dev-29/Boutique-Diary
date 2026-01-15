@@ -53,7 +53,7 @@ export function SectionListEditor({ value, onChange }: SectionListEditorProps) {
 
   const toggleSection = (id: string) => {
     onChange(
-      sections.map(s => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
+      sections.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
     );
   };
 
@@ -72,8 +72,8 @@ export function SectionListEditor({ value, onChange }: SectionListEditorProps) {
     if (!draggedId || draggedId === targetId) return;
 
     const sorted = [...sections];
-    const draggedIndex = sorted.findIndex(s => s.id === draggedId);
-    const targetIndex = sorted.findIndex(s => s.id === targetId);
+    const draggedIndex = sorted.findIndex((s) => s.id === draggedId);
+    const targetIndex = sorted.findIndex((s) => s.id === targetId);
 
     // Swap orders
     const [moved] = sorted.splice(draggedIndex, 1);
@@ -99,12 +99,12 @@ export function SectionListEditor({ value, onChange }: SectionListEditorProps) {
           </p>
         </div>
         <div className="text-sm text-muted-foreground">
-          {sections.filter(s => s.enabled).length}/{sections.length} actives
+          {sections.filter((s) => s.enabled).length}/{sections.length} actives
         </div>
       </div>
 
       <div className="space-y-2">
-        {sortedSections.map(section => {
+        {sortedSections.map((section) => {
           const Icon = SECTION_ICONS[section.type];
           const isDragging = draggedId === section.id;
 
@@ -112,9 +112,9 @@ export function SectionListEditor({ value, onChange }: SectionListEditorProps) {
             <Card
               key={section.id}
               draggable
-              onDragStart={e => handleDragStart(e, section.id)}
+              onDragStart={(e) => handleDragStart(e, section.id)}
               onDragOver={handleDragOver}
-              onDrop={e => handleDrop(e, section.id)}
+              onDrop={(e) => handleDrop(e, section.id)}
               className={`group rounded-2xl border-2 transition-all cursor-move ${
                 isDragging
                   ? "border-primary bg-primary/5 shadow-lg scale-[1.02]"
@@ -176,7 +176,7 @@ export function SectionListEditor({ value, onChange }: SectionListEditorProps) {
         </p>
         <div className="flex flex-wrap gap-2">
           {sortedSections
-            .filter(s => s.enabled)
+            .filter((s) => s.enabled)
             .map((section, index) => (
               <div
                 key={section.id}

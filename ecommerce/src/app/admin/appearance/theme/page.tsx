@@ -32,7 +32,7 @@ export default async function ThemePage(props: {
 
   // Use the ID from URL if editing, otherwise use active theme
   const themeToEdit = themeId
-    ? allThemes.find(t => t.id === themeId) || activeTheme
+    ? allThemes.find((t) => t.id === themeId) || activeTheme
     : activeTheme;
 
   return (

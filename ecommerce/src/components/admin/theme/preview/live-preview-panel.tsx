@@ -26,7 +26,7 @@ export function LivePreviewPanel({
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleRefresh = () => setRefreshKey(k => k + 1);
+  const handleRefresh = () => setRefreshKey((k) => k + 1);
 
   return (
     <div className="h-full flex flex-col">

@@ -96,12 +96,12 @@ export function ThemeVisualEditor({
         <CardContent className="p-0">
           <Tabs
             value={activeTab}
-            onValueChange={v => setActiveTab(v as typeof activeTab)}
+            onValueChange={(v) => setActiveTab(v as typeof activeTab)}
           >
             {/* Tab List */}
             <div className="border-b border-gray-100 px-4 overflow-x-auto">
               <TabsList className="bg-transparent h-12 w-full justify-start gap-0 p-0">
-                {tabItems.map(tab => {
+                {tabItems.map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (
                     <TabsTrigger

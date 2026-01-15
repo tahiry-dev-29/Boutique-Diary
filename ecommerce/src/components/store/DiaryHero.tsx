@@ -9,7 +9,11 @@ import { cn } from "@/lib/utils";
 
 interface DiaryHeroProps {
   customerCount?: number;
-  recentCustomers?: { id: string; username: string }[];
+  recentCustomers?: {
+    id: string | number;
+    username: string;
+    photo?: string | null;
+  }[];
   heroConfig?: HeroConfig;
   previewMode?: boolean;
 }
@@ -36,8 +40,8 @@ export default function DiaryHero({
   const displayCount = customerCount;
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.map(c => ({
-          url: `https://i.pravatar.cc/150?u=${c.id}`,
+      ? recentCustomers.map((c) => ({
+          url: c.photo || `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
       : [

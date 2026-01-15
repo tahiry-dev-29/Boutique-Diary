@@ -66,7 +66,7 @@ export default function StoreHero() {
             <div className="mb-8">
               <h3 className="font-semibold mb-3">Size</h3>
               <div className="flex gap-3">
-                {["S", "M", "L", "XL"].map(size => {
+                {["S", "M", "L", "XL"].map((size) => {
                   const isM = size === "M";
                   return (
                     <button
