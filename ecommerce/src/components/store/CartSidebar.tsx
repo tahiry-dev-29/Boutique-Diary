@@ -38,7 +38,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       {}
       <div
         className={cn(
-          "fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] md:w-[480px] bg-white z-[70] shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] md:w-[480px] bg-background z-[70] shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-x-0" : "translate-x-[110%]",
         )}
       >
@@ -81,7 +81,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   className="group relative flex gap-5 p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all duration-300"
                 >
                   {}
-                  <div className="w-20 h-24 bg-white rounded-xl shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
+                  <div className="w-20 h-24 bg-background rounded-xl shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
                     {item.image ? (
                       <Image
                         src={item.image}
@@ -125,7 +125,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <div className="flex justify-between items-center mt-3">
                       {}
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center bg-white border border-gray-200 rounded-full px-1 py-1 shadow-sm">
+                        <div className="flex items-center bg-background border border-gray-200 rounded-full px-1 py-1 shadow-sm">
                           <button
                             onClick={() =>
                               updateQuantity(item.id, item.quantity - 1)
@@ -187,7 +187,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             <div className="grid grid-cols-2 gap-3">
               <Link
                 href="/cart"
-                className="w-full bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center justify-center text-sm"
+                className="w-full bg-background border border-gray-200 text-gray-900 px-4 py-3 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center justify-center text-sm"
                 onClick={onClose}
               >
                 Voir le panier

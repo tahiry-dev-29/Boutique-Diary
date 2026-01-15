@@ -3,6 +3,8 @@ import MainLayout from "@/components/MainLayout";
 import { getCategories } from "@/lib/store-data";
 import { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
+import { ThemeStyle } from "@/components/store/theme-style";
+import { getTheme } from "@/lib/theme/theme-service";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -27,6 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
+  const theme = await getTheme();
 
   return (
     <html
@@ -34,7 +37,8 @@ export default async function RootLayout({
       className={`${playfair.variable} ${montserrat.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased dark:bg-gray-900/50 text-foreground">
+      <body className="antialiased bg-background dark:bg-gray-900/50 text-foreground">
+        <ThemeStyle theme={theme} />
         <MainLayout categories={categories}>{children}</MainLayout>
       </body>
     </html>

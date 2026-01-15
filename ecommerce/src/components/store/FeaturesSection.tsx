@@ -91,7 +91,7 @@ export default function FeaturesSection({
   return (
     <section
       ref={sectionRef}
-      className="py-16 px-4 md:px-6 bg-white my-8 rounded-[40px] max-w-[1400px] mx-auto overflow-hidden"
+      className="py-16 px-4 md:px-6 bg-background my-8 rounded-[40px] max-w-[1400px] mx-auto overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         {}

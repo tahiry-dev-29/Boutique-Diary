@@ -62,7 +62,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
               className={`promo-card opacity-0 translate-y-10 relative h-[300px] rounded-[32px] overflow-hidden ${bgColor} group transition-all duration-300 hover:shadow-xl`}
             >
               <button
-                className="absolute top-4 left-4 w-10 h-10 bg-white rounded-full flex items-center justify-center z-10 hover:scale-110 transition-transform shadow-sm"
+                className="absolute top-4 left-4 w-10 h-10 bg-background rounded-full flex items-center justify-center z-10 hover:scale-110 transition-transform shadow-sm"
                 title="Ajouter aux favoris"
               >
                 <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
@@ -70,7 +70,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
 
               <Link
                 href={`/store/product/${product.id}`}
-                className="absolute top-4 right-4 bg-white/40 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold text-black z-10 hover:bg-white transition-colors flex items-center gap-1"
+                className="absolute top-4 right-4 bg-background/40 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold text-black z-10 hover:bg-background transition-colors flex items-center gap-1"
               >
                 Acheter <ArrowRight className="w-3 h-3" />
               </Link>
@@ -101,7 +101,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
                 )}
               </Link>
 
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm px-5 py-4 rounded-2xl shadow-sm z-20 flex justify-between items-center">
+              <div className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm px-5 py-4 rounded-2xl shadow-sm z-20 flex justify-between items-center">
                 <div>
                   <p className="font-bold text-sm truncate max-w-[150px]">
                     {product.name}

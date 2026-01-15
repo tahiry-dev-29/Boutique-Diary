@@ -137,7 +137,7 @@ export default function ProductCard({
               "p-2.5 rounded-full backdrop-blur-sm transition-all shadow-lg border active:scale-90 disabled:opacity-50",
               isWishlisted
                 ? "bg-rose-500 text-white border-rose-500 scale-110"
-                : "bg-white/95 text-gray-700 hover:text-rose-500 border-black/5",
+                : "bg-background/95 text-gray-700 hover:text-rose-500 border-black/5",
             )}
             aria-label={
               isWishlisted ? "Retirer des favoris" : "Ajouter aux favoris"

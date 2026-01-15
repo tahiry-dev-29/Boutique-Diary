@@ -105,7 +105,7 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
           <span className="relative z-10">Partager mon expérience</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[28px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-white">
+      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[28px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-background">
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-br from-amber-50/50 via-rose-50/30 to-white -z-10" />
 
         <div className="p-5">
@@ -157,7 +157,7 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                   {PREDEFINED_TAGS.map((tag) => (
                     <label
                       key={tag}
-                      className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all border border-transparent has-[:checked]:border-black has-[:checked]:bg-white has-[:checked]:shadow-lg has-[:checked]:shadow-black/5"
+                      className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all border border-transparent has-[:checked]:border-black has-[:checked]:bg-background has-[:checked]:shadow-lg has-[:checked]:shadow-black/5"
                     >
                       <Checkbox
                         className="hidden"
@@ -193,7 +193,7 @@ export default function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                     <FormControl>
                       <Textarea
                         placeholder="Racontez-nous tout..."
-                        className="min-h-[80px] rounded-[16px] bg-gray-50/50 border-gray-100 focus-visible:ring-black focus-visible:bg-white placeholder:text-gray-400 font-medium text-xs p-3.5 resize-none transition-all shadow-sm"
+                        className="min-h-[80px] rounded-[16px] bg-gray-50/50 border-gray-100 focus-visible:ring-black focus-visible:bg-background placeholder:text-gray-400 font-medium text-xs p-3.5 resize-none transition-all shadow-sm"
                         {...field}
                       />
                     </FormControl>

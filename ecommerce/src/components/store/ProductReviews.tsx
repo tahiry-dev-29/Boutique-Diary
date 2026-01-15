@@ -133,7 +133,7 @@ export default function ProductReviews({
   }, [reviews, activeFilter]);
 
   return (
-    <section className="bg-white py-16 px-4 md:px-6 border-t border-gray-100">
+    <section className="bg-background py-16 px-4 md:px-6 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-24">
         {}
         <div className="flex flex-col gap-12 static lg:sticky lg:top-24 lg:self-start">
@@ -177,7 +177,7 @@ export default function ProductReviews({
                     "px-4 py-2 rounded-full text-xs font-bold border transition-all",
                     filter === activeFilter
                       ? "bg-black text-white border-black"
-                      : "bg-white text-gray-500 border-gray-100 hover:border-gray-300",
+                      : "bg-background text-gray-500 border-gray-100 hover:border-gray-300",
                   )}
                 >
                   {filter}
@@ -230,7 +230,7 @@ export default function ProductReviews({
               </div>
             ) : (
               <div className="bg-gray-50 rounded-[32px] p-20 text-center flex flex-col items-center gap-4">
-                <div className="bg-white p-4 rounded-2xl shadow-sm">
+                <div className="bg-background p-4 rounded-2xl shadow-sm">
                   ⭐⭐⭐⭐⭐
                 </div>
                 <p className="text-gray-500 font-bold">

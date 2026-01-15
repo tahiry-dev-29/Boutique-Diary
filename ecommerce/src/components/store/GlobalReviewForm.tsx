@@ -172,12 +172,12 @@ export default function GlobalReviewModal() {
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <MessageSquarePlus className="w-7 h-7 relative z-10" />
-          <span className="absolute right-full mr-4 px-4 py-2 bg-white/80 backdrop-blur-md text-black text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 whitespace-nowrap border border-white/50">
+          <span className="absolute right-full mr-4 px-4 py-2 bg-background/80 backdrop-blur-md text-black text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 whitespace-nowrap border border-white/50">
             Donner un avis
           </span>
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-[32px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-white">
+      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-[32px] border-0 shadow-[0_32px_80px_rgba(0,0,0,0.15)] bg-background">
         {}
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-white -z-10" />
 
@@ -213,7 +213,7 @@ export default function GlobalReviewModal() {
                           <input
                             type="text"
                             placeholder="Rechercher un produit..."
-                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50/50 border border-gray-100 rounded-[14px] focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-white transition-all font-medium text-xs"
+                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50/50 border border-gray-100 rounded-[14px] focus:outline-none focus:ring-2 focus:ring-black/5 focus:bg-background transition-all font-medium text-xs"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                           />
@@ -268,7 +268,7 @@ export default function GlobalReviewModal() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-3 p-2.5 bg-gray-900 text-white rounded-[16px] shadow-lg group">
-                        <div className="relative w-10 h-10 rounded-md overflow-hidden bg-white/10 flex-shrink-0">
+                        <div className="relative w-10 h-10 rounded-md overflow-hidden bg-background/10 flex-shrink-0">
                           {selectedProduct.images?.[0]?.url ? (
                             <Image
                               src={selectedProduct.images[0].url}
@@ -295,7 +295,7 @@ export default function GlobalReviewModal() {
                             setSelectedProduct(null);
                             field.onChange("");
                           }}
-                          className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                          className="w-7 h-7 rounded-full bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -345,7 +345,7 @@ export default function GlobalReviewModal() {
                     <FormControl>
                       <Textarea
                         placeholder="Qu'est-ce qui vous a plu ? Des points à améliorer ?"
-                        className="min-h-[80px] rounded-[16px] bg-gray-50/50 border-gray-100 focus-visible:ring-black focus-visible:bg-white placeholder:text-gray-400 font-medium text-xs p-3.5 resize-none transition-all shadow-sm"
+                        className="min-h-[80px] rounded-[16px] bg-gray-50/50 border-gray-100 focus-visible:ring-black focus-visible:bg-background placeholder:text-gray-400 font-medium text-xs p-3.5 resize-none transition-all shadow-sm"
                         {...field}
                       />
                     </FormControl>

@@ -67,7 +67,7 @@ export default function CategoryTabsSection({
   const bgColors = ["bg-[#f3f4f6]", "bg-[#f9fafb]"];
 
   return (
-    <section className="py-20 px-4 md:px-6 bg-white">
+    <section className="py-20 px-4 md:px-6 bg-background">
       <div className="max-w-[1400px] mx-auto">
         {}
         <div className="text-center mb-16">

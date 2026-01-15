@@ -10,6 +10,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useCartStore } from "@/lib/cart-store";
+import { HeaderConfig } from "@/lib/theme/theme-config";
 import { cn } from "@/lib/utils";
 import anime from "animejs";
 import {
@@ -22,10 +23,15 @@ import {
   Trophy,
   User,
   X,
+  LogOut,
+  Settings as SettingsIcon,
+  UserCircle,
+  Heart,
+  MapPin,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import BrandLogo from "./BrandLogo";
 import CartSidebar from "./CartSidebar";
 import {
@@ -37,61 +43,78 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  LogOut,
-  Settings as SettingsIcon,
-  UserCircle,
-  Heart,
-  MapPin,
-} from "lucide-react";
 import { toast } from "sonner";
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  photo?: string;
+  role: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface StoreNavbarProps {
+  categories?: Category[];
+  headerConfig?: HeaderConfig;
+  previewMode?: boolean;
+}
 
 export default function StoreNavbar({
   categories = [],
-}: {
-  categories?: any[];
-}) {
+  headerConfig,
+  previewMode = false,
+}: StoreNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/me");
       const data = await res.json();
       if (data.user) {
         setUser(data.user);
       }
-    } catch (err) {
-      console.error("Auth check failed", err);
+    } catch (_error) {
+      console.error("Auth check failed", _error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      await fetchUser();
+    };
+    checkUser();
+  }, [fetchUser]);
 
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-
       window.location.href = "/api/auth/social/logout";
-    } catch (err) {
+    } catch (_error) {
       toast.error("Erreur lors de la déconnexion");
-
       window.location.href = "/api/auth/social/logout";
     }
   };
 
-  const isCartOpen = useCartStore((state) => state.isOpen);
-  const setOpen = useCartStore((state) => state.setOpen);
-  const itemCount = useCartStore((state) => state.getItemCount());
+  const isCartOpen = useCartStore(state => state.isOpen);
+  const setOpen = useCartStore(state => state.setOpen);
+  const itemCount = useCartStore(state => state.getItemCount());
 
   const pathname = usePathname();
 
   const isActive = (path: string) => pathname === path;
 
   useEffect(() => {
+    // Skip animations in preview mode
+    if (previewMode) return;
+
     anime({
       targets: [".nav-logo", ".nav-menu", ".nav-actions"],
       translateY: [-20, 0],
@@ -100,7 +123,7 @@ export default function StoreNavbar({
       easing: "easeOutQuad",
       duration: 800,
     });
-  }, []);
+  }, [previewMode]);
 
   const collections = [
     {
@@ -141,11 +164,27 @@ export default function StoreNavbar({
     "text-gray-600 hover:text-black tracking-tight",
   );
 
+  // Compute nav styles based on headerConfig
+  const navBgColor = headerConfig?.bgColor || "rgba(255,255,255,0.2)";
+  const isSticky = headerConfig?.sticky !== false;
+  const isTransparent = headerConfig?.transparent === true;
+
   return (
     <>
-      <nav className="bg-white/20 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+      <nav
+        className={cn(
+          "z-50 transition-all duration-300 backdrop-blur-md border-b",
+          isSticky ? "sticky top-0" : "relative",
+          isTransparent
+            ? "border-transparent bg-transparent"
+            : "border-white/10",
+          previewMode && "opacity-100", // Force visibility in preview
+        )}
+        style={{
+          backgroundColor: isTransparent ? "transparent" : navBgColor,
+        }}
+      >
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
-          {}
           <Link
             href="/"
             className="nav-logo opacity-0 flex items-center justify-center transition-transform hover:scale-105"
@@ -153,15 +192,14 @@ export default function StoreNavbar({
             <BrandLogo className="w-28 md:w-36" variant="light" />
           </Link>
 
-          {}
           <div className="hidden md:block nav-menu opacity-0 absolute left-1/2 -translate-x-1/2">
-            <div className="rounded-full bg-gray-100/50 border border-gray-200/50 p-1 flex items-center gap-1 shadow-sm">
+            <div className="rounded-full bg-gray-100/30 border border-white/20 p-1 flex items-center gap-1 shadow-sm">
               <NavigationMenu>
                 <NavigationMenuList className="gap-0">
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
-                      className="!rounded-full transition-none"
+                      className="rounded-full! transition-none"
                     >
                       <Link
                         href="/"
@@ -197,7 +235,7 @@ export default function StoreNavbar({
                                 Catalogue <br /> Complet
                               </div>
                               <p className="text-sm leading-relaxed text-gray-500 font-medium">
-                                Explorez l'intégralité de nos collections
+                                Explorez l&apos;intégralité de nos collections
                                 écologiques et durables.
                               </p>
                             </Link>
@@ -205,7 +243,7 @@ export default function StoreNavbar({
                         </li>
 
                         <div className="grid grid-cols-2 gap-4">
-                          {collections.map((item) => (
+                          {collections.map(item => (
                             <li key={item.title}>
                               <NavigationMenuLink asChild>
                                 <Link
@@ -217,7 +255,7 @@ export default function StoreNavbar({
                                   {item.icon && (
                                     <div
                                       className={cn(
-                                        "p-2 w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center mb-1 group-hover/item:scale-110 transition-transform duration-300",
+                                        "p-2 w-10 h-10 rounded-xl bg-background shadow-sm flex items-center justify-center mb-1 group-hover/item:scale-110 transition-transform duration-300",
                                         item.color,
                                       )}
                                     >
@@ -235,7 +273,7 @@ export default function StoreNavbar({
 
                         <div className="col-span-1 lg:col-start-2 pt-4 mt-2 border-t border-gray-100">
                           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                            {categoriesList.map((item) => (
+                            {categoriesList.map(item => (
                               <li key={item.name} className="list-none">
                                 <NavigationMenuLink asChild>
                                   <Link
@@ -256,7 +294,7 @@ export default function StoreNavbar({
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
-                      className="!rounded-full transition-none"
+                      className="rounded-full! transition-none"
                     >
                       <Link
                         href="/promotions"
@@ -274,7 +312,7 @@ export default function StoreNavbar({
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
-                      className="!rounded-full transition-none"
+                      className="rounded-full! transition-none"
                     >
                       <Link
                         href="/produits"
@@ -292,7 +330,7 @@ export default function StoreNavbar({
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
-                      className="!rounded-full transition-none"
+                      className="rounded-full! transition-none"
                     >
                       <Link
                         href="/blog"
@@ -311,7 +349,6 @@ export default function StoreNavbar({
             </div>
           </div>
 
-          {}
           <div className="hidden md:flex items-center gap-3 nav-actions opacity-0">
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -426,7 +463,8 @@ export default function StoreNavbar({
 
             <button
               onClick={() => setOpen(true)}
-              className="relative p-2.5 bg-zinc-900 hover:bg-black text-white rounded-full transition-all duration-300 hover:scale-110 active:scale-95 shadow-xl shadow-zinc-200/50 flex items-center justify-center cursor-pointer group"
+              className="relative p-2.5 text-white rounded-full transition-all duration-300 hover:scale-110 active:scale-95 shadow-xl flex items-center justify-center cursor-pointer group"
+              style={{ backgroundColor: "var(--store-primary)" }}
             >
               <ShoppingBag className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
               {itemCount > 0 && (
@@ -439,7 +477,6 @@ export default function StoreNavbar({
               )}
             </button>
           </div>
-          {}
           <button
             className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -452,9 +489,8 @@ export default function StoreNavbar({
           </button>
         </div>
 
-        {}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-24 left-0 w-full bg-white border-b border-gray-100 p-8 flex flex-col gap-6 shadow-2xl animate-in slide-in-from-top-10 rounded-b-[40px] z-50">
+          <div className="md:hidden absolute top-24 left-0 w-full bg-background border-b border-gray-100 p-8 flex flex-col gap-6 shadow-2xl animate-in slide-in-from-top-10 rounded-b-[40px] z-50">
             <div className="flex flex-col gap-4">
               <Link
                 href="/"
@@ -471,7 +507,7 @@ export default function StoreNavbar({
                 Boutique
               </Link>
               <div className="grid grid-cols-2 gap-2 pl-4">
-                {collections.map((item) => (
+                {collections.map(item => (
                   <Link
                     key={item.title}
                     href={item.href}
@@ -541,10 +577,8 @@ export default function StoreNavbar({
         )}
       </nav>
 
-      {}
       <CartSidebar isOpen={isCartOpen} onClose={() => setOpen(false)} />
 
-      {}
       <SearchCommand open={isSearchOpen} onOpenChange={setIsSearchOpen} />
     </>
   );

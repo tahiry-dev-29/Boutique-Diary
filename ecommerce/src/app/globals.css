@@ -40,6 +40,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Store Theme Variables */
+  --color-store-primary: var(--store-primary);
+  --color-store-secondary: var(--store-secondary);
+  --color-store-accent: var(--store-accent);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 :root {
@@ -180,12 +187,12 @@
     font-size: 16px !important;
     font-weight: 600 !important;
     color: #ffffff !important;
-    background: linear-gradient(
+    background: var(--store-primary-gradient, linear-gradient(
       135deg,
-      #1a1a2e 0%,
-      #16213e 50%,
-      #0f3460 100%
-    ) !important;
+      var(--store-primary) 0%,
+      var(--store-secondary) 50%,
+      var(--store-primary) 100%
+    )) !important;
     border: none !important;
     border-radius: 50px !important;
     cursor: pointer !important;
@@ -243,7 +250,7 @@
   left: 2px;
   right: 2px;
   bottom: 2px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: var(--store-primary-gradient, linear-gradient(135deg, var(--store-primary) 0%, var(--store-secondary) 50%, var(--store-primary) 100%));
   border-radius: 48px;
   z-index: -1;
 }
@@ -406,7 +413,7 @@
 .hero-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #3d6b6b;
+  border: 4px solid var(--store-primary);
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -469,14 +476,11 @@
 
 .hero-heading-gradient {
   display: block;
-  background: linear-gradient(
+  background: var(--store-primary-gradient, linear-gradient(
     135deg,
-    #4a7c7c 0%,
-    #6a8b7a 30%,
-    #9aa28c 50%,
-    #c9a28a 70%,
-    #d4b8a5 100%
-  );
+    var(--store-primary) 0%,
+    var(--store-secondary) 100%
+  ));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -503,7 +507,8 @@
 .hero-btn {
   display: inline-block;
   padding: 16px 32px;
-  background-color: #3d6b6b;
+  background-color: var(--store-primary);
+  opacity: var(--store-primary-opacity, 1);
   color: #ffffff;
   font-family: "Inter", sans-serif;
   font-size: 0.7rem;
@@ -516,7 +521,8 @@
 }
 
 .hero-btn:hover {
-  background-color: #2d5555;
+  background-color: var(--store-primary);
+  filter: brightness(0.9);
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(61, 107, 107, 0.3);
 }
@@ -742,7 +748,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid #e5e5e5;
-  border-top-color: #3d6b6b;
+  border-top-color: var(--store-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

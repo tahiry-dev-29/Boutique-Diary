@@ -78,7 +78,7 @@ export default function ClientTestimonials({
         <div className="relative flex items-center gap-4">
           <button
             onClick={prevSlide}
-            className="hidden md:flex w-14 h-14 rounded-full bg-white border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
+            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
           >
             <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
           </button>
@@ -95,7 +95,7 @@ export default function ClientTestimonials({
                 <div
                   key={item.id}
                   className={cn(
-                    "testimonial-card min-w-full md:min-w-[calc(50%-12px)] bg-white border border-gray-100 p-10 rounded-[40px] text-left shadow-[0_20px_50px_rgba(0,0,0,0.04)] relative group hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500",
+                    "testimonial-card min-w-full md:min-w-[calc(50%-12px)] bg-background border border-gray-100 p-10 rounded-[40px] text-left shadow-[0_20px_50px_rgba(0,0,0,0.04)] relative group hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500",
                     index === currentIndex
                       ? "scale-100 opacity-100"
                       : "scale-95 opacity-50",
@@ -149,7 +149,7 @@ export default function ClientTestimonials({
 
           <button
             onClick={nextSlide}
-            className="hidden md:flex w-14 h-14 rounded-full bg-white border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
+            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
           >
             <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
           </button>

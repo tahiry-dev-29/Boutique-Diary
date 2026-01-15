@@ -91,7 +91,7 @@ export default function CollectionScroll({
                 )}
 
                 {index === 3 && (
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
                     <ArrowUpRight className="w-8 h-8 text-white" />
                   </div>
                 )}

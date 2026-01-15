@@ -49,7 +49,7 @@ export default function ServiceHighlights() {
               Nous garantissons l'authenticité de tous nos produits.
             </p>
           </div>
-          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-white transition-colors">
+          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-background transition-colors">
             Voir Plus <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -67,7 +67,7 @@ export default function ServiceHighlights() {
               tracas.
             </p>
           </div>
-          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-white transition-colors">
+          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-background transition-colors">
             Voir Plus <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -81,7 +81,7 @@ export default function ServiceHighlights() {
               sérénité.
             </p>
           </div>
-          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-white transition-colors">
+          <button className="self-start flex items-center gap-2 border border-black/10 rounded-full pl-3 pr-2 py-1 text-[10px] font-bold hover:bg-background transition-colors">
             Voir Plus <ArrowRight className="w-3 h-3" />
           </button>
         </div>

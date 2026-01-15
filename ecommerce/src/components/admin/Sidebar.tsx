@@ -230,6 +230,12 @@ const navSections: NavSection[] = [
             permission: "appearance.edit",
           },
           {
+            id: "theme",
+            label: "Thèmes",
+            href: "/admin/appearance/theme",
+            permission: "appearance.edit",
+          },
+          {
             id: "banner",
             label: "Bannière",
             href: "/admin/appearance/banner",
@@ -257,11 +263,14 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const { hasPermission, loading } = usePermissions();
 
-  const filterMenuItem = (item: MenuItem): boolean => {
-    return !item.permission || hasPermission(item.permission);
-  };
+  const filterMenuItem = React.useCallback(
+    (item: MenuItem): boolean => {
+      return !item.permission || hasPermission(item.permission);
+    },
+    [hasPermission],
+  );
 
-  const getFilteredSections = (): NavSection[] => {
+  const filteredSections = React.useMemo((): NavSection[] => {
     return navSections
       .map((section) => ({
         ...section,
@@ -276,17 +285,18 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
           .filter((item) => !item.subItems || item.subItems.length > 0),
       }))
       .filter((section) => section.items.length > 0);
-  };
+  }, [filterMenuItem, hasPermission]);
 
-  const filteredSections = getFilteredSections();
-
-  const isItemActive = (item: MenuItem) => {
-    if (item.href === pathname) return true;
-    if (item.subItems) {
-      return item.subItems.some((sub) => pathname.startsWith(sub.href));
-    }
-    return false;
-  };
+  const isItemActive = React.useCallback(
+    (item: MenuItem) => {
+      if (item.href === pathname) return true;
+      if (item.subItems) {
+        return item.subItems.some((sub) => pathname.startsWith(sub.href));
+      }
+      return false;
+    },
+    [pathname],
+  );
 
   React.useEffect(() => {
     filteredSections.forEach((section) => {
@@ -300,7 +310,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
         }
       });
     });
-  }, [pathname]);
+  }, [pathname, filteredSections, isItemActive, expandedSections]);
 
   const toggleSection = (sectionId: string) => {
     if (expandedSections.includes(sectionId)) {
