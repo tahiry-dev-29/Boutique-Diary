@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
 
     let previousStock = 0;
 
-    const result = await prisma.$transaction(async tx => {
+    const result = await prisma.$transaction(async (tx) => {
       // Handle ProductVariation update
       if (variationId) {
         const variation = await tx.productVariation.findUnique({
