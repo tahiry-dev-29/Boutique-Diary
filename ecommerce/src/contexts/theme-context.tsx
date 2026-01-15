@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export const THEME_PRESETS = {
   default: {
@@ -93,20 +94,30 @@ const STORAGE_KEY = "boutique-admin-theme";
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [theme, setTheme] = useState<ThemeState>(DEFAULT_THEME);
   const [mounted, setMounted] = useState(false);
+
+  const isAdminPage =
+    pathname?.startsWith("/admin") || pathname?.startsWith("/admin-login");
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setTheme({ ...DEFAULT_THEME, ...parsed });
-      } catch (e) {
-        console.error("Failed to parse stored theme:", e);
+        // Wrap in Promise to avoid synchronous setState inside effect warning
+        Promise.resolve().then(() => {
+          setTheme({ ...DEFAULT_THEME, ...parsed });
+        });
+      } catch (error) {
+        console.error("Failed to parse stored theme:", error);
       }
     }
-    setMounted(true);
+    // Defer setMounted to avoid cascading render warning
+    Promise.resolve().then(() => {
+      setMounted(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -114,6 +125,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
 
     const root = document.documentElement;
+
+    // Only apply these settings to admin pages
+    if (!isAdminPage) {
+      root.classList.remove("dark");
+      return;
+    }
 
     if (theme.colorMode === "dark") {
       root.classList.add("dark");
@@ -153,7 +170,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.setAttribute("data-radius", theme.radius);
     root.setAttribute("data-content-layout", theme.contentLayout);
     root.setAttribute("data-sidebar-mode", theme.sidebarMode);
-  }, [theme, mounted]);
+  }, [theme, mounted, isAdminPage]);
 
   const contextValue: ThemeContextType = {
     ...theme,

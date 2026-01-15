@@ -479,7 +479,7 @@ model BlogPost {
   productId Int
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  // Optional: Link to specific variant image
+  // Link to specific variant image
   productImageId Int?
   productImage   ProductImage? @relation(fields: [productImageId], references: [id])
 
@@ -517,4 +517,50 @@ model ContactMessage {
 
   @@index([status])
   @@index([email])
+}
+
+// Dynamic theming for the front-office
+model StoreTheme {
+  id Int @id @default(autoincrement())
+
+  // Metadata
+  name String @default("My Theme") @db.VarChar(100)
+
+  // Core colors
+  primaryColor    String  @default("#3d6b6b") @db.VarChar(9)
+  primaryOpacity  Float   @default(1.0)
+  primaryGradient String? @db.Text
+
+  secondaryColor    String  @default("#d4b8a5") @db.VarChar(9)
+  secondaryOpacity  Float   @default(1.0)
+  secondaryGradient String? @db.Text
+
+  accentColor String @default("#c45a4a") @db.VarChar(9)
+
+  // Typography
+  fontHeading String @default("Playfair Display") @db.VarChar(100)
+  fontBody    String @default("Montserrat") @db.VarChar(100)
+
+  // Background Customization
+  backgroundColor String @default("#ffffff") @db.VarChar(9)
+  textColor       String @default("#111111") @db.VarChar(9)
+
+  // Header Configuration
+  // { style: 'classic'|'minimal'|'centered', bgColor, transparent, sticky, logoPosition }
+  headerConfig Json?
+
+  // Hero Section Configuration
+  // { style: 'large'|'split'|'video', title, subtitle, ctaText, ctaLink, bgImage, overlay }
+  heroConfig Json?
+
+  // Home Page Sections (ordered array)
+  // [{ id, type, enabled, order, config: {...} }]
+  sectionsConfig Json?
+
+  // Status
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
