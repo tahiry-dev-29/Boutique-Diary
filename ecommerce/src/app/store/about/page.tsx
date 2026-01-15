@@ -1,10 +1,9 @@
 "use client";
 
 import StoreFooter from "@/components/store/StoreFooter";
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import anime from "animejs";
-import { CheckCircle2, Globe2, Heart, ShieldCheck } from "lucide-react";
+import { Globe2, Heart, ShieldCheck } from "lucide-react";
 
 export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,8 +19,8 @@ export default function AboutPage() {
     });
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".anim-item"),
@@ -38,7 +37,7 @@ export default function AboutPage() {
       { threshold: 0.1 },
     );
 
-    document.querySelectorAll(".anim-section").forEach((section) => {
+    document.querySelectorAll(".anim-section").forEach(section => {
       observer.observe(section);
     });
 
@@ -60,12 +59,12 @@ export default function AboutPage() {
             Notre Histoire
           </span>
           <h1 className="about-hero-text opacity-0 text-5xl md:text-7xl font-bold mb-6 text-gray-900 tracking-tight">
-            Redéfinir <br className="md:hidden" /> l'Excellence.
+            Redéfinir <br className="md:hidden" /> l&apos;Excellence.
           </h1>
           <p className="about-hero-text opacity-0 text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-            Meher est née d'une vision simple : créer des produits qui
-            inspirent, respectent la planète et élèvent votre quotidien par leur
-            qualité exceptionnelle.
+            Diary Boutique est née d&apos;une vision simple : créer des produits
+            qui inspirent, respectent la planète et élèvent votre quotidien par
+            leur qualité exceptionnelle.
           </p>
         </div>
       </section>
@@ -73,9 +72,9 @@ export default function AboutPage() {
       {}
       <section className="py-20 px-6 bg-gray-50 anim-section">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="anim-item opacity-0 relative aspect-square md:aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl">
+          <div className="anim-item opacity-0 relative aspect-square md:aspect-4/5 rounded-[40px] overflow-hidden shadow-2xl">
             {}
-            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-400 relative">
+            <div className="w-full h-full bg-linear-to-br from-gray-200 to-gray-400 relative">
               <div className="absolute inset-0 flex items-center justify-center text-gray-500 font-bold opacity-30 text-4xl">
                 MISSION
               </div>
@@ -87,10 +86,10 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
               <p>
-                Chez Meher, nous croyons que la mode et le luxe ne doivent pas
-                se faire au détriment de notre environnement. C'est pourquoi
-                nous nous engageons à utiliser des matériaux sourcés de manière
-                éthique.
+                Chez Diary Boutique, nous croyons que la mode et le luxe ne
+                doivent pas se faire au détriment de notre environnement.
+                C&apos;est pourquoi nous nous engageons à utiliser des matériaux
+                sourcés de manière éthique.
               </p>
               <p>
                 Notre processus de fabrication allie artisanat traditionnel et
@@ -157,14 +156,16 @@ export default function AboutPage() {
         <div className="max-w-[800px] mx-auto anim-item opacity-0">
           <div className="text-6xl text-gray-700 font-serif mb-6">“</div>
           <p className="text-2xl md:text-4xl font-medium leading-relaxed mb-8">
-            Le véritable luxe réside dans l'harmonie entre ce que nous créons et
-            le monde qui nous entoure.
+            Le véritable luxe réside dans l&apos;harmonie entre ce que nous
+            créons et le monde qui nous entoure.
           </p>
           <div className="flex items-center justify-center gap-4">
             <div className="w-12 h-12 bg-gray-800 rounded-full"></div>
             <div className="text-left">
               <div className="font-bold text-lg">Tahiry R.</div>
-              <div className="text-gray-400 text-sm">Fondateur, Meher</div>
+              <div className="text-gray-400 text-sm">
+                Fondateur, Diary Boutique
+              </div>
             </div>
           </div>
         </div>

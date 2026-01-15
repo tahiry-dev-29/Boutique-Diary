@@ -25,15 +25,15 @@ export default function BrandLogo({
           <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop
               offset="0%"
-              style={{ stopColor: "#d4a373", stopOpacity: 1 }}
+              style={{ stopColor: "var(--store-primary)", stopOpacity: 1 }}
             />
             <stop
               offset="50%"
-              style={{ stopColor: "#bc6c25", stopOpacity: 1 }}
+              style={{ stopColor: "var(--store-secondary)", stopOpacity: 1 }}
             />
             <stop
               offset="100%"
-              style={{ stopColor: "#d4a373", stopOpacity: 1 }}
+              style={{ stopColor: "var(--store-primary)", stopOpacity: 1 }}
             />
           </linearGradient>
         </defs>
@@ -103,7 +103,7 @@ export default function BrandLogo({
             style={{ animationDelay: "0.5s" }}
             d="M-50,20 C-20,35 20,35 50,20"
             fill="none"
-            stroke={isDark ? "rgba(255,255,255,0.1)" : "#e5e7eb"}
+            stroke={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -114,9 +114,9 @@ export default function BrandLogo({
             textAnchor="middle"
             className="title-anim"
             style={{
-              fontFamily: "var(--font-playfair)",
+              fontFamily: "var(--font-heading)",
               fontSize: "52px",
-              fill: isDark ? "#ffffff" : "#1f2937",
+              fill: isDark ? "#ffffff" : "var(--foreground)",
               fontStyle: "italic",
             }}
           >
@@ -129,9 +129,11 @@ export default function BrandLogo({
             textAnchor="middle"
             className="subtitle-anim"
             style={{
-              fontFamily: "var(--font-montserrat)",
+              fontFamily: "var(--font-body)",
               fontSize: "12px",
-              fill: isDark ? "rgba(255,255,255,0.4)" : "#9ca3af",
+              fill: isDark
+                ? "rgba(255,255,255,0.4)"
+                : "var(--muted-foreground)",
               fontWeight: 400,
             }}
           >

@@ -1,4 +1,4 @@
-import MeherHero from "@/components/store/MeherHero";
+import DiaryHero from "@/components/store/DiaryHero";
 import PromoSection from "@/components/store/PromoSection";
 import CollectionScroll from "@/components/store/CollectionScroll";
 import FeaturesSection from "@/components/store/FeaturesSection";
@@ -26,8 +26,8 @@ export default async function Home() {
   const testimonials = await getTestimonials(6);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
-      <MeherHero
+    <div className="min-h-screen bg-background font-sans text-gray-900 overflow-x-hidden">
+      <DiaryHero
         customerCount={customerCount}
         recentCustomers={recentCustomers}
       />

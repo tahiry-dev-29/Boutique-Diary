@@ -1,11 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function StoreHero() {
   return (
-    <section className="bg-[#f8f9fa] py-8 md:py-16 px-4 md:px-6">
+    <section
+      className="py-8 md:py-16 px-4 md:px-6"
+      style={{ backgroundColor: "var(--background, #f8f9fa)" }}
+    >
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_400px] lg:grid-cols-[1fr_450px] gap-8 items-start">
         {}
         <div className="bg-transparent rounded-3xl p-4 md:p-8 flex items-center justify-center relative min-h-[400px] md:min-h-[600px]">
@@ -52,7 +54,10 @@ export default function StoreHero() {
             <div className="mb-6">
               <h3 className="font-semibold mb-3">Available Color</h3>
               <div className="flex gap-3">
-                <button className="w-8 h-8 rounded-full bg-black border-2 border-transparent hover:scale-110 transition-transform ring-2 ring-offset-2 ring-black"></button>
+                <button
+                  className="w-8 h-8 rounded-full bg-black border-2 border-transparent hover:scale-110 transition-transform ring-2 ring-offset-2 ring-black"
+                  style={{ backgroundColor: "var(--store-primary)" }}
+                ></button>
                 <button className="w-8 h-8 rounded-full bg-blue-700 border-2 border-transparent hover:scale-110 transition-transform"></button>
                 <button className="w-8 h-8 rounded-full bg-green-800 border-2 border-transparent hover:scale-110 transition-transform"></button>
               </div>
@@ -61,16 +66,25 @@ export default function StoreHero() {
             <div className="mb-8">
               <h3 className="font-semibold mb-3">Size</h3>
               <div className="flex gap-3">
-                {["S", "M", "L", "XL"].map((size) => (
-                  <button
-                    key={size}
-                    className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all
-                      ${size === "M" ? "border-black bg-black text-white shadow-lg" : "border-gray-200 text-gray-600 hover:border-black"}
-                    `}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {["S", "M", "L", "XL"].map(size => {
+                  const isM = size === "M";
+                  return (
+                    <button
+                      key={size}
+                      className={cn(
+                        "w-12 h-12 rounded-lg border flex items-center justify-center transition-all",
+                        isM
+                          ? "border-transparent text-white shadow-lg"
+                          : "border-gray-200 text-gray-600 hover:border-black",
+                      )}
+                      style={
+                        isM ? { backgroundColor: "var(--store-primary)" } : {}
+                      }
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -78,7 +92,10 @@ export default function StoreHero() {
               <button className="flex-1 py-4 rounded-full border border-gray-200 font-medium hover:bg-gray-50 transition-colors">
                 Add to Chart
               </button>
-              <button className="flex-1 py-4 rounded-full bg-black text-white font-medium hover:bg-gray-800 transition-colors shadow-lg">
+              <button
+                className="flex-1 py-4 rounded-full bg-black text-white font-medium hover:opacity-90 transition-colors shadow-lg"
+                style={{ backgroundColor: "var(--store-primary)" }}
+              >
                 Checkout Now
               </button>
             </div>

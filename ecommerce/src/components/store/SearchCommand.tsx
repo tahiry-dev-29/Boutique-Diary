@@ -68,7 +68,7 @@ export default function SearchCommand({
       />
 
       {}
-      <div className="relative w-full max-w-[640px] shadow-2xl rounded-xl overflow-hidden bg-white ring-1 ring-black/5 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[640px] shadow-2xl rounded-xl overflow-hidden bg-background ring-1 ring-black/5 flex flex-col animate-in fade-in zoom-in-95 duration-200">
         <div className="flex flex-col w-full h-full">
           <div className="flex items-center border-b px-4 py-3">
             <Search className="w-5 h-5 text-gray-400 mr-3" />
@@ -107,7 +107,7 @@ export default function SearchCommand({
                     onClick={() => handleSelect(`/shop?category=${cat.id}`)}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100 hover:text-black cursor-pointer transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-white text-gray-500">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-background text-gray-500">
                       <Layers className="w-4 h-4" />
                     </div>
                     <span className="font-medium">{cat.name}</span>

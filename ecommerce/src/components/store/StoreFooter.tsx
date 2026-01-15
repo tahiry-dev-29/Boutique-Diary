@@ -1,209 +1,146 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
 
 export default function StoreFooter() {
   return (
-    <footer className="bg-[#1a1a2e] text-white py-16 px-4 md:px-6">
+    <footer className="bg-[#1a1a2e] text-gray-400 py-24 px-4 md:px-8 font-sans">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {}
-          <div className="col-span-1 md:col-span-1">
-            <h2 className="text-2xl font-bold mb-6">Meher</h2>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              Nous distribuons nos collections dans des boutiques sélectionnées.
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 mb-20 text-center md:text-left">
+          {/* Brand & Address */}
+          <div className="flex flex-col items-center md:items-start">
+            <h2 className="text-3xl font-black mb-8 text-white tracking-tighter font-sans">
+              Diary Boutique
+            </h2>
+            <p className="text-gray-400 text-base leading-relaxed mb-8 max-w-[280px]">
+              Nous distribuons nos collections dans des boutiques sélectionnées
+              à travers le monde.
             </p>
-            <div className="text-gray-400 text-xs">
-              <p>Technology Park</p>
-              <p>8-14 Marie Curie Street</p>
-              <p>08042 Barcelona</p>
-              <p className="mt-2">hello@meher.com</p>
+            <div className="text-sm text-gray-500 space-y-2 font-medium">
+              <p className="hover:text-gray-300 transition-colors">
+                Technology Park
+              </p>
+              <p className="hover:text-gray-300 transition-colors">
+                8-14 Marie Curie Street
+              </p>
+              <p className="hover:text-gray-300 transition-colors">
+                08042 Barcelona
+              </p>
+              <p className="mt-4 pt-4 border-t border-gray-800 text-primary font-bold">
+                diary@boutique.com
+              </p>
             </div>
           </div>
 
-          {}
-          <div>
-            <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
+          {/* Service Client */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-gray-500">
               Service Client
             </h3>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/customer/orders"
-                  className="hover:text-white transition-colors"
-                >
-                  Mes Commandes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/customer/wishlist"
-                  className="hover:text-white transition-colors"
-                >
-                  Mes Favoris
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/customer/addresses"
-                  className="hover:text-white transition-colors"
-                >
-                  Mes Adresses
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Retours
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Livraison et Retours
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Conditions Générales
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Politique de Confidentialité
-                </Link>
-              </li>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "FAQ", href: "#" },
+                { label: "Mes Commandes", href: "/dashboard/customer/orders" },
+                { label: "Mes Favoris", href: "/dashboard/customer/wishlist" },
+                {
+                  label: "Mes Adresses",
+                  href: "/dashboard/customer/addresses",
+                },
+                { label: "Retours", href: "#" },
+                { label: "Livraison et Retours", href: "#" },
+                { label: "Conditions Générales", href: "#" },
+                { label: "Politique de Confidentialité", href: "#" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-white hover:translate-x-1 transition-all duration-300"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {}
-          <div>
-            <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
+          {/* Produits */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-gray-500">
               Produits
             </h3>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li>
-                <Link
-                  href="/nouveautes"
-                  className="hover:text-white transition-colors"
-                >
-                  Nouveautés
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/promotions"
-                  className="hover:text-white transition-colors"
-                >
-                  Promotions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/top-vente"
-                  className="hover:text-white transition-colors"
-                >
-                  Top Vente
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/produits"
-                  className="hover:text-white transition-colors"
-                >
-                  Tous les produits
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop?category=men"
-                  className="hover:text-white transition-colors"
-                >
-                  Hommes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop?category=women"
-                  className="hover:text-white transition-colors"
-                >
-                  Femmes
-                </Link>
-              </li>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "Nouveautés", href: "/nouveautes" },
+                { label: "Promotions", href: "/promotions" },
+                { label: "Top Vente", href: "/top-vente" },
+                { label: "Tous les produits", href: "/produits" },
+                { label: "Hommes", href: "/shop?category=men" },
+                { label: "Femmes", href: "/shop?category=women" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-white hover:translate-x-1 transition-all duration-300"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {}
-          <div>
-            <h3 className="font-semibold mb-6 text-sm uppercase tracking-wider text-gray-300">
-              Infos Entreprise
+          {/* Infos Entreprise */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="font-bold mb-8 text-xs uppercase tracking-[0.2em] text-gray-500">
+              Société
             </h3>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li>
-                <Link
-                  href="/blog"
-                  className="hover:text-white transition-colors"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  À Propos
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Nos Magasins
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Rejoignez-nous
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Nos Valeurs
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Support
-                </Link>
-              </li>
+            <ul className="space-y-4 text-sm font-medium">
+              {[
+                { label: "Blog", href: "/blog" },
+                { label: "À Propos", href: "#" },
+                { label: "Nos Magasins", href: "#" },
+                { label: "Rejoignez-nous", href: "#" },
+                { label: "Nos Valeurs", href: "#" },
+                { label: "Support", href: "#" },
+              ].map(link => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="inline-block hover:text-white hover:translate-x-1 transition-all duration-300"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-xs">
-            Copyright © 2026 Meher. Tous droits réservés.
+        {/* Bottom Legal */}
+        <div className="border-t border-gray-900/50 pt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+          <p className="text-gray-500 text-xs font-sans tracking-wide">
+            &copy; 2026{" "}
+            <span className="text-gray-400 font-bold">DIARY BOUTIQUE</span>.
+            Conçu avec excellence.
           </p>
-          <div className="flex items-center gap-6">
-            <Link href="#" className="text-gray-500 hover:text-white">
-              <Facebook className="w-4 h-4" />
-            </Link>
-            <Link href="#" className="text-gray-500 hover:text-white">
-              <Instagram className="w-4 h-4" />
-            </Link>
-            <Link href="#" className="text-gray-500 hover:text-white">
-              <Linkedin className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="flex gap-4 text-xs text-gray-500">
-            <Link href="#" className="hover:text-white">
+
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[10px] uppercase tracking-widest font-bold">
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-white transition-colors"
+            >
               Confidentialité
             </Link>
-            <Link href="#" className="hover:text-white">
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-white transition-colors"
+            >
               Sécurité
             </Link>
-            <Link href="#" className="hover:text-white">
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-white transition-colors"
+            >
               Conditions
             </Link>
           </div>

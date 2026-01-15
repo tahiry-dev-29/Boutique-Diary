@@ -105,7 +105,7 @@ export default function StoreProductBanner({
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1.5 h-1.5 bg-white rounded-full opacity-30 blur-[1px]"
+              className="absolute w-1.5 h-1.5 bg-background rounded-full opacity-30 blur-[1px]"
               style={{
                 top: `${(i * 13) % 100}%`,
                 left: `${(i * 21) % 100}%`,
@@ -116,7 +116,7 @@ export default function StoreProductBanner({
         </div>
 
         <div className="max-w-5xl space-y-6 relative">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-white/90 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-background/5 backdrop-blur-xl border border-white/10 text-white/90 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="relative">
               <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
               <div className="absolute inset-0 blur-sm bg-amber-400 opacity-50" />
@@ -155,7 +155,7 @@ export default function StoreProductBanner({
           </p>
 
           <div className="pt-8 flex flex-col md:flex-row items-center justify-center gap-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-700 fill-mode-both">
-            <div className="flex items-center gap-5 px-6 py-4 rounded-[2rem] bg-slate-900/40 border border-white/10 backdrop-blur-3xl transition-all hover:bg-white/10 hover:scale-[1.02] active:scale-95 group/stats shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center gap-5 px-6 py-4 rounded-[2rem] bg-slate-900/40 border border-white/10 backdrop-blur-3xl transition-all hover:bg-background/10 hover:scale-[1.02] active:scale-95 group/stats shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
               <div className="flex -space-x-4">
                 {recentCustomers.length > 0
                   ? recentCustomers.map((customer, i) => (
@@ -200,7 +200,7 @@ export default function StoreProductBanner({
               </div>
             </div>
 
-            <div className="hidden md:block w-px h-12 bg-white/20" />
+            <div className="hidden md:block w-px h-12 bg-background/20" />
 
             <div className="flex items-center gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
