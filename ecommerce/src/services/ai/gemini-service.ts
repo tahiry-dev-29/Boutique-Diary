@@ -14,7 +14,7 @@ const RETRY_CONFIG = {
  * Delay helper
  */
 const delay = (ms: number) =>
-  new Promise<void>(resolve => setTimeout(resolve, ms));
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /**
  * Retry wrapper with exponential backoff for rate limiting
