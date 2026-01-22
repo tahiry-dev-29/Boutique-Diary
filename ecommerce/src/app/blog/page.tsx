@@ -48,7 +48,7 @@ export default async function BlogPage() {
   const otherPosts = posts.slice(1);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen bg-background dark:bg-gray-950">
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
         <StoreProductBanner
           title="Le Journal Boutique Diary"

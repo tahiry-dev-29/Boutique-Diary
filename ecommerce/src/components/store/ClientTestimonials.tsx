@@ -27,7 +27,7 @@ export default function ClientTestimonials({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0].isIntersecting) {
           anime({
             targets: ".testimonial-card",
@@ -50,12 +50,12 @@ export default function ClientTestimonials({
   if (!testimonials || testimonials.length === 0) return null;
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    setCurrentIndex(prev => (prev + 1) % testimonials.length);
   };
 
   const prevSlide = () => {
     setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
+      prev => (prev - 1 + testimonials.length) % testimonials.length,
     );
   };
 
@@ -66,19 +66,19 @@ export default function ClientTestimonials({
     >
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-16 space-y-4">
-          <span className="text-xs font-black uppercase tracking-[0.3em] text-indigo-600">
+          <span className="text-xs font-black uppercase tracking-[0.3em] text-primary">
             Témoignages
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase">
+          <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">
             Nos clients satisfaits
           </h2>
-          <div className="w-20 h-1.5 bg-indigo-600 mx-auto rounded-full" />
+          <div className="w-20 h-1.5 bg-primary mx-auto rounded-full" />
         </div>
 
         <div className="relative flex items-center gap-4">
           <button
             onClick={prevSlide}
-            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
+            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-border items-center justify-center hover:bg-foreground hover:text-background transition-all shadow-xl active:scale-90 group z-10"
           >
             <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
           </button>
@@ -95,17 +95,17 @@ export default function ClientTestimonials({
                 <div
                   key={item.id}
                   className={cn(
-                    "testimonial-card min-w-full md:min-w-[calc(50%-12px)] bg-background border border-gray-100 p-10 rounded-[40px] text-left shadow-[0_20px_50px_rgba(0,0,0,0.04)] relative group hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500",
+                    "testimonial-card min-w-full md:min-w-[calc(50%-12px)] bg-card border border-border p-10 rounded-[40px] text-left shadow-[var(--card-shadow)] relative group hover:shadow-[var(--card-shadow)] transition-all duration-500",
                     index === currentIndex
                       ? "scale-100 opacity-100"
                       : "scale-95 opacity-50",
                   )}
                 >
-                  <Quote className="absolute top-8 right-10 w-12 h-12 text-gray-50 opacity-10 group-hover:scale-110 transition-transform duration-500" />
+                  <Quote className="absolute top-8 right-10 w-12 h-12 text-muted-foreground opacity-10 group-hover:scale-110 transition-transform duration-500" />
 
                   <div className="flex justify-between items-start mb-8">
                     <div className="flex gap-4">
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-indigo-50 shadow-inner">
+                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-border shadow-inner">
                         <img
                           src={`https://i.pravatar.cc/150?u=${item.id}`}
                           alt={item.name}
@@ -113,10 +113,10 @@ export default function ClientTestimonials({
                         />
                       </div>
                       <div>
-                        <h4 className="font-black text-[15px] text-gray-900 uppercase tracking-tight">
+                        <h4 className="font-black text-[15px] text-foreground uppercase tracking-tight">
                           {item.name}
                         </h4>
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                        <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                           {item.date}
                         </span>
                       </div>
@@ -129,17 +129,17 @@ export default function ClientTestimonials({
                             "w-4 h-4",
                             i < item.rating
                               ? "fill-amber-400 text-amber-400"
-                              : "fill-gray-100 text-gray-100",
+                              : "fill-muted text-muted",
                           )}
                         />
                       ))}
                     </div>
                   </div>
 
-                  <h3 className="font-black text-lg mb-3 text-gray-900 leading-tight uppercase tracking-tight italic">
+                  <h3 className="font-black text-lg mb-3 text-foreground leading-tight uppercase tracking-tight italic">
                     {item.title}
                   </h3>
-                  <p className="text-sm md:text-base text-gray-500 leading-relaxed font-medium line-clamp-4 italic">
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-medium line-clamp-4 italic">
                     "{item.review}"
                   </p>
                 </div>
@@ -149,7 +149,7 @@ export default function ClientTestimonials({
 
           <button
             onClick={nextSlide}
-            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-gray-100 items-center justify-center hover:bg-black hover:text-white transition-all shadow-xl active:scale-90 group z-10"
+            className="hidden md:flex w-14 h-14 rounded-full bg-background border border-border items-center justify-center hover:bg-foreground hover:text-background transition-all shadow-xl active:scale-90 group z-10"
           >
             <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
           </button>
@@ -163,8 +163,8 @@ export default function ClientTestimonials({
               className={cn(
                 "h-2 rounded-full transition-all duration-300",
                 i === currentIndex
-                  ? "w-10 bg-indigo-600"
-                  : "w-2 bg-gray-200 hover:bg-gray-300",
+                  ? "w-10 bg-primary"
+                  : "w-2 bg-muted hover:bg-muted-foreground",
               )}
             />
           ))}

@@ -557,6 +557,9 @@ model StoreTheme {
   // [{ id, type, enabled, order, config: {...} }]
   sectionsConfig Json?
 
+  // Style Preset - Controls UI paradigm (material, glassmorphism, neobrutalism, minimal)
+  stylePreset String @default("material") @db.VarChar(50)
+
   // Status
   isActive  Boolean   @default(true)
   deletedAt DateTime?

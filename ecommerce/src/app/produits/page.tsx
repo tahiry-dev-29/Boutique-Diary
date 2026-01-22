@@ -12,7 +12,7 @@ export default async function ProduitsPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
         <StoreProductBanner
           title="Tous nos Produits"

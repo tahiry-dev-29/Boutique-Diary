@@ -16,11 +16,16 @@ export async function getTheme(): Promise<StoreTheme> {
 
       if (!original) {
         // Create the core default theme
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...createData } = defaultTheme;
         theme = await prisma.storeTheme.create({
           data: {
-            ...defaultTheme,
+            ...createData,
             isActive: true,
-          },
+            headerConfig: createData.headerConfig ?? undefined,
+            heroConfig: createData.heroConfig ?? undefined,
+            sectionsConfig: createData.sectionsConfig ?? undefined,
+          } as any, // Cast to any to bypass strict Prisma JSON null checks if needed
         });
       } else {
         // Activate it if it was inactive
@@ -108,7 +113,7 @@ export async function updateTheme(
     const { id, ...updateData } = result.data;
     theme = await prisma.storeTheme.update({
       where: { id: data.id },
-      data: updateData,
+      data: updateData as any,
     });
   } else {
     // If it's a new theme and set to active, deactivate others
@@ -119,11 +124,21 @@ export async function updateTheme(
       });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _, ...baseTheme } = defaultTheme;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: __, ...updateData } = result.data;
+
     theme = await prisma.storeTheme.create({
       data: {
-        ...defaultTheme,
-        ...result.data,
-      },
+        ...baseTheme,
+        ...updateData,
+        headerConfig:
+          updateData.headerConfig ?? baseTheme.headerConfig ?? undefined,
+        heroConfig: updateData.heroConfig ?? baseTheme.heroConfig ?? undefined,
+        sectionsConfig:
+          updateData.sectionsConfig ?? baseTheme.sectionsConfig ?? undefined,
+      } as any,
     });
   }
 

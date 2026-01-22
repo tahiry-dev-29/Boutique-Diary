@@ -166,12 +166,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   // Filter variations by current color
   const colorVariations = useMemo(() => {
     if (!currentImage?.color) return [];
-    return product.variations.filter((v) => v.color === currentImage.color);
+    return product.variations.filter(v => v.color === currentImage.color);
   }, [product.variations, currentImage.color]);
 
   const displayPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant
         ? Number(variant.price)
         : (currentImage?.price ?? product?.price);
@@ -181,7 +181,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const displayOldPrice = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant
         ? variant.oldPrice
           ? Number(variant.oldPrice)
@@ -200,7 +200,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const currentRef = useMemo(() => {
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant?.sku ?? currentImage?.reference ?? product?.reference;
     }
     return currentImage?.reference ?? product?.reference;
@@ -213,7 +213,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const availableSizes = useMemo(() => {
     if (colorVariations.length > 0) {
-      return colorVariations.map((v) => v.size).filter(Boolean) as string[];
+      return colorVariations.map(v => v.size).filter(Boolean) as string[];
     }
     return currentImage?.sizes && currentImage.sizes.length > 0
       ? currentImage.sizes
@@ -223,7 +223,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const displayStock = useMemo(() => {
     // 1. If we have a specific size selected, get that variant's stock
     if (selectedSize && colorVariations.length > 0) {
-      const variant = colorVariations.find((v) => v.size === selectedSize);
+      const variant = colorVariations.find(v => v.size === selectedSize);
       return variant ? variant.stock : 0;
     }
 
@@ -261,15 +261,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     });
   }, []);
 
-  const addItem = useCartStore((state) => state.addItem);
-  const cartItems = useCartStore((state) => state.items);
+  const addItem = useCartStore(state => state.addItem);
+  const cartItems = useCartStore(state => state.items);
 
   // Optimistic stock calculation: subtract quantity already in cart
   const reactiveStock = useMemo(() => {
     const targetColor = currentImage?.color || null;
     const targetSize = selectedSize || null;
 
-    const itemsMatchingSelection = cartItems.filter((item) => {
+    const itemsMatchingSelection = cartItems.filter(item => {
       if (item.productId !== product.id) return false;
 
       const itemColor = item.color || null;
@@ -297,7 +297,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           product.stock;
 
     const inCartTotal = cartItems
-      .filter((item) => item.productId === product.id)
+      .filter(item => item.productId === product.id)
       .reduce((acc, item) => acc + item.quantity, 0);
 
     return Math.max(0, physicalTotal - inCartTotal);
@@ -393,8 +393,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const blogPosts: BlogPost[] = product.blogPosts || [];
   const currentBlogPost =
-    blogPosts.find((bp) => bp.productImageId === currentImage?.id) ||
-    blogPosts.find((bp) => !bp.productImageId);
+    blogPosts.find(bp => bp.productImageId === currentImage?.id) ||
+    blogPosts.find(bp => !bp.productImageId);
 
   return (
     <section className="py-4 md:py-8 px-4 md:px-6">
@@ -403,11 +403,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="grid grid-cols-1 md:grid-cols-[80px_1fr] gap-4">
           {/* Global Stock Display above gallery */}
           <div className="col-span-1 md:col-span-2 flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
+            <div className="flex items-center gap-2 px-3 py-1 bg-muted/40 border border-border rounded-full">
               <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                 Stock Total:{" "}
-                <span className="text-black">{animatedGlobalStock}</span> unités
+                <span className="text-foreground">{animatedGlobalStock}</span>{" "}
+                unités
               </span>
             </div>
           </div>
@@ -418,10 +419,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 key={img.id || i}
                 onClick={() => setSelectedImageIndex(i)}
                 className={cn(
-                  "relative shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-all",
+                  "relative shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square bg-muted rounded-lg overflow-hidden border-2 transition-all",
                   selectedImageIndex === i
-                    ? "border-black ring-1 ring-black/20"
-                    : "border-transparent hover:border-gray-300",
+                    ? "border-primary ring-1 ring-primary/20"
+                    : "border-transparent hover:border-border",
                 )}
               >
                 {img.url && (
@@ -437,7 +438,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {}
-          <div className="product-image-container opacity-0 relative bg-gray-50 rounded-3xl aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
+          <div className="product-image-container opacity-0 relative bg-muted rounded-3xl aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
             {currentImage?.url ? (
               <Image
                 src={currentImage.url}
@@ -447,7 +448,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-gray-400 font-bold text-xl">
+              <div className="flex items-center justify-center h-full text-muted-foreground font-bold text-xl">
                 [Image Principale]
               </div>
             )}
@@ -478,7 +479,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   "px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-md shadow-lg border",
                   globalReactiveStock < 5
                     ? "bg-orange-500/90 text-white border-orange-400"
-                    : "bg-black/80 text-white border-white/20",
+                    : "bg-black/60 text-white border-white/20",
                 )}
               >
                 <div
@@ -501,15 +502,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="product-info-stagger flex flex-col gap-8">
           <div>
             <div className="flex justify-between items-start">
-              <span className="text-sm text-gray-500 font-medium mb-2 block uppercase tracking-wide">
+              <span className="text-sm text-muted-foreground font-medium mb-2 block uppercase tracking-wide">
                 {product.category?.name || "Boutique"}
               </span>
-              <span className="text-xs text-gray-400 font-mono">
+              <span className="text-xs text-muted-foreground font-mono">
                 Ref: {currentRef}
               </span>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-black mb-3 text-gray-900 tracking-tight leading-tight">
+            <h1 className="text-2xl md:text-3xl font-black mb-3 text-foreground tracking-tight leading-tight">
               {product.name}
             </h1>
 
@@ -538,16 +539,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             {/* Price and Rating Row */}
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-end gap-3">
-                <span className="text-2xl md:text-3xl font-bold tracking-tight">
+                <span className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
                   ${displayPrice?.toFixed(2)}
                 </span>
                 {hasDiscount && (
-                  <span className="text-gray-400 line-through text-lg mb-1">
-                    ${displayOldPrice.toFixed(2)}
+                  <span className="text-muted-foreground line-through text-lg mb-1">
+                    ${displayOldPrice?.toFixed(2)}
                   </span>
                 )}
               </div>
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-border" />
               <div className="flex items-center gap-2">
                 <div className="flex text-amber-500">
                   {[...Array(5)].map((_, i) => (
@@ -557,22 +558,22 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         "w-4 h-4 fill-current",
                         i < Math.round(product.rating || 0)
                           ? "text-amber-500"
-                          : "text-gray-200",
+                          : "text-muted",
                       )}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-500 font-medium">
+                <span className="text-sm text-muted-foreground font-medium">
                   ({product.reviewCount || 0})
                 </span>
               </div>
             </div>
 
             {}
-            <div className="h-px bg-gray-100 my-2" />
+            <div className="h-px bg-border my-2" />
 
             {}
-            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               {product.description || "Aucune description disponible."}
             </p>
 
@@ -580,9 +581,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {/* Color Selector */}
               <div>
                 <div className="flex justify-between mb-2">
-                  <h3 className="font-bold text-gray-900 text-sm">
+                  <h3 className="font-bold text-foreground text-sm">
                     Couleur:{" "}
-                    <span className="font-normal text-gray-500">
+                    <span className="font-normal text-muted-foreground">
                       {currentImage?.color || "Standard"}
                     </span>
                   </h3>
@@ -592,7 +593,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     uniqueColors.map((color: string) => {
                       const isSelected = currentImage?.color === color;
                       const index = images.findIndex(
-                        (img) => img.color === color,
+                        img => img.color === color,
                       );
                       return (
                         <button
@@ -601,8 +602,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                           className={cn(
                             "w-10 h-10 rounded-full border-2 transition-all p-0.5 relative",
                             isSelected
-                              ? "border-black ring-1 ring-black"
-                              : "border-gray-200 hover:border-gray-400",
+                              ? "border-primary ring-1 ring-primary"
+                              : "border-border hover:border-muted-foreground",
                           )}
                           title={color}
                         >
@@ -611,7 +612,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                             style={{ background: COLOR_MAP[color] || color }}
                           />
                           {isSelected && (
-                            <span className="absolute -top-1 -right-1 bg-black text-white rounded-full p-0.5">
+                            <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full p-0.5">
                               <Check className="w-2.5 h-2.5" />
                             </span>
                           )}
@@ -619,7 +620,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       );
                     })
                   ) : (
-                    <span className="text-sm text-gray-400 italic">
+                    <span className="text-sm text-muted-foreground italic">
                       Aucune variante couleur
                     </span>
                   )}
@@ -629,13 +630,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {/* Size Selector */}
               <div>
                 <div className="flex justify-between mb-2">
-                  <h3 className="font-bold text-gray-900 text-sm">
+                  <h3 className="font-bold text-foreground text-sm">
                     Taille:{" "}
-                    <span className="font-normal text-gray-500">
+                    <span className="font-normal text-muted-foreground">
                       {selectedSize || "Sélectionnez"}
                     </span>
                   </h3>
-                  <button className="text-xs text-black underline">
+                  <button className="text-xs text-foreground underline">
                     Guide des tailles
                   </button>
                 </div>
@@ -648,15 +649,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         className={cn(
                           "h-12 min-w-12 px-4 rounded-lg border font-medium flex items-center justify-center transition-all",
                           selectedSize === size
-                            ? "bg-black text-white border-black shadow-md"
-                            : "border-gray-200 text-gray-700 hover:border-black",
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "border-border text-muted-foreground hover:border-primary hover:text-foreground",
                         )}
                       >
                         {size}
                       </button>
                     ))
                   ) : (
-                    <span className="text-sm text-gray-400 italic">
+                    <span className="text-sm text-muted-foreground italic">
                       Taille unique
                     </span>
                   )}
@@ -672,8 +673,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     className={cn(
                       "flex items-center text-sm font-medium gap-2 p-3 rounded-xl w-fit transition-colors duration-500",
                       reactiveStock < 5
-                        ? "bg-orange-50 text-orange-600 border border-orange-100"
-                        : "bg-green-50 text-green-600 border border-green-100",
+                        ? "bg-orange-50 text-orange-600 border border-orange-100 dark:bg-orange-950/30 dark:border-orange-900/50"
+                        : "bg-green-50 text-green-600 border border-green-100 dark:bg-green-950/30 dark:border-green-900/50",
                     )}
                   >
                     <span className="relative flex h-2.5 w-2.5">
@@ -699,13 +700,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     </span>
                   </div>
                   {availableSizes.length > 0 && !selectedSize && (
-                    <p className="text-[10px] text-gray-400 font-medium italic">
+                    <p className="text-[10px] text-muted-foreground font-medium italic">
                       * Sélectionnez une taille pour voir le stock précis
                     </p>
                   )}
                 </div>
               ) : (
-                <div className="flex items-center text-red-600 text-sm font-medium gap-2 p-3 bg-red-50 rounded-xl border border-red-100 w-fit">
+                <div className="flex items-center text-red-600 text-sm font-medium gap-2 p-3 bg-red-50 rounded-xl border border-red-100 w-fit dark:bg-red-950/30 dark:border-red-900/50">
                   <AlertCircle className="w-4 h-4" />
                   Rupture de stock
                 </div>
@@ -714,15 +715,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
             {/* Quantity and Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex border border-gray-100 bg-gray-50/50 backdrop-blur-sm rounded-2xl items-center p-1">
+              <div className="flex border border-border bg-muted/40 backdrop-blur-sm rounded-2xl items-center p-1">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={reactiveStock <= 0}
-                  className="w-12 h-12 hover:bg-background rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="w-12 h-12 hover:bg-background rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed text-foreground"
                 >
                   -
                 </button>
-                <span className="w-10 text-center font-black text-lg">
+                <span className="w-10 text-center font-black text-lg text-foreground">
                   {quantity}
                 </span>
                 <button
@@ -730,7 +731,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     setQuantity(Math.min(reactiveStock, quantity + 1))
                   }
                   disabled={reactiveStock <= 0 || quantity >= reactiveStock}
-                  className="w-12 h-12 hover:bg-background rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="w-12 h-12 hover:bg-background rounded-xl transition-all font-black text-xl disabled:opacity-30 disabled:cursor-not-allowed text-foreground"
                 >
                   +
                 </button>
@@ -747,9 +748,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   "flex-1 py-5 rounded-2xl font-black text-sm md:text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl active:scale-[0.98] whitespace-nowrap px-6",
                   displayStock > 0
                     ? isLoggedIn
-                      ? "bg-black text-white hover:bg-gray-800 shadow-black/10"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[var(--btn-shadow)]"
                       : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed",
+                    : "bg-muted text-muted-foreground cursor-not-allowed",
                 )}
               >
                 {isLoggedIn ? (
@@ -771,7 +772,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   "w-16 h-16 rounded-2xl flex items-center justify-center transition-all border active:scale-90 shadow-xl",
                   isWishlisted
                     ? "bg-rose-500 text-white border-rose-500"
-                    : "bg-background text-gray-700 border-gray-100 hover:border-rose-200 hover:text-rose-500",
+                    : "bg-background text-foreground border-border hover:border-rose-200 hover:text-rose-500",
                 )}
               >
                 <Heart
@@ -780,13 +781,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </button>
             </div>
 
-            <p className="text-xs text-gray-400 mt-4 text-center">
+            <p className="text-xs text-muted-foreground mt-4 text-center">
               Livraison gratuite pour les commandes de plus de $200. Retours
               sous 30 jours.
             </p>
 
             {currentBlogPost && currentBlogPost.slug && (
-              <div className="mt-8 pt-8 border-t border-gray-100">
+              <div className="mt-8 pt-8 border-t border-border">
                 <Link
                   href={`/blog/${currentBlogPost.slug}`}
                   className="group flex items-center gap-4 p-4 rounded-xl bg-linear-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all border border-amber-100/50"

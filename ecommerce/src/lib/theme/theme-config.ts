@@ -46,6 +46,16 @@ export const sectionConfigSchema = z.object({
 // All home sections
 export const sectionsConfigSchema = z.array(sectionConfigSchema);
 
+// Style Preset Enum - Controls entire UI paradigm
+export const stylePresetEnum = z.enum([
+  "material",
+  "glassmorphism",
+  "neobrutalism",
+  "minimal",
+]);
+
+export type StylePreset = z.infer<typeof stylePresetEnum>;
+
 // =============================================================================
 // MAIN THEME SCHEMA
 // =============================================================================
@@ -93,6 +103,9 @@ export const themeSchema = z.object({
   headerConfig: headerConfigSchema.optional().nullable(),
   heroConfig: heroConfigSchema.optional().nullable(),
   sectionsConfig: sectionsConfigSchema.optional().nullable(),
+
+  // Style Preset - Controls UI paradigm (buttons, cards, shadows, etc.)
+  stylePreset: stylePresetEnum.default("material"),
 
   isActive: z.boolean().default(true).optional(),
 });
@@ -151,6 +164,7 @@ export const defaultTheme: StoreTheme = {
   isActive: true,
   backgroundColor: "#ffffff",
   textColor: "#1a1a1a",
+  stylePreset: "material",
   headerConfig: defaultHeaderConfig,
   heroConfig: defaultHeroConfig,
   sectionsConfig: defaultSectionsConfig,
@@ -161,40 +175,49 @@ export const defaultTheme: StoreTheme = {
 // =============================================================================
 
 export const THEME_PRESETS: Record<string, Partial<StoreTheme>> = {
+  // Material Design - Clean, elevated, professional
+  "Material Luxe": {
+    primaryColor: "#1976D2",
+    secondaryColor: "#FFC107",
+    accentColor: "#FF5722",
+    backgroundColor: "#FAFAFA",
+    textColor: "#212121",
+    fontHeading: "Roboto",
+    fontBody: "Roboto",
+    stylePreset: "material",
+  },
+  // Neobrutalism - Bold, blocky, high contrast
+  "Neo Bold": {
+    primaryColor: "#FACC15",
+    secondaryColor: "#F472B6",
+    accentColor: "#22D3EE",
+    backgroundColor: "#FEF3C7",
+    textColor: "#1C1917",
+    fontHeading: "Space Grotesk",
+    fontBody: "Space Grotesk",
+    stylePreset: "neobrutalism",
+  },
+  // Minimal - Clean, no shadows, sharp
+  "Minimal Pure": {
+    primaryColor: "#18181B",
+    secondaryColor: "#A1A1AA",
+    accentColor: "#3F3F46",
+    backgroundColor: "#FFFFFF",
+    textColor: "#09090B",
+    fontHeading: "Inter",
+    fontBody: "Inter",
+    stylePreset: "minimal",
+  },
+  // Original Boutique (Material default)
   "Boutique Originale": {
     primaryColor: "#3d6b6b",
     secondaryColor: "#d4b8a5",
     accentColor: "#c45a4a",
     backgroundColor: "#ffffff",
     textColor: "#1a1a1a",
-  },
-  Nature: {
-    primaryColor: "#2D5A27",
-    secondaryColor: "#F4F1DE",
-    accentColor: "#A7C957",
-    backgroundColor: "#F8F9FA",
-    textColor: "#1B4332",
-  },
-  Luxury: {
-    primaryColor: "#1A1A1A",
-    secondaryColor: "#D4AF37",
-    accentColor: "#F5F5F5",
-    backgroundColor: "#FFFFFF",
-    textColor: "#111111",
-  },
-  Vibrant: {
-    primaryColor: "#6D28D9",
-    secondaryColor: "#FDE047",
-    accentColor: "#F43F5E",
-    backgroundColor: "#FDFCFE",
-    textColor: "#1E1B4B",
-  },
-  "Minimal Noir": {
-    primaryColor: "#000000",
-    secondaryColor: "#737373",
-    accentColor: "#D4D4D4",
-    backgroundColor: "#FFFFFF",
-    textColor: "#171717",
+    fontHeading: "Playfair Display",
+    fontBody: "Montserrat",
+    stylePreset: "material",
   },
 };
 

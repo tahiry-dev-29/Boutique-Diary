@@ -19,8 +19,8 @@ export default function AboutPage() {
     });
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".anim-item"),
@@ -37,7 +37,7 @@ export default function AboutPage() {
       { threshold: 0.1 },
     );
 
-    document.querySelectorAll(".anim-section").forEach((section) => {
+    document.querySelectorAll(".anim-section").forEach(section => {
       observer.observe(section);
     });
 
@@ -45,7 +45,7 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white" ref={containerRef}>
+    <div className="min-h-screen bg-background" ref={containerRef}>
       {}
       <section className="relative pt-20 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">

@@ -40,7 +40,7 @@ export default function DiaryHero({
   const displayCount = customerCount;
   const displayAvatars =
     recentCustomers.length > 0
-      ? recentCustomers.map((c) => ({
+      ? recentCustomers.map(c => ({
           url: c.photo || `https://i.pravatar.cc/150?u=${c.id}`,
           name: c.username,
         }))
@@ -103,7 +103,7 @@ export default function DiaryHero({
             {displayAvatars.map((client, i) => (
               <div
                 key={i}
-                className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative shadow-sm"
+                className="w-10 h-10 rounded-full border-2 border-background bg-muted overflow-hidden relative shadow-sm"
               >
                 <Image
                   src={client.url}
@@ -114,7 +114,7 @@ export default function DiaryHero({
                 />
               </div>
             ))}
-            <div className="w-10 h-10 rounded-full border-2 border-white bg-background flex items-center justify-center text-xs font-bold text-gray-400 shadow-sm leading-none">
+            <div className="w-10 h-10 rounded-full border-2 border-background bg-background flex items-center justify-center text-xs font-bold text-muted-foreground shadow-sm leading-none">
               +
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function DiaryHero({
           <h1
             className={cn(
               "text-5xl md:text-7xl font-medium tracking-tight leading-[1.1] mb-8",
-              bgImage && overlay ? "text-white" : "text-gray-900",
+              bgImage && overlay ? "text-white" : "text-foreground",
             )}
           >
             <div
@@ -155,7 +155,9 @@ export default function DiaryHero({
               <p
                 className={cn(
                   "text-lg font-normal mt-4",
-                  bgImage && overlay ? "text-white/80" : "text-gray-500",
+                  bgImage && overlay
+                    ? "text-white/80"
+                    : "text-muted-foreground",
                 )}
               >
                 {subtitle}
@@ -171,7 +173,9 @@ export default function DiaryHero({
                 <ArrowRight
                   className={cn(
                     "w-8 h-8 md:w-12 md:h-12 stroke-[1.5]",
-                    bgImage && overlay ? "text-white/60" : "text-gray-400",
+                    bgImage && overlay
+                      ? "text-white/60"
+                      : "text-muted-foreground",
                   )}
                 />
                 <a

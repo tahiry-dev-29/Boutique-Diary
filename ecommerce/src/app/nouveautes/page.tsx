@@ -11,7 +11,7 @@ export default async function NouveautesPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="pt-4 pb-16 px-4 md:px-6 max-w-[1400px] mx-auto">
         <StoreProductBanner
           title="Nouveautés"

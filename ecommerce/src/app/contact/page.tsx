@@ -4,9 +4,9 @@ import { Heart, MessageCircle, Phone, User } from "lucide-react";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-[#3d6b6b] to-[#2d5555] pt-24 pb-48 overflow-hidden">
+      <div className="relative bg-gradient-to-r from-[var(--store-primary)] to-[color-mix(in_srgb,var(--store-primary)_70%,black)] pt-24 pb-48 overflow-hidden">
         {/* Floating Icons Decorative Elements */}
         {/* Left - Message Bubble */}
         <div className="absolute top-24 left-[10%] animate-bounce duration-[3000ms]">
