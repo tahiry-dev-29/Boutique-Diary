@@ -438,7 +438,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {}
-          <div className="product-image-container opacity-0 relative bg-muted rounded-3xl aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%] shadow-2xl shadow-black/5">
+          <div className="product-image-container product-card-reveal opacity-0 relative aspect-3/4 md:aspect-4/5 max-h-[450px] md:max-h-[500px] overflow-hidden order-1 md:order-2 group mx-auto w-full md:w-[95%]">
             {currentImage?.url ? (
               <Image
                 src={currentImage.url}
@@ -715,7 +715,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
             {/* Quantity and Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex border border-border bg-muted/40 backdrop-blur-sm rounded-2xl items-center p-1">
+              <div className="flex border border-border bg-card/40 backdrop-blur-sm rounded-2xl items-center p-1">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={reactiveStock <= 0}
@@ -745,10 +745,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 }
                 disabled={displayStock <= 0}
                 className={cn(
-                  "flex-1 py-5 rounded-2xl font-black text-sm md:text-lg flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-2xl active:scale-[0.98] whitespace-nowrap px-6",
+                  "flex-1 py-5 rounded-2xl font-black text-sm md:text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] whitespace-nowrap px-6 shadow-xl hover:shadow-2xl",
                   displayStock > 0
                     ? isLoggedIn
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[var(--btn-shadow)]"
+                      ? "btn-primary"
                       : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20"
                     : "bg-muted text-muted-foreground cursor-not-allowed",
                 )}
@@ -790,17 +790,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <div className="mt-8 pt-8 border-t border-border">
                 <Link
                   href={`/blog/${currentBlogPost.slug}`}
-                  className="group flex items-center gap-4 p-4 rounded-xl bg-linear-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all border border-amber-100/50"
+                  className="group flex items-center gap-4 p-4 rounded-xl bg-background hover:bg-secondary/10 transition-all border border-border"
                   target="_blank"
                 >
-                  <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                    <BookOpen className="w-6 h-6 text-amber-500" />
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-0.5">
+                    <p className="text-xs font-bold text-primary uppercase tracking-wider mb-0.5">
                       Découvrir
                     </p>
-                    <h4 className="font-bold text-gray-900 group-hover:text-amber-800 transition-colors">
+                    <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
                       {currentBlogPost.title}
                     </h4>
                   </div>

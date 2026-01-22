@@ -13,6 +13,7 @@ import PhoneInput from "./PhoneInput";
 import AddressMap from "./AddressMap";
 import PaymentMethods from "./PaymentMethods";
 import { useCartStore } from "@/lib/cart-store";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string().email("Email invalide"),
@@ -35,6 +36,7 @@ export default function CheckoutForm() {
     lat: number;
     lng: number;
   } | null>(null);
+  const [addressMode, setAddressMode] = useState<"map" | "manual">("map");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -157,7 +159,7 @@ export default function CheckoutForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({
+          items: items.map(item => ({
             productId: item.productId,
             productImageId: item.productImageId,
             quantity: item.quantity,
@@ -197,25 +199,29 @@ export default function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+      <section className="bg-card rounded-3xl p-6 lg:p-8 shadow-sm border border-border">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-foreground">
+          <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
             1
           </span>
           Identification
         </h2>
         <div className="grid gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Email *</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Email *
+            </label>
             <input
               type="email"
               {...form.register("email")}
               placeholder="votre@email.com"
               readOnly={!!userEmail}
-              className={`w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-900 focus:ring-2 focus:ring-black/5 focus:border-black transition-all ${userEmail ? "cursor-not-allowed opacity-70" : ""}`}
+              className={`w-full px-4 py-3 bg-secondary/5 rounded-xl border border-border text-foreground focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all ${userEmail ? "cursor-not-allowed opacity-70" : ""}`}
             />
             {userEmail && (
-              <p className="text-xs text-gray-500">Email de votre compte</p>
+              <p className="text-xs text-muted-foreground">
+                Email de votre compte
+              </p>
             )}
             {errors.email && (
               <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -223,32 +229,70 @@ export default function CheckoutForm() {
           </div>
           <PhoneInput
             value={phoneValue}
-            onChange={(val) => setValue("phone", val, { shouldValidate: true })}
+            onChange={val => setValue("phone", val, { shouldValidate: true })}
             error={errors.phone?.message}
           />
         </div>
       </section>
 
-      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+      <section className="bg-card rounded-3xl p-6 lg:p-8 shadow-sm border border-border">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-foreground">
+          <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
             2
           </span>
           Livraison
         </h2>
 
         <div className="space-y-6">
+          <div className="flex p-1 bg-secondary/10 rounded-2xl w-fit">
+            <button
+              type="button"
+              onClick={() => setAddressMode("map")}
+              className={cn(
+                "px-6 py-2 rounded-xl text-sm font-bold transition-all",
+                addressMode === "map"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Carte interactive
+            </button>
+            <button
+              type="button"
+              onClick={() => setAddressMode("manual")}
+              className={cn(
+                "px-6 py-2 rounded-xl text-sm font-bold transition-all",
+                addressMode === "manual"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Saisie manuelle
+            </button>
+          </div>
+
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Adresse de livraison
+            <label className="text-sm font-medium text-muted-foreground">
+              {addressMode === "map"
+                ? "Adresse de livraison"
+                : "Entrez votre adresse exacte *"}
             </label>
             <div className="relative">
               <input
                 type="text"
-                value={addressValue}
-                readOnly
-                placeholder="Sélectionnez votre position sur la carte"
-                className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-700 cursor-not-allowed"
+                {...form.register("address")}
+                readOnly={addressMode === "map"}
+                placeholder={
+                  addressMode === "map"
+                    ? "Sélectionnez votre position sur la carte"
+                    : "Rue, quartier, ville..."
+                }
+                className={cn(
+                  "w-full px-4 py-3 bg-secondary/5 rounded-xl border border-border text-foreground transition-all placeholder:text-muted-foreground/50",
+                  addressMode === "map"
+                    ? "cursor-not-allowed"
+                    : "focus:border-primary focus:ring-2 focus:ring-primary/5 outline-none",
+                )}
               />
             </div>
             {errors.address && (
@@ -256,37 +300,41 @@ export default function CheckoutForm() {
             )}
           </div>
 
-          <AddressMap onAddressSelect={onAddressSelect} />
+          {addressMode === "map" && (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <AddressMap onAddressSelect={onAddressSelect} />
+            </div>
+          )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Complément d'adresse (Cité, étage, porte...)
+            <label className="text-sm font-medium text-muted-foreground">
+              Complément d&apos;adresse (Cité, étage, porte...)
             </label>
             <input
               {...form.register("complement")}
               placeholder="Ex: Porte A, 2ème étage..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-gray-400"
+              className="w-full px-4 py-3 bg-secondary/5 rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-muted-foreground/50 text-foreground"
             />
           </div>
         </div>
       </section>
 
-      <section className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-          <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+      <section className="bg-card rounded-3xl p-6 lg:p-8 shadow-sm border border-border">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-foreground">
+          <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
             3
           </span>
           Paiement
         </h2>
         <PaymentMethods
           selected={selectedPaymentMethod || null}
-          onChange={(val) =>
+          onChange={val =>
             setValue("paymentMethod", val, { shouldValidate: true })
           }
           mvolaPhone={mvolaPhoneValue || ""}
-          onMvolaPhoneChange={(val) => setValue("mvolaPhone", val)}
+          onMvolaPhoneChange={val => setValue("mvolaPhone", val)}
           mvolaName={mvolaNameValue || ""}
-          onMvolaNameChange={(val) => setValue("mvolaName", val)}
+          onMvolaNameChange={val => setValue("mvolaName", val)}
         />
         {errors.paymentMethod && (
           <p className="text-xs text-red-500 mt-2">
@@ -299,7 +347,7 @@ export default function CheckoutForm() {
         <button
           type="submit"
           disabled={isSubmitting || items.length === 0}
-          className="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-gray-900 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -313,7 +361,7 @@ export default function CheckoutForm() {
         <div className="text-center mt-4">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-black hover:underline flex items-center justify-center gap-2"
+            className="text-sm text-muted-foreground hover:text-primary hover:underline flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour à la boutique

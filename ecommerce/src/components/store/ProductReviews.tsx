@@ -133,7 +133,7 @@ export default function ProductReviews({
   }, [reviews, activeFilter]);
 
   return (
-    <section className="bg-background py-16 px-4 md:px-6 border-t border-gray-100">
+    <section className="bg-background py-16 px-4 md:px-6 border-t border-border">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-24">
         {}
         <div className="flex flex-col gap-12 static lg:sticky lg:top-24 lg:self-start">
@@ -150,7 +150,7 @@ export default function ProductReviews({
               <div className="flex flex-col gap-4">
                 <Button
                   asChild
-                  className="w-full bg-black text-white hover:bg-gray-800 rounded-xl py-6 font-bold text-lg"
+                  className="w-full bg-primary text-primary-foreground hover:opacity-90 rounded-xl py-6 font-bold text-lg"
                 >
                   <Link href="/login">Se connecter pour donner un avis</Link>
                 </Button>
@@ -165,19 +165,19 @@ export default function ProductReviews({
         {}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               {reviews.length} Avis vérifiés
             </h3>
             <div className="flex gap-2 flex-wrap">
-              {["Récents", "Meilleures notes", "Utiles"].map((filter) => (
+              {["Récents", "Meilleures notes", "Utiles"].map(filter => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
                     "px-4 py-2 rounded-full text-xs font-bold border transition-all",
                     filter === activeFilter
-                      ? "bg-black text-white border-black"
-                      : "bg-background text-gray-500 border-gray-100 hover:border-gray-300",
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-transparent text-muted-foreground border-border hover:border-primary/50",
                   )}
                 >
                   {filter}
@@ -205,7 +205,7 @@ export default function ProductReviews({
                         0,
                         isExpanded ? sortedReviews.length : DISPLAY_LIMIT,
                       )
-                      .map((review) => (
+                      .map(review => (
                         <ReviewItem
                           key={review.id}
                           review={review}
@@ -229,8 +229,8 @@ export default function ProductReviews({
                 )}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-[32px] p-20 text-center flex flex-col items-center gap-4">
-                <div className="bg-background p-4 rounded-2xl shadow-sm">
+              <div className="bg-secondary/5 rounded-[32px] p-20 text-center flex flex-col items-center gap-4">
+                <div className="bg-card p-4 rounded-2xl shadow-sm">
                   ⭐⭐⭐⭐⭐
                 </div>
                 <p className="text-gray-500 font-bold">

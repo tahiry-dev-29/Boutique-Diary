@@ -12,16 +12,18 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {}
-      <header className="bg-card border-b sticky top-0 z-50">
+      <header className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Continuer mes achats</span>
           </Link>
-          <h1 className="text-lg font-bold font-heading">Paiement</h1>
+          <h1 className="text-lg font-bold font-heading text-foreground">
+            Paiement
+          </h1>
           <div className="w-[100px]" /> {}
         </div>
       </header>

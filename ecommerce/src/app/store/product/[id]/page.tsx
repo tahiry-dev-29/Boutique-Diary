@@ -25,7 +25,7 @@ export default async function ProductPage({
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-[1400px] mx-auto px-4 md:px-6 pt-4">
         <StoreBreadcrumb productName={product.name} />
       </div>
@@ -38,7 +38,7 @@ export default async function ProductPage({
       />
 
       {}
-      <div className="bg-gray-50 pt-8 pb-0">
+      <div className="bg-secondary/5 pt-8 pb-0">
         <StoreProductGrid products={relatedProducts} />
       </div>
 
