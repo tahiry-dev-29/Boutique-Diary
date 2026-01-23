@@ -312,6 +312,87 @@ async function main() {
   ]);
   console.log(`✅ Created ${promos.length} promotion rules.\n`);
 
+  // Create Promo Codes
+  console.log("🎫 Creating promo codes...");
+  const promoCodes = await Promise.all([
+    prisma.promoCode.create({
+      data: {
+        code: "WELCOME10",
+        type: "PERCENTAGE",
+        value: 10,
+        minOrderAmount: 20000,
+        usageLimit: 100,
+        costPoints: null,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "DIARY5000",
+        type: "FIXED_AMOUNT",
+        value: 5000,
+        minOrderAmount: 50000,
+        usageLimit: 50,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "VIP25",
+        type: "PERCENTAGE",
+        value: 25,
+        minOrderAmount: 100000,
+        usageLimit: 20,
+        costPoints: null,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "REWARD10",
+        type: "PERCENTAGE",
+        value: 10,
+        minOrderAmount: 0,
+        usageLimit: 1,
+        costPoints: 50,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "REWARD5000",
+        type: "FIXED_AMOUNT",
+        value: 5000,
+        minOrderAmount: 20000,
+        usageLimit: 1,
+        costPoints: 100,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "VIP50",
+        type: "PERCENTAGE",
+        value: 50,
+        minOrderAmount: 50000,
+        usageLimit: 1,
+        costPoints: 500,
+        isActive: true,
+      },
+    }),
+    prisma.promoCode.create({
+      data: {
+        code: "BONUS1000",
+        type: "FIXED_AMOUNT",
+        value: 1000,
+        minOrderAmount: null,
+        usageLimit: null,
+        isActive: true,
+      },
+    }),
+  ]);
+  console.log(`✅ Created ${promoCodes.length} promo codes.\n`);
+
   // Create 50 Products with real images
   console.log("📦 Creating 50 products with real images...");
   const products = [];
@@ -428,6 +509,7 @@ async function main() {
       password: customerPassword,
       role: "CUSTOMER",
       isActive: true,
+      points: 250, // Initial points for testing
     },
   });
   customers.push(defaultClient);
@@ -452,6 +534,7 @@ async function main() {
         role: "CUSTOMER",
         isActive: true,
         photo: photo,
+        points: randomInt(0, 500),
       },
     });
     customers.push(customer);
@@ -617,7 +700,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error("❌ Seeding failed:", e);
     process.exit(1);
   })

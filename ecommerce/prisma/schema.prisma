@@ -1,21 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// prisma/schema.prisma
-
-// 1. Définir le driver comme 'postgresql'
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// 2. Un modèle simple pour le test
+datasource db {
+  provider = "postgresql"
+}
+
 model Post {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255)
@@ -23,129 +13,102 @@ model Post {
   createdAt DateTime @default(now())
 }
 
-// Role hierarchy: CUSTOMER < EMPLOYEE < ADMIN < SUPERADMIN
-enum Role {
-  CUSTOMER
-  EMPLOYEE
-  ADMIN
-  SUPERADMIN
-}
-
 model User {
-  id        Int              @id @default(autoincrement())
-  username  String           @unique
-  email     String           @unique
-  password  String
-  role      Role             @default(CUSTOMER)
-  isActive  Boolean          @default(true)
-  photo     String?          @db.Text
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  orders    Order[]
-  carts     Cart[]
-  reviews   Review[]
-  replies   ReviewReply[]
-  reactions ReviewReaction[]
-  wishlist  WishlistItem[]
-  addresses Address[]
+  id         Int              @id @default(autoincrement())
+  username   String           @unique
+  email      String           @unique
+  password   String
+  createdAt  DateTime         @default(now())
+  isActive   Boolean          @default(true)
+  role       Role             @default(CUSTOMER)
+  updatedAt  DateTime         @updatedAt
+  photo      String?
+  points     Int              @default(0)
+  addresses  Address[]
+  carts      Cart[]
+  orders     Order[]
+  reviews    Review[]
+  reactions  ReviewReaction[]
+  replies    ReviewReply[]
+  wishlist   WishlistItem[]
+  promoCodes PromoCode[]
 }
 
 model Product {
-  id          Int            @id @default(autoincrement())
-  name        String         @db.VarChar(255)
-  description String?        @db.Text
-  reference   String         @unique @db.VarChar(100)
-  images      ProductImage[]
-  price       Float
-  stock       Int            @default(0)
-
-  // Lifecycle & Soft Delete
-  status    String    @default("DRAFT") // 'DRAFT' | 'PUBLISHED'
-  deletedAt DateTime?
-
-  // Nouveaux champs pour filtrage avancé
-  brand  String?  @db.VarChar(100)
-  colors String[] @default([])
-  sizes  String[] @default([])
-
-  // Indicateurs de type de produit
-  isNew        Boolean @default(false)
-  isPromotion  Boolean @default(false)
-  oldPrice     Float?
-  isBestSeller Boolean @default(false)
-
-  // Avis clients
-  rating      Float? @default(0)
-  reviewCount Int    @default(0)
-
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
+  id              Int                @id @default(autoincrement())
+  name            String             @db.VarChar(255)
+  description     String?
+  reference       String             @unique @db.VarChar(100)
+  price           Float
+  stock           Int                @default(0)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  categoryId      Int?
+  brand           String?            @db.VarChar(100)
+  colors          String[]           @default([])
+  isBestSeller    Boolean            @default(false)
+  isNew           Boolean            @default(false)
+  isPromotion     Boolean            @default(false)
+  oldPrice        Float?
+  rating          Float?             @default(0)
+  reviewCount     Int                @default(0)
+  sizes           String[]           @default([])
+  deletedAt       DateTime?
   promotionRuleId Int?
-  promotionRule   PromotionRule? @relation(fields: [promotionRuleId], references: [id])
-
-  variations     ProductVariation[]
-  stockMovements StockMovement[] // Relation for history
-  cartItems      CartItem[]
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  orderItems     OrderItem[]
-  reviews        Review[]
-  wishlistedBy   WishlistItem[]
-  blogPosts      BlogPost[]
+  status          String             @default("DRAFT")
+  blogPosts       BlogPost[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+  category        Category?          @relation(fields: [categoryId], references: [id])
+  promotionRule   PromotionRule?     @relation(fields: [promotionRuleId], references: [id])
+  images          ProductImage[]
+  variations      ProductVariation[]
+  reviews         Review[]
+  stockMovements  StockMovement[]
+  wishlistedBy    WishlistItem[]
 }
 
-// Cart Models
 model Cart {
   id        String     @id @default(cuid())
   sessionId String?    @unique
   userId    Int?
-  user      User?      @relation(fields: [userId], references: [id])
-  items     CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  user      User?      @relation(fields: [userId], references: [id])
+  items     CartItem[]
 }
 
 model CartItem {
   id        String   @id @default(cuid())
   cartId    String
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int      @default(1)
   color     String?
   size      String?
   price     Float
   createdAt DateTime @default(now())
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
 
   @@index([cartId])
   @@index([productId])
 }
 
 model ProductVariation {
-  id        Int     @id @default(autoincrement())
-  sku       String  @unique
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  // Attributes
-  color String?
-  size  String?
-
-  // Pricing & Stock
-  price    Decimal  @db.Decimal(10, 2)
-  oldPrice Decimal? @db.Decimal(10, 2)
-  stock    Int      @default(0)
-
-  // Promotion Linking
+  id              Int            @id @default(autoincrement())
+  sku             String         @unique
+  productId       Int
+  color           String?
+  size            String?
+  price           Decimal        @db.Decimal(10, 2)
+  stock           Int            @default(0)
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  oldPrice        Decimal?       @db.Decimal(10, 2)
   promotionRuleId Int?
+  product         Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   promotionRule   PromotionRule? @relation(fields: [promotionRuleId], references: [id])
-
-  // Status
-  isActive Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@unique([productId, color, size])
   @@index([sku])
@@ -154,55 +117,55 @@ model ProductVariation {
 
 model ProductImage {
   id              Int             @id @default(autoincrement())
-  url             String          @db.Text
+  url             String
   reference       String?         @db.VarChar(100)
   color           String?         @db.VarChar(50)
   sizes           String[]        @default([])
   price           Float?
   oldPrice        Float?
   stock           Int?
-  isNew           Boolean         @default(false)
-  isBestSeller    Boolean         @default(false)
-  isPromotion     Boolean         @default(false)
-  promotionRuleId Int?
-  promotionRule   PromotionRule?  @relation(fields: [promotionRuleId], references: [id])
-  categoryId      Int?
-  category        Category?       @relation(fields: [categoryId], references: [id])
   productId       Int
-  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  stockMovements  StockMovement[] // Relation for history
-  orderItems      OrderItem[]
+  categoryId      Int?
+  isNew           Boolean         @default(false)
+  isPromotion     Boolean         @default(false)
+  isBestSeller    Boolean         @default(false)
+  promotionRuleId Int?
   blogPosts       BlogPost[]
+  orderItems      OrderItem[]
+  category        Category?       @relation(fields: [categoryId], references: [id])
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  promotionRule   PromotionRule?  @relation(fields: [promotionRuleId], references: [id])
+  stockMovements  StockMovement[]
 }
 
 model Category {
   id          Int            @id @default(autoincrement())
   name        String         @db.VarChar(255)
-  description String?        @db.Text
+  description String?
   slug        String         @unique @db.VarChar(255)
-  products    Product[]
-  images      ProductImage[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  products    Product[]
+  images      ProductImage[]
 }
 
 model SiteSettings {
   id        Int      @id @default(autoincrement())
   key       String   @unique @db.VarChar(100)
-  value     String   @db.Text
+  value     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Banner {
   id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(100) // Ex: "CUSTOMIZED"
-  subtitle    String?  @db.VarChar(100) // Ex: "FASHION"
-  description String?  @db.Text
-  buttonText  String?  @db.VarChar(50) // Ex: "READ MORE"
-  buttonLink  String?  @db.VarChar(255) // Ex: "/shop"
-  imageUrl    String   @db.Text
-  order       Int      @default(1) // Position in slider (1-5)
+  title       String   @db.VarChar(100)
+  subtitle    String?  @db.VarChar(100)
+  description String?
+  buttonText  String?  @db.VarChar(50)
+  buttonLink  String?  @db.VarChar(255)
+  imageUrl    String
+  order       Int      @default(1)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -216,197 +179,153 @@ model Admin {
   name            String           @db.VarChar(100)
   email           String           @unique
   password        String
-  role            String           @default("admin") // "admin" | "superadmin"
+  role            String           @default("admin")
   isActive        Boolean          @default(true)
-  isOnline        Boolean          @default(false)
-  lastSeen        DateTime? // Track online status
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  reviewReplies   ReviewReply[]
-  reviewReactions ReviewReaction[]
+  lastSeen        DateTime?
+  isOnline        Boolean          @default(false)
   contactMessages ContactMessage[]
+  reviewReactions ReviewReaction[]
+  reviewReplies   ReviewReply[]
 }
 
-// New model for Stock Audit/History
 model StockMovement {
-  id Int @id @default(autoincrement())
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
+  id             Int           @id @default(autoincrement())
+  productId      Int
   productImageId Int?
-  productImage   ProductImage? @relation(fields: [productImageId], references: [id], onDelete: SetNull)
-
-  type          String // "ADJUSTMENT", "ORDER", "RETURN", "RECEIVED"
-  quantity      Int // The change amount (e.g. +10, -5) or final amount? Usually change. But for Audit "Physical Count" we calc diff.
-  previousStock Int // Snapshot before change
-  newStock      Int // Snapshot after change
-
-  reason String? // "Damage", "Expire", "Stocktake", etc.
-  note   String? @db.Text
-
-  createdBy String? // Admin username or ID
-
-  createdAt DateTime @default(now())
+  type           String
+  quantity       Int
+  previousStock  Int
+  newStock       Int
+  reason         String?
+  note           String?
+  createdBy      String?
+  createdAt      DateTime      @default(now())
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productImage   ProductImage? @relation(fields: [productImageId], references: [id])
 
   @@index([productId])
   @@index([productImageId])
 }
 
 model Order {
-  id        String @id @default(cuid())
-  reference String @unique
-  total     Float
-  status    String @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED, COMPLETED
-
-  customerId Int?
-  customer   User? @relation(fields: [customerId], references: [id])
-
-  items OrderItem[]
-
-  // Payment Relation
+  id           String               @id @default(cuid())
+  reference    String               @unique
+  total        Float
+  status       String               @default("PENDING")
+  customerId   Int?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  stockReduced Boolean              @default(false)
+  discount     Float?               @default(0)
+  promoCode    String?
+  customer     User?                @relation(fields: [customerId], references: [id])
+  items        OrderItem[]
   transactions PaymentTransaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  stockReduced Boolean @default(false)
 }
 
 model OrderItem {
-  id      String @id @default(cuid())
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
-
-  // Optional: Track specific variant for stock management
+  id             String        @id @default(cuid())
+  orderId        String
+  productId      Int
+  quantity       Int
+  price          Float
   productImageId Int?
+  order          Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product        Product       @relation(fields: [productId], references: [id])
   productImage   ProductImage? @relation(fields: [productImageId], references: [id])
-
-  quantity Int
-  price    Float
 
   @@index([orderId])
   @@index([productId])
   @@index([productImageId])
 }
 
-// Payment Module
-
 model PaymentMethod {
-  id          Int     @id @default(autoincrement())
-  code        String  @unique // 'mvola', 'orange_money', 'stripe', 'cash'
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
   name        String
   description String?
   logoUrl     String?
-  isActive    Boolean @default(false)
-  isDefault   Boolean @default(false)
-
-  // Configuration (API keys, secrets, merchant IDs) stored securely
-  config Json? // e.g. { "merchantData": "...", "apiKey": "..." }
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive    Boolean  @default(false)
+  isDefault   Boolean  @default(false)
+  config      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model PaymentTransaction {
-  id String @id @default(cuid())
-
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  amount   Float
-  currency String @default("MGA")
-
-  provider  String // 'mvola', 'orange_money', 'manual'
-  reference String? // External transaction ID (e.g. MVola TransID)
-
-  status String // 'PENDING', 'SUCCESS', 'FAILED', 'CANCELLED', 'REFUNDED'
-
-  metadata Json? // Store full provider response/details
-
+  id        String   @id @default(cuid())
+  orderId   String
+  amount    Float
+  currency  String   @default("MGA")
+  provider  String
+  reference String?
+  status    String
+  metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([reference])
   @@index([status])
 }
 
-// Marketing Module
-
-enum DiscountType {
-  PERCENTAGE
-  FIXED_AMOUNT
-}
-
 model PromoCode {
-  id    Int          @id @default(autoincrement())
-  code  String       @unique @db.VarChar(50)
-  type  DiscountType @default(PERCENTAGE)
-  value Float
+  id             Int          @id @default(autoincrement())
+  code           String       @unique @db.VarChar(50)
+  type           DiscountType @default(PERCENTAGE)
+  value          Float
+  startDate      DateTime?
+  endDate        DateTime?
+  usageLimit     Int?
+  usageCount     Int          @default(0)
+  minOrderAmount Float?
+  costPoints     Int? // Coût en points pour acheter ce code
+  isActive       Boolean      @default(true)
+  ownerId        Int? // Si défini, ce code appartient à un utilisateur spécifique
+  owner          User?        @relation(fields: [ownerId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  // Validity
-  startDate DateTime?
-  endDate   DateTime?
-
-  // Limits
-  usageLimit Int? // Max total uses
-  usageCount Int  @default(0) // Current uses
-
-  minOrderAmount Float? // Min cart total to apply
-
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  @@index([ownerId])
   @@index([code])
   @@index([isActive])
 }
 
 model PromotionRule {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(255)
-  priority Int    @default(0) // Higher applies first? or last? Usually higher first.
-
-  // Logic stored as JSON for flexibility
-  conditions Json // e.g. { type: "cart_total_gt", value: 100 }
-  actions    Json // e.g. { type: "discount_percentage", value: 20 }
-
-  startDate DateTime?
-  endDate   DateTime?
-
-  products Product[]
-
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(255)
+  priority          Int                @default(0)
+  conditions        Json
+  actions           Json
+  startDate         DateTime?
+  endDate           DateTime?
   isActive          Boolean            @default(true)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
-  productVariations ProductVariation[]
+  products          Product[]
   productImages     ProductImage[]
+  productVariations ProductVariation[]
 
   @@index([isActive])
 }
 
 model Review {
-  id         Int     @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
   rating     Float
-  comment    String  @db.Text
-  isVerified Boolean @default(false)
-  tags       Json? // e.g. ["Great quality", "Easy setup"]
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  replies   ReviewReply[]
-  reactions ReviewReaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  comment    String
+  isVerified Boolean          @default(false)
+  tags       Json?
+  productId  Int
+  userId     Int
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  product    Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions  ReviewReaction[]
+  replies    ReviewReply[]
 
   @@index([productId])
   @@index([userId])
@@ -414,28 +333,28 @@ model Review {
 
 model ReviewReply {
   id        Int      @id @default(autoincrement())
-  content   String   @db.Text
+  content   String
   reviewId  Int
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   adminId   Int?
-  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
   userId    Int?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  admin     Admin?   @relation(fields: [adminId], references: [id])
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@index([reviewId])
 }
 
 model ReviewReaction {
   id       Int    @id @default(autoincrement())
-  type     String // 'LIKE', 'LOVE', 'LAUGH', etc.
+  type     String
   reviewId Int
-  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   userId   Int?
-  user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   adminId  Int?
-  admin    Admin? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  admin    Admin? @relation(fields: [adminId], references: [id])
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user     User?  @relation(fields: [userId], references: [id])
 
   @@unique([reviewId, userId, adminId, type])
 }
@@ -443,10 +362,10 @@ model ReviewReaction {
 model WishlistItem {
   id        String   @id @default(cuid())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
 }
@@ -454,8 +373,7 @@ model WishlistItem {
 model Address {
   id          String   @id @default(cuid())
   userId      Int
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label       String? // e.g., "Home", "Office"
+  label       String?
   street      String
   city        String
   postalCode  String
@@ -464,37 +382,27 @@ model Address {
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Blog system - AI generated articles for products
 model BlogPost {
-  id         Int     @id @default(autoincrement())
-  title      String  @db.VarChar(255)
-  slug       String  @unique @db.VarChar(300)
-  excerpt    String? @db.Text
-  content    String  @db.Text
-  coverImage String? @db.Text
-
-  // Link to product
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  // Link to specific variant image
-  productImageId Int?
-  productImage   ProductImage? @relation(fields: [productImageId], references: [id])
-
-  // Metadata
-  isPublished Boolean @default(false)
-  viewCount   Int     @default(0)
-
-  // SEO
-  metaTitle       String? @db.VarChar(255)
-  metaDescription String? @db.Text
-
-  // Timestamps
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
+  id              Int           @id @default(autoincrement())
+  title           String        @db.VarChar(255)
+  slug            String        @unique @db.VarChar(300)
+  excerpt         String?
+  content         String
+  coverImage      String?
+  productId       Int
+  isPublished     Boolean       @default(false)
+  viewCount       Int           @default(0)
+  metaTitle       String?       @db.VarChar(255)
+  metaDescription String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  publishedAt     DateTime?
+  productImageId  Int?
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productImage    ProductImage? @relation(fields: [productImageId], references: [id])
 
   @@index([productId])
   @@index([isPublished])
@@ -502,68 +410,53 @@ model BlogPost {
 }
 
 model ContactMessage {
-  id      Int     @id @default(autoincrement())
-  name    String  @db.VarChar(255)
-  email   String  @db.VarChar(255)
-  phone   String? @db.VarChar(50)
-  message String  @db.Text
-  status  String  @default("UNREAD") // UNREAD, READ, REPLIED
-
-  adminId Int? // Optional field if you want to assign to an admin
-  admin   Admin? @relation(fields: [adminId], references: [id])
-
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String   @db.VarChar(255)
+  phone     String?  @db.VarChar(50)
+  message   String
+  status    String   @default("UNREAD")
+  adminId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  admin     Admin?   @relation(fields: [adminId], references: [id])
 
   @@index([status])
   @@index([email])
 }
 
-// Dynamic theming for the front-office
 model StoreTheme {
-  id Int @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
+  name              String    @default("My Theme") @db.VarChar(100)
+  primaryColor      String    @default("#3d6b6b") @db.VarChar(9)
+  primaryOpacity    Float     @default(1.0)
+  primaryGradient   String?
+  secondaryColor    String    @default("#d4b8a5") @db.VarChar(9)
+  secondaryOpacity  Float     @default(1.0)
+  secondaryGradient String?
+  accentColor       String    @default("#c45a4a") @db.VarChar(9)
+  fontHeading       String    @default("Playfair Display") @db.VarChar(100)
+  fontBody          String    @default("Montserrat") @db.VarChar(100)
+  backgroundColor   String    @default("#ffffff") @db.VarChar(9)
+  textColor         String    @default("#111111") @db.VarChar(9)
+  headerConfig      Json?
+  heroConfig        Json?
+  sectionsConfig    Json?
+  stylePreset       String    @default("material") @db.VarChar(50)
+  isActive          Boolean   @default(true)
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
 
-  // Metadata
-  name String @default("My Theme") @db.VarChar(100)
+enum Role {
+  CUSTOMER
+  EMPLOYEE
+  ADMIN
+  SUPERADMIN
+}
 
-  // Core colors
-  primaryColor    String  @default("#3d6b6b") @db.VarChar(9)
-  primaryOpacity  Float   @default(1.0)
-  primaryGradient String? @db.Text
-
-  secondaryColor    String  @default("#d4b8a5") @db.VarChar(9)
-  secondaryOpacity  Float   @default(1.0)
-  secondaryGradient String? @db.Text
-
-  accentColor String @default("#c45a4a") @db.VarChar(9)
-
-  // Typography
-  fontHeading String @default("Playfair Display") @db.VarChar(100)
-  fontBody    String @default("Montserrat") @db.VarChar(100)
-
-  // Background Customization
-  backgroundColor String @default("#ffffff") @db.VarChar(9)
-  textColor       String @default("#111111") @db.VarChar(9)
-
-  // Header Configuration
-  // { style: 'classic'|'minimal'|'centered', bgColor, transparent, sticky, logoPosition }
-  headerConfig Json?
-
-  // Hero Section Configuration
-  // { style: 'large'|'split'|'video', title, subtitle, ctaText, ctaLink, bgImage, overlay }
-  heroConfig Json?
-
-  // Home Page Sections (ordered array)
-  // [{ id, type, enabled, order, config: {...} }]
-  sectionsConfig Json?
-
-  // Style Preset - Controls UI paradigm (material, glassmorphism, neobrutalism, minimal)
-  stylePreset String @default("material") @db.VarChar(50)
-
-  // Status
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
 }

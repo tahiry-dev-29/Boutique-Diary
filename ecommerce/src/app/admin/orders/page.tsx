@@ -8,7 +8,7 @@ import {
   OrderFloatingPanel,
   OrderDetails,
 } from "@/components/admin/orders/OrderViewModal";
-import { generateInvoicePDF } from "@/utils/pdf-invoice";
+import { InvoiceGeneratorService } from "@/utils/pdf-invoice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -79,7 +79,7 @@ export default function OrdersPage() {
       const res = await fetch("/api/admin/orders?limit=200");
       const data: OrdersResponse = await res.json();
 
-      const formattedOrders: Order[] = data.orders.map((order) => ({
+      const formattedOrders: Order[] = data.orders.map(order => ({
         id: order.id,
         reference: order.reference,
         customer: {
@@ -216,7 +216,7 @@ export default function OrdersPage() {
       const res = await fetch(`/api/orders/${order.reference}/invoice`);
       if (res.ok) {
         const data = await res.json();
-        generateInvoicePDF(data);
+        await InvoiceGeneratorService.generate(data);
         toast.success("Facture téléchargée !");
       } else {
         toast.error("Impossible de récupérer les données de la facture");

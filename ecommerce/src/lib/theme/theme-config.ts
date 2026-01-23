@@ -219,6 +219,50 @@ export const THEME_PRESETS: Record<string, Partial<StoreTheme>> = {
     fontBody: "Montserrat",
     stylePreset: "material",
   },
+  // Treato Natural - Warm, organic, soft
+  "Treato Natural": {
+    primaryColor: "#EADDCD", // Sand/Beige from image background
+    secondaryColor: "#D4C5B0", // Slightly darker beige
+    accentColor: "#1A1A1A", // Dark text/buttons from image
+    backgroundColor: "#EADDCD", // Main background
+    textColor: "#1A1A1A", // Primary text color
+    fontHeading: "Montserrat", // Looks like sans-serif geometric
+    fontBody: "Inter",
+    stylePreset: "minimal",
+  },
+  // Modern Tech - Deep Purple & Clean White
+  "Modern Tech": {
+    primaryColor: "#6C5CE7",
+    secondaryColor: "#A29BFE",
+    accentColor: "#00B894",
+    backgroundColor: "#FFFFFF",
+    textColor: "#2D3436",
+    fontHeading: "Inter",
+    fontBody: "Inter",
+    stylePreset: "minimal",
+  },
+  // Sunset Vibes - Warm gradient feel
+  "Sunset Vibes": {
+    primaryColor: "#FF7675",
+    secondaryColor: "#FAB1A0",
+    accentColor: "#FD79A8",
+    backgroundColor: "#FFF5F5",
+    textColor: "#2D3436",
+    fontHeading: "Poppins",
+    fontBody: "Open Sans",
+    stylePreset: "glassmorphism",
+  },
+  // Forest Minimal - Eucalyptus & Sage
+  "Forest Minimal": {
+    primaryColor: "#55E6C1",
+    secondaryColor: "#58B19F",
+    accentColor: "#F8EFBA",
+    backgroundColor: "#F0FDF4",
+    textColor: "#1B4332",
+    fontHeading: "Montserrat",
+    fontBody: "Lato",
+    stylePreset: "neobrutalism",
+  },
 };
 
 // Section type labels for UI

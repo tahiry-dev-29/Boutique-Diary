@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { StoreTheme, defaultTheme, themeSchema } from "./theme-config";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 export async function getTheme(): Promise<StoreTheme> {
   try {
@@ -22,10 +23,10 @@ export async function getTheme(): Promise<StoreTheme> {
           data: {
             ...createData,
             isActive: true,
-            headerConfig: createData.headerConfig ?? undefined,
-            heroConfig: createData.heroConfig ?? undefined,
-            sectionsConfig: createData.sectionsConfig ?? undefined,
-          } as any, // Cast to any to bypass strict Prisma JSON null checks if needed
+            headerConfig: createData.headerConfig ?? Prisma.JsonNull,
+            heroConfig: createData.heroConfig ?? Prisma.JsonNull,
+            sectionsConfig: createData.sectionsConfig ?? Prisma.JsonNull,
+          } as Prisma.StoreThemeCreateInput,
         });
       } else {
         // Activate it if it was inactive
@@ -68,6 +69,7 @@ export async function activateTheme(id: number) {
   });
 
   revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/appearance/theme");
   return updated;
 }
@@ -109,11 +111,19 @@ export async function updateTheme(
 
   let theme;
   if (data.id) {
+    // If we're setting this one to active, deactivate others
+    if (data.isActive) {
+      await prisma.storeTheme.updateMany({
+        where: { isActive: true, id: { not: data.id } },
+        data: { isActive: false },
+      });
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...updateData } = result.data;
     theme = await prisma.storeTheme.update({
       where: { id: data.id },
-      data: updateData as any,
+      data: updateData as Prisma.StoreThemeUpdateInput,
     });
   } else {
     // If it's a new theme and set to active, deactivate others
@@ -134,15 +144,23 @@ export async function updateTheme(
         ...baseTheme,
         ...updateData,
         headerConfig:
-          updateData.headerConfig ?? baseTheme.headerConfig ?? undefined,
-        heroConfig: updateData.heroConfig ?? baseTheme.heroConfig ?? undefined,
+          (updateData.headerConfig as Prisma.InputJsonValue) ??
+          (baseTheme.headerConfig as Prisma.InputJsonValue) ??
+          Prisma.JsonNull,
+        heroConfig:
+          (updateData.heroConfig as Prisma.InputJsonValue) ??
+          (baseTheme.heroConfig as Prisma.InputJsonValue) ??
+          Prisma.JsonNull,
         sectionsConfig:
-          updateData.sectionsConfig ?? baseTheme.sectionsConfig ?? undefined,
-      } as any,
+          (updateData.sectionsConfig as Prisma.InputJsonValue) ??
+          (baseTheme.sectionsConfig as Prisma.InputJsonValue) ??
+          Prisma.JsonNull,
+      } as Prisma.StoreThemeCreateInput,
     });
   }
 
   revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/appearance/theme");
 
   return theme as StoreTheme;

@@ -13,6 +13,7 @@ import {
   Layout,
   RefreshCw,
   Wand2,
+  Power,
 } from "lucide-react";
 
 import {
@@ -22,7 +23,6 @@ import {
   HeaderConfig,
   HeroConfig,
   SectionsConfig,
-  StylePreset,
 } from "@/lib/theme/theme-config";
 import { ThemeColorPicker } from "./theme-color-picker";
 import { ThemeFontSelector } from "./theme-font-selector";
@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Helper functions for color conversion
@@ -72,7 +73,7 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
     setValue,
     watch,
     reset,
-    formState: { isDirty, errors },
+    formState: { isDirty },
   } = useForm<StoreTheme>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(themeSchema) as any,
@@ -127,6 +128,9 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
         setValue(key as keyof StoreTheme, value, { shouldDirty: true });
       });
       toast.info(`Preset "${presetName}" appliqué`);
+
+      // Update theme name - always adapt as requested
+      setValue("name", presetName, { shouldDirty: true });
     }
   };
 
@@ -162,7 +166,31 @@ export function ThemeForm({ initialData }: ThemeFormProps) {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Activate Toggle */}
+          <div className="flex items-center gap-2 mr-2 bg-muted/50 p-2 rounded-lg border border-border/50">
+            <Switch
+              id="theme-active"
+              checked={!!currentValues.isActive}
+              onCheckedChange={checked =>
+                setValue("isActive", checked, { shouldDirty: true })
+              }
+            />
+            <Label
+              htmlFor="theme-active"
+              className="text-xs font-medium cursor-pointer flex items-center gap-1.5"
+            >
+              <Power
+                className={
+                  currentValues.isActive
+                    ? "w-3 h-3 text-emerald-500"
+                    : "w-3 h-3 text-muted-foreground"
+                }
+              />
+              {currentValues.isActive ? "Actif" : "Inactif"}
+            </Label>
+          </div>
+
           <Button
             type="button"
             variant="ghost"

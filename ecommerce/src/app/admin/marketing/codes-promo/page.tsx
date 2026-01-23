@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import { PromoCodeTable } from "@/features/marketing/components/PromoCodeManagement/PromoCodeTable";
 import { PromoCodeForm } from "@/features/marketing/components/PromoCodeManagement/PromoCodeForm";
 import { usePromoCodes } from "@/features/marketing/hooks/use-promo-codes";
@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export default function PromoCodesPage() {
   const {
@@ -23,6 +24,7 @@ export default function PromoCodesPage() {
     createPromoCode,
     updatePromoCode,
     deletePromoCode,
+    refresh,
   } = usePromoCodes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<PromoCode | null>(null);
@@ -62,18 +64,29 @@ export default function PromoCodesPage() {
           title="Codes Promo"
           description="Gérez les codes de réduction pour vos clients."
         />
-        <Button
-          onClick={handleCreate}
-          className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nouveau Code
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => refresh()}
+            disabled={loading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+            Actualiser
+          </Button>
+          <Button
+            onClick={handleCreate}
+            className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nouveau Code
+          </Button>
+        </div>
       </div>
 
       {loading ? (
         <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div
               key={i}
               className="h-16 bg-gray-100 dark:bg-gray-900 rounded-lg animate-pulse"

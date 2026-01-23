@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import PhoneInput from "./PhoneInput";
 import AddressMap from "./AddressMap";
 import PaymentMethods from "./PaymentMethods";
+import PromoCodeInput, { AppliedPromo } from "./PromoCodeInput";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,15 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function CheckoutForm() {
+interface CheckoutFormProps {
+  appliedPromo: AppliedPromo | null;
+  onPromoApplied: (promo: AppliedPromo | null) => void;
+}
+
+export default function CheckoutForm({
+  appliedPromo,
+  onPromoApplied,
+}: CheckoutFormProps) {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -175,6 +184,8 @@ export default function CheckoutForm() {
           paymentMethod: data.paymentMethod,
           mvolaPhone: data.mvolaPhone,
           mvolaName: data.mvolaName,
+          promoCode: appliedPromo?.code || null,
+          discount: appliedPromo?.discount || 0,
         }),
       });
 
@@ -319,10 +330,28 @@ export default function CheckoutForm() {
         </div>
       </section>
 
+      {/* Promo Code Section */}
       <section className="bg-card rounded-3xl p-6 lg:p-8 shadow-sm border border-border">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-foreground">
           <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
             3
+          </span>
+          Code Promo
+        </h2>
+        <PromoCodeInput
+          cartTotal={items.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0,
+          )}
+          appliedPromo={appliedPromo}
+          onPromoApplied={onPromoApplied}
+        />
+      </section>
+
+      <section className="bg-card rounded-3xl p-6 lg:p-8 shadow-sm border border-border">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-foreground">
+          <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
+            4
           </span>
           Paiement
         </h2>

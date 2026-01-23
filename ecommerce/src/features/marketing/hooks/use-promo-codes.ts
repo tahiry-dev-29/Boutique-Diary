@@ -11,11 +11,13 @@ export function usePromoCodes() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/marketing/promo-codes");
+      const res = await fetch("/api/admin/marketing/promo-codes", {
+        cache: "no-store",
+      });
       if (!res.ok) throw new Error("Erreur de chargement");
       const data = await res.json();
       setPromoCodes(data);
-    } catch (err) {
+    } catch {
       setError("Impossible de charger les codes promo");
     } finally {
       setLoading(false);
@@ -42,8 +44,10 @@ export function usePromoCodes() {
       await fetchPromoCodes();
       toast.success("Code promo créé avec succès");
       return true;
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la création");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Erreur lors de la création";
+      toast.error(message);
       return false;
     }
   };
@@ -64,8 +68,10 @@ export function usePromoCodes() {
       await fetchPromoCodes();
       toast.success("Code promo mis à jour");
       return true;
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la mise à jour");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Erreur lors de la mise à jour";
+      toast.error(message);
       return false;
     }
   };
@@ -78,11 +84,13 @@ export function usePromoCodes() {
 
       if (!res.ok) throw new Error("Erreur de suppression");
 
-      setPromoCodes((prev) => prev.filter((code) => code.id !== id));
+      setPromoCodes(prev => prev.filter(code => code.id !== id));
       toast.success("Code promo supprimé");
       return true;
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la suppression");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Erreur lors de la suppression";
+      toast.error(message);
       return false;
     }
   };

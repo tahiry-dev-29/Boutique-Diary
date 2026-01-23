@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { generateInvoicePDF } from "@/utils/pdf-invoice";
+import { InvoiceGeneratorService, InvoiceData } from "@/utils/pdf-invoice";
 import {
   Select,
   SelectContent,
@@ -121,7 +121,9 @@ const InfoRow = ({
     </div>
     <div className="flex flex-col min-w-0 flex-1">
       <span className="text-xs text-muted-foreground font-medium">{label}</span>
-      <span className="text-foreground font-semibold break-words">{value}</span>
+      <span className="text-foreground font-semibold wrap-break-word">
+        {value}
+      </span>
     </div>
   </div>
 );
@@ -139,8 +141,8 @@ export function OrderFloatingPanel({
   useEffect(() => {
     if (open && initialOrder?.id) {
       fetch(`/api/admin/orders/${initialOrder.id}`)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           if (data.id) {
             setOrder({
               ...data,
@@ -178,11 +180,13 @@ export function OrderFloatingPanel({
         throw new Error(errorData.error || "Erreur lors de la mise à jour");
       }
 
-      setOrder({ ...order, status: newStatus as any });
+      setOrder({ ...order, status: newStatus as OrderDetails["status"] });
       toast.success("Statut mis à jour avec succès");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Erreur inconnue";
       console.error("[OrderUpdateError]", error);
-      toast.error(error.message || "Impossible de mettre à jour le statut");
+      toast.error(message || "Impossible de mettre à jour le statut");
     }
   };
 
@@ -271,7 +275,9 @@ export function OrderFloatingPanel({
                   variant="outline"
                   size="sm"
                   className="flex-1 bg-background/50 border-border/50 shadow-sm"
-                  onClick={() => generateInvoicePDF(order as any)}
+                  onClick={async () =>
+                    await InvoiceGeneratorService.generate(order as any)
+                  }
                 >
                   <Download className="w-3.5 h-3.5 mr-2" />
                   Facture
@@ -315,7 +321,7 @@ export function OrderFloatingPanel({
                 Panier ({order.items.length})
               </h3>
               <div className="space-y-3">
-                {order.items.map((item) => (
+                {order.items.map(item => (
                   <div
                     key={item.id}
                     className="flex gap-4 p-3 rounded-2xl hover:bg-secondary/30 transition-colors border border-transparent hover:border-border/40"

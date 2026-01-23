@@ -32,6 +32,8 @@ interface CreateOrderBody {
   paymentMethod: string;
   mvolaPhone?: string;
   mvolaName?: string;
+  promoCode?: string;
+  discount?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -87,6 +89,31 @@ export async function POST(request: NextRequest) {
       stockUpdates.push({ productId: item.productId, quantity: item.quantity });
     }
 
+    // Handle Promo Code
+    let discountAmount = 0;
+    let promoIdToIncrement: number | null = null;
+
+    if (body.promoCode) {
+      const promo = await prisma.promoCode.findUnique({
+        where: { code: body.promoCode.toUpperCase().trim() },
+      });
+
+      if (promo && promo.isActive) {
+        // Re-calculate discount for security
+        if (promo.type === "PERCENTAGE") {
+          discountAmount = Math.round((total * promo.value) / 100);
+        } else {
+          discountAmount = promo.value;
+        }
+
+        // Ensure discount doesn't exceed total
+        discountAmount = Math.min(discountAmount, total);
+        promoIdToIncrement = promo.id;
+      }
+    }
+
+    const finalTotal = Math.max(0, total - discountAmount);
+
     let reference = generateOrderReference();
     let attempts = 0;
     while (attempts < 5) {
@@ -96,15 +123,17 @@ export async function POST(request: NextRequest) {
       attempts++;
     }
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async tx => {
       const newOrder = await tx.order.create({
         data: {
           reference,
-          total,
+          total: finalTotal,
           status: "PENDING",
           customerId,
+          promoCode: body.promoCode || null,
+          discount: discountAmount,
           items: {
-            create: body.items.map((item) => ({
+            create: body.items.map(item => ({
               productId: item.productId,
               productImageId: item.productImageId,
               quantity: item.quantity,
@@ -113,7 +142,7 @@ export async function POST(request: NextRequest) {
           },
           transactions: {
             create: {
-              amount: total,
+              amount: finalTotal,
               currency: "MGA",
               provider: body.paymentMethod,
               status: "PENDING",
@@ -125,6 +154,9 @@ export async function POST(request: NextRequest) {
                 addressCoords: body.addressCoords,
                 mvolaPhone: body.mvolaPhone,
                 mvolaName: body.mvolaName,
+                promoCode: body.promoCode,
+                originalTotal: total,
+                discount: discountAmount,
               },
             },
           },
@@ -134,6 +166,14 @@ export async function POST(request: NextRequest) {
           transactions: true,
         },
       });
+
+      // Increment promo usage
+      if (promoIdToIncrement) {
+        await tx.promoCode.update({
+          where: { id: promoIdToIncrement },
+          data: { usageCount: { increment: 1 } },
+        });
+      }
 
       return newOrder;
     });

@@ -2,16 +2,24 @@
 
 import { useCartStore, formatPrice } from "@/lib/cart-store";
 import Image from "next/image";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Tag } from "lucide-react";
 
-export default function OrderSummary() {
+interface OrderSummaryProps {
+  discount?: number;
+  promoCode?: string | null;
+}
+
+export default function OrderSummary({
+  discount = 0,
+  promoCode,
+}: OrderSummaryProps) {
   const items = useCartStore(state => state.items);
   const getSubtotal = useCartStore(state => state.getSubtotal);
 
   const subtotal = getSubtotal();
   const delivery = 0;
-  const taxes = subtotal * 0.2;
-  const total = subtotal + delivery + taxes;
+  const taxes = Math.round((subtotal - discount) * 0.2);
+  const total = subtotal + delivery + taxes - discount;
 
   if (items.length === 0) {
     return (
@@ -30,7 +38,7 @@ export default function OrderSummary() {
     <div className="bg-secondary/5 rounded-3xl p-6 lg:p-8 sticky top-8 text-foreground">
       <h3 className="font-bold text-xl mb-6">Récapitulatif</h3>
 
-      {}
+      {/* Items list */}
       <div className="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
         {items.map(item => (
           <div key={item.id} className="flex gap-4">
@@ -47,7 +55,7 @@ export default function OrderSummary() {
                   No Img
                 </div>
               )}
-              <span className="absolute top-0 right-0 bg-black text-white text-[10px] px-1.5 py-0.5 rounded-bl-lg font-bold">
+              <span className="absolute top-0 right-0 bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-bl-lg font-bold">
                 x{item.quantity}
               </span>
             </div>
@@ -66,12 +74,24 @@ export default function OrderSummary() {
         ))}
       </div>
 
-      {}
+      {/* Totals */}
       <div className="space-y-3 border-t border-border pt-6">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Sous-total</span>
           <span className="font-medium">{formatPrice(subtotal)}</span>
         </div>
+
+        {/* Promo discount */}
+        {discount > 0 && (
+          <div className="flex justify-between text-sm text-primary animate-in fade-in slide-in-from-top-1">
+            <span className="flex items-center gap-1">
+              <Tag className="w-3 h-3" />
+              Promo ({promoCode})
+            </span>
+            <span className="font-bold">-{formatPrice(discount)}</span>
+          </div>
+        )}
+
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Livraison</span>
           <span className="text-primary font-medium">Gratuite</span>

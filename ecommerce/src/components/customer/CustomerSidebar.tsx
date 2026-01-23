@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  Gift,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -39,6 +40,12 @@ const navItems = [
     label: "Mes adresses",
     icon: MapPin,
     href: "/dashboard/customer/addresses",
+  },
+  {
+    id: "promo-codes",
+    label: "Codes Promos",
+    icon: Gift,
+    href: "/dashboard/customer/promo-codes",
   },
   {
     id: "settings",
@@ -133,7 +140,7 @@ export default function CustomerSidebar({
 
         {}
         <nav className="space-y-1">
-          {navItems.map((item) => {
+          {navItems.map(item => {
             const isActive = pathname === item.href;
             return (
               <Link

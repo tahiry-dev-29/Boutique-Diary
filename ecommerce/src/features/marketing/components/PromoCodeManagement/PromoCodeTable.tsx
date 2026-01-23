@@ -3,6 +3,7 @@
 import React from "react";
 import { PromoCode, DiscountType } from "../../types";
 import { formatPrice } from "@/lib/formatPrice";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Copy, BarChart3 } from "lucide-react";
+import { Edit, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -101,7 +102,7 @@ export function PromoCodeTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((code) => (
+          {data.map(code => (
             <TableRow
               key={code.id}
               className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -145,11 +146,18 @@ export function PromoCodeTable({
                   </span>
                   {}
                   {code.usageLimit && (
-                    <div className="w-16 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                    <div className="w-20 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden border border-gray-200/50 dark:border-gray-700/50">
                       <div
-                        className="h-full bg-indigo-500 rounded-full"
+                        className={cn(
+                          "h-full rounded-full transition-all duration-500",
+                          code.usageCount / code.usageLimit >= 1
+                            ? "bg-rose-500"
+                            : code.usageCount / code.usageLimit >= 0.8
+                              ? "bg-amber-500"
+                              : "bg-indigo-500",
+                        )}
                         style={{
-                          width: `${Math.min((code.usageCount / code.usageLimit) * 100, 100)}%`,
+                          width: `${Math.max((code.usageCount / code.usageLimit) * 100, code.usageCount > 0 ? 5 : 0)}%`,
                         }}
                       />
                     </div>

@@ -10,7 +10,7 @@ import {
   Loader2,
   FileText,
 } from "lucide-react";
-import { generateInvoicePDF } from "@/utils/pdf-invoice";
+import { InvoiceGeneratorService, InvoiceData } from "@/utils/pdf-invoice";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -25,10 +25,10 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function CustomerOrders() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<InvoiceData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [actionOrder, setActionOrder] = useState<any>(null);
+  const [actionOrder, setActionOrder] = useState<InvoiceData | null>(null);
   const [actionType, setActionType] = useState<"CANCEL" | "COMPLETE" | null>(
     null,
   );
@@ -60,7 +60,7 @@ export default function CustomerOrders() {
       const res = await fetch(`/api/orders/${orderRef}/invoice`);
       if (res.ok) {
         const data = await res.json();
-        generateInvoicePDF(data);
+        await InvoiceGeneratorService.generate(data);
         toast.success("Facture téléchargée !");
       } else {
         toast.error("Impossible de récupérer les données de la facture");
@@ -107,9 +107,11 @@ export default function CustomerOrders() {
         actionType === "CANCEL" ? "Commande annulée" : "Réception confirmée !",
       );
       fetchOrders();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Une erreur est survenue";
       console.error(err);
-      toast.error(err.message);
+      toast.error(message);
     } finally {
       setActionOrder(null);
       setActionType(null);
@@ -165,7 +167,7 @@ export default function CustomerOrders() {
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
         ) : orders.length > 0 ? (
-          orders.map((order) => (
+          orders.map(order => (
             <div
               key={order.id}
               className="dark:border-gray-700/50 border border-border rounded-xl overflow-hidden"
@@ -193,7 +195,7 @@ export default function CustomerOrders() {
               </div>
 
               <div className="p-4 space-y-3">
-                {order.items.map((item: any, i: number) => (
+                {order.items.map((item, i: number) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
@@ -201,7 +203,7 @@ export default function CustomerOrders() {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {item.product?.name || "Produit inconnu"}
+                          {item.productName || "Produit inconnu"}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           Quantité: {item.quantity}
@@ -281,7 +283,7 @@ export default function CustomerOrders() {
 
       <AlertDialog
         open={!!actionOrder}
-        onOpenChange={(open) => !open && setActionOrder(null)}
+        onOpenChange={open => !open && setActionOrder(null)}
       >
         <AlertDialogContent className="bg-gray-100 dark:bg-gray-800 border-border">
           <AlertDialogHeader>
