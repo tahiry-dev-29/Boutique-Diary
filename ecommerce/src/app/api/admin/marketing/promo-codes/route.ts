@@ -22,6 +22,7 @@ export async function GET() {
     const promoCodes = await prisma.promoCode.findMany({
       orderBy: { createdAt: "desc" },
     });
+
     return NextResponse.json(promoCodes);
   } catch (error) {
     console.error("Error fetching promo codes:", error);
