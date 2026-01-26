@@ -3,6 +3,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { verifyToken } from "@/lib/auth";
+
+// getUser removed in favor of verifyToken
 
 const validateSchema = z.object({
   code: z.string().min(1, "Le code est requis"),
@@ -22,6 +25,31 @@ export async function POST(req: Request) {
     if (!promoCode) {
       return NextResponse.json(
         { valid: false, message: "Code promo introuvable" },
+        { status: 200 },
+      );
+    }
+
+    // If code has an owner, only that user can use it
+    if (promoCode.ownerId) {
+      const user = await verifyToken();
+      if (!user || user.userId !== promoCode.ownerId) {
+        return NextResponse.json(
+          {
+            valid: false,
+            message: "Ce code est personnel et ne peut pas être utilisé",
+          },
+          { status: 200 },
+        );
+      }
+    }
+
+    // Check if PENDING (Customer created but not paid)
+    if (promoCode.status === "PENDING") {
+      return NextResponse.json(
+        {
+          valid: false,
+          message: "Ce code est en attente de paiement (voir votre dashboard)",
+        },
         { status: 200 },
       );
     }

@@ -13,9 +13,12 @@ export interface PromoCode {
   usageLimit?: number | null;
   usageCount: number;
   minOrderAmount?: number | null;
+  costPoints?: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  status: "PENDING" | "ACTIVE" | "EXPIRED";
+  ownerId?: number | null;
 }
 
 export interface PromotionRule {

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2, Wand2, Coins } from "lucide-react";
 import { DiscountType, PromoCode } from "../../types";
 
 const formSchema = z.object({
@@ -39,11 +39,12 @@ const formSchema = z.object({
   value: z.coerce
     .number()
     .min(0, "La valeur doit être positive")
-    .refine((val) => val > 0, "La valeur doit être supérieure à 0"),
+    .refine(val => val > 0, "La valeur doit être supérieure à 0"),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   usageLimit: z.coerce.number().min(0).optional().nullable(),
   minOrderAmount: z.coerce.number().min(0).optional().nullable(),
+  costPoints: z.coerce.number().min(0).optional().nullable(),
   isActive: z.boolean().default(true),
 });
 
@@ -70,6 +71,7 @@ export function PromoCodeForm({
       endDate: "",
       usageLimit: null,
       minOrderAmount: null,
+      costPoints: null,
       isActive: true,
     },
   });
@@ -88,6 +90,7 @@ export function PromoCodeForm({
           : "",
         usageLimit: initialData.usageLimit,
         minOrderAmount: initialData.minOrderAmount,
+        costPoints: initialData.costPoints ?? null,
         isActive: initialData.isActive,
       });
     } else {
@@ -99,6 +102,7 @@ export function PromoCodeForm({
         endDate: "",
         usageLimit: null,
         minOrderAmount: null,
+        costPoints: null,
         isActive: true,
       });
     }
@@ -129,7 +133,7 @@ export function PromoCodeForm({
                     <Input
                       placeholder="SUMMER2025"
                       {...field}
-                      onChange={(e) =>
+                      onChange={e =>
                         field.onChange(e.target.value.toUpperCase())
                       }
                     />
@@ -216,7 +220,7 @@ export function PromoCodeForm({
                     type="number"
                     placeholder="20"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    onChange={e => field.onChange(e.target.value)}
                   />
                 </FormControl>
                 <FormDescription>
@@ -264,14 +268,14 @@ export function PromoCodeForm({
             name="usageLimit"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Limite d'utilisation (Optionnel)</FormLabel>
+                <FormLabel>Limite d&apos;utilisation (Optionnel)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     placeholder="Illimité"
                     {...field}
                     value={field.value === null ? "" : field.value}
-                    onChange={(e) => {
+                    onChange={e => {
                       const val = e.target.value;
                       field.onChange(val === "" ? null : Number(val));
                     }}
@@ -297,7 +301,7 @@ export function PromoCodeForm({
                     placeholder="0"
                     {...field}
                     value={field.value === null ? "" : field.value}
-                    onChange={(e) => {
+                    onChange={e => {
                       const val = e.target.value;
                       field.onChange(val === "" ? null : Number(val));
                     }}
@@ -305,6 +309,40 @@ export function PromoCodeForm({
                 </FormControl>
                 <FormDescription>
                   Montant minimum du panier pour appliquer le code.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 space-y-4">
+          <div className="flex items-center gap-2 text-primary font-bold">
+            <Coins className="w-5 h-5" />
+            Vendre ce code dans la boutique cadeaux
+          </div>
+          <FormField
+            control={form.control}
+            name="costPoints"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Prix en Points (Points de fidélité)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Ex: 500"
+                    {...field}
+                    value={field.value === null ? "" : field.value}
+                    onChange={e => {
+                      const val = e.target.value;
+                      field.onChange(val === "" ? null : Number(val));
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Si vous définissez un prix, le code sera visible par les
+                  clients dans leur dashboard et achetable avec leurs points.
+                  Laissez vide pour un code promo classique non achetable.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

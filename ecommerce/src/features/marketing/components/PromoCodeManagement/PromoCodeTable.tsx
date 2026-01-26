@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Copy } from "lucide-react";
+import { Edit, Trash2, Copy, Coins } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -40,6 +40,28 @@ export function PromoCodeTable({
     const startDate = code.startDate ? new Date(code.startDate) : null;
     const endDate = code.endDate ? new Date(code.endDate) : null;
 
+    if (code.status === "PENDING") {
+      return (
+        <Badge
+          variant="outline"
+          className="border-amber-500 text-amber-600 bg-amber-50"
+        >
+          En attente
+        </Badge>
+      );
+    }
+
+    if (code.status === "EXPIRED") {
+      return (
+        <Badge
+          variant="destructive"
+          className="bg-rose-100 text-rose-600 border-rose-200"
+        >
+          Expiré
+        </Badge>
+      );
+    }
+
     if (!code.isActive) {
       return (
         <Badge variant="secondary" className="bg-gray-100 text-gray-500">
@@ -47,6 +69,8 @@ export function PromoCodeTable({
         </Badge>
       );
     }
+
+    // ... existing logic for Planifié / Épuisé ...
 
     if (endDate && endDate < now) {
       return (
@@ -97,6 +121,7 @@ export function PromoCodeTable({
             <TableHead>Réduction</TableHead>
             <TableHead>Utilisation</TableHead>
             <TableHead>Validité</TableHead>
+            <TableHead>Prix (Points)</TableHead>
             <TableHead>Statut</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -112,6 +137,14 @@ export function PromoCodeTable({
                   <span className="font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
                     {code.code}
                   </span>
+                  {code.ownerId && (
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] h-5 px-1 ml-1"
+                    >
+                      Perso
+                    </Badge>
+                  )}
                   <button
                     onClick={() => copyToClipboard(code.code)}
                     className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-indigo-500 transition-opacity"
@@ -194,6 +227,17 @@ export function PromoCodeTable({
                 </div>
               </TableCell>
 
+              <TableCell>
+                {code.costPoints ? (
+                  <div className="flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400">
+                    <Coins className="h-4 w-4" />
+                    {code.costPoints}
+                  </div>
+                ) : (
+                  <span className="text-gray-400 text-xs">-</span>
+                )}
+              </TableCell>
+
               <TableCell>{getStatusBadge(code)}</TableCell>
 
               <TableCell className="text-right">
@@ -229,7 +273,7 @@ export function PromoCodeTable({
 
           {data.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-gray-500">
+              <TableCell colSpan={7} className="h-24 text-center text-gray-500">
                 Aucun code promo trouvé. Créez-en un pour commencer !
               </TableCell>
             </TableRow>

@@ -27,11 +27,12 @@ model User {
   addresses  Address[]
   carts      Cart[]
   orders     Order[]
+  products   Product[]
+  promoCodes PromoCode[]
   reviews    Review[]
   reactions  ReviewReaction[]
   replies    ReviewReply[]
   wishlist   WishlistItem[]
-  promoCodes PromoCode[]
 }
 
 model Product {
@@ -56,10 +57,12 @@ model Product {
   deletedAt       DateTime?
   promotionRuleId Int?
   status          String             @default("DRAFT")
+  ownerId         Int?
   blogPosts       BlogPost[]
   cartItems       CartItem[]
   orderItems      OrderItem[]
   category        Category?          @relation(fields: [categoryId], references: [id])
+  owner           User?              @relation(fields: [ownerId], references: [id])
   promotionRule   PromotionRule?     @relation(fields: [promotionRuleId], references: [id])
   images          ProductImage[]
   variations      ProductVariation[]
@@ -210,19 +213,20 @@ model StockMovement {
 }
 
 model Order {
-  id           String               @id @default(cuid())
-  reference    String               @unique
-  total        Float
-  status       String               @default("PENDING")
-  customerId   Int?
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  stockReduced Boolean              @default(false)
-  discount     Float?               @default(0)
-  promoCode    String?
-  customer     User?                @relation(fields: [customerId], references: [id])
-  items        OrderItem[]
-  transactions PaymentTransaction[]
+  id             String               @id @default(cuid())
+  reference      String               @unique
+  total          Float
+  status         String               @default("PENDING")
+  customerId     Int?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  stockReduced   Boolean              @default(false)
+  discount       Float?               @default(0)
+  promoCode      String?
+  pointsRewarded Boolean              @default(false)
+  customer       User?                @relation(fields: [customerId], references: [id])
+  items          OrderItem[]
+  transactions   PaymentTransaction[]
 }
 
 model OrderItem {
@@ -273,21 +277,22 @@ model PaymentTransaction {
 }
 
 model PromoCode {
-  id             Int          @id @default(autoincrement())
-  code           String       @unique @db.VarChar(50)
-  type           DiscountType @default(PERCENTAGE)
+  id             Int             @id @default(autoincrement())
+  code           String          @unique @db.VarChar(50)
+  type           DiscountType    @default(PERCENTAGE)
   value          Float
   startDate      DateTime?
   endDate        DateTime?
   usageLimit     Int?
-  usageCount     Int          @default(0)
+  usageCount     Int             @default(0)
   minOrderAmount Float?
-  costPoints     Int? // Coût en points pour acheter ce code
-  isActive       Boolean      @default(true)
-  ownerId        Int? // Si défini, ce code appartient à un utilisateur spécifique
-  owner          User?        @relation(fields: [ownerId], references: [id])
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  costPoints     Int?
+  ownerId        Int?
+  status         PromoCodeStatus @default(PENDING)
+  owner          User?           @relation(fields: [ownerId], references: [id])
 
   @@index([ownerId])
   @@index([code])
@@ -459,4 +464,10 @@ enum Role {
 enum DiscountType {
   PERCENTAGE
   FIXED_AMOUNT
+}
+
+enum PromoCodeStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
 }
