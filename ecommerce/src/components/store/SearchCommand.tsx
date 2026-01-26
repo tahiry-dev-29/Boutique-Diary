@@ -74,7 +74,7 @@ export default function SearchCommand({
             <Search className="w-5 h-5 text-gray-400 mr-3" />
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={e => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400 text-gray-900 h-9 font-medium"
               placeholder="Rechercher des produits, catégories..."
               autoFocus
@@ -134,6 +134,7 @@ export default function SearchCommand({
                           src={product.images[0].url}
                           alt={product.name}
                           fill
+                          sizes="80px"
                           className="object-cover group-hover/item:scale-110 transition-transform duration-500"
                         />
                       ) : (

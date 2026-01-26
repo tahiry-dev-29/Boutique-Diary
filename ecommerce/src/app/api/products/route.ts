@@ -29,8 +29,6 @@ export async function GET(request: NextRequest) {
       whereClause.promotionRuleId = parseInt(promotionRuleId);
     if (status) whereClause.status = status;
 
-    console.log("[Products API] Fetching with filters:", whereClause);
-
     const products = await prisma.product.findMany({
       where: whereClause,
       include: {
@@ -45,8 +43,6 @@ export async function GET(request: NextRequest) {
       },
       ...(limit ? { take: parseInt(limit) } : {}),
     });
-
-    console.log(`[Products API] Found ${products.length} products`);
 
     return NextResponse.json(products);
   } catch (error: unknown) {

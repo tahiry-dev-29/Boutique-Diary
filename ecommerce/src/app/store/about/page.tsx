@@ -162,7 +162,7 @@ export default function AboutPage() {
           <div className="flex items-center justify-center gap-4">
             <div className="w-12 h-12 bg-gray-800 rounded-full"></div>
             <div className="text-left">
-              <div className="font-bold text-lg">Tahiry R.</div>
+              <div className="font-bold text-lg">Diary R.</div>
               <div className="text-gray-400 text-sm">
                 Fondateur, Diary Boutique
               </div>

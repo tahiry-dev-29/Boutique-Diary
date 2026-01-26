@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Gift, Tag, Copy, Check, Loader2, Sparkles, Coins } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CustomPromoForm } from "@/features/marketing/components/CustomPromoForm";
 
 interface PromoShopItem {
   id: number;
@@ -15,6 +16,7 @@ interface PromoShopItem {
   expiresAt: string | null;
   purchasePrice?: number;
   description: string;
+  status?: "PENDING" | "ACTIVE" | "EXPIRED";
 }
 
 export default function PromoCodesPage() {
@@ -24,12 +26,11 @@ export default function PromoCodesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [renewingPromo, setRenewingPromo] = useState<PromoShopItem | null>(
+    null,
+  );
 
-  useEffect(() => {
-    fetchPromoCodes();
-  }, []);
-
-  const fetchPromoCodes = async () => {
+  const fetchPromoCodes = useCallback(async () => {
     try {
       const res = await fetch("/api/customer/promo-codes");
       if (res.ok) {
@@ -44,7 +45,16 @@ export default function PromoCodesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchPromoCodes();
+  }, [fetchPromoCodes]);
+
+  const handleSuccess = useCallback(() => {
+    setRenewingPromo(null);
+    fetchPromoCodes();
+  }, [fetchPromoCodes]);
 
   const handlePurchase = async (item: PromoShopItem) => {
     if (!item.purchasePrice || points < item.purchasePrice) return;
@@ -62,10 +72,10 @@ export default function PromoCodesPage() {
 
       toast.success("Code promo acheté avec succès !");
       setPoints(data.newPoints);
-      // Move purchased code to myCodes (or just reload logic, simpler to push local)
       setMyCodes([data.promo, ...myCodes]);
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Une erreur est survenue");
     } finally {
       setIsPurchasing(null);
     }
@@ -111,12 +121,20 @@ export default function PromoCodesPage() {
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
               Mon Solde
             </p>
-            <p className="text-2xl font-black text-primary">
+            <p className="text-xl sm:text-2xl font-black text-primary">
               {points.toLocaleString()} pts
             </p>
           </div>
         </div>
       </div>
+
+      {/* Personalized Promo Code Section */}
+      <section className="bg-primary/5 rounded-3xl p-1 border border-primary/10">
+        <CustomPromoForm
+          onSuccess={handleSuccess}
+          renewPromo={renewingPromo as any}
+        />
+      </section>
 
       {/* My Codes Section */}
       {myCodes.length > 0 && (
@@ -124,13 +142,13 @@ export default function PromoCodesPage() {
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Tag className="w-5 h-5" /> Mes Codes Actifs
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myCodes.map(item => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+            {myCodes.map((item: PromoShopItem) => (
               <div
                 key={item.id}
                 className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all group"
               >
-                <div className="bg-secondary/30 p-6 flex flex-col justify-between h-full">
+                <div className="bg-secondary/30 p-5 md:p-6 flex flex-col justify-between h-full">
                   <div>
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-2xl font-black text-foreground">
@@ -138,9 +156,15 @@ export default function PromoCodesPage() {
                           ? `-${item.value}%`
                           : `-${item.value.toLocaleString("fr-FR")} Ar`}
                       </h3>
-                      <span className="bg-green-500/10 text-green-600 text-xs px-2 py-1 rounded-full font-bold">
-                        Acquis
-                      </span>
+                      {item.status === "PENDING" ? (
+                        <span className="bg-amber-500/10 text-amber-600 text-xs px-2 py-1 rounded-full font-bold">
+                          Attente paiement
+                        </span>
+                      ) : (
+                        <span className="bg-green-500/10 text-green-600 text-xs px-2 py-1 rounded-full font-bold">
+                          Actif
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
                       {item.description}
@@ -166,6 +190,28 @@ export default function PromoCodesPage() {
                       )}
                     </button>
                   </div>
+
+                  {/* Renewal/Payment Button */}
+                  {item.status === "PENDING" && (
+                    <Button
+                      variant="outline"
+                      className="w-full mt-3 border-amber-500 text-amber-600 hover:bg-amber-50"
+                      onClick={() => setRenewingPromo(item)}
+                    >
+                      <Coins className="w-4 h-4 mr-2" />
+                      Payer maintenant
+                    </Button>
+                  )}
+                  {item.status === "EXPIRED" && (
+                    <Button
+                      variant="outline"
+                      className="w-full mt-3 border-primary text-primary hover:bg-primary/5"
+                      onClick={() => setRenewingPromo(item)}
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Renouveler
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
@@ -185,7 +231,7 @@ export default function PromoCodesPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
             {availableCodes.map(item => {
               const canBuy = item.purchasePrice && points >= item.purchasePrice;
               return (
@@ -193,7 +239,7 @@ export default function PromoCodesPage() {
                   key={item.id}
                   className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col"
                 >
-                  <div className="bg-linear-to-br from-primary/5 to-transparent p-6 flex-1">
+                  <div className="bg-linear-to-br from-primary/5 to-transparent p-5 md:p-6 flex-1">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
                       {item.type === "PERCENTAGE" ? (
                         <Tag className="w-6 h-6 text-primary" />

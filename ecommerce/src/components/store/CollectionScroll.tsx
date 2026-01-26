@@ -38,7 +38,7 @@ export default function CollectionScroll({
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Collection des produits <br />
-              les plus vendus de l'année
+              les plus vendus de l&apos;année
             </h2>
           </div>
 
@@ -82,11 +82,12 @@ export default function CollectionScroll({
                     src={item.images[0].url}
                     alt={item.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className="object-cover"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-black/20 font-bold text-xl">
-                    Pas d'image
+                    Pas d&apos;image
                   </div>
                 )}
 

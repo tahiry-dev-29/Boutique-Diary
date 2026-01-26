@@ -1,5 +1,5 @@
 import React from "react";
-import { ShoppingBag, Heart, MapPin, Clock } from "lucide-react";
+import { ShoppingBag, Heart, MapPin, Clock, Coins } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
@@ -17,7 +17,7 @@ async function getData() {
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
-        select: { username: true },
+        select: { username: true, points: true },
       }),
       prisma.order.count({ where: { customerId: userId } }),
       prisma.wishlistItem.count({ where: { userId: userId } }),
@@ -70,6 +70,12 @@ export default async function CustomerDashboard() {
       icon: MapPin,
       href: "/dashboard/customer/addresses",
     },
+    {
+      label: "Points Fidélité",
+      value: (user.points || 0).toLocaleString(),
+      icon: Coins,
+      href: "/dashboard/customer/promo-codes",
+    },
   ];
 
   return (
@@ -85,8 +91,8 @@ export default async function CustomerDashboard() {
       </div>
 
       {}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map((stat) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map(stat => (
           <Link
             key={stat.label}
             href={stat.href}
@@ -128,7 +134,7 @@ export default async function CustomerDashboard() {
 
         <div className="space-y-3">
           {recentOrders.length > 0 ? (
-            recentOrders.map((order) => (
+            recentOrders.map(order => (
               <div
                 key={order.id}
                 className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-accent transition-colors"

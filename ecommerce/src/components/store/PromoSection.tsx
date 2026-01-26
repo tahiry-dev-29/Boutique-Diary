@@ -8,7 +8,13 @@ import Link from "next/link";
 import { formatPrice } from "@/lib/cart-store";
 
 interface PromoSectionProps {
-  products?: any[];
+  products?: {
+    id: number;
+    name: string;
+    price: number;
+    category?: { name: string } | null;
+    images?: { url: string }[];
+  }[];
 }
 
 export default function PromoSection({ products = [] }: PromoSectionProps) {
@@ -19,8 +25,8 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             anime({
               targets: entry.target.querySelectorAll(".promo-card"),
@@ -87,6 +93,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
                       src={imageUrl}
                       alt={product.name}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       className="object-contain drop-shadow-2xl"
                     />
                   </div>
@@ -124,7 +131,7 @@ export default function PromoSection({ products = [] }: PromoSectionProps) {
           href="/promotions"
           className="group flex items-center gap-2 bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition-all hover:gap-4 shadow-lg hover:shadow-black/20"
         >
-          Voir plus d'offres
+          Voir plus d&apos;offres
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </Link>
       </div>

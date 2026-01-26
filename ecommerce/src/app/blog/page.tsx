@@ -28,16 +28,40 @@ interface BlogPost {
   };
 }
 
+import { prisma } from "@/lib/prisma";
+
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/blog?limit=20`, {
-      next: { revalidate: 60 },
+    const posts = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      take: 20,
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        coverImage: true,
+        publishedAt: true,
+        viewCount: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+            brand: true,
+            price: true,
+            category: { select: { name: true } },
+          },
+        },
+      },
     });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.posts || [];
-  } catch {
+
+    return (posts as any).map((post: any) => ({
+      ...post,
+      publishedAt: post.publishedAt.toISOString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
     return [];
   }
 }
