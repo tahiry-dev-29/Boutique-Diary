@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { reduceOrderStock, replenishOrderStock } from "@/lib/stock-utils";
+import { rewardPointsForOrder } from "@/lib/loyalty";
 
 export async function GET(
   request: NextRequest,
@@ -84,7 +85,7 @@ export async function GET(
             address: displayAddress,
           }
         : { name: "Invité", email: "", address: displayAddress },
-      items: order.items.map((item) => ({
+      items: order.items.map(item => ({
         id: item.id,
         productId: item.productId,
         productName: item.product.name,
@@ -129,7 +130,7 @@ export async function PATCH(
 
     console.log(`[OrderPATCH] Updating order ${id} to status: ${status}`);
 
-    const updatedOrder = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await prisma.$transaction(async tx => {
       const order = await tx.order.update({
         where: { id },
         data: { status },
@@ -146,17 +147,28 @@ export async function PATCH(
         await replenishOrderStock(id, tx);
       }
 
+      // Reward points only on COMPLETED status
+      if (status === "COMPLETED") {
+        console.log(`[OrderPATCH] Rewarding points for order ${id}`);
+        await rewardPointsForOrder(id, tx);
+      }
+
       return order;
     });
 
     return NextResponse.json(updatedOrder);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating order:", error);
+    const message =
+      error instanceof Error ? error.message : "Failed to update order";
     return NextResponse.json(
       {
         error: "Failed to update order",
-        details: error.message,
-        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        details: message,
+        stack:
+          process.env.NODE_ENV === "development" && error instanceof Error
+            ? error.stack
+            : undefined,
       },
       { status: 500 },
     );

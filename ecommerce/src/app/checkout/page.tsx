@@ -42,10 +42,7 @@ export default function CheckoutPage() {
 
             {/* Summary */}
             <div className="lg:col-span-5 xl:col-span-4 order-1 lg:order-2">
-              <OrderSummary
-                discount={appliedPromo?.discount || 0}
-                promoCode={appliedPromo?.code || null}
-              />
+              <OrderSummary appliedPromo={appliedPromo} />
             </div>
           </div>
         </div>
