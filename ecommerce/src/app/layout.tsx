@@ -2,18 +2,18 @@ import "./globals.css";
 import MainLayout from "@/components/MainLayout";
 import { getCategories } from "@/lib/store-data";
 import { Metadata } from "next";
-import { Playfair_Display, Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeStyle } from "@/components/store/theme-style";
 import { getTheme } from "@/lib/theme/theme-service";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
+const playfair = localFont({
+  src: "../../public/fonts/PlayfairDisplay-VariableFont_wght.ttf",
   variable: "--font-playfair",
   display: "swap",
 });
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
+const montserrat = localFont({
+  src: "../../public/fonts/Montserrat-VariableFont_wght.ttf",
   variable: "--font-montserrat",
   display: "swap",
 });
