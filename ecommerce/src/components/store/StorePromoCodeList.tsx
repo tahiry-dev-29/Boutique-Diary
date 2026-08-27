@@ -1,6 +1,6 @@
 "use client";
 
-import { PromoCode } from "@prisma/client";
+import type { PromoCode } from "@/generated/prisma/client";
 import { Copy, Check, Ticket, Clock, Percent, Banknote } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

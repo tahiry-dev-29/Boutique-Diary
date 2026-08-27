@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { notificationManager } from "./notification-manager";
 
 export async function reduceOrderStock(

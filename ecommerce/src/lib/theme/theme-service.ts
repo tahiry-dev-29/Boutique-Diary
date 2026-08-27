@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { StoreTheme, defaultTheme, themeSchema } from "./theme-config";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
 export async function getTheme(): Promise<StoreTheme> {
   try {
