@@ -2,9 +2,9 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { Role } from "./auth-constants";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "jwt-secret-ecommerce",
-);
+const rawJwtSecret = process.env.JWT_SECRET;
+if (!rawJwtSecret) throw new Error("JWT_SECRET is not set");
+const JWT_SECRET = new TextEncoder().encode(rawJwtSecret);
 const ADMIN_COOKIE_NAME = "admin_session";
 
 export interface AdminPayload {

@@ -11,6 +11,7 @@ import {
   Star,
   Clock,
 } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -245,7 +246,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                 prose-ol:my-6 prose-ol:pl-6
                 prose-blockquote:border-l-primary/40 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:rounded-r-xl prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:not-italic
                 prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8 prose-img:border prose-img:border-gray-100 dark:prose-img:border-gray-800"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(post.content),
+              }}
             />
 
             {/* Share section (mobile) */}

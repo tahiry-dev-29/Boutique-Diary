@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { usePathname } from "next/navigation";
 import { StoreTheme, StylePreset } from "@/lib/theme/theme-config";
 
@@ -98,7 +99,7 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
   return (
     <style
       dangerouslySetInnerHTML={{
-        __html: `
+        __html: DOMPurify.sanitize(`
         :root {
           /* Store Theme Custom Variables */
           --store-primary: ${theme.primaryColor};
@@ -244,7 +245,7 @@ export function ThemeStyle({ theme }: { theme: StoreTheme }) {
         `
             : ""
         }
-      `,
+      `),
       }}
     />
   );
