@@ -24,7 +24,6 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -100,7 +99,6 @@ export default function CustomerPage() {
 
       if (!response.ok) throw new Error("Failed to delete");
 
-      const data = await response.json();
       setCustomers(prev => prev.filter(c => !selectedCustomers.includes(c.id)));
       toast.success(`${selectedCustomers.length} clients supprimés`);
       setSelectedCustomers([]);

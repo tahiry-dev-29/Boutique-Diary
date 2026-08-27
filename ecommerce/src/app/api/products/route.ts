@@ -238,6 +238,7 @@ export async function POST(request: NextRequest) {
     revalidatePath("/nouveautes");
     revalidatePath("/top-vente");
     revalidatePath("/promotions");
+    revalidatePath("/produits");
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: unknown) {
@@ -285,6 +286,7 @@ export async function PUT(request: NextRequest) {
     revalidatePath("/nouveautes");
     revalidatePath("/top-vente");
     revalidatePath("/promotions");
+    revalidatePath("/produits");
 
     return NextResponse.json({ success: true });
   } catch (error) {

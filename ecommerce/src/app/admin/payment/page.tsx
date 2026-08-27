@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import {
   CreditCard,
   ArrowRight,
@@ -9,6 +11,7 @@ import {
   List,
   TrendingUp,
   Clock,
+  Loader2,
 } from "lucide-react";
 import {
   Card,
@@ -23,72 +26,93 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import StatsCard from "@/components/admin/dashboard/StatsCard";
 import { formatPrice } from "@/lib/utils";
 
+/** Response shape from the transactions endpoint. */
+interface TransactionsResponse {
+  transactions: Array<{ status: string; amount: number }>;
+  pagination: { total: number };
+}
+
+/** Aggregated payment dashboard statistics. */
+interface PaymentStats {
+  totalRevenue: number;
+  transactionCount: number;
+  pendingCount: number;
+  activeMethods: number;
+}
+
+/** Derives dashboard KPIs from raw API data. */
+function deriveStats(
+  txData: TransactionsResponse | undefined,
+  methodsData: Array<{ isActive: boolean }> | undefined,
+): PaymentStats {
+  const txs = txData?.transactions ?? [];
+  const totalRevenue = txs
+    .filter(t => t.status === "SUCCESS")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const pendingCount = txs.filter(t => t.status === "PENDING").length;
+  const activeMethods = methodsData?.filter(m => m.isActive).length ?? 0;
+
+  return {
+    totalRevenue,
+    transactionCount: txData?.pagination?.total ?? txs.length,
+    pendingCount,
+    activeMethods,
+  };
+}
+
 export default function PaymentDashboardPage() {
-  const [stats, setStats] = useState({
-    totalRevenue: 0,
-    transactionCount: 0,
-    pendingCount: 0,
-    activeMethods: 0,
-  });
-  const [loading, setLoading] = useState(true);
+  const {
+    data: txData,
+    isLoading: txLoading,
+    mutate: mutateTx,
+  } = useSWR<TransactionsResponse>(
+    "/api/admin/payments/transactions?limit=100",
+    fetcher,
+    { revalidateOnFocus: true },
+  );
 
+  const { data: methodsData, isLoading: methodsLoading } = useSWR<
+    Array<{ isActive: boolean }>
+  >("/api/admin/payments/methods", fetcher, { revalidateOnFocus: true });
+
+  const loading = txLoading || methodsLoading;
+  const stats = deriveStats(txData, methodsData);
+
+  /** SSE listener refreshes dashboard stats on real-time events. */
   useEffect(() => {
-    const fetchPaymentStats = async () => {
+    const eventSource = new EventSource("/api/notifications/stream?role=admin");
+
+    eventSource.onmessage = event => {
       try {
-        // En l'absence d'un endpoint dédié, on récupère les transactions pour calculer quelques stats
-        const response = await fetch(
-          "/api/admin/payments/transactions?limit=100",
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const txs = data.transactions || [];
-
-          const revenue = txs
-            .filter(
-              (t: { status: string; amount: number }) => t.status === "SUCCESS",
-            )
-            .reduce(
-              (sum: number, t: { status: string; amount: number }) =>
-                sum + t.amount,
-              0,
-            );
-
-          const pending = txs.filter(
-            (t: { status: string; amount: number }) => t.status === "PENDING",
-          ).length;
-
-          // On récupère aussi les méthodes pour le compteur
-          const methodsRes = await fetch("/api/admin/payments/methods");
-          const methods = await methodsRes.json();
-          const activeMethodsCount = methods.filter(
-            (m: { isActive: boolean }) => m.isActive,
-          ).length;
-
-          setStats({
-            totalRevenue: revenue,
-            transactionCount: txs.length,
-            pendingCount: pending,
-            activeMethods: activeMethodsCount,
-          });
+        if (event.data.startsWith("{")) {
+          const data = JSON.parse(event.data);
+          if (
+            data.type === "TRANSACTION_UPDATE" ||
+            data.type === "TRANSACTION_BULK_UPDATE" ||
+            data.type === "ORDER_UPDATE"
+          ) {
+            mutateTx();
+          }
         }
-      } catch (error) {
-        console.error("Failed to fetch payment stats", error);
-      } finally {
-        setLoading(false);
+      } catch {
+        /* heartbeat — ignore */
       }
     };
 
-    fetchPaymentStats();
-  }, []);
+    return () => eventSource.close();
+  }, [mutateTx]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
         title="Gestion des Paiements"
         description="Configurez vos passerelles de paiement et suivez vos revenus en temps réel."
+        onRefresh={() => mutateTx()}
+        isLoading={loading}
       />
 
-      {/* Statistiques rapides */}
+      {/* Quick statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-linear-to-br from-indigo-600 to-purple-700 rounded-2xl p-5 text-white shadow-lg flex flex-col justify-between h-[140px] border border-white/10 transition-transform hover:scale-[1.02]">
           <div className="p-2 bg-white/20 rounded-xl w-fit">
@@ -99,7 +123,11 @@ export default function PaymentDashboardPage() {
               Revenu Total (Transactions)
             </p>
             <h3 className="text-2xl font-bold mt-1">
-              {loading ? "..." : formatPrice(stats.totalRevenue)}
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                formatPrice(stats.totalRevenue)
+              )}
             </h3>
           </div>
         </div>
@@ -127,7 +155,7 @@ export default function PaymentDashboardPage() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Carte Configuration */}
+        {/* Payment methods configuration card */}
         <Card className="group border-none shadow-sm bg-white dark:bg-gray-900 overflow-hidden relative transition-all hover:shadow-md">
           <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.05] group-hover:scale-110 transition-transform duration-500">
             <Settings size={160} />
@@ -175,7 +203,7 @@ export default function PaymentDashboardPage() {
           </CardFooter>
         </Card>
 
-        {/* Carte Transactions */}
+        {/* Transactions history card */}
         <Card className="group border-none shadow-sm bg-white dark:bg-gray-900 overflow-hidden relative transition-all hover:shadow-md">
           <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.05] group-hover:scale-110 transition-transform duration-500">
             <List size={160} />
@@ -194,7 +222,7 @@ export default function PaymentDashboardPage() {
           <CardContent>
             <div className="space-y-4 py-2">
               <p className="text-gray-500 dark:text-gray-400">
-                Suivez l'état de chaque paiement, filtrez par date ou par
+                Suivez l&apos;état de chaque paiement, filtrez par date ou par
                 client, et exportez vos données comptables.
               </p>
               <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/30 flex justify-between items-center">
@@ -213,7 +241,7 @@ export default function PaymentDashboardPage() {
                 variant="outline"
                 className="w-full h-12 rounded-xl border-2 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-all"
               >
-                Voir l'historique
+                Voir l&apos;historique
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>

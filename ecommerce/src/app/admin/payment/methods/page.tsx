@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import React, { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import {
   Settings,
   CreditCard,
   Banknote,
   Smartphone,
   Check,
-  X,
   Loader2,
 } from "lucide-react";
 import {
@@ -35,7 +35,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/admin/PageHeader";
 
+/** Shape of a payment method from the API. */
 interface PaymentMethod {
   id: number;
   code: string;
@@ -44,100 +46,132 @@ interface PaymentMethod {
   logoUrl: string | null;
   isActive: boolean;
   isDefault: boolean;
-  config: any;
+  config: Record<string, string> | null;
 }
 
-import { PageHeader } from "@/components/admin/PageHeader";
+/** Returns the icon element matching a payment method code. */
+function getMethodIcon(code: string) {
+  switch (code) {
+    case "mvola":
+      return <Smartphone className="w-8 h-8 text-yellow-500" />;
+    case "orange_money":
+      return <Smartphone className="w-8 h-8 text-orange-500" />;
+    case "airtel_money":
+      return <Smartphone className="w-8 h-8 text-red-500" />;
+    case "cash":
+      return <Banknote className="w-8 h-8 text-green-500" />;
+    default:
+      return <CreditCard className="w-8 h-8" />;
+  }
+}
 
 export default function PaymentMethodsPage() {
-  const [methods, setMethods] = useState<PaymentMethod[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: methods = [],
+    isLoading,
+    mutate,
+  } = useSWR<PaymentMethod[]>("/api/admin/payments/methods", fetcher, {
+    revalidateOnFocus: true,
+  });
+
   const [configuringMethod, setConfiguringMethod] =
     useState<PaymentMethod | null>(null);
 
-  useEffect(() => {
-    fetchMethods();
-  }, []);
+  /** Refs for config dialog inputs — avoids brittle document.getElementById. */
+  const merchantIdRef = useRef<HTMLInputElement>(null);
+  const apiKeyRef = useRef<HTMLInputElement>(null);
+  const publicKeyRef = useRef<HTMLInputElement>(null);
+  const secretKeyRef = useRef<HTMLInputElement>(null);
 
-  const fetchMethods = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/payments/methods");
-      if (!res.ok) throw new Error("Failed to fetch methods");
-      const data = await res.json();
-      setMethods(data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors du chargement des modes de paiement");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleActive = async (
-    method: PaymentMethod,
-    checked: boolean,
-  ) => {
-    try {
-      setMethods(prev =>
-        prev.map(m => (m.id === method.id ? { ...m, isActive: checked } : m)),
+  /** Toggle a method's active state with optimistic update. */
+  const handleToggleActive = useCallback(
+    async (method: PaymentMethod, checked: boolean) => {
+      const optimistic = methods.map(m =>
+        m.id === method.id ? { ...m, isActive: checked } : m,
       );
+      mutate(optimistic, false);
 
-      const res = await fetch("/api/admin/payments/methods", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: method.id, isActive: checked }),
-      });
+      try {
+        const res = await fetch("/api/admin/payments/methods", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: method.id, isActive: checked }),
+        });
 
-      if (!res.ok) throw new Error("Failed to update");
-      toast.success(`${method.name} ${checked ? "activé" : "désactivé"}`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors de la mise à jour");
-      fetchMethods();
-    }
-  };
+        if (!res.ok) throw new Error("Failed to update");
+        toast.success(`${method.name} ${checked ? "activé" : "désactivé"}`);
+        mutate();
+      } catch {
+        toast.error("Erreur lors de la mise à jour");
+        mutate();
+      }
+    },
+    [methods, mutate],
+  );
 
-  const handleSetDefault = async (method: PaymentMethod) => {
-    if (method.isDefault) return;
-    try {
-      setMethods(prev =>
-        prev.map(m => ({ ...m, isDefault: m.id === method.id })),
-      );
+  /** Set a method as the default payment method. */
+  const handleSetDefault = useCallback(
+    async (method: PaymentMethod) => {
+      if (method.isDefault) return;
 
-      const res = await fetch("/api/admin/payments/methods", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: method.id,
-          isDefault: true,
-          isActive: true,
-        }),
-      });
+      const optimistic = methods.map(m => ({
+        ...m,
+        isDefault: m.id === method.id,
+      }));
+      mutate(optimistic, false);
 
-      if (!res.ok) throw new Error("Failed to set default");
-      toast.success(`${method.name} défini par défaut`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors de la définition par défaut");
-      fetchMethods();
-    }
-  };
+      try {
+        const res = await fetch("/api/admin/payments/methods", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: method.id,
+            isDefault: true,
+            isActive: true,
+          }),
+        });
 
-  const getIcon = (code: string) => {
-    switch (code) {
-      case "mvola":
-        return <Smartphone className="w-8 h-8 text-yellow-500" />;
-      case "orange_money":
-        return <Smartphone className="w-8 h-8 text-orange-500" />;
-      case "airtel_money":
-        return <Smartphone className="w-8 h-8 text-red-500" />;
-      case "cash":
-        return <Banknote className="w-8 h-8 text-green-500" />;
-      default:
-        return <CreditCard className="w-8 h-8" />;
-    }
-  };
+        if (!res.ok) throw new Error("Failed to set default");
+        toast.success(`${method.name} défini par défaut`);
+        mutate();
+      } catch {
+        toast.error("Erreur lors de la définition par défaut");
+        mutate();
+      }
+    },
+    [methods, mutate],
+  );
+
+  /** Save configuration from dialog form refs. */
+  const handleSaveConfig = useCallback(
+    async (method: PaymentMethod) => {
+      const config: Record<string, string> = {};
+
+      if (method.code === "mvola") {
+        config.merchantId = merchantIdRef.current?.value ?? "";
+        config.apiKey = apiKeyRef.current?.value ?? "";
+      } else if (method.code === "stripe") {
+        config.publicKey = publicKeyRef.current?.value ?? "";
+        config.secretKey = secretKeyRef.current?.value ?? "";
+      }
+
+      try {
+        const res = await fetch("/api/admin/payments/methods", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: method.id, config }),
+        });
+
+        if (!res.ok) throw new Error("Update failed");
+        toast.success("Configuration mise à jour");
+        setConfiguringMethod(null);
+        mutate();
+      } catch {
+        toast.error("Erreur lors de la sauvegarde de la configuration");
+      }
+    },
+    [mutate],
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -145,9 +179,11 @@ export default function PaymentMethodsPage() {
         title="Modes de Paiement"
         description="Gérez les méthodes de paiement disponibles sur votre boutique."
         backHref="/admin/payment"
+        onRefresh={() => mutate()}
+        isLoading={isLoading}
       />
 
-      {loading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
         </div>
@@ -173,7 +209,7 @@ export default function PaymentMethodsPage() {
                         : "bg-gray-200 dark:bg-gray-800",
                     )}
                   >
-                    {getIcon(method.code)}
+                    {getMethodIcon(method.code)}
                   </div>
                   <div>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -255,29 +291,31 @@ export default function PaymentMethodsPage() {
                         <>
                           <div className="grid gap-2">
                             <Label
-                              htmlFor="merchantId"
+                              htmlFor={`merchantId-${method.id}`}
                               className="text-sm font-bold uppercase tracking-wider text-gray-500"
                             >
                               ID Marchand
                             </Label>
                             <Input
-                              id="merchantId"
-                              defaultValue={method.config?.merchantId || ""}
+                              id={`merchantId-${method.id}`}
+                              ref={merchantIdRef}
+                              defaultValue={method.config?.merchantId ?? ""}
                               placeholder="ex: 123456"
                               className="h-12 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus-visible:ring-indigo-500"
                             />
                           </div>
                           <div className="grid gap-2">
                             <Label
-                              htmlFor="apiKey"
+                              htmlFor={`apiKey-${method.id}`}
                               className="text-sm font-bold uppercase tracking-wider text-gray-500"
                             >
                               Clé API (Consumer Key)
                             </Label>
                             <Input
-                              id="apiKey"
+                              id={`apiKey-${method.id}`}
+                              ref={apiKeyRef}
                               type="password"
-                              defaultValue={method.config?.apiKey || ""}
+                              defaultValue={method.config?.apiKey ?? ""}
                               className="h-12 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus-visible:ring-indigo-500"
                             />
                           </div>
@@ -288,29 +326,31 @@ export default function PaymentMethodsPage() {
                         <>
                           <div className="grid gap-2">
                             <Label
-                              htmlFor="publicKey"
+                              htmlFor={`publicKey-${method.id}`}
                               className="text-sm font-bold uppercase tracking-wider text-gray-500"
                             >
                               Clé Publique
                             </Label>
                             <Input
-                              id="publicKey"
-                              defaultValue={method.config?.publicKey || ""}
+                              id={`publicKey-${method.id}`}
+                              ref={publicKeyRef}
+                              defaultValue={method.config?.publicKey ?? ""}
                               placeholder="pk_test_..."
                               className="h-12 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus-visible:ring-indigo-500"
                             />
                           </div>
                           <div className="grid gap-2">
                             <Label
-                              htmlFor="secretKey"
+                              htmlFor={`secretKey-${method.id}`}
                               className="text-sm font-bold uppercase tracking-wider text-gray-500"
                             >
                               Clé Secrète
                             </Label>
                             <Input
-                              id="secretKey"
+                              id={`secretKey-${method.id}`}
+                              ref={secretKeyRef}
                               type="password"
-                              defaultValue={method.config?.secretKey || ""}
+                              defaultValue={method.config?.secretKey ?? ""}
                               placeholder="sk_test_..."
                               className="h-12 rounded-xl border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus-visible:ring-indigo-500"
                             />
@@ -339,55 +379,7 @@ export default function PaymentMethodsPage() {
                       </Button>
                       <Button
                         className="rounded-xl h-12 px-8 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20"
-                        onClick={async () => {
-                          const config: any = {};
-                          if (method.code === "mvola") {
-                            config.merchantId = (
-                              document.getElementById(
-                                "merchantId",
-                              ) as HTMLInputElement
-                            ).value;
-                            config.apiKey = (
-                              document.getElementById(
-                                "apiKey",
-                              ) as HTMLInputElement
-                            ).value;
-                          } else if (method.code === "stripe") {
-                            config.publicKey = (
-                              document.getElementById(
-                                "publicKey",
-                              ) as HTMLInputElement
-                            ).value;
-                            config.secretKey = (
-                              document.getElementById(
-                                "secretKey",
-                              ) as HTMLInputElement
-                            ).value;
-                          }
-
-                          try {
-                            const res = await fetch(
-                              "/api/admin/payments/methods",
-                              {
-                                method: "PUT",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                  id: method.id,
-                                  config,
-                                }),
-                              },
-                            );
-
-                            if (!res.ok) throw new Error("Update failed");
-                            toast.success("Configuration mise à jour");
-                            setConfiguringMethod(null);
-                            fetchMethods();
-                          } catch (error) {
-                            toast.error(
-                              "Erreur lors de la sauvegarde de la configuration",
-                            );
-                          }
-                        }}
+                        onClick={() => handleSaveConfig(method)}
                       >
                         Enregistrer
                       </Button>
