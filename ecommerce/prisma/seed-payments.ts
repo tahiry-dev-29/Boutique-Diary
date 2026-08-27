@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import "dotenv/config";
@@ -15,7 +15,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("💳 Creating payment methods...");
-  
+
   // Create default payment methods safely
   const paymentMethods = [
     {
@@ -64,7 +64,9 @@ async function main() {
     });
   }
 
-  console.log("✅ Payment methods added successfully without touching other data!");
+  console.log(
+    "✅ Payment methods added successfully without touching other data!",
+  );
 }
 
 main()
