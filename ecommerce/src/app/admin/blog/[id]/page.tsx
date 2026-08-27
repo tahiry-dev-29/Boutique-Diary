@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -311,7 +312,9 @@ export default function EditBlogPage({
               <Label>Aperçu du contenu</Label>
               <div
                 className="prose prose-sm dark:prose-invert max-w-none p-6 bg-white dark:bg-gray-900 rounded-xl border border-border"
-                dangerouslySetInnerHTML={{ __html: content }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(content),
+                }}
               />
             </div>
           </div>
