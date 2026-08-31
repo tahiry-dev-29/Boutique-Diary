@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="admin@boutique.com"
+                  placeholder="votre@email.com"
                   required
                   className="w-full pl-12 pr-4 py-3 bg-gray-100/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 />

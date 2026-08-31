@@ -162,7 +162,7 @@ export default function SettingsPage() {
                         setFormData({ ...formData, username: e.target.value })
                       }
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
-                      placeholder="John Doe"
+                      placeholder="Votre nom d'utilisateur"
                     />
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
                         setFormData({ ...formData, email: e.target.value })
                       }
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-muted border-transparent focus:bg-background focus:border-primary transition-all outline-none text-sm font-medium"
-                      placeholder="john@example.com"
+                      placeholder="votre@email.com"
                     />
                   </div>
                 </div>
