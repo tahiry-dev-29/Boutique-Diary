@@ -43,6 +43,6 @@ next-env.d.ts
 .turbo
 
 /src/generated/prisma
-/public/uploads
+# /public/uploads
 /public/urlProducts
 
